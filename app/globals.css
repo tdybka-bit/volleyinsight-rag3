@@ -1,26 +1,174 @@
 @import "tailwindcss";
 
+/* Theme Variables */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Blue + Orange Theme (Default) - Blue as primary for user pages */
+  --primary: #007fff; /* Blue as primary */
+  --primary-foreground: #ffffff;
+  --secondary: #ff6b35; /* Orange as secondary */
+  --secondary-foreground: #ffffff;
+  --accent: #3b82f6; /* Blue accent */
+  --accent-foreground: #ffffff;
+  --background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e293b 100%); /* Blue gradient */
+  --foreground: #f8fafc;
+  --muted: rgba(15, 23, 42, 0.3);
+  --muted-foreground: #cbd5e1;
+  --border: rgba(59, 130, 246, 0.2);
+  --card: rgba(255, 255, 255, 0.1); /* Glassmorphism card background */
+  --card-foreground: #f8fafc;
+  --gradient-start: #007fff; /* Blue start */
+  --gradient-end: #3b82f6; /* Blue end */
+  --gradient-accent: #ff6b35; /* Orange accent */
+  --theme-name: "Niebieski + Pomarańczowy";
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="mint"] {
+  /* Mint + Beige Theme - Mint as primary for user pages */
+  --primary: #5A6E7F; /* Mint as primary */
+  --primary-foreground: #ffffff;
+  --secondary: #A8E6CF; /* Mint as secondary */
+  --secondary-foreground: #1e293b;
+  --accent: #F5F5DC; /* Beige accent */
+  --accent-foreground: #1e293b;
+  --background: linear-gradient(135deg, #1e293b 0%, #0f766e 50%, #fef3c7 100%); /* Mint gradient */
+  --foreground: #f8fafc;
+  --muted: rgba(30, 41, 59, 0.3);
+  --muted-foreground: #cbd5e1;
+  --border: rgba(168, 230, 207, 0.3); /* Mint border */
+  --card: rgba(255, 255, 255, 0.1); /* Glassmorphism card background */
+  --card-foreground: #f8fafc;
+  --gradient-start: #5A6E7F; /* Mint start */
+  --gradient-end: #A8E6CF; /* Mint end */
+  --gradient-accent: #F5F5DC; /* Beige accent */
+  --theme-name: "Miętowy + Beżowy";
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  transition: all 0.3s ease;
+  min-height: 100vh;
+}
+
+/* Glassmorphism effects */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-card {
+  background: rgba(255, 107, 53, 0.05); /* Orange-tinted glassmorphism */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 107, 53, 0.1); /* Orange border */
+}
+
+/* Admin panel specific styles - Orange primary, Navy secondary */
+.admin-primary {
+  background: linear-gradient(135deg, #ff6b35, #e55a2b);
+  color: #ffffff;
+}
+
+.admin-secondary {
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  color: #ffffff;
+}
+
+.admin-accent {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.admin-card {
+  background: rgba(255, 107, 53, 0.08);
+  border: 1px solid rgba(255, 107, 53, 0.2);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+
+.admin-button {
+  background: linear-gradient(135deg, #ff6b35, #e55a2b);
+  color: #ffffff;
+  border: 1px solid rgba(255, 107, 53, 0.3);
+  transition: all 0.3s ease;
+}
+
+.admin-button:hover {
+  background: linear-gradient(135deg, #e55a2b, #d94616);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+}
+
+.admin-button-secondary {
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  color: #ffffff;
+  border: 1px solid rgba(30, 58, 138, 0.3);
+  transition: all 0.3s ease;
+}
+
+.admin-button-secondary:hover {
+  background: linear-gradient(135deg, #1e40af, #1d4ed8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Theme transition */
+.theme-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
