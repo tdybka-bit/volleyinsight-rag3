@@ -193,3 +193,4 @@ export async function exampleUsage() {
     console.error('Błąd w przykładzie użycia:', error);
   }
 }
+

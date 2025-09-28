@@ -10,14 +10,13 @@ import {
   BookOpen,
   ChevronRight,
   Play,
-  Users,
-  TrendingUp,
   Sparkles,
-  Upload,
-  CheckCircle,
   Loader2,
   Zap,
-  Settings
+  Settings,
+  User,
+  Phone,
+  HelpCircle
 } from 'lucide-react'
 import { useTheme } from '../components/ThemeProvider'
 import ThemeToggle from '../components/ThemeToggle'
@@ -34,7 +33,6 @@ export default function VolleyInsight() {
   ])
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [uploadStatus, setUploadStatus] = useState('')
 
   // Track page view on mount
   useEffect(() => {
@@ -63,11 +61,17 @@ export default function VolleyInsight() {
       const data = await response.json()
 
       if (data.success) {
-        // Dodaj odpowiedź AI z kontekstem
+        // Dodaj odpowiedź AI z smart context info
         const aiMessage = data.message
-        const contextInfo = data.context?.hasContext 
-          ? `\n\n📚 *Odpowiedź na podstawie ${data.context.sourcesCount} źródeł z bazy wiedzy*`
-          : '\n\n⚠️ *Odpowiedź na podstawie ogólnej wiedzy (brak danych w bazie)*'
+        let contextInfo = ''
+        
+        if (data.context?.responseSource === 'database') {
+          contextInfo = `\n\n📚 *Odpowiedź na podstawie ${data.context.relevantSourcesCount} wysokiej jakości źródeł z bazy wiedzy VolleyInsight*`
+        } else if (data.context?.responseSource === 'hybrid') {
+          contextInfo = `\n\n🔗 *Odpowiedź hybrydowa: ${data.context.relevantSourcesCount} źródeł z bazy + wiedza ekspercka*`
+        } else {
+          contextInfo = '\n\n🤖 *Odpowiedź na podstawie wiedzy eksperckiej (brak odpowiednich danych w bazie)*'
+        }
         
         setMessages(prev => [...prev, { 
           role: 'assistant', 
@@ -100,51 +104,6 @@ export default function VolleyInsight() {
     }
   }
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    // Sprawdź typ pliku
-    if (!file.name.endsWith('.md')) {
-      setUploadStatus('❌ Tylko pliki .md są obsługiwane')
-      setTimeout(() => setUploadStatus(''), 3000)
-      return
-    }
-
-    setUploadStatus('Przesyłanie...')
-    
-    try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('type', 'general')
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setUploadStatus(`✅ ${data.message}`)
-        // Dodaj informację o sukcesie do chat
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: `📁 Plik "${file.name}" został pomyślnie dodany do bazy wiedzy! Zawiera ${data.data.chunksCount} fragmentów treści. Możesz teraz zadawać pytania na podstawie tego materiału.` 
-        }])
-      } else {
-        setUploadStatus(`❌ ${data.error}`)
-      }
-    } catch (error) {
-      console.error('Błąd przesyłania pliku:', error)
-      setUploadStatus('❌ Błąd przesyłania pliku')
-    }
-
-    // Wyczyść input
-    event.target.value = ''
-    
-    setTimeout(() => setUploadStatus(''), 5000)
-  }
 
   const handleModuleClick = (module: typeof trainingModules[0]) => {
     // Track block click analytics
@@ -256,20 +215,58 @@ export default function VolleyInsight() {
       <div className="flex h-[calc(100vh-80px)]">
         
         {/* Left Column - Control Panel (25%) */}
-        <div className="w-1/4 glass border-r border-border p-6">
-          <div className="space-y-6">
+        <div className="w-1/4 glass border-r border-border p-4">
+          <div className="space-y-3">
+            {/* My Account */}
+            <div className="glass-card rounded-xl p-3">
+              <h3 className="font-semibold text-card-foreground mb-2 flex items-center text-sm">
+                <User className="w-4 h-4 mr-2" />
+                Moje konto
+              </h3>
+              <div className="space-y-1">
+                <button className="w-full p-2 text-left text-xs text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors opacity-50 cursor-not-allowed">
+                  Profil użytkownika
+                </button>
+                <button className="w-full p-2 text-left text-xs text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors opacity-50 cursor-not-allowed">
+                  Ustawienia konta
+                </button>
+                <button className="w-full p-2 text-left text-xs text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors opacity-50 cursor-not-allowed">
+                  Historia aktywności
+                </button>
+              </div>
+            </div>
+
+            {/* Contacts */}
+            <div className="glass-card rounded-xl p-3">
+              <h3 className="font-semibold text-card-foreground mb-2 flex items-center text-sm">
+                <Phone className="w-4 h-4 mr-2" />
+                Kontakty
+              </h3>
+              <div className="space-y-1">
+                <button className="w-full p-2 text-left text-xs text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors opacity-50 cursor-not-allowed">
+                  Zespół trenerów
+                </button>
+                <button className="w-full p-2 text-left text-xs text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors opacity-50 cursor-not-allowed">
+                  Wsparcie techniczne
+                </button>
+                <button className="w-full p-2 text-left text-xs text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors opacity-50 cursor-not-allowed">
+                  Kontakt z nami
+                </button>
+              </div>
+            </div>
+
             {/* Quick Actions */}
-            <div className="glass-card rounded-xl p-4">
-              <h3 className="font-semibold text-card-foreground mb-3 flex items-center">
+            <div className="glass-card rounded-xl p-3">
+              <h3 className="font-semibold text-card-foreground mb-2 flex items-center text-sm">
                 <Sparkles className="w-4 h-4 mr-2" />
                 Szybkie pytania
               </h3>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {quickQuestions.map((question, index) => (
             <button 
                     key={index}
                     onClick={() => setInputMessage(question)}
-                    className="w-full p-2 text-left text-sm text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors"
+                    className="w-full p-2 text-left text-xs text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors"
             >
                     {question}
             </button>
@@ -277,137 +274,72 @@ export default function VolleyInsight() {
               </div>
             </div>
 
-            {/* Upload Section */}
-            <div className="glass-card rounded-xl p-4">
-              <h3 className="font-semibold text-card-foreground mb-3 flex items-center">
-                <Upload className="w-4 h-4 mr-2" />
-                Materiały
+            {/* Help */}
+            <div className="glass-card rounded-xl p-3">
+              <h3 className="font-semibold text-card-foreground mb-2 flex items-center text-sm">
+                <HelpCircle className="w-4 h-4 mr-2" />
+                Pomoc
               </h3>
-              <div className="space-y-3">
-                <input
-                  type="file"
-                  onChange={handleFileUpload}
-                  accept=".txt,.md,.docx,.pdf"
-                  className="hidden"
-                  id="file-upload"
-                />
-                <label
-                  htmlFor="file-upload"
-                  className="block w-full p-3 border-2 border-dashed border-border rounded-lg text-center cursor-pointer hover:border-primary transition-colors glass"
-                >
-                  <Upload className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Przeciągnij pliki</span>
-                </label>
-                {uploadStatus && (
-                  <div className="flex items-center space-x-2 text-sm">
-                    {uploadStatus.includes('✅') ? (
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                    ) : (
-                      <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                    )}
-                    <span className="text-muted-foreground">{uploadStatus}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Training Progress */}
-            <div className="glass-card rounded-xl p-4">
-              <h3 className="font-semibold text-card-foreground mb-3 flex items-center">
-                <TrendingUp className="w-4 h-4 mr-2" />
-                Postępy
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Podstawy gry</span>
-                  <span className="text-primary">75%</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div 
-                    className="h-2 rounded-full transition-all duration-500"
-                    style={{ 
-                      width: '75%',
-                      background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end), var(--gradient-accent))`
-                    }}
-                  ></div>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Technika</span>
-                  <span className="text-primary">60%</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div 
-                    className="h-2 rounded-full transition-all duration-500"
-                    style={{ 
-                      width: '60%',
-                      background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end), var(--gradient-accent))`
-                    }}
-                  ></div>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Przepisy</span>
-                  <span className="text-primary">40%</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div 
-                    className="h-2 rounded-full transition-all duration-500"
-                    style={{ 
-                      width: '40%',
-                      background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end), var(--gradient-accent))`
-                    }}
-                  ></div>
-                </div>
+              <div className="space-y-1">
+                <button className="w-full p-2 text-left text-xs text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors opacity-50 cursor-not-allowed">
+                  FAQ
+                </button>
+                <button className="w-full p-2 text-left text-xs text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors opacity-50 cursor-not-allowed">
+                  Instrukcja użytkowania
+                </button>
+                <button className="w-full p-2 text-left text-xs text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors opacity-50 cursor-not-allowed">
+                  Zgłoś problem
+                </button>
               </div>
             </div>
           </div>
         </div>
 
         {/* Middle Column - Training Sections (50%) */}
-        <div className="w-1/2 p-6 overflow-y-auto">
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-foreground mb-2">Moduły treningowe</h2>
-              <p className="text-muted-foreground">Kliknij na moduł aby rozpocząć dedykowaną ścieżkę nauki</p>
-        </div>
+        <div className="w-1/2 p-4">
+          <div className="text-center mb-3">
+            <h2 className="text-xl font-bold text-foreground mb-1">Moduły treningowe</h2>
+            <p className="text-xs text-muted-foreground">Kliknij na moduł aby rozpocząć dedykowaną ścieżkę nauki</p>
+          </div>
         
             {/* Training Modules Grid 2x3 */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-2">
               {trainingModules.map((module, index) => {
             const IconComponent = module.icon
             return (
-              <div 
+                  <div 
                 key={module.id}
                     onClick={() => handleModuleClick(module)}
-                    className="glass-card rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all duration-300 group hover:scale-105"
+                    className="glass-card rounded-lg p-3 cursor-pointer hover:shadow-lg transition-all duration-300 group hover:scale-105"
                     style={{ 
                       background: `linear-gradient(135deg, var(--gradient-start)/10, var(--gradient-end)/10, var(--gradient-accent)/5)` 
                     }}
                   >
                     <div className="text-center">
                       <div 
-                        className="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300"
+                        className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-300"
                         style={{ 
                           background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end), var(--gradient-accent))` 
                         }}
                       >
-                        <span className="text-2xl">{module.emoji}</span>
+                        <span className="text-lg">{module.emoji}</span>
                       </div>
-                      <h3 className="text-lg font-bold text-card-foreground mb-2 group-hover:text-primary transition-colors">
+                      <h3 className="text-sm font-bold text-card-foreground mb-1 group-hover:text-primary transition-colors">
                         {module.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground mb-3">
+                      <p className="text-xs text-muted-foreground mb-2">
                         {module.description}
                       </p>
                       
                       {/* Progress Bar */}
-                      <div className="mb-3">
+                      <div className="mb-2">
                         <div className="flex justify-between text-xs text-muted-foreground mb-1">
                           <span>Postęp</span>
                           <span>{module.progress}%</span>
                         </div>
-                        <div className="w-full bg-muted rounded-full h-2">
+                        <div className="w-full bg-muted rounded-full h-1.5">
                           <div 
-                            className="h-2 rounded-full transition-all duration-500"
+                            className="h-1.5 rounded-full transition-all duration-500"
                             style={{ 
                               width: `${module.progress}%`,
                               background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end), var(--gradient-accent))`
@@ -427,67 +359,26 @@ export default function VolleyInsight() {
                 )
               })}
             </div>
-
-            {/* Features */}
-            <div className="grid grid-cols-3 gap-4 mt-8">
-              <div className="text-center p-4 glass-card rounded-xl">
-                <div 
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
-                  style={{ 
-                    background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end), var(--gradient-accent))` 
-                  }}
-                >
-                  <Users className="w-6 h-6 text-white" />
-                </div>
-                <h4 className="font-semibold text-card-foreground mb-1">Eksperci</h4>
-                <p className="text-xs text-muted-foreground">Profesjonalni trenerzy</p>
-              </div>
-              <div className="text-center p-4 glass-card rounded-xl">
-                <div 
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
-                  style={{ 
-                    background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end), var(--gradient-accent))` 
-                  }}
-                >
-                  <TrendingUp className="w-6 h-6 text-white" />
-                </div>
-                <h4 className="font-semibold text-card-foreground mb-1">Postępy</h4>
-                <p className="text-xs text-muted-foreground">Śledź rozwój</p>
-              </div>
-              <div className="text-center p-4 glass-card rounded-xl">
-                <div 
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
-                  style={{ 
-                    background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end), var(--gradient-accent))` 
-                  }}
-                >
-                  <Target className="w-6 h-6 text-white" />
-                </div>
-                <h4 className="font-semibold text-card-foreground mb-1">Precyzja</h4>
-                <p className="text-xs text-muted-foreground">Dokładne odpowiedzi</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Right Column - AI Chat (25%) */}
         <div className="w-1/4 glass border-l border-border flex flex-col">
-          <div className="p-4 border-b border-border">
-            <h3 className="font-semibold text-foreground flex items-center">
+          <div className="p-3 border-b border-border">
+            <h3 className="font-semibold text-foreground flex items-center text-sm">
               <MessageCircle className="w-4 h-4 mr-2" />
               Chat AI
             </h3>
           </div>
 
             {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 overflow-y-auto p-3 space-y-2">
               {messages.map((message, index) => (
                 <div
                   key={index}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                  className={`max-w-[80%] px-3 py-2 rounded-lg text-sm ${
+                  className={`max-w-[90%] px-2 py-1.5 rounded-lg text-xs ${
                       message.role === 'user'
                       ? 'text-white'
                       : 'glass-card text-card-foreground'
@@ -502,10 +393,10 @@ export default function VolleyInsight() {
               ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="glass-card text-card-foreground px-3 py-2 rounded-lg">
+                <div className="glass-card text-card-foreground px-2 py-1.5 rounded-lg">
                   <div className="flex items-center space-x-2">
                     <Loader2 className="w-3 h-3 animate-spin" />
-                    <span className="text-sm">AI analizuje...</span>
+                    <span className="text-xs">AI analizuje...</span>
                   </div>
                 </div>
               </div>
@@ -513,7 +404,7 @@ export default function VolleyInsight() {
             </div>
 
             {/* Input */}
-          <div className="p-4 border-t border-border">
+          <div className="p-3 border-t border-border">
             <div className="flex space-x-2">
                 <input
                   type="text"
@@ -521,23 +412,23 @@ export default function VolleyInsight() {
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                 placeholder="Zadaj pytanie..."
-                className="flex-1 px-3 py-2 text-sm glass rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="flex-1 px-2 py-1.5 text-xs glass rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 disabled={isLoading}
                 />
                 <button
                   onClick={sendMessage}
                 disabled={isLoading || !inputMessage.trim()}
-                className="px-3 py-2 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center"
+                className="px-2 py-1.5 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center"
                 style={{ 
                   background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end))` 
                 }}
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-3 h-3" />
               </button>
             </div>
           </div>
-          </div>
         </div>
+      </div>
     </div>
   )
 }

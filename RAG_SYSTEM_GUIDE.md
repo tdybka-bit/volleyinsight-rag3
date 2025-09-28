@@ -261,3 +261,4 @@ docker run -p 8000:8000 chromadb/chroma
 3. **Metadane** - dodawaj znaczące typy i kategorie
 4. **Testowanie** - regularnie testuj jakość odpowiedzi
 5. **Monitoring** - śledź statystyki i błędy
+

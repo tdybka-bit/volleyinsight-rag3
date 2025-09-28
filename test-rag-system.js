@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '.env.local' });
 const { loadAndStoreContent, searchContent, getDatabaseStats } = require('./lib/vectorIntegration.js');
 
 async function testRAGSystem() {
@@ -91,3 +92,4 @@ async function testRAGSystem() {
 
 // Uruchom test
 testRAGSystem();
+

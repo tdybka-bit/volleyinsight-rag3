@@ -48,3 +48,4 @@ async function testMarkdownLoader() {
 
 // Run the test
 testMarkdownLoader();
+

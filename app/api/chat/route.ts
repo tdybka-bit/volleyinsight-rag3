@@ -17,41 +17,76 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`🔍 RAG Chat: "${message}"`);
+    console.log(`\n🔍 ===== RAG CHAT TEST =====`);
+    console.log(`📝 Pytanie: "${message}"`);
+    console.log(`🎯 Threshold podobieństwa: 0.6`);
 
-    // 1. Wyszukaj podobne treści w ChromaDB
+    // 1. Wyszukaj podobne treści w ChromaDB z threshold
     let context = '';
     let searchResults = [];
+    let responseSource = 'openai'; // 'database', 'hybrid', 'openai'
+    const SIMILARITY_THRESHOLD = 0.3; // Minimum similarity score (lowered from 0.6)
     
     try {
       searchResults = await searchSimilar(message, limit);
       
+      console.log(`📊 Znaleziono ${searchResults.length} wyników w bazie`);
+      
       if (searchResults.length > 0) {
-        context = searchResults
-          .map((result, index) => 
-            `Źródło ${index + 1} (${result.metadata.type}):\n${result.content}\n`
-          )
-          .join('\n');
+        // Loguj wszystkie wyniki z podobieństwem
+        console.log(`📈 Szczegóły wyników:`);
+        searchResults.forEach((result, index) => {
+          const isRelevant = result.similarity >= SIMILARITY_THRESHOLD;
+          console.log(`  ${index + 1}. ${result.metadata.type} - ${(result.similarity * 100).toFixed(1)}% ${isRelevant ? '✅' : '❌'}`);
+        });
         
-        console.log(`📚 Znaleziono ${searchResults.length} podobnych treści`);
+        // Filtruj wyniki według threshold podobieństwa
+        const relevantResults = searchResults.filter(result => result.similarity >= SIMILARITY_THRESHOLD);
+        
+        if (relevantResults.length > 0) {
+          context = relevantResults
+            .map((result, index) => 
+              `Źródło ${index + 1} (${result.metadata.type}, podobieństwo: ${(result.similarity * 100).toFixed(1)}%):\n${result.content}\n`
+            )
+            .join('\n');
+          
+          responseSource = relevantResults.length === searchResults.length ? 'database' : 'hybrid';
+          console.log(`✅ Wybrano ${relevantResults.length} wysokiej jakości treści`);
+          console.log(`🎯 Response source: ${responseSource.toUpperCase()}`);
+        } else {
+          console.log(`❌ Wszystkie treści mają zbyt niskie podobieństwo (max: ${Math.max(...searchResults.map(r => r.similarity)).toFixed(3)})`);
+          console.log(`🎯 Response source: OPENAI (fallback)`);
+        }
       } else {
-        console.log('⚠️ Brak podobnych treści w bazie danych');
+        console.log('❌ Brak podobnych treści w bazie danych');
+        console.log(`🎯 Response source: OPENAI (fallback)`);
       }
     } catch (searchError) {
-      console.error('Błąd wyszukiwania w ChromaDB:', searchError);
+      console.error('❌ Błąd wyszukiwania w ChromaDB:', searchError);
+      console.log(`🎯 Response source: OPENAI (fallback)`);
       // Kontynuuj bez kontekstu jeśli wyszukiwanie się nie powiedzie
     }
 
-    // 2. Przygotuj prompt z kontekstem
-    const systemPrompt = `Jesteś ekspertem od siatkówki i trenerem VolleyInsight. 
+    // 2. Przygotuj smart prompt z kontekstem
+    let systemPrompt = `Jesteś ekspertem od siatkówki i trenerem VolleyInsight. 
 Odpowiadaj na pytania dotyczące techniki, taktyki, przepisów i treningu siatkówki.
 
-${context ? `KONTEKST Z BAZY WIEDZY:
+Odpowiadaj po polsku, profesjonalnie i pomocnie. Jeśli pytanie dotyczy konkretnej techniki, podaj szczegółowe instrukcje.`;
+
+    // Smart prompt logic based on response source
+    if (responseSource === 'database') {
+      systemPrompt += `\n\nKONTEKST Z BAZY WIEDZY VOLLEYINSIGHT:
 ${context}
 
-Użyj powyższego kontekstu aby udzielić dokładnej i szczegółowej odpowiedzi. Jeśli kontekst nie zawiera odpowiedzi na pytanie, powiedz to jasno i zaproponuj inne pytanie.` : 'Nie masz dostępu do bazy wiedzy, więc odpowiadaj na podstawie swojej wiedzy o siatkówce.'}
+Użyj powyższego kontekstu jako głównego źródła informacji. Odpowiadaj na podstawie tych materiałów, dodając swoje eksperckie komentarze.`;
+    } else if (responseSource === 'hybrid') {
+      systemPrompt += `\n\nKONTEKST Z BAZY WIEDZY VOLLEYINSIGHT (częściowo odpowiedni):
+${context}
 
-Odpowiadaj po polsku, profesjonalnie i pomocnie. Jeśli pytanie dotyczy konkretnej techniki, podaj szczegółowe instrukcje.`;
+Użyj powyższego kontekstu jako punktu wyjścia, ale uzupełnij odpowiedź swoją wiedzą ekspercką o siatkówce.`;
+    } else {
+      systemPrompt += `\n\nNie masz dostępu do bazy wiedzy VolleyInsight, więc odpowiadaj na podstawie swojej wiedzy eksperckiej o siatkówce.`;
+    }
 
     // 3. Generuj odpowiedź używając OpenAI
     const completion = await openai.chat.completions.create({
@@ -72,17 +107,21 @@ Odpowiadaj po polsku, profesjonalnie i pomocnie. Jeśli pytanie dotyczy konkretn
 
     const response = completion.choices[0]?.message?.content || 'Przepraszam, nie mogę wygenerować odpowiedzi.';
 
-    // 4. Przygotuj odpowiedź z metadanymi
+    // 4. Przygotuj smart response z metadanymi
     const responseData = {
       success: true,
       message: response,
       context: {
         hasContext: context.length > 0,
+        responseSource: responseSource,
         sourcesCount: searchResults.length,
+        relevantSourcesCount: searchResults.filter(r => r.similarity >= SIMILARITY_THRESHOLD).length,
+        similarityThreshold: SIMILARITY_THRESHOLD,
         sources: searchResults.map(result => ({
           type: result.metadata.type,
           filename: result.metadata.filename,
           similarity: result.similarity,
+          isRelevant: result.similarity >= SIMILARITY_THRESHOLD,
           content: result.content.substring(0, 100) + '...'
         }))
       },
@@ -90,6 +129,10 @@ Odpowiadaj po polsku, profesjonalnie i pomocnie. Jeśli pytanie dotyczy konkretn
     };
 
     console.log(`✅ Odpowiedź wygenerowana (${response.length} znaków)`);
+    console.log(`🎯 Final response source: ${responseSource.toUpperCase()}`);
+    console.log(`📊 Context length: ${context.length} znaków`);
+    console.log(`===== KONIEC RAG TEST =====\n`);
+    
     return NextResponse.json(responseData);
 
   } catch (error) {
@@ -133,3 +176,4 @@ export async function GET() {
     );
   }
 }
+

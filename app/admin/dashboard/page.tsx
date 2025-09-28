@@ -17,7 +17,11 @@ import {
   Home,
   FileText,
   Database,
-  FolderOpen
+  FolderOpen,
+  RefreshCw,
+  HardDrive,
+  File,
+  Calendar
 } from 'lucide-react'
 
 export default function AdminDashboard() {
@@ -28,10 +32,18 @@ export default function AdminDashboard() {
     sessionStats: { totalSessions: 0, activeSessions: 0, completedSessions: 0, averageSessionTime: 0, totalEvents: 0 },
     pageStats: []
   })
+  const [dbStats, setDbStats] = useState({
+    general: { totalChunks: 0, totalFiles: 0, lastUpload: null, databaseSize: '0 KB' },
+    breakdown: { byType: {}, byFile: [], totalSize: '0 KB' },
+    recentUploads: [],
+    files: []
+  })
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingDb, setIsLoadingDb] = useState(false)
 
   useEffect(() => {
     loadAnalytics()
+    loadDbStats()
   }, [])
 
   const loadAnalytics = () => {
@@ -52,6 +64,25 @@ export default function AdminDashboard() {
       })
       setIsLoading(false)
     }, 1000)
+  }
+
+  const loadDbStats = async () => {
+    setIsLoadingDb(true)
+    try {
+      const response = await fetch('/api/admin/stats')
+      const data = await response.json()
+      
+      if (data.success) {
+        setDbStats(data)
+        console.log('📊 Database stats loaded:', data)
+      } else {
+        console.error('❌ Error loading DB stats:', data.error)
+      }
+    } catch (error) {
+      console.error('❌ Error fetching DB stats:', error)
+    } finally {
+      setIsLoadingDb(false)
+    }
   }
 
   const handleLogout = () => {
@@ -145,6 +176,14 @@ export default function AdminDashboard() {
                   title="Odśwież dane"
                 >
                   <TrendingUp className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={loadDbStats}
+                  disabled={isLoadingDb}
+                  className="px-3 py-2 glass rounded-lg hover:bg-white/10 transition-colors disabled:opacity-50"
+                  title="Odśwież statystyki bazy danych"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoadingDb ? 'animate-spin' : ''}`} />
                 </button>
                 <a
                   href="/"
@@ -332,6 +371,150 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+
+          {/* Database Statistics */}
+          <div className="mt-8">
+            <div className="admin-card rounded-xl p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-card-foreground flex items-center">
+                  <Database className="w-5 h-5 mr-2" />
+                  Database Statistics
+                </h3>
+                <button
+                  onClick={loadDbStats}
+                  disabled={isLoadingDb}
+                  className="px-3 py-1 text-sm admin-button rounded-lg flex items-center space-x-1 disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-3 h-3 ${isLoadingDb ? 'animate-spin' : ''}`} />
+                  <span>Refresh Stats</span>
+                </button>
+              </div>
+
+              {isLoadingDb ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Ładowanie statystyk bazy danych...</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {/* General Stats */}
+                  <div>
+                    <h4 className="text-md font-semibold text-card-foreground mb-4 flex items-center">
+                      <BarChart3 className="w-4 h-4 mr-2" />
+                      Ogólne statystyki
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="glass rounded-lg p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Chunki</p>
+                            <p className="text-2xl font-bold text-primary">{dbStats.general.totalChunks}</p>
+                          </div>
+                          <HardDrive className="w-8 h-8 text-primary" />
+                        </div>
+                      </div>
+                      <div className="glass rounded-lg p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Pliki</p>
+                            <p className="text-2xl font-bold text-green-500">{dbStats.general.totalFiles}</p>
+                          </div>
+                          <File className="w-8 h-8 text-green-500" />
+                        </div>
+                      </div>
+                      <div className="glass rounded-lg p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Rozmiar bazy</p>
+                            <p className="text-2xl font-bold text-blue-500">{dbStats.general.databaseSize}</p>
+                          </div>
+                          <Database className="w-8 h-8 text-blue-500" />
+                        </div>
+                      </div>
+                      <div className="glass rounded-lg p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Ostatni upload</p>
+                            <p className="text-sm font-bold text-orange-500">
+                              {dbStats.general.lastUpload ? 
+                                new Date(dbStats.general.lastUpload).toLocaleDateString() : 
+                                'Brak'
+                              }
+                            </p>
+                          </div>
+                          <Calendar className="w-8 h-8 text-orange-500" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Breakdown by Type */}
+                  <div>
+                    <h4 className="text-md font-semibold text-card-foreground mb-4">Breakdown by Type</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="glass rounded-lg p-4">
+                        <h5 className="text-sm font-medium text-card-foreground mb-3">Chunki per kategoria</h5>
+                        <div className="space-y-2">
+                          {Object.entries(dbStats.breakdown.byType).map(([type, count]) => (
+                            <div key={type} className="flex items-center justify-between">
+                              <span className="text-sm text-muted-foreground capitalize">{type}</span>
+                              <span className="text-sm font-bold text-primary">{count as number}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="glass rounded-lg p-4">
+                        <h5 className="text-sm font-medium text-card-foreground mb-3">Pliki źródłowe</h5>
+                        <div className="space-y-2">
+                          {dbStats.breakdown.byFile.map((file, index) => (
+                            <div key={index} className="flex items-center justify-between">
+                              <span className="text-sm text-muted-foreground truncate">{file.filename}</span>
+                              <div className="text-right">
+                                <span className="text-sm font-bold text-primary">{file.chunks}</span>
+                                <span className="text-xs text-muted-foreground ml-1">chunks</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Recent Uploads */}
+                  <div>
+                    <h4 className="text-md font-semibold text-card-foreground mb-4">Recent Uploads</h4>
+                    <div className="space-y-2">
+                      {dbStats.recentUploads.length > 0 ? (
+                        dbStats.recentUploads.map((upload, index) => (
+                          <div key={index} className="glass rounded-lg p-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3">
+                                <FileText className="w-4 h-4 text-primary" />
+                                <div>
+                                  <p className="text-sm font-medium text-card-foreground">{upload.filename}</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {new Date(upload.uploadDate).toLocaleString()}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-sm font-bold text-primary">{upload.chunksCount} chunks</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {upload.status === 'completed' ? '✅ Completed' : '⏳ Processing'}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-center text-muted-foreground py-4">Brak ostatnich uploadów</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

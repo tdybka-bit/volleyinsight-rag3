@@ -131,3 +131,4 @@ async function testDataFlow() {
 
 // Uruchom test
 testDataFlow();
+

@@ -105,62 +105,148 @@ export class DocxParser {
   private static extractSectionsFromHtml(html: string, originalFile: string): ParsedSection[] {
     const sections: ParsedSection[] = []
     
-    // Split by headers (h1, h2, h3)
+    // First try to split by headers (h1, h2, h3) - standard format
     const headerRegex = /<(h[1-3])[^>]*>(.*?)<\/h[1-3]>/gi
-    const parts = html.split(headerRegex)
+    const headerParts = html.split(headerRegex)
     
-    let currentSection: Partial<ParsedSection> | null = null
-    let sectionIndex = 0
-    
-    for (let i = 0; i < parts.length; i += 3) {
-      const tag = parts[i]
-      const title = parts[i + 1]
-      const content = parts[i + 2]
+    if (headerParts.length > 1) {
+      // Standard HTML with headers
+      let currentSection: Partial<ParsedSection> | null = null
+      let sectionIndex = 0
       
-      if (tag && title) {
-        // Save previous section
-        if (currentSection && currentSection.content) {
-          sections.push(currentSection as ParsedSection)
+      for (let i = 0; i < headerParts.length; i += 3) {
+        const tag = headerParts[i]
+        const title = headerParts[i + 1]
+        const content = headerParts[i + 2]
+        
+        if (tag && title) {
+          // Save previous section
+          if (currentSection && currentSection.content) {
+            sections.push(currentSection as ParsedSection)
+          }
+          
+          // Start new section
+          const cleanTitle = title.replace(/<[^>]*>/g, '').trim()
+          const level = parseInt(tag.charAt(1))
+          
+          currentSection = {
+            title: cleanTitle,
+            content: '',
+            level,
+            topic: this.detectTopic(cleanTitle),
+            difficulty: this.detectDifficulty(cleanTitle),
+            keywords: this.extractKeywords(cleanTitle),
+            metadata: {
+              originalFile,
+              sectionIndex: sectionIndex++,
+              wordCount: 0,
+              createdAt: new Date().toISOString()
+            }
+          }
+        } else if (currentSection && content) {
+          // Add content to current section
+          const cleanContent = this.cleanContent(content.replace(/<[^>]*>/g, ''))
+          currentSection.content += (currentSection.content ? '\n\n' : '') + cleanContent
         }
+      }
+      
+      // Add last section
+      if (currentSection && currentSection.content) {
+        sections.push(currentSection as ParsedSection)
+      }
+    } else {
+      // Fallback: Split by paragraphs and detect titles
+      const paragraphs = html.split(/<p[^>]*>/gi)
+      
+      let currentSection: Partial<ParsedSection> | null = null
+      let sectionIndex = 0
+      
+      for (const paragraph of paragraphs) {
+        const cleanText = paragraph.replace(/<[^>]*>/g, '').replace(/<br\s*\/?>/gi, '\n').trim()
         
-        // Start new section
-        const cleanTitle = title.replace(/<[^>]*>/g, '').trim()
-        const level = parseInt(tag.charAt(1))
+        if (!cleanText) continue
         
-        currentSection = {
-          title: cleanTitle,
-          content: '',
-          level,
-          topic: this.detectTopic(cleanTitle),
-          difficulty: this.detectDifficulty(cleanTitle),
-          keywords: this.extractKeywords(cleanTitle),
-          metadata: {
-            originalFile,
-            sectionIndex: sectionIndex++,
-            wordCount: 0,
-            createdAt: new Date().toISOString()
+        // Check if this paragraph contains a title
+        const lines = cleanText.split('\n').map(line => line.trim()).filter(line => line.length > 0)
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i]
+          const isTitle = (
+            /^\d+\s+[A-ZĄĆĘŁŃÓŚŹŻ]/.test(line) && line.length < 100
+          ) || (
+            /^#{1,3}\s+/.test(line) && line.length < 100
+          )
+          
+          if (isTitle) {
+            // Save previous section
+            if (currentSection && currentSection.content) {
+              sections.push(currentSection as ParsedSection)
+            }
+            
+            // Start new section
+            currentSection = {
+              title: line,
+              content: '',
+              level: 1,
+              topic: this.detectTopic(line),
+              difficulty: this.detectDifficulty(line),
+              keywords: this.extractKeywords(line),
+              metadata: {
+                originalFile,
+                sectionIndex: sectionIndex++,
+                wordCount: 0,
+                createdAt: new Date().toISOString()
+              }
+            }
+          } else if (currentSection) {
+            // Add content to current section
+            const cleanContent = this.cleanContent(line)
+            currentSection.content += (currentSection.content ? '\n\n' : '') + cleanContent
           }
         }
-      } else if (currentSection && content) {
-        // Add content to current section
-        const cleanContent = this.cleanContent(content.replace(/<[^>]*>/g, ''))
-        currentSection.content += (currentSection.content ? '\n\n' : '') + cleanContent
-        currentSection.metadata!.wordCount = currentSection.content.split(/\s+/).length
+      }
+      
+      // Add last section
+      if (currentSection && currentSection.content) {
+        sections.push(currentSection as ParsedSection)
       }
     }
     
-    // Save last section
-    if (currentSection && currentSection.content) {
-      sections.push(currentSection as ParsedSection)
-    }
+    // Update word counts
+    sections.forEach(section => {
+      section.metadata.wordCount = section.content.split(/\s+/).length
+    })
     
     return sections
+  }
+  
+  private static looksLikeTitle(text: string): boolean {
+    // Check if text looks like a title
+    const trimmed = text.trim()
+    
+    // Too long to be a title
+    if (trimmed.length > 100) return false
+    
+    // Check for common title patterns
+    const titlePatterns = [
+      /^\d+\s+[A-ZĄĆĘŁŃÓŚŹŻ]/, // Numbered titles like "7 Historia siatkówki"
+      /^#{1,3}\s+/, // Markdown headers like "### Historia siatkówki"
+      /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]+\s+[a-ząćęłńóśźż]/, // Title case
+      /^(Wprowadzenie|Historia|Podstawy|Technika|Taktyka|Ćwiczenia|Zakończenie)/i
+    ]
+    
+    return titlePatterns.some(pattern => pattern.test(trimmed))
   }
 
   static async parseDocx(file: File): Promise<ParsedDocument> {
     try {
+      // Convert File to ArrayBuffer
       const arrayBuffer = await file.arrayBuffer()
-      const result = await mammoth.convertToHtml({ arrayBuffer })
+      
+      // Convert ArrayBuffer to Buffer for mammoth
+      const buffer = Buffer.from(arrayBuffer)
+      
+      const result = await mammoth.convertToHtml({ buffer })
       
       const sections = this.extractSectionsFromHtml(result.value, file.name)
       
@@ -255,3 +341,4 @@ export class DocxParser {
     return savedFiles
   }
 }
+
