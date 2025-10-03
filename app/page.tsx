@@ -214,8 +214,8 @@ export default function VolleyInsight() {
       {/* Main 3-Column Layout */}
       <div className="flex h-[calc(100vh-80px)]">
         
-        {/* Left Column - Control Panel (25%) */}
-        <div className="w-1/4 glass border-r border-border p-4">
+        {/* Left Column - Control Panel (20%) */}
+        <div className="w-1/5 glass border-r border-border p-4">
           <div className="space-y-3">
             {/* My Account */}
             <div className="glass-card rounded-xl p-3">
@@ -295,137 +295,129 @@ export default function VolleyInsight() {
           </div>
         </div>
 
-        {/* Middle Column - Training Sections (50%) */}
-        <div className="w-1/2 p-4">
-          <div className="text-center mb-3">
-            <h2 className="text-xl font-bold text-foreground mb-1">Moduły treningowe</h2>
-            <p className="text-xs text-muted-foreground">Kliknij na moduł aby rozpocząć dedykowaną ścieżkę nauki</p>
-          </div>
-        
-            {/* Training Modules Grid 2x3 */}
-            <div className="grid grid-cols-2 gap-2">
-              {trainingModules.map((module, index) => {
-            const IconComponent = module.icon
-            return (
-                  <div 
-                key={module.id}
-                    onClick={() => handleModuleClick(module)}
-                    className="glass-card rounded-lg p-3 cursor-pointer hover:shadow-lg transition-all duration-300 group hover:scale-105"
-                    style={{ 
-                      background: `linear-gradient(135deg, var(--gradient-start)/10, var(--gradient-end)/10, var(--gradient-accent)/5)` 
-                    }}
-                  >
-                    <div className="text-center">
-                      <div 
-                        className="w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-300"
-                        style={{ 
-                          background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end), var(--gradient-accent))` 
-                        }}
-                      >
-                        <span className="text-lg">{module.emoji}</span>
-                      </div>
-                      <h3 className="text-sm font-bold text-card-foreground mb-1 group-hover:text-primary transition-colors">
-                        {module.title}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mb-2">
-                        {module.description}
-                      </p>
-                      
-                      {/* Progress Bar */}
-                      <div className="mb-2">
-                        <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                          <span>Postęp</span>
-                          <span>{module.progress}%</span>
-                        </div>
-                        <div className="w-full bg-muted rounded-full h-1.5">
-                          <div 
-                            className="h-1.5 rounded-full transition-all duration-500"
-                            style={{ 
-                              width: `${module.progress}%`,
-                              background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end), var(--gradient-accent))`
-                            }}
-                          ></div>
-                        </div>
-                        <div className="text-xs text-muted-foreground mt-1">
-                          {module.completedMaterials}/{module.totalMaterials} materiałów
-                        </div>
-                      </div>
-                      
-                      <div className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        Kliknij aby rozpocząć naukę
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-        </div>
-
-        {/* Right Column - AI Chat (25%) */}
-        <div className="w-1/4 glass border-l border-border flex flex-col">
-          <div className="p-3 border-b border-border">
-            <h3 className="font-semibold text-foreground flex items-center text-sm">
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Chat AI
+        {/* Middle Column - Chat Interface (60%) */}
+        <div className="w-3/5 glass border-l border-r border-border flex flex-col">
+          <div className="p-6 border-b border-border">
+            <h3 className="font-semibold text-foreground flex items-center text-lg">
+              <MessageCircle className="w-5 h-5 mr-2" />
+              Chat AI - VolleyInsight
             </h3>
+            <p className="text-sm text-muted-foreground mt-1">Zadaj pytanie o siatkówkę, technikę lub strategię gry</p>
           </div>
 
-            {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-2">
-              {messages.map((message, index) => (
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
                 <div
-                  key={index}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                  className={`max-w-[90%] px-2 py-1.5 rounded-lg text-xs ${
-                      message.role === 'user'
+                  className={`max-w-[85%] px-4 py-3 rounded-lg text-lg leading-relaxed ${
+                    message.role === 'user'
                       ? 'text-white'
                       : 'glass-card text-card-foreground'
-                    }`}
+                  }`}
                   style={message.role === 'user' ? {
                     background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end))`
                   } : {}}
-                  >
-                    {message.content}
-                  </div>
+                >
+                  {message.content}
                 </div>
-              ))}
+              </div>
+            ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="glass-card text-card-foreground px-2 py-1.5 rounded-lg">
-                  <div className="flex items-center space-x-2">
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                    <span className="text-xs">AI analizuje...</span>
+                <div className="glass-card text-card-foreground px-4 py-3 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span className="text-lg">AI analizuje pytanie...</span>
                   </div>
                 </div>
               </div>
             )}
-            </div>
+          </div>
 
-            {/* Input */}
-          <div className="p-3 border-t border-border">
-            <div className="flex space-x-2">
-                <input
-                  type="text"
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                placeholder="Zadaj pytanie..."
-                className="flex-1 px-2 py-1.5 text-xs glass rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          {/* Input */}
+          <div className="p-6 border-t border-border">
+            <div className="flex space-x-3">
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                placeholder="Zadaj pytanie o siatkówkę..."
+                className="flex-1 px-4 py-3 text-lg glass rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 disabled={isLoading}
-                />
-                <button
-                  onClick={sendMessage}
+              />
+              <button
+                onClick={sendMessage}
                 disabled={isLoading || !inputMessage.trim()}
-                className="px-2 py-1.5 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center"
+                className="px-6 py-3 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center text-lg"
                 style={{ 
                   background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end))` 
                 }}
               >
-                <Send className="w-3 h-3" />
+                <Send className="w-5 h-5" />
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Right Column - Training Sections Menu (20%) */}
+        <div className="w-1/5 p-4">
+          <div className="text-center mb-4">
+            <h2 className="text-lg font-bold text-foreground mb-2">Moduły treningowe</h2>
+            <p className="text-sm text-muted-foreground">Kliknij na moduł aby rozpocząć dedykowaną ścieżkę nauki</p>
+          </div>
+        
+          {/* Training Modules Grid 2x3 */}
+          <div className="grid grid-cols-2 gap-3">
+            {trainingModules.map((module, index) => {
+              const IconComponent = module.icon
+              return (
+                <div 
+                  key={module.id}
+                  onClick={() => handleModuleClick(module)}
+                  className="glass-card rounded-lg p-3 cursor-pointer hover:shadow-lg transition-all duration-300 group hover:scale-105 aspect-square flex flex-col items-center justify-center"
+                  style={{ 
+                    background: `linear-gradient(135deg, var(--gradient-start)/10, var(--gradient-end)/10, var(--gradient-accent)/5)` 
+                  }}
+                >
+                  {/* Icon */}
+                  <div 
+                    className="w-10 h-10 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300"
+                    style={{ 
+                      background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end), var(--gradient-accent))` 
+                    }}
+                  >
+                    <span className="text-lg">{module.emoji}</span>
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className="text-sm font-bold text-card-foreground mb-3 group-hover:text-primary transition-colors text-center">
+                    {module.title}
+                  </h3>
+                  
+                  {/* Progress */}
+                  <div className="w-full">
+                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                      <span>Postęp</span>
+                      <span>{module.progress}%</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-1.5">
+                      <div 
+                        className="h-1.5 rounded-full transition-all duration-500"
+                        style={{ 
+                          width: `${module.progress}%`,
+                          background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end), var(--gradient-accent))`
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>

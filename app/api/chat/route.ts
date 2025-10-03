@@ -8,7 +8,7 @@ const openai = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, limit = 3 } = await request.json();
+    const { message, limit = 3, responseLength = 'medium' } = await request.json();
 
     if (!message || typeof message !== 'string') {
       return NextResponse.json(
@@ -68,10 +68,52 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Przygotuj smart prompt z kontekstem
-    let systemPrompt = `Jesteś ekspertem od siatkówki i trenerem VolleyInsight. 
-Odpowiadaj na pytania dotyczące techniki, taktyki, przepisów i treningu siatkówki.
+    const hasContext = context.length > 0;
+    
+    // Determine response length instructions
+    let lengthInstruction = '';
+    switch (responseLength) {
+      case 'short':
+        lengthInstruction = 'Odpowiadaj BARDZO ZWIĘŹLE (2-3 zdania maksymalnie).';
+        break;
+      case 'detailed':
+        lengthInstruction = 'Możesz udzielić pełnej, szczegółowej odpowiedzi.';
+        break;
+      default: // 'medium'
+        lengthInstruction = 'Odpowiadaj ZWIĘŹLE (3-5 zdań maksymalnie).';
+    }
 
-Odpowiadaj po polsku, profesjonalnie i pomocnie. Jeśli pytanie dotyczy konkretnej techniki, podaj szczegółowe instrukcje.`;
+    let systemPrompt = `Jesteś ekspertem siatkówki w VolleyInsight. 
+
+ZASADY ODPOWIEDZI:
+- Odpowiadaj KONKRETNIE i ZWIĘŹLE (3-5 zdań max)
+- Używaj bullet points dla list elementów
+- Krótkie paragrafy (max 2-3 zdania każdy)
+- Struktura: Główna odpowiedź → Opcjonalne detale
+
+FORMATOWANIE:
+- Numerowane listy dla kroków (1. 2. 3.)
+- Bullet points (•) dla cech/elementów
+- Pogrubienie dla kluczowych terminów
+- Podział na sekcje tylko gdy niezbędne
+
+PRZYKŁAD DOBREJ ODPOWIEDZI:
+"Blok wymaga trzech kluczowych elementów:
+- Pozycja: stopy na szerokość barków, kolana lekko ugięte
+- Timing: skok dokładnie w momencie uderzenia przez atakującego
+- Ręce: maksymalnie wyciągnięte, palce rozstawione
+
+Kluczowy jest timing - za wcześnie lub za późno znacząco obniża skuteczność."
+
+UNIKAJ:
+- Rozwlekłych wprowadzeń
+- Powtarzania oczywistości
+- Nadmiernych wyjaśnień
+- Długich akapitów bez podziału
+
+${lengthInstruction}
+
+${hasContext ? 'Bazuj na kontekście z bazy wiedzy.' : 'Używaj wiedzy eksperckiej.'}`;
 
     // Smart prompt logic based on response source
     if (responseSource === 'database') {
@@ -114,6 +156,7 @@ Użyj powyższego kontekstu jako punktu wyjścia, ale uzupełnij odpowiedź swoj
       context: {
         hasContext: context.length > 0,
         responseSource: responseSource,
+        responseLength: responseLength,
         sourcesCount: searchResults.length,
         relevantSourcesCount: searchResults.filter(r => r.similarity >= SIMILARITY_THRESHOLD).length,
         similarityThreshold: SIMILARITY_THRESHOLD,
@@ -130,6 +173,7 @@ Użyj powyższego kontekstu jako punktu wyjścia, ale uzupełnij odpowiedź swoj
 
     console.log(`✅ Odpowiedź wygenerowana (${response.length} znaków)`);
     console.log(`🎯 Final response source: ${responseSource.toUpperCase()}`);
+    console.log(`📏 Response length: ${responseLength.toUpperCase()}`);
     console.log(`📊 Context length: ${context.length} znaków`);
     console.log(`===== KONIEC RAG TEST =====\n`);
     
