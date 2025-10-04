@@ -95,3 +95,4 @@ async function testRAG() {
 
 // Uruchom test
 testRAG().catch(console.error);
+

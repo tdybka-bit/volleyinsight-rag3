@@ -44,6 +44,49 @@ const DIFFICULTY_KEYWORDS = {
 }
 
 export class DocxParser {
+  private static detectCategoryFromFilename(filename: string): string | undefined {
+    const lowerFilename = filename.toLowerCase()
+    
+    // Map filename patterns to categories
+    const categoryPatterns = {
+      'przepisy': ['przepis', 'przepisy', 'regulamin', 'zasady', 'reguły'],
+      'blok': ['blok', 'blokowanie', 'blokada'],
+      'atak': ['atak', 'uderzenie', 'spike'],
+      'obrona': ['obrona', 'bronienie'],
+      'zagrywka': ['zagrywka', 'serw', 'serwowanie'],
+      'ustawienia': ['ustawienia', 'ustawka', 'pasy'],
+      'trening': ['trening', 'ćwiczenia', 'drill'],
+      'technika': ['technika', 'techniki'],
+      'taktyka': ['taktyka', 'taktyki', 'strategia']
+    }
+    
+    for (const [category, patterns] of Object.entries(categoryPatterns)) {
+      if (patterns.some(pattern => lowerFilename.includes(pattern))) {
+        console.log(`File: ${filename} → detected category from filename: ${category}`)
+        return category
+      }
+    }
+    
+    return undefined
+  }
+
+  private static detectCategoryFromMetadata(content: string): string | undefined {
+    const lines = content.split('\n').map(line => line.trim())
+    
+    // Check first few lines for "KATEGORIA: [nazwa]" pattern
+    for (let i = 0; i < Math.min(5, lines.length); i++) {
+      const line = lines[i]
+      const categoryMatch = line.match(/KATEGORIA:\s*([a-zA-Ząćęłńóśźż\s]+)/i)
+      if (categoryMatch) {
+        const category = categoryMatch[1].toLowerCase().trim()
+        console.log(`File: detected category from metadata: ${category}`)
+        return category
+      }
+    }
+    
+    return undefined
+  }
+
   private static detectTopic(text: string): string | undefined {
     const lowerText = text.toLowerCase()
     
@@ -105,6 +148,17 @@ export class DocxParser {
   private static extractSectionsFromHtml(html: string, originalFile: string): ParsedSection[] {
     const sections: ParsedSection[] = []
     
+    // Detect category from filename first
+    const filenameCategory = this.detectCategoryFromFilename(originalFile)
+    
+    // Detect category from metadata in content
+    const metadataCategory = this.detectCategoryFromMetadata(html.replace(/<[^>]*>/g, ''))
+    
+    // Use filename category as primary, metadata as fallback
+    const detectedCategory = filenameCategory || metadataCategory || 'uncategorized'
+    
+    console.log(`File: ${originalFile} → detected category: ${detectedCategory}`)
+    
     // First try to split by headers (h1, h2, h3) - standard format
     const headerRegex = /<(h[1-3])[^>]*>(.*?)<\/h[1-3]>/gi
     const headerParts = html.split(headerRegex)
@@ -133,7 +187,7 @@ export class DocxParser {
             title: cleanTitle,
             content: '',
             level,
-            topic: this.detectTopic(cleanTitle),
+            topic: detectedCategory,
             difficulty: this.detectDifficulty(cleanTitle),
             keywords: this.extractKeywords(cleanTitle),
             metadata: {
@@ -188,7 +242,7 @@ export class DocxParser {
               title: line,
               content: '',
               level: 1,
-              topic: this.detectTopic(line),
+              topic: detectedCategory,
               difficulty: this.detectDifficulty(line),
               keywords: this.extractKeywords(line),
               metadata: {
@@ -253,7 +307,7 @@ export class DocxParser {
       // Group sections by topic
       const topicGroups = new Map<string, ParsedSection[]>()
       sections.forEach(section => {
-        const topic = section.topic || 'general'
+        const topic = section.topic || 'uncategorized'
         if (!topicGroups.has(topic)) {
           topicGroups.set(topic, [])
         }
@@ -311,7 +365,7 @@ export class DocxParser {
     
     // Add metadata
     markdown += `<!--\n`
-    markdown += `Temat: ${topic || 'general'}\n`
+    markdown += `Temat: ${topic || 'uncategorized'}\n`
     markdown += `Poziom: ${difficulty}\n`
     markdown += `Słowa kluczowe: ${keywords.join(', ')}\n`
     markdown += `Źródło: ${metadata.originalFile}\n`
@@ -329,7 +383,7 @@ export class DocxParser {
     const savedFiles: { [topic: string]: string } = {}
     
     for (const section of sections) {
-      const topic = section.topic || 'general'
+      const topic = section.topic || 'uncategorized'
       const filename = `${topic}.md`
       const markdown = this.generateMarkdown(section)
       

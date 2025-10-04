@@ -17,9 +17,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`\n🔍 ===== RAG CHAT TEST =====`);
+    console.log(`\n🔍 ===== RAG CHAT REQUEST =====`);
     console.log(`📝 Pytanie: "${message}"`);
-    console.log(`🎯 Threshold podobieństwa: 0.6`);
+    console.log(`🎯 Threshold podobieństwa: 0.3`);
+    console.log(`📊 Limit wyników: ${limit}`);
 
     // 1. Wyszukaj podobne treści w ChromaDB z threshold
     let context = '';
@@ -28,17 +29,30 @@ export async function POST(request: NextRequest) {
     const SIMILARITY_THRESHOLD = 0.3; // Minimum similarity score (lowered from 0.6)
     
     try {
-      searchResults = await searchSimilar(message, limit);
+      searchResults = await searchSimilar(message, Math.max(limit, 5)); // Pobierz co najmniej 5 wyników do logowania
       
       console.log(`📊 Znaleziono ${searchResults.length} wyników w bazie`);
       
       if (searchResults.length > 0) {
-        // Loguj wszystkie wyniki z podobieństwem
-        console.log(`📈 Szczegóły wyników:`);
-        searchResults.forEach((result, index) => {
+        // Loguj top 5 wyników z similarity scores
+        console.log(`📈 TOP 5 WYNIKÓW Z CHROMADB:`);
+        const topResults = searchResults.slice(0, 5);
+        topResults.forEach((result, index) => {
           const isRelevant = result.similarity >= SIMILARITY_THRESHOLD;
-          console.log(`  ${index + 1}. ${result.metadata.type} - ${(result.similarity * 100).toFixed(1)}% ${isRelevant ? '✅' : '❌'}`);
+          const contentPreview = result.content.substring(0, 80) + '...';
+          console.log(`  ${index + 1}. [${result.metadata.type}] ${(result.similarity * 100).toFixed(1)}% ${isRelevant ? '✅' : '❌'}`);
+          console.log(`      Content: "${contentPreview}"`);
+          console.log(`      File: ${result.metadata.filename || 'unknown'}`);
         });
+        
+        // Threshold check
+        const maxSimilarity = Math.max(...searchResults.map(r => r.similarity));
+        const passedThreshold = searchResults.filter(r => r.similarity >= SIMILARITY_THRESHOLD);
+        
+        console.log(`🎯 THRESHOLD CHECK:`);
+        console.log(`   Threshold: ${SIMILARITY_THRESHOLD} (${(SIMILARITY_THRESHOLD * 100).toFixed(1)}%)`);
+        console.log(`   Max similarity: ${maxSimilarity.toFixed(3)} (${(maxSimilarity * 100).toFixed(1)}%)`);
+        console.log(`   Passed threshold: ${passedThreshold.length}/${searchResults.length} wyników`);
         
         // Filtruj wyniki według threshold podobieństwa
         const relevantResults = searchResults.filter(result => result.similarity >= SIMILARITY_THRESHOLD);
@@ -50,20 +64,27 @@ export async function POST(request: NextRequest) {
             )
             .join('\n');
           
-          responseSource = relevantResults.length === searchResults.length ? 'database' : 'hybrid';
+          // Decyzja: database/hybrid/openai
+          if (relevantResults.length === searchResults.length) {
+            responseSource = 'database';
+            console.log(`🎯 DECYZJA: DATABASE (wszystkie wyniki przeszły threshold)`);
+          } else {
+            responseSource = 'hybrid';
+            console.log(`🎯 DECYZJA: HYBRID (${relevantResults.length}/${searchResults.length} wyników przeszło threshold)`);
+          }
+          
           console.log(`✅ Wybrano ${relevantResults.length} wysokiej jakości treści`);
-          console.log(`🎯 Response source: ${responseSource.toUpperCase()}`);
         } else {
-          console.log(`❌ Wszystkie treści mają zbyt niskie podobieństwo (max: ${Math.max(...searchResults.map(r => r.similarity)).toFixed(3)})`);
-          console.log(`🎯 Response source: OPENAI (fallback)`);
+          console.log(`❌ DECYZJA: OPENAI (żaden wynik nie przeszedł threshold)`);
+          console.log(`   Najwyższe podobieństwo: ${maxSimilarity.toFixed(3)} (${(maxSimilarity * 100).toFixed(1)}%)`);
         }
       } else {
         console.log('❌ Brak podobnych treści w bazie danych');
-        console.log(`🎯 Response source: OPENAI (fallback)`);
+        console.log(`🎯 DECYZJA: OPENAI (brak wyników)`);
       }
     } catch (searchError) {
       console.error('❌ Błąd wyszukiwania w ChromaDB:', searchError);
-      console.log(`🎯 Response source: OPENAI (fallback)`);
+      console.log(`🎯 DECYZJA: OPENAI (błąd wyszukiwania)`);
       // Kontynuuj bez kontekstu jeśli wyszukiwanie się nie powiedzie
     }
 
@@ -171,11 +192,13 @@ Użyj powyższego kontekstu jako punktu wyjścia, ale uzupełnij odpowiedź swoj
       timestamp: new Date().toISOString()
     };
 
-    console.log(`✅ Odpowiedź wygenerowana (${response.length} znaków)`);
-    console.log(`🎯 Final response source: ${responseSource.toUpperCase()}`);
-    console.log(`📏 Response length: ${responseLength.toUpperCase()}`);
-    console.log(`📊 Context length: ${context.length} znaków`);
-    console.log(`===== KONIEC RAG TEST =====\n`);
+    console.log(`\n✅ ODPOWIEDŹ WYGENEROWANA:`);
+    console.log(`   Długość: ${response.length} znaków`);
+    console.log(`   Źródło: ${responseSource.toUpperCase()}`);
+    console.log(`   Typ: ${responseLength.toUpperCase()}`);
+    console.log(`   Kontekst: ${context.length} znaków`);
+    console.log(`   Wykorzystane źródła: ${responseData.context.relevantSourcesCount}/${responseData.context.sourcesCount}`);
+    console.log(`===== KONIEC RAG REQUEST =====\n`);
     
     return NextResponse.json(responseData);
 

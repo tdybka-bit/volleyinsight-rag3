@@ -45,24 +45,50 @@ export async function initChromaDB() {
     
     if (existingCollection) {
       console.log(`Kolekcja ${COLLECTION_NAME} już istnieje`);
-      return await chromaClient.getCollection({ name: COLLECTION_NAME });
+      const collection = await chromaClient.getCollection({ name: COLLECTION_NAME });
+      
+      // Sprawdź czy kolekcja ma embedding function
+      const collectionInfo = await collection.get();
+      if (!collectionInfo.embeddingFunction) {
+        console.log(`⚠️ Kolekcja ${COLLECTION_NAME} nie ma embedding function - usuwam i tworzę nową`);
+        await chromaClient.deleteCollection({ name: COLLECTION_NAME });
+        return await createNewCollection();
+      }
+      
+      return collection;
     }
 
-    // Utwórz nową kolekcję
-    const collection = await chromaClient.createCollection({
-      name: COLLECTION_NAME,
-      metadata: {
-        description: "Volleyball training insights and techniques",
-        created_at: new Date().toISOString()
-      }
-    });
-
-    console.log(`Utworzono kolekcję ${COLLECTION_NAME}`);
-    return collection;
+    // Utwórz nową kolekcję z embedding function
+    return await createNewCollection();
   } catch (error) {
     console.error('Błąd inicjalizacji ChromaDB:', error);
     throw error;
   }
+}
+
+/**
+ * Tworzy nową kolekcję z właściwą embedding function
+ */
+async function createNewCollection() {
+  const collection = await chromaClient.createCollection({
+    name: COLLECTION_NAME,
+    metadata: {
+      description: "Volleyball training insights and techniques",
+      created_at: new Date().toISOString()
+    },
+    embeddingFunction: {
+      // Użyj OpenAI embedding function
+      generate: async (texts: string[]) => {
+        const embeddings = await Promise.all(
+          texts.map(text => generateEmbedding(text))
+        );
+        return embeddings;
+      }
+    }
+  });
+
+  console.log(`✅ Utworzono kolekcję ${COLLECTION_NAME} z embedding function`);
+  return collection;
 }
 
 
@@ -77,12 +103,7 @@ export async function embedAndStore(chunks: MarkdownChunk[]): Promise<void> {
     
     console.log(`Zapisywanie ${chunks.length} chunków do ChromaDB...`);
     
-    // Generuj embeddings dla wszystkich chunków
-    const embeddings = await Promise.all(
-      chunks.map(chunk => generateEmbedding(chunk.content))
-    );
-
-    // Przygotuj dane do zapisania
+    // Przygotuj dane do zapisania (ChromaDB wygeneruje embeddings automatycznie)
     const ids = chunks.map((_, index) => `chunk_${Date.now()}_${index}`);
     const documents = chunks.map(chunk => chunk.content);
     const metadatas = chunks.map(chunk => ({
@@ -93,15 +114,14 @@ export async function embedAndStore(chunks: MarkdownChunk[]): Promise<void> {
       contentLength: chunk.content.length
     }));
 
-    // Zapisz do ChromaDB
+    // Zapisz do ChromaDB (bez embeddings - ChromaDB wygeneruje je automatycznie)
     await collection.add({
       ids,
-      embeddings,
       documents,
       metadatas
     });
 
-    console.log(`✅ Pomyślnie zapisano ${chunks.length} chunków do ChromaDB`);
+    console.log(`✅ Pomyślnie zapisano ${chunks.length} chunków do ChromaDB z automatycznymi embeddings`);
   } catch (error) {
     console.error('Błąd zapisywania embeddings:', error);
     throw error;
@@ -118,12 +138,9 @@ export async function searchSimilar(query: string, limit: number = 3): Promise<a
   try {
     const collection = await initChromaDB();
     
-    // Generuj embedding dla zapytania
-    const queryEmbedding = await generateEmbedding(query);
-    
-    // Wyszukaj podobne treści
+    // Wyszukaj podobne treści (ChromaDB wygeneruje embedding dla zapytania automatycznie)
     const results = await collection.query({
-      queryEmbeddings: [queryEmbedding],
+      queryTexts: [query],
       nResults: limit,
       include: ['documents', 'metadatas', 'distances']
     });
@@ -236,6 +253,64 @@ export async function checkConnection(): Promise<boolean> {
     return true;
   } catch (error) {
     console.error('❌ Błąd połączenia z ChromaDB:', error);
+    return false;
+  }
+}
+
+/**
+ * Testuje czy embedding function działa poprawnie
+ * @returns Promise<boolean> - Czy embedding function działa
+ */
+export async function testEmbeddingFunction(): Promise<boolean> {
+  try {
+    const collection = await initChromaDB();
+    
+    // Test: zapisz 1 chunk testowy
+    const testChunk = {
+      id: 'test_chunk_' + Date.now(),
+      document: 'Test siatkówki - blok to podstawowy element obrony',
+      metadata: {
+        type: 'test',
+        filename: 'test.md',
+        chunkIndex: 0,
+        originalFile: 'test.md',
+        contentLength: 50
+      }
+    };
+    
+    console.log('🧪 Testowanie embedding function...');
+    
+    // Zapisz test chunk
+    await collection.add({
+      ids: [testChunk.id],
+      documents: [testChunk.document],
+      metadatas: [testChunk.metadata]
+    });
+    
+    console.log('✅ Test chunk zapisany');
+    
+    // Test: wyszukaj podobne treści
+    const searchResults = await collection.query({
+      queryTexts: ['blok siatkówka'],
+      nResults: 1,
+      include: ['documents', 'metadatas', 'distances']
+    });
+    
+    if (searchResults.documents[0].length > 0) {
+      const similarity = 1 - searchResults.distances[0][0];
+      console.log(`✅ Embedding function działa! Similarity: ${(similarity * 100).toFixed(1)}%`);
+      
+      // Usuń test chunk
+      await collection.delete({ ids: [testChunk.id] });
+      console.log('✅ Test chunk usunięty');
+      
+      return true;
+    } else {
+      console.log('❌ Embedding function nie działa - brak wyników wyszukiwania');
+      return false;
+    }
+  } catch (error) {
+    console.error('❌ Błąd testowania embedding function:', error);
     return false;
   }
 }

@@ -5,14 +5,14 @@ import { embedAndStore, searchSimilar, searchByType, getCollectionStats, checkCo
  * Główna funkcja integrująca markdown loader z vector store
  * Ładuje pliki markdown i zapisuje je jako embeddings w ChromaDB
  * @param contentDir - Ścieżka do katalogu z plikami markdown
- * @param chunkSize - Rozmiar chunków (domyślnie 500)
- * @param overlap - Nakładanie między chunkami (domyślnie 100)
+ * @param chunkSize - Rozmiar chunków (domyślnie 1200)
+ * @param overlap - Nakładanie między chunkami (domyślnie 300)
  * @returns Promise<Object> - Statystyki operacji
  */
 export async function loadAndStoreContent(
   contentDir: string = './content',
-  chunkSize: number = 500,
-  overlap: number = 100
+  chunkSize: number = 1200,
+  overlap: number = 300
 ): Promise<{
   success: boolean;
   chunksLoaded: number;
@@ -193,4 +193,5 @@ export async function exampleUsage() {
     console.error('Błąd w przykładzie użycia:', error);
   }
 }
+
 

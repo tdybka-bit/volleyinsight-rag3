@@ -267,3 +267,4 @@ function generateReport(totalTime) {
 
 // Run the comprehensive test
 testRAGSystem().catch(console.error);
+

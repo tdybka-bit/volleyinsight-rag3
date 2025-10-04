@@ -14,11 +14,11 @@ interface MarkdownChunk {
 /**
  * Helper function to split text into chunks with overlap
  * @param text - The text to chunk
- * @param chunkSize - Size of each chunk in characters (default: 500)
- * @param overlap - Number of characters to overlap between chunks (default: 100)
+ * @param chunkSize - Size of each chunk in characters (default: 1200)
+ * @param overlap - Number of characters to overlap between chunks (default: 300)
  * @returns Array of text chunks
  */
-function chunkText(text: string, chunkSize: number = 500, overlap: number = 100): string[] {
+function chunkText(text: string, chunkSize: number = 1200, overlap: number = 300): string[] {
   if (text.length <= chunkSize) {
     return [text];
   }
@@ -93,14 +93,14 @@ function extractMetadata(filename: string): { type: string; originalFile: string
 /**
  * Load all markdown files from content/ directory and chunk them
  * @param contentDir - Path to content directory (default: './content')
- * @param chunkSize - Size of each chunk in characters (default: 500)
- * @param overlap - Number of characters to overlap between chunks (default: 100)
+ * @param chunkSize - Size of each chunk in characters (default: 1200)
+ * @param overlap - Number of characters to overlap between chunks (default: 300)
  * @returns Promise<MarkdownChunk[]> - Array of chunked content
  */
 export async function loadMarkdownFiles(
   contentDir: string = './content',
-  chunkSize: number = 500,
-  overlap: number = 100
+  chunkSize: number = 1200,
+  overlap: number = 300
 ): Promise<MarkdownChunk[]> {
   try {
     // Check if content directory exists
@@ -178,8 +178,8 @@ export async function loadMarkdownFiles(
  */
 export async function loadMarkdownFilesByType(
   contentDir: string = './content',
-  chunkSize: number = 500,
-  overlap: number = 100
+  chunkSize: number = 1200,
+  overlap: number = 300
 ): Promise<{ [type: string]: MarkdownChunk[] }> {
   const chunks = await loadMarkdownFiles(contentDir, chunkSize, overlap);
   

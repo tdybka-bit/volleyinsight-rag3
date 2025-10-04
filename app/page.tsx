@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { 
   Volleyball, 
   MessageCircle, 
@@ -25,6 +25,7 @@ import { useAnalytics } from '../lib/analytics'
 export default function VolleyInsight() {
   const { theme } = useTheme()
   const { trackBlockClick, trackQuestion, trackPageView } = useAnalytics()
+  const messagesEndRef = useRef<HTMLDivElement>(null)
   const [messages, setMessages] = useState([
     { 
       role: 'assistant', 
@@ -38,6 +39,11 @@ export default function VolleyInsight() {
   useEffect(() => {
     trackPageView('home')
   }, [trackPageView])
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return
@@ -326,6 +332,8 @@ export default function VolleyInsight() {
                 </div>
               </div>
             ))}
+            {/* Auto-scroll target */}
+            <div ref={messagesEndRef} />
             {isLoading && (
               <div className="flex justify-start">
                 <div className="glass-card text-card-foreground px-4 py-3 rounded-lg">

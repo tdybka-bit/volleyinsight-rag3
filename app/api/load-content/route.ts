@@ -6,8 +6,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action') || 'all';
     const query = searchParams.get('query') || '';
-    const chunkSize = parseInt(searchParams.get('chunkSize') || '500');
-    const overlap = parseInt(searchParams.get('overlap') || '100');
+    const chunkSize = parseInt(searchParams.get('chunkSize') || '1200');
+    const overlap = parseInt(searchParams.get('overlap') || '300');
 
     let result;
 
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { action, query, chunkSize = 500, overlap = 100 } = body;
+    const { action, query, chunkSize = 1200, overlap = 300 } = body;
 
     let result;
 
@@ -85,4 +85,5 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
 

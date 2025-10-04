@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { action, query, type, limit = 3, contentDir = './content', chunkSize = 500, overlap = 100 } = body;
+    const { action, query, type, limit = 3, contentDir = './content', chunkSize = 1200, overlap = 300 } = body;
 
     let result;
 
@@ -121,4 +121,5 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
 

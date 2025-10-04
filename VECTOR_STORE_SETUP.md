@@ -156,3 +156,4 @@ docker run -p 8000:8000 chromadb/chroma
 4. Dodaj metryki wydajności
 5. Rozszerz o więcej typów treści
 
+
