@@ -178,3 +178,5 @@
 **Baza danych:** ChromaDB (65 chunków)  
 **Model:** OpenAI GPT-3.5-turbo + text-embedding-3-small
 
+
+

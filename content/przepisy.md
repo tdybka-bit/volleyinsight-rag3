@@ -5,7 +5,7 @@ Temat: przepisy
 Poziom: podstawowy
 Słowa kluczowe: 
 Źródło: przepisy-gry-2021-2024.docx
-Utworzono: 2025-10-04T21:00:26.661Z
+Utworzono: 2025-10-05T19:21:53.240Z
 Liczba słów: 12634
 -->
 

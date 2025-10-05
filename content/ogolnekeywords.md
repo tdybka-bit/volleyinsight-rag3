@@ -5,7 +5,7 @@ Temat: ogolnekeywords
 Poziom: podstawowy
 Słowa kluczowe: 
 Źródło: Upload 2.docx
-Utworzono: 2025-10-04T20:59:38.070Z
+Utworzono: 2025-10-05T19:16:37.876Z
 Liczba słów: 6784
 -->
 
