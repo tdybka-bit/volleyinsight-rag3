@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import AdminProtectedRoute from '../../../components/AdminProtectedRoute'
-import DocxUploader from '../../../components/DocxUploader'
+import DocumentUploader from '../../../components/DocumentUploader'
 import { 
   FileText, 
   Upload, 
@@ -166,7 +166,7 @@ export default function ContentManagement() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Upload Section */}
             <div className="lg:col-span-1">
-              <DocxUploader />
+            <DocumentUploader />
             </div>
 
             {/* Content Files List */}
