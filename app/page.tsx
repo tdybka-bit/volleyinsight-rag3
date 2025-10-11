@@ -110,7 +110,6 @@ export default function VolleyInsight() {
     }
   }
 
-
   const handleModuleClick = (module: typeof trainingModules[0]) => {
     // Track block click analytics
     trackBlockClick(module.id, module.title, 'home')
@@ -269,15 +268,35 @@ export default function VolleyInsight() {
               </h3>
               <div className="space-y-1">
                 {quickQuestions.map((question, index) => (
-            <button 
+                  <button 
                     key={index}
                     onClick={() => setInputMessage(question)}
                     className="w-full p-2 text-left text-xs text-muted-foreground hover:text-foreground hover:bg-white/10 rounded-lg transition-colors"
-            >
+                  >
                     {question}
-            </button>
+                  </button>
                 ))}
               </div>
+            </div>
+
+            {/* LIVE Mecz - NOWY */}
+            <div className="glass-card rounded-xl p-3 border-2 border-red-500/50">
+              <h3 className="font-semibold text-card-foreground mb-2 flex items-center text-sm">
+                <div className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></div>
+                LIVE Mecz
+              </h3>
+              <button 
+                onClick={() => window.location.href = '/live'}
+                className="w-full p-3 text-left text-sm font-semibold text-white bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 rounded-lg transition-all transform hover:scale-105"
+              >
+                <div className="flex items-center justify-between">
+                  <span>🏐 Polska vs Brazylia</span>
+                  <ChevronRight className="w-4 h-4" />
+                </div>
+                <div className="text-xs mt-1 opacity-90">
+                  Set 3 • 21:19 • NA ŻYWO
+                </div>
+              </button>
             </div>
 
             {/* Help */}
