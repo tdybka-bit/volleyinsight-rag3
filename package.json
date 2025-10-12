@@ -17,12 +17,14 @@
   },
   "dependencies": {
     "@chroma-core/default-embed": "^0.1.8",
+    "@pinecone-database/pinecone": "^6.1.2",
     "chromadb": "^3.0.15",
     "dotenv": "^17.2.3",
     "lucide-react": "^0.544.0",
     "mammoth": "^1.11.0",
     "next": "15.5.4",
     "openai": "^5.23.1",
+    "pdf-parse": "^2.2.16",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
