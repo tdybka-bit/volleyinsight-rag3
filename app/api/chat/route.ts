@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
-
 // Import vector store dla RAG
 const { searchSimilar } = require('../../../lib/vectorStore');
+
+// ✅ Lazy initialization - tworzy klienta tylko gdy jest potrzebny
+function getOpenAI() {
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +26,6 @@ export async function POST(request: NextRequest) {
     let ragContext = '';
     try {
       const similarDocs = await searchSimilar(message, 3);
-      
       if (similarDocs && similarDocs.length > 0) {
         ragContext = similarDocs
           .map((doc: any) => `[${doc.metadata.type}] ${doc.content}`)
@@ -38,7 +40,7 @@ export async function POST(request: NextRequest) {
     let systemPrompt = `Jesteś ekspertem od siatkówki i pomocnym asystentem AI dla aplikacji VolleyLive AI.`;
 
     if (context === 'live-match') {
-      systemPrompt += `\n\nOdpowiadasz na pytania użytkownika który ogląda mecz NA ŻYWO. 
+      systemPrompt += `\n\nOdpowiadasz na pytania użytkownika który ogląda mecz NA ŻYWO.
 Twoje odpowiedzi powinny być:
 - KRÓTKIE i zwięzłe (2-4 zdania max)
 - Napisane prostym językiem
@@ -58,6 +60,9 @@ Wykorzystuj dostępną wiedzę z dokumentacji siatkówki.`;
     if (ragContext) {
       systemPrompt += `\n\nMasz dostęp do następującej wiedzy z bazy dokumentów:\n${ragContext}`;
     }
+
+    // ✅ Pobierz klienta OpenAI dopiero tutaj
+    const openai = getOpenAI();
 
     // Wywołanie OpenAI
     const completion = await openai.chat.completions.create({
@@ -81,7 +86,7 @@ Wykorzystuj dostępną wiedzę z dokumentacji siatkówki.`;
   } catch (error) {
     console.error('Chat API error:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Błąd podczas przetwarzania zapytania',
         details: error instanceof Error ? error.message : 'Nieznany błąd'
       },
