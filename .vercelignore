@@ -1,0 +1,19 @@
+﻿# Test files - nie potrzebne na produkcji
+debug-docx.js
+debug-lines.js
+debug-paragraphs.js
+debug-regex.js
+test-*.js
+quick-*.js
+
+# Development
+docker-compose.yml
+chroma_data/
+chroma/
+
+# Documentation
+*.md
+!README.md
+
+# Local files
+.env.local
