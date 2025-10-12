@@ -16,9 +16,7 @@
     "setup:vector": "npm run chromadb:start"
   },
   "dependencies": {
-    "@chroma-core/default-embed": "^0.1.8",
     "@pinecone-database/pinecone": "^6.1.2",
-    "chromadb": "^3.0.15",
     "lucide-react": "^0.544.0",
     "mammoth": "^1.11.0",
     "next": "15.5.4",
@@ -28,6 +26,8 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@chroma-core/default-embed": "^0.1.8",
+    "chromadb": "^3.0.15",
     "dotenv": "^17.2.3",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",

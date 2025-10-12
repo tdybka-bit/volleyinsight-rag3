@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import mammoth from 'mammoth';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || 'your-api-key-here'
-});
+// ✅ Lazy initialization
+function getOpenAI() {
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+}
 
 const CATEGORIES = ['blok', 'atak', 'obrona', 'zagrywka', 'ustawienia', 'przepisy', 'ogólne'];
 
@@ -98,6 +101,7 @@ export async function POST(request: NextRequest) {
             console.log(`🏷️ Paragraph ${i + 1}: Manual category ${category}`);
           } else {
             // Use AI categorization
+            const openai = getOpenAI(); // ✅ Pobierz klienta tutaj
             const completion = await openai.chat.completions.create({
               model: "gpt-3.5-turbo",
               messages: [
