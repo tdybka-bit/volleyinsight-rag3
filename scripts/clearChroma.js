@@ -1,4 +1,7 @@
-﻿const { clearCollection, checkConnection } = require('../lib/vectorStore');
+﻿require('dotenv').config({ path: '.env.local' });
+const { embedAndStore, checkConnection, getCollectionStats } = require('../lib/vectorStore');
+// ... reszta kodu
+const { clearCollection, checkConnection } = require('../lib/vectorStore');
 
 async function main() {
   console.log('🗑️  Czyszczenie kolekcji ChromaDB...\n');

@@ -1,4 +1,7 @@
-﻿const { searchSimilar, checkConnection } = require('../lib/vectorStore');
+﻿require('dotenv').config({ path: '.env.local' });
+const { embedAndStore, checkConnection, getCollectionStats } = require('../lib/vectorStore');
+// ... reszta kodu
+const { searchSimilar, checkConnection } = require('../lib/vectorStore');
 
 const testQueries = [
   'Jak poprawić technikę bloku?',

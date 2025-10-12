@@ -1,4 +1,7 @@
-﻿const { embedAndStore, checkConnection, getCollectionStats } = require('../lib/vectorStore');
+﻿require('dotenv').config({ path: '.env.local' });
+const { embedAndStore, checkConnection, getCollectionStats } = require('../lib/vectorStore');
+// ... reszta kodu
+const { embedAndStore, checkConnection, getCollectionStats } = require('../lib/vectorStore.ts');
 const fs = require('fs');
 const path = require('path');
 
