@@ -114,6 +114,12 @@ export default function VolleyInsight() {
     // Track block click analytics
     trackBlockClick(module.id, module.title, 'home')
     
+    // Specjalna obsługa dla dashboardu
+    if (module.id === 'dashboard') {
+      window.location.href = '/players'
+      return
+    }
+    
     // Przekieruj do dedykowanej strony tematu
     window.location.href = `/${module.id}`
   }
@@ -184,6 +190,17 @@ export default function VolleyInsight() {
       progress: 40,
       completedMaterials: 2,
       totalMaterials: 5
+    },
+    {
+      id: 'dashboard',
+      title: 'Dashboard Graczy',
+      description: 'Statystyki i wykresy PlusLiga & Tauron Liga',
+      icon: Target,
+      question: 'Zobacz statystyki graczy',
+      emoji: '📊',
+      progress: 0,
+      completedMaterials: 0,
+      totalMaterials: 0
     }
   ]
 
