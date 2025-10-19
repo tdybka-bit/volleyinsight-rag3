@@ -157,13 +157,19 @@ async function scrapePlayer(playerId) {
       }
     }
     
+    // Add is_home field to each match
+    const matchesWithHome = matchByMatch.map(match => ({
+      ...match,
+      is_home: match.opponent ? match.opponent.trim().startsWith(teamName) : false
+    }));
+
     const playerData = {
       ...basicInfo,
       season: SEASON,
       team: teamName,
       season_totals: seasonTotals,
-      match_by_match: matchByMatch,
-      matches_count: matchByMatch.length
+      match_by_match: matchesWithHome,
+      matches_count: matchesWithHome.length
     };
     
     console.log(`✅ ${basicInfo.name}: ${matchByMatch.length} meczów`);

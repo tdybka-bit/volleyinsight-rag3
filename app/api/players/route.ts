@@ -44,12 +44,13 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get('sortBy') || 'points';
     const limit = parseInt(searchParams.get('limit') || '0');
     const league = searchParams.get('league') || 'plusliga'; // plusliga or tauronliga
+    const season = searchParams.get('season') || '2024-2025'; // 2024-2025, 2023-2024, 2022-2023
 
-    // Ścieżki do plików z graczami (wybór folderu na podstawie ligi)
+    // Ścieżki do plików z graczami (wybór folderu na podstawie ligi i sezonu)
     const dataDir = path.join(
       process.cwd(), 
       'data', 
-      league === 'tauronliga' ? 'tauronliga' : 'players'
+      `${league}-${season}`
     );
     const files = await fs.readdir(dataDir);
     
@@ -63,24 +64,15 @@ export async function GET(request: NextRequest) {
       }, { status: 404 });
     }
 
-    // Łączymy dane ze wszystkich plików (deduplikacja po ID)
-    const playersMap = new Map<string, Player>();
+    // Łączymy dane ze wszystkich plików
+    let allPlayers: Player[] = [];
     
     for (const file of fullFiles) {
       const filePath = path.join(dataDir, file);
       const fileContent = await fs.readFile(filePath, 'utf-8');
       const data: PlayersData = JSON.parse(fileContent);
-      
-      // Dodaj tylko jeśli gracz nie istnieje (deduplikacja)
-      data.players.forEach((player: Player) => {
-        if (!playersMap.has(player.id)) {
-          playersMap.set(player.id, player);
-        }
-      });
+      allPlayers = allPlayers.concat(data.players);
     }
-    
-    // Konwertuj Map na Array
-    const allPlayers = Array.from(playersMap.values());
 
     // Filtrowanie po minimalnej liczbie meczów
     let filteredPlayers = allPlayers.filter(
@@ -101,6 +93,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       meta: {
+        league: league,
         total_players: allPlayers.length,
         filtered_players: filteredPlayers.length,
         min_matches: minMatches,

@@ -15,12 +15,13 @@ export async function GET(
     const playerId = params.id;
     const { searchParams } = new URL(request.url);
     const league = searchParams.get('league') || 'plusliga';
+    const season = searchParams.get('season') || '2024-2025';
 
-    // Ścieżki do plików (wybór folderu na podstawie ligi)
+    // Ścieżki do plików (wybór folderu na podstawie ligi i sezonu)
     const dataDir = path.join(
       process.cwd(), 
       'data', 
-      league === 'tauronliga' ? 'tauronliga' : 'players'
+      `${league}-${season}`
     );
     const files = await fs.readdir(dataDir);
     

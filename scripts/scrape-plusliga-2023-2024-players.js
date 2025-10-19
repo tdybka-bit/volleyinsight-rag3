@@ -162,7 +162,7 @@ async function scrapePlayer(playerId) {
       season: SEASON,
       team: teamName,
       season_totals: seasonTotals,
-      match_by_match: matchByMatch,
+      match_by_match: matchByMatch.map(match => ({ ...match, is_home: match.opponent ? match.opponent.trim().startsWith(teamName) : false })),
       matches_count: matchByMatch.length
     };
     
@@ -245,3 +245,4 @@ async function main() {
 }
 
 main();
+

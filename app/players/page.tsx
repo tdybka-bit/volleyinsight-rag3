@@ -25,6 +25,7 @@ export default function PlayersPage() {
     const [sortBy, setSortBy] = useState('points');
     const [minMatches, setMinMatches] = useState(15);
     const [league, setLeague] = useState<'plusliga' | 'tauronliga'>('plusliga');
+    const [season, setSeason] = useState<string>('2024-2025');
 
   // Sprawdź preselekcję ligi z URL
 useEffect(() => {
@@ -37,13 +38,13 @@ useEffect(() => {
 
     useEffect(() => {
     fetchPlayers();
-  }, [sortBy, minMatches, league]);
+  }, [sortBy, minMatches, league, season]);
 
   const fetchPlayers = async () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/players?sortBy=${sortBy}&minMatches=${minMatches}&league=${league}`
+        `/api/players?sortBy=${sortBy}&minMatches=${minMatches}&league=${league}&season=${season}`
       );
       const data = await res.json();
       setPlayers(data.players || []);
@@ -79,6 +80,21 @@ useEffect(() => {
         {/* Filtry */}
         <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 mb-6 border border-white/20">
           <div className="flex flex-wrap gap-4 items-center">
+            {/* Selector sezonu */}
+            <div>
+              <label className="block text-sm font-medium text-blue-200 mb-2">
+                Sezon
+              </label>
+              <select
+                value={season}
+                onChange={(e) => setSeason(e.target.value)}
+                className="bg-slate-800 text-white px-4 py-2 rounded-lg border border-blue-500/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="2024-2025">2024/2025</option>
+                <option value="2023-2024">2023/2024</option>
+                <option value="2022-2023">2022/2023</option>
+              </select>
+            </div>
             {/* Przełącznik Ligi */}
             <div>
               <label className="block text-sm font-medium text-blue-200 mb-2">
@@ -205,7 +221,7 @@ useEffect(() => {
                       </td>
                       <td className="px-6 py-4 text-center">
                         <Link
-                          href={`/players/${player.id}?league=${league}`}
+                          href={`/players/${player.id}?league=${league}&season=${season}`}
                           className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium"
                         >
                           Szczegóły →

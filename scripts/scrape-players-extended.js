@@ -252,9 +252,21 @@ async function scrapePlayer(playerId) {
     // Statystyki mecz po meczu
     const matchByMatch = extractMatchByMatchStats($);
     
+    // Ekstraktuj nazwę drużyny z pierwszego meczu
+    let teamName = 'Unknown';
+    if (matchByMatch.length > 0 && matchByMatch[0].opponent) {
+      // Format: "ZAKSA Kędzierzyn-Koźle - Jastrzębski Węgiel"
+      const firstMatch = matchByMatch[0].opponent;
+      const parts = firstMatch.split('-');
+      if (parts.length >= 2) {
+        teamName = parts[0].trim();
+      }
+    }
+    
     const playerData = {
       ...basicInfo,
       season: SEASON,
+      team: teamName,  // <-- DODANE!
       season_totals: seasonTotals,
       match_by_match: matchByMatch,
       matches_count: matchByMatch.length

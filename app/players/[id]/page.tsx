@@ -42,15 +42,16 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
       setPlayerId(p.id);
       const searchParams = new URLSearchParams(window.location.search);
       const playerLeague = searchParams.get('league') || 'plusliga';
+      const playerSeason = searchParams.get('season') || '2024-2025';
       setLeague(playerLeague);
-      fetchPlayer(p.id, playerLeague);
+      fetchPlayer(p.id, playerLeague, playerSeason);
     });
   }, [params]);
 
-  const fetchPlayer = async (id: string, playerLeague: string) => {
+  const fetchPlayer = async (id: string, playerLeague: string, playerSeason: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/players/${id}?league=${playerLeague}`);
+      const res = await fetch(`/api/players/${id}?league=${playerLeague}&season=${playerSeason}`);
       const data = await res.json();
       setPlayer(data.player);
     } catch (error) {

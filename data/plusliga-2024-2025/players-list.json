@@ -1,0 +1,1271 @@
+{
+  "meta": {
+    "league": "plusliga",
+    "season": "2024-2025",
+    "scraped_at": "2025-10-18T22:17:35.788Z",
+    "total_players": 252,
+    "source_url": "https://www.plusliga.pl/statsPlayers/tournament_1/47.html"
+  },
+  "players": [
+    {
+      "id": "12",
+      "name": "Adam Lorenc",
+      "url": "https://www.plusliga.pl/statsPlayers/id/12.html"
+    },
+    {
+      "id": "33",
+      "name": "Adrian Kopij",
+      "url": "https://www.plusliga.pl/statsPlayers/id/33.html"
+    },
+    {
+      "id": "35",
+      "name": "Adrian Markiewicz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/35.html"
+    },
+    {
+      "id": "42",
+      "name": "Adrian Staszewski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/42.html"
+    },
+    {
+      "id": "126",
+      "name": "Alexander Berger",
+      "url": "https://www.plusliga.pl/statsPlayers/id/126.html"
+    },
+    {
+      "id": "137",
+      "name": "Aliaksei Nasevich",
+      "url": "https://www.plusliga.pl/statsPlayers/id/137.html"
+    },
+    {
+      "id": "169",
+      "name": "Andreas Takvam",
+      "url": "https://www.plusliga.pl/statsPlayers/id/169.html"
+    },
+    {
+      "id": "183",
+      "name": "Andrzej Wrona",
+      "url": "https://www.plusliga.pl/statsPlayers/id/183.html"
+    },
+    {
+      "id": "221",
+      "name": "Antoni Kwasigroch",
+      "url": "https://www.plusliga.pl/statsPlayers/id/221.html"
+    },
+    {
+      "id": "235",
+      "name": "Arkadiusz Żakieta",
+      "url": "https://www.plusliga.pl/statsPlayers/id/235.html"
+    },
+    {
+      "id": "250",
+      "name": "Artur Ratajczak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/250.html"
+    },
+    {
+      "id": "251",
+      "name": "Artur Sługocki",
+      "url": "https://www.plusliga.pl/statsPlayers/id/251.html"
+    },
+    {
+      "id": "253",
+      "name": "Artur Szalpuk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/253.html"
+    },
+    {
+      "id": "263",
+      "name": "Aymen Bouguerra",
+      "url": "https://www.plusliga.pl/statsPlayers/id/263.html"
+    },
+    {
+      "id": "270",
+      "name": "Bartłomiej Bołądź",
+      "url": "https://www.plusliga.pl/statsPlayers/id/270.html"
+    },
+    {
+      "id": "278",
+      "name": "Bartłomiej Krulicki",
+      "url": "https://www.plusliga.pl/statsPlayers/id/278.html"
+    },
+    {
+      "id": "279",
+      "name": "Bartłomiej Lemański",
+      "url": "https://www.plusliga.pl/statsPlayers/id/279.html"
+    },
+    {
+      "id": "280",
+      "name": "Bartłomiej Lipiński",
+      "url": "https://www.plusliga.pl/statsPlayers/id/280.html"
+    },
+    {
+      "id": "282",
+      "name": "Bartłomiej Mordyl",
+      "url": "https://www.plusliga.pl/statsPlayers/id/282.html"
+    },
+    {
+      "id": "289",
+      "name": "Bartłomiej Wójcik",
+      "url": "https://www.plusliga.pl/statsPlayers/id/289.html"
+    },
+    {
+      "id": "293",
+      "name": "Bartosz Bednorz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/293.html"
+    },
+    {
+      "id": "301",
+      "name": "Bartosz Filipiak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/301.html"
+    },
+    {
+      "id": "302",
+      "name": "Bartosz Firszt",
+      "url": "https://www.plusliga.pl/statsPlayers/id/302.html"
+    },
+    {
+      "id": "305",
+      "name": "Bartosz Gomułka",
+      "url": "https://www.plusliga.pl/statsPlayers/id/305.html"
+    },
+    {
+      "id": "313",
+      "name": "Bartosz Kurek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/313.html"
+    },
+    {
+      "id": "314",
+      "name": "Bartosz Kwolek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/314.html"
+    },
+    {
+      "id": "316",
+      "name": "Bartosz Makoś",
+      "url": "https://www.plusliga.pl/statsPlayers/id/316.html"
+    },
+    {
+      "id": "318",
+      "name": "Bartosz Mariański",
+      "url": "https://www.plusliga.pl/statsPlayers/id/318.html"
+    },
+    {
+      "id": "323",
+      "name": "Bartosz Schmidt",
+      "url": "https://www.plusliga.pl/statsPlayers/id/323.html"
+    },
+    {
+      "id": "334",
+      "name": "Bartosz Zych",
+      "url": "https://www.plusliga.pl/statsPlayers/id/334.html"
+    },
+    {
+      "id": "341",
+      "name": "Benjamin Toniutti",
+      "url": "https://www.plusliga.pl/statsPlayers/id/341.html"
+    },
+    {
+      "id": "362",
+      "name": "Brandon Koppers",
+      "url": "https://www.plusliga.pl/statsPlayers/id/362.html"
+    },
+    {
+      "id": "382",
+      "name": "Cezary Sapiński",
+      "url": "https://www.plusliga.pl/statsPlayers/id/382.html"
+    },
+    {
+      "id": "405",
+      "name": "Damian Domagała",
+      "url": "https://www.plusliga.pl/statsPlayers/id/405.html"
+    },
+    {
+      "id": "407",
+      "name": "Damian Hudzik",
+      "url": "https://www.plusliga.pl/statsPlayers/id/407.html"
+    },
+    {
+      "id": "408",
+      "name": "Damian Kogut",
+      "url": "https://www.plusliga.pl/statsPlayers/id/408.html"
+    },
+    {
+      "id": "412",
+      "name": "Damian Radziwon",
+      "url": "https://www.plusliga.pl/statsPlayers/id/412.html"
+    },
+    {
+      "id": "413",
+      "name": "Damian Schulz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/413.html"
+    },
+    {
+      "id": "418",
+      "name": "Damian Wierzbicki",
+      "url": "https://www.plusliga.pl/statsPlayers/id/418.html"
+    },
+    {
+      "id": "419",
+      "name": "Damian Wojtaszek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/419.html"
+    },
+    {
+      "id": "423",
+      "name": "Daniel Chiţigoi",
+      "url": "https://www.plusliga.pl/statsPlayers/id/423.html"
+    },
+    {
+      "id": "426",
+      "name": "Daniel Gąsior",
+      "url": "https://www.plusliga.pl/statsPlayers/id/426.html"
+    },
+    {
+      "id": "436",
+      "name": "Daniel Popiela",
+      "url": "https://www.plusliga.pl/statsPlayers/id/436.html"
+    },
+    {
+      "id": "462",
+      "name": "David Smith",
+      "url": "https://www.plusliga.pl/statsPlayers/id/462.html"
+    },
+    {
+      "id": "468",
+      "name": "Dawid Dulski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/468.html"
+    },
+    {
+      "id": "478",
+      "name": "Dawid Ogórek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/478.html"
+    },
+    {
+      "id": "482",
+      "name": "Dawid Siwczyk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/482.html"
+    },
+    {
+      "id": "487",
+      "name": "Dawid Woch",
+      "url": "https://www.plusliga.pl/statsPlayers/id/487.html"
+    },
+    {
+      "id": "497",
+      "name": "Deniss Petrovs",
+      "url": "https://www.plusliga.pl/statsPlayers/id/497.html"
+    },
+    {
+      "id": "514",
+      "name": "Dominik Depowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/514.html"
+    },
+    {
+      "id": "517",
+      "name": "Dominik Kramczyński",
+      "url": "https://www.plusliga.pl/statsPlayers/id/517.html"
+    },
+    {
+      "id": "554",
+      "name": "Eemi Tervaportti",
+      "url": "https://www.plusliga.pl/statsPlayers/id/554.html"
+    },
+    {
+      "id": "574",
+      "name": "Erik Shoji",
+      "url": "https://www.plusliga.pl/statsPlayers/id/574.html"
+    },
+    {
+      "id": "604",
+      "name": "Fabian Majcherski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/604.html"
+    },
+    {
+      "id": "618",
+      "name": "Filip Falkowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/618.html"
+    },
+    {
+      "id": "626",
+      "name": "Filip Popiwczak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/626.html"
+    },
+    {
+      "id": "659",
+      "name": "Gjorgi Gjorgiev",
+      "url": "https://www.plusliga.pl/statsPlayers/id/659.html"
+    },
+    {
+      "id": "678",
+      "name": "Grzegorz Łomacz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/678.html"
+    },
+    {
+      "id": "682",
+      "name": "Grzegorz Pająk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/682.html"
+    },
+    {
+      "id": "696",
+      "name": "Gyorgy Grozer",
+      "url": "https://www.plusliga.pl/statsPlayers/id/696.html"
+    },
+    {
+      "id": "717",
+      "name": "Hubert Węgrzyn",
+      "url": "https://www.plusliga.pl/statsPlayers/id/717.html"
+    },
+    {
+      "id": "726",
+      "name": "Igor Grobelny",
+      "url": "https://www.plusliga.pl/statsPlayers/id/726.html"
+    },
+    {
+      "id": "741",
+      "name": "Ilia Kovalov",
+      "url": "https://www.plusliga.pl/statsPlayers/id/741.html"
+    },
+    {
+      "id": "777",
+      "name": "Jakub Abramowicz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/777.html"
+    },
+    {
+      "id": "780",
+      "name": "Jakub Bucki",
+      "url": "https://www.plusliga.pl/statsPlayers/id/780.html"
+    },
+    {
+      "id": "785",
+      "name": "Jakub Ciunajtis",
+      "url": "https://www.plusliga.pl/statsPlayers/id/785.html"
+    },
+    {
+      "id": "786",
+      "name": "Jakub Czerwiński",
+      "url": "https://www.plusliga.pl/statsPlayers/id/786.html"
+    },
+    {
+      "id": "798",
+      "name": "Jakub Jarosz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/798.html"
+    },
+    {
+      "id": "799",
+      "name": "Jakub Jurczyk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/799.html"
+    },
+    {
+      "id": "803",
+      "name": "Jakub Kochanowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/803.html"
+    },
+    {
+      "id": "807",
+      "name": "Jakub Kowalczyk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/807.html"
+    },
+    {
+      "id": "811",
+      "name": "Jakub Kubacki",
+      "url": "https://www.plusliga.pl/statsPlayers/id/811.html"
+    },
+    {
+      "id": "815",
+      "name": "Jakub Macyra",
+      "url": "https://www.plusliga.pl/statsPlayers/id/815.html"
+    },
+    {
+      "id": "816",
+      "name": "Jakub Majchrzak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/816.html"
+    },
+    {
+      "id": "821",
+      "name": "Jakub Nowosielski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/821.html"
+    },
+    {
+      "id": "825",
+      "name": "Jakub Popiwczak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/825.html"
+    },
+    {
+      "id": "834",
+      "name": "Jakub Strulak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/834.html"
+    },
+    {
+      "id": "836",
+      "name": "Jakub Szczurowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/836.html"
+    },
+    {
+      "id": "837",
+      "name": "Jakub Szymański",
+      "url": "https://www.plusliga.pl/statsPlayers/id/837.html"
+    },
+    {
+      "id": "842",
+      "name": "Jakub Wachnik",
+      "url": "https://www.plusliga.pl/statsPlayers/id/842.html"
+    },
+    {
+      "id": "855",
+      "name": "Jan Firlej",
+      "url": "https://www.plusliga.pl/statsPlayers/id/855.html"
+    },
+    {
+      "id": "858",
+      "name": "Jan Hadrava",
+      "url": "https://www.plusliga.pl/statsPlayers/id/858.html"
+    },
+    {
+      "id": "864",
+      "name": "Jan Nowakowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/864.html"
+    },
+    {
+      "id": "876",
+      "name": "Janusz Gałązka",
+      "url": "https://www.plusliga.pl/statsPlayers/id/876.html"
+    },
+    {
+      "id": "904",
+      "name": "Jędrzej Gruszczyński",
+      "url": "https://www.plusliga.pl/statsPlayers/id/904.html"
+    },
+    {
+      "id": "929",
+      "name": "Joaquin Gallego",
+      "url": "https://www.plusliga.pl/statsPlayers/id/929.html"
+    },
+    {
+      "id": "937",
+      "name": "Jordan Zaleszczyk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/937.html"
+    },
+    {
+      "id": "941",
+      "name": "Joshua Tuaniga",
+      "url": "https://www.plusliga.pl/statsPlayers/id/941.html"
+    },
+    {
+      "id": "982",
+      "name": "Jurij Gladyr",
+      "url": "https://www.plusliga.pl/statsPlayers/id/982.html"
+    },
+    {
+      "id": "1011",
+      "name": "Kacper Sienkiewicz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1011.html"
+    },
+    {
+      "id": "1020",
+      "name": "Kajetan Kubicki",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1020.html"
+    },
+    {
+      "id": "1022",
+      "name": "Kajetan Marek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1022.html"
+    },
+    {
+      "id": "1026",
+      "name": "Kamil Dembiec",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1026.html"
+    },
+    {
+      "id": "1029",
+      "name": "Kamil Droszyński",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1029.html"
+    },
+    {
+      "id": "1036",
+      "name": "Kamil Kosiba",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1036.html"
+    },
+    {
+      "id": "1039",
+      "name": "Kamil Kwasowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1039.html"
+    },
+    {
+      "id": "1043",
+      "name": "Kamil Maruszczyk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1043.html"
+    },
+    {
+      "id": "1054",
+      "name": "Kamil Szymendera",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1054.html"
+    },
+    {
+      "id": "1055",
+      "name": "Kamil Szymura",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1055.html"
+    },
+    {
+      "id": "1069",
+      "name": "Karol Borkowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1069.html"
+    },
+    {
+      "id": "1071",
+      "name": "Karol Butryn",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1071.html"
+    },
+    {
+      "id": "1077",
+      "name": "Karol Jankiewicz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1077.html"
+    },
+    {
+      "id": "1078",
+      "name": "Karol Kłos",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1078.html"
+    },
+    {
+      "id": "1082",
+      "name": "Karol Urbanowicz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1082.html"
+    },
+    {
+      "id": "1149",
+      "name": "Kévin Tillie",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1149.html"
+    },
+    {
+      "id": "1150",
+      "name": "Kewin Sasak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1150.html"
+    },
+    {
+      "id": "1179",
+      "name": "Klemen Čebulj",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1179.html"
+    },
+    {
+      "id": "1185",
+      "name": "Konrad Jankowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1185.html"
+    },
+    {
+      "id": "1191",
+      "name": "Konrad Stajer",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1191.html"
+    },
+    {
+      "id": "1204",
+      "name": "Krystian Walczak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1204.html"
+    },
+    {
+      "id": "1211",
+      "name": "Krzysztof Gibek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1211.html"
+    },
+    {
+      "id": "1229",
+      "name": "Krzysztof Rejno",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1229.html"
+    },
+    {
+      "id": "1239",
+      "name": "Kuba Hawryluk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1239.html"
+    },
+    {
+      "id": "1260",
+      "name": "Linus Weber",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1260.html"
+    },
+    {
+      "id": "1272",
+      "name": "Lukas Kampa",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1272.html"
+    },
+    {
+      "id": "1274",
+      "name": "Lukas Vasina",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1274.html"
+    },
+    {
+      "id": "1275",
+      "name": "Luke Perry",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1275.html"
+    },
+    {
+      "id": "1280",
+      "name": "Łukasz Kaczmarek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1280.html"
+    },
+    {
+      "id": "1285",
+      "name": "Łukasz Kozub",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1285.html"
+    },
+    {
+      "id": "1306",
+      "name": "Łukasz Usowicz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1306.html"
+    },
+    {
+      "id": "1309",
+      "name": "Łukasz Wiśniewski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1309.html"
+    },
+    {
+      "id": "1319",
+      "name": "Maciej Czyrek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1319.html"
+    },
+    {
+      "id": "1337",
+      "name": "Maciej Nowowsiak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1337.html"
+    },
+    {
+      "id": "1339",
+      "name": "Maciej Olenderek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1339.html"
+    },
+    {
+      "id": "1352",
+      "name": "Maciej Wóz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1352.html"
+    },
+    {
+      "id": "1354",
+      "name": "Maciej Zając",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1354.html"
+    },
+    {
+      "id": "1400",
+      "name": "Maksymilian Granieczny",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1400.html"
+    },
+    {
+      "id": "1423",
+      "name": "Manuel Armoa",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1423.html"
+    },
+    {
+      "id": "1443",
+      "name": "Marcin Janusz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1443.html"
+    },
+    {
+      "id": "1446",
+      "name": "Marcin Kania",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1446.html"
+    },
+    {
+      "id": "1453",
+      "name": "Marcin Komenda",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1453.html"
+    },
+    {
+      "id": "1455",
+      "name": "Marcin Krawiecki",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1455.html"
+    },
+    {
+      "id": "1470",
+      "name": "Marcin Waliński",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1470.html"
+    },
+    {
+      "id": "1579",
+      "name": "Mateusz Bieniek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1579.html"
+    },
+    {
+      "id": "1582",
+      "name": "Mateusz Borkowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1582.html"
+    },
+    {
+      "id": "1584",
+      "name": "Mateusz Czunkiewicz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1584.html"
+    },
+    {
+      "id": "1589",
+      "name": "Mateusz Janikowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1589.html"
+    },
+    {
+      "id": "1598",
+      "name": "Mateusz Kufka",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1598.html"
+    },
+    {
+      "id": "1602",
+      "name": "Mateusz Maciejewicz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1602.html"
+    },
+    {
+      "id": "1603",
+      "name": "Mateusz Malinowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1603.html"
+    },
+    {
+      "id": "1604",
+      "name": "Mateusz Masłowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1604.html"
+    },
+    {
+      "id": "1606",
+      "name": "Mateusz Nowak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1606.html"
+    },
+    {
+      "id": "1612",
+      "name": "Mateusz Poręba",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1612.html"
+    },
+    {
+      "id": "1614",
+      "name": "Mateusz Rećko",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1614.html"
+    },
+    {
+      "id": "1619",
+      "name": "Mateusz Siwicki",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1619.html"
+    },
+    {
+      "id": "1620",
+      "name": "Mateusz Szpernalowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1620.html"
+    },
+    {
+      "id": "1633",
+      "name": "Matias Sanchez",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1633.html"
+    },
+    {
+      "id": "1671",
+      "name": "Michał Gierżot",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1671.html"
+    },
+    {
+      "id": "1687",
+      "name": "Michał Kozłowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1687.html"
+    },
+    {
+      "id": "1707",
+      "name": "Michał Potera",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1707.html"
+    },
+    {
+      "id": "1713",
+      "name": "Michał Szalacha",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1713.html"
+    },
+    {
+      "id": "1728",
+      "name": "Miguel Tavares Rodrigues",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1728.html"
+    },
+    {
+      "id": "1740",
+      "name": "Mikołaj Sawicki",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1740.html"
+    },
+    {
+      "id": "1742",
+      "name": "Mikołaj Słotarski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1742.html"
+    },
+    {
+      "id": "1745",
+      "name": "Milad Ebadipour",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1745.html"
+    },
+    {
+      "id": "1759",
+      "name": "Miłosz Wróbel",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1759.html"
+    },
+    {
+      "id": "1760",
+      "name": "Miłosz Zniszczoł",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1760.html"
+    },
+    {
+      "id": "1762",
+      "name": "Miran Kujundžić",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1762.html"
+    },
+    {
+      "id": "1784",
+      "name": "Moritz Karlitzek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1784.html"
+    },
+    {
+      "id": "1787",
+      "name": "Moustapha M'Baye",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1787.html"
+    },
+    {
+      "id": "1826",
+      "name": "Nicolas Szerszeń",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1826.html"
+    },
+    {
+      "id": "1828",
+      "name": "Nicolas Zerba",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1828.html"
+    },
+    {
+      "id": "1848",
+      "name": "Norbert Huber",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1848.html"
+    },
+    {
+      "id": "1855",
+      "name": "Oleh Shevchenko",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1855.html"
+    },
+    {
+      "id": "1908",
+      "name": "Patryk Łaba",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1908.html"
+    },
+    {
+      "id": "1911",
+      "name": "Patryk Niemiec",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1911.html"
+    },
+    {
+      "id": "1914",
+      "name": "Patryk Szczurek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1914.html"
+    },
+    {
+      "id": "1915",
+      "name": "Patryk Szwaradzki",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1915.html"
+    },
+    {
+      "id": "1918",
+      "name": "Patryk Waloch",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1918.html"
+    },
+    {
+      "id": "1951",
+      "name": "Paweł Cieślik",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1951.html"
+    },
+    {
+      "id": "1954",
+      "name": "Paweł Halaba",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1954.html"
+    },
+    {
+      "id": "1964",
+      "name": "Paweł Pietraszko",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1964.html"
+    },
+    {
+      "id": "1977",
+      "name": "Paweł Zatorski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1977.html"
+    },
+    {
+      "id": "1997",
+      "name": "Piotr Fenoszyn",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1997.html"
+    },
+    {
+      "id": "2015",
+      "name": "Piotr Orczyk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2015.html"
+    },
+    {
+      "id": "2041",
+      "name": "Przemysław Stępień",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2041.html"
+    },
+    {
+      "id": "2065",
+      "name": "Rafał Buszek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2065.html"
+    },
+    {
+      "id": "2069",
+      "name": "Rafał Faryna",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2069.html"
+    },
+    {
+      "id": "2082",
+      "name": "Rafał Sobański",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2082.html"
+    },
+    {
+      "id": "2084",
+      "name": "Rafał Szymura",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2084.html"
+    },
+    {
+      "id": "2093",
+      "name": "Remigiusz Kapica",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2093.html"
+    },
+    {
+      "id": "2112",
+      "name": "Robert Täht",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2112.html"
+    },
+    {
+      "id": "2151",
+      "name": "Sebastian Adamczyk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2151.html"
+    },
+    {
+      "id": "2169",
+      "name": "Seweryn Lipiński",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2169.html"
+    },
+    {
+      "id": "2216",
+      "name": "Stéphen Boyer",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2216.html"
+    },
+    {
+      "id": "2231",
+      "name": "Szymon Gregorowicz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2231.html"
+    },
+    {
+      "id": "2233",
+      "name": "Szymon Jakubiszak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2233.html"
+    },
+    {
+      "id": "2238",
+      "name": "Szymon Patecki",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2238.html"
+    },
+    {
+      "id": "2260",
+      "name": "Thales Hoss",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2260.html"
+    },
+    {
+      "id": "2271",
+      "name": "Tobias Christian Brand",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2271.html"
+    },
+    {
+      "id": "2281",
+      "name": "Tomasz Fornal",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2281.html"
+    },
+    {
+      "id": "2290",
+      "name": "Tomasz Kowalski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2290.html"
+    },
+    {
+      "id": "2326",
+      "name": "Tymur Tsmokalo",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2326.html"
+    },
+    {
+      "id": "2337",
+      "name": "Vasyl Tupchii",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2337.html"
+    },
+    {
+      "id": "2359",
+      "name": "Vladyslav Shchurov",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2359.html"
+    },
+    {
+      "id": "2360",
+      "name": "Voitto Köykkä",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2360.html"
+    },
+    {
+      "id": "2362",
+      "name": "Vuk Todorović",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2362.html"
+    },
+    {
+      "id": "2385",
+      "name": "Wiktor Nowak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2385.html"
+    },
+    {
+      "id": "2387",
+      "name": "Wiktor Rajsner",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2387.html"
+    },
+    {
+      "id": "2405",
+      "name": "Wojciech Ferens",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2405.html"
+    },
+    {
+      "id": "2428",
+      "name": "Wojciech Włodarczyk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2428.html"
+    },
+    {
+      "id": "2436",
+      "name": "Yaroslav Pampushko",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2436.html"
+    },
+    {
+      "id": "2443",
+      "name": "Yurii Semeniuk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2443.html"
+    },
+    {
+      "id": "2452",
+      "name": "Žiga Štern",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2452.html"
+    },
+    {
+      "id": "2455",
+      "name": "Zouheir El Graoui",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2455.html"
+    },
+    {
+      "id": "2473",
+      "name": "Wojciech Więcławski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2473.html"
+    },
+    {
+      "id": "2479",
+      "name": "Aleks Grozdanov",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2479.html"
+    },
+    {
+      "id": "2480",
+      "name": "Wilfredo Leon Venero",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2480.html"
+    },
+    {
+      "id": "2481",
+      "name": "Bennie Tuinstra",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2481.html"
+    },
+    {
+      "id": "2482",
+      "name": "Fynnian McCarthy",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2482.html"
+    },
+    {
+      "id": "2483",
+      "name": "Pavle Perić",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2483.html"
+    },
+    {
+      "id": "2484",
+      "name": "David Dinculescu",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2484.html"
+    },
+    {
+      "id": "2485",
+      "name": "Amin Esmaeilnezhad",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2485.html"
+    },
+    {
+      "id": "2491",
+      "name": "Jakub Olejniczak",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2491.html"
+    },
+    {
+      "id": "2492",
+      "name": "Kellian Motta Paes",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2492.html"
+    },
+    {
+      "id": "2494",
+      "name": "Luka Tadić",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2494.html"
+    },
+    {
+      "id": "2495",
+      "name": "Igor Kyrcz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2495.html"
+    },
+    {
+      "id": "2496",
+      "name": "Valerii Todua",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2496.html"
+    },
+    {
+      "id": "2519",
+      "name": "Andrii Rohozhyn",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2519.html"
+    },
+    {
+      "id": "2520",
+      "name": "Anton Brehme",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2520.html"
+    },
+    {
+      "id": "2521",
+      "name": "Timothée Jean Lucien Carle",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2521.html"
+    },
+    {
+      "id": "2522",
+      "name": "Andrii Shvets",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2522.html"
+    },
+    {
+      "id": "2523",
+      "name": "Wojciech Gajek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2523.html"
+    },
+    {
+      "id": "2524",
+      "name": "Adrian Kucharczyk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2524.html"
+    },
+    {
+      "id": "2525",
+      "name": "Henrique Dantas Nóbrega Honorato",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2525.html"
+    },
+    {
+      "id": "2526",
+      "name": "Patryk Dudek",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2526.html"
+    },
+    {
+      "id": "2527",
+      "name": "Chizoba Eduardo Neves Atu",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2527.html"
+    },
+    {
+      "id": "2528",
+      "name": "Piotr Pilarz",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2528.html"
+    },
+    {
+      "id": "2529",
+      "name": "Gregor Ropret",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2529.html"
+    },
+    {
+      "id": "2530",
+      "name": "Maksymilian Peliński",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2530.html"
+    },
+    {
+      "id": "2531",
+      "name": "Quentin Jouffroy",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2531.html"
+    },
+    {
+      "id": "2532",
+      "name": "Aaron Russell",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2532.html"
+    },
+    {
+      "id": "2533",
+      "name": "Kyle Ensing",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2533.html"
+    },
+    {
+      "id": "2534",
+      "name": "Mathijs Desmet",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2534.html"
+    },
+    {
+      "id": "2535",
+      "name": "Rune Fasteland",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2535.html"
+    },
+    {
+      "id": "2536",
+      "name": "Lorenzo Pope",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2536.html"
+    },
+    {
+      "id": "2537",
+      "name": "Märt Tammearu",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2537.html"
+    },
+    {
+      "id": "2538",
+      "name": "Santeri Välimaa",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2538.html"
+    },
+    {
+      "id": "2539",
+      "name": "Luciano Vicentín",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2539.html"
+    },
+    {
+      "id": "2540",
+      "name": "Juan Ignacio Finoli",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2540.html"
+    },
+    {
+      "id": "2541",
+      "name": "Mobin Nasri",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2541.html"
+    },
+    {
+      "id": "2555",
+      "name": "Yevhenii Kisiluk",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2555.html"
+    },
+    {
+      "id": "2581",
+      "name": "Quinn Lester Isaacson",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2581.html"
+    },
+    {
+      "id": "2582",
+      "name": "Patrik Indra",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2582.html"
+    },
+    {
+      "id": "2650",
+      "name": "Gijs Jorna",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2650.html"
+    },
+    {
+      "id": "2700",
+      "name": "Kacper Grendysa",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2700.html"
+    },
+    {
+      "id": "2701",
+      "name": "Krzysztof Sękowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2701.html"
+    },
+    {
+      "id": "2709",
+      "name": "Łukasz Żygadło",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2709.html"
+    },
+    {
+      "id": "2710",
+      "name": "Kacper Sukiennik",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2710.html"
+    },
+    {
+      "id": "2712",
+      "name": "Radoslav Parapunov",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2712.html"
+    },
+    {
+      "id": "2724",
+      "name": "Filip Tarka",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2724.html"
+    },
+    {
+      "id": "2725",
+      "name": "Mateusz Wąsikowski",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2725.html"
+    }
+  ]
+}
