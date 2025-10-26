@@ -144,3 +144,61 @@ export function getPlayerById(id: string): PlayerWithCombinedStats | null {
   const players = getAllPlayers();
   return players.find(p => p.id === id) || null;
 }
+
+/**
+ * Get all players with enhanced data (includes match dates, W/L, phase)
+ */
+export function getAllPlayersEnhanced(): PlayerWithCombinedStats[] {
+  const players: PlayerWithCombinedStats[] = [];
+  
+  const enhancedFile = path.join(dataDir, 'plusliga-2024-2025', 'players-enhanced.json');
+  
+  if (fs.existsSync(enhancedFile)) {
+    console.log('📊 Reading enhanced data...');
+    const content = fs.readFileSync(enhancedFile, 'utf-8');
+    const data = JSON.parse(content);
+    
+    data.players.forEach((p: any) => {
+      players.push({
+        id: p.id,
+        name: p.name,
+        team: p.team || 'Unknown',
+        league: p.league || 'plusliga',
+        season: p.season || '2024-2025',
+        position: guessPosition(p.season_totals || {}),
+        career_totals: {},
+        season_totals: p.season_totals || {},
+        match_by_match: p.match_by_match || [],
+        currentSeasonStats: {
+          matches: p.season_totals?.matches || 0,
+          sets: p.season_totals?.sets || 0,
+          points: p.season_totals?.points || 0,
+          attacks: p.season_totals?.attack_total || 0,
+          attackEfficiency: p.season_totals?.attack_perfect_percent || 0,
+          blocks: p.season_totals?.block_points || 0,
+          aces: p.season_totals?.aces || 0,
+          serves: p.season_totals?.serve_total || 0,
+          serveEfficiency: 0,
+          reception: p.season_totals?.reception_total || 0,
+          receptionEfficiency: p.season_totals?.reception_perfect_percent || 0
+        },
+        careerTotals: {
+          matches: p.season_totals?.matches || 0,
+          sets: p.season_totals?.sets || 0,
+          points: p.season_totals?.points || 0,
+          attacks: p.season_totals?.attack_total || 0,
+          attackEfficiency: 0,
+          blocks: p.season_totals?.block_points || 0,
+          aces: p.season_totals?.aces || 0,
+          serves: 0,
+          serveEfficiency: 0,
+          reception: 0,
+          receptionEfficiency: 0
+        }
+      });
+    });
+    return players;
+  }
+  
+  return getAllPlayers();
+}

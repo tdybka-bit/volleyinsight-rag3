@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
 import { 
   Volleyball, 
   MessageCircle, 
@@ -22,16 +23,23 @@ import { useTheme } from '../components/ThemeProvider'
 import ThemeToggle from '../components/ThemeToggle'
 import { useAnalytics } from '../lib/analytics'
 
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+  queryType?: 'stats' | 'expert';
+  sources?: Array<{
+    id: number;
+    content: string;
+    score: number;
+    source: string;
+  }>;
+}
+
 export default function VolleyInsight() {
   const { theme } = useTheme()
   const { trackBlockClick, trackQuestion, trackPageView } = useAnalytics()
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const [messages, setMessages] = useState([
-    { 
-      role: 'assistant', 
-      content: 'Cześć! Jestem ekspertem VolleyInsight. Pomogę Ci w treningu siatkówki, analizie techniki i strategii gry. O czym chciałbyś porozmawiać?'
-    }
-  ])
+  const [messages, setMessages] = useState<Message[]>([])
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -48,63 +56,47 @@ export default function VolleyInsight() {
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return
 
-    const newMessages = [...messages, { role: 'user', content: inputMessage }]
-    setMessages(newMessages)
-    const userMessage = inputMessage
+    const userMessage: Message = { role: 'user', content: inputMessage }
+    setMessages(prev => [...prev, userMessage])
     setInputMessage('')
     setIsLoading(true)
-    
+
     try {
-      // Wyślij pytanie do API chat
-      const response = await fetch('/api/chat', {
+      const response = await fetch('/api/chat-unified', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: userMessage, limit: 3 }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: inputMessage,
+          history: messages.map(m => ({
+            role: m.role,
+            content: m.content
+          }))
+        })
       })
 
       const data = await response.json()
 
-      if (data.success) {
-        // Dodaj odpowiedź AI z smart context info
-        const aiMessage = data.message
-        let contextInfo = ''
-        
-        if (data.context?.responseSource === 'database') {
-          contextInfo = `\n\n📚 *Odpowiedź na podstawie ${data.context.relevantSourcesCount} wysokiej jakości źródeł z bazy wiedzy VolleyInsight*`
-        } else if (data.context?.responseSource === 'hybrid') {
-          contextInfo = `\n\n🔗 *Odpowiedź hybrydowa: ${data.context.relevantSourcesCount} źródeł z bazy + wiedza ekspercka*`
-        } else {
-          contextInfo = '\n\n🤖 *Odpowiedź na podstawie wiedzy eksperckiej (brak odpowiednich danych w bazie)*'
-        }
-        
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: aiMessage + contextInfo 
-        }])
-
-        // Track question analytics
-        trackQuestion(
-          userMessage, 
-          undefined, 
-          aiMessage.length, 
-          data.context?.hasContext || false, 
-          data.context?.sourcesCount || 0
-        )
-      } else {
-        // Błąd API - pokaż komunikat błędu
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: data.message || 'Przepraszam, wystąpił błąd podczas przetwarzania Twojego pytania.' 
-        }])
+      if (data.error) {
+        throw new Error(data.error)
       }
+
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: data.response,
+        queryType: data.queryType,
+        sources: data.sources
+      }
+
+      setMessages(prev => [...prev, assistantMessage])
     } catch (error) {
-      console.error('Błąd wysyłania wiadomości:', error)
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'Przepraszam, wystąpił błąd połączenia. Spróbuj ponownie.' 
-      }])
+      console.error('Chat error:', error)
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: 'Przepraszam, wystąpił błąd. Spróbuj ponownie.',
+        }
+      ])
     } finally {
       setIsLoading(false)
     }
@@ -349,37 +341,87 @@ export default function VolleyInsight() {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            {messages.length === 0 && (
+              <div className="text-center py-8">
+                <div className="text-6xl mb-4">🏐</div>
+                <h3 className="text-xl font-semibold text-white mb-2">VolleyInsight Chat</h3>
+                <p className="text-gray-300 mb-4">Zadaj pytanie o statystyki lub technikę siatkówki</p>
+                <div className="flex gap-2 justify-center text-sm">
+                  <span className="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full">
+                    📊 Statystyki
+                  </span>
+                  <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full">
+                    🎓 Wiedza ekspercka
+                  </span>
+                </div>
+              </div>
+            )}
             {messages.map((message, index) => (
               <div
                 key={index}
                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[85%] px-4 py-3 rounded-lg text-lg leading-relaxed ${
+                  className={`max-w-[85%] rounded-xl p-4 ${
                     message.role === 'user'
-                      ? 'text-white'
-                      : 'glass-card text-card-foreground'
+                      ? 'bg-orange-500/20 border border-orange-500/30'
+                      : 'bg-white/10 border border-white/20'
                   }`}
-                  style={message.role === 'user' ? {
-                    background: `linear-gradient(135deg, var(--gradient-start), var(--gradient-end))`
-                  } : {}}
                 >
-                  {message.content}
+                  <div className="flex items-start gap-3">
+                    <div className="text-2xl">
+                      {message.role === 'user' ? '👤' : '🤖'}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-white whitespace-pre-wrap">{message.content}</p>
+                      
+                      {message.queryType && (
+                        <div className="mt-2 text-xs text-gray-400">
+                          Źródło: {message.queryType === 'stats' ? '📊 Statystyki' : '🎓 Wiedza ekspercka'}
+                        </div>
+                      )}
+
+                      {message.sources && message.sources.length > 0 && (
+                        <details className="mt-3">
+                          <summary className="text-xs text-blue-400 cursor-pointer hover:text-blue-300">
+                            Pokaż źródła ({message.sources.length})
+                          </summary>
+                          <div className="mt-2 space-y-2">
+                            {message.sources.map(source => (
+                              <div
+                                key={source.id}
+                                className="text-xs bg-slate-800/50 p-2 rounded border border-slate-700"
+                              >
+                                <div className="text-gray-400 mb-1">
+                                  {source.source === 'stats' ? '📊' : '🎓'} Score: {source.score.toFixed(2)}
+                                </div>
+                                <div className="text-gray-300">{source.content}</div>
+                              </div>
+                            ))}
+                          </div>
+                        </details>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
-            {/* Auto-scroll target */}
-            <div ref={messagesEndRef} />
             {isLoading && (
               <div className="flex justify-start">
-                <div className="glass-card text-card-foreground px-4 py-3 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span className="text-lg">AI analizuje pytanie...</span>
+                <div className="bg-white/10 border border-white/20 rounded-xl p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl">🤖</div>
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
                   </div>
                 </div>
               </div>
             )}
+            {/* Auto-scroll target */}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Input */}
@@ -390,7 +432,7 @@ export default function VolleyInsight() {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                placeholder="Zadaj pytanie o siatkówkę..."
+                placeholder="Zadaj pytanie o statystyki lub technikę siatkówki..."
                 className="flex-1 px-4 py-3 text-lg glass rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 disabled={isLoading}
               />
@@ -404,6 +446,9 @@ export default function VolleyInsight() {
               >
                 <Send className="w-5 h-5" />
               </button>
+            </div>
+            <div className="mt-2 text-center text-xs text-gray-400">
+              💡 Chat automatycznie wybiera źródło danych na podstawie Twojego pytania
             </div>
           </div>
         </div>
