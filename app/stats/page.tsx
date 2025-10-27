@@ -1,9 +1,9 @@
-import { getAllPlayers } from '@/lib/playerData';
+import { getAllPlayersEnhanced } from '@/lib/playerData';
 import StatsTableWithFilters from '@/components/stats/StatsTableWithFilters';
 import Link from 'next/link';
 
 export default function StatsPage() {
-  const allPlayers = getAllPlayers();
+  const allPlayers = getAllPlayersEnhanced();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">

@@ -25,6 +25,7 @@ export default function TaskCard({
 
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData('text/plain', task.id);
+    e.dataTransfer.setData('text/status', task.status);
     e.dataTransfer.effectAllowed = 'move';
   };
 
@@ -66,28 +67,28 @@ export default function TaskCard({
     <div
       draggable
       onDragStart={handleDragStart}
-      className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4 cursor-move hover:bg-white/15 transition-all duration-200 hover:scale-105 hover:shadow-lg"
+      className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-3 cursor-move hover:bg-white/15 transition-all duration-200 hover:scale-105 hover:shadow-lg"
     >
       {isEditing ? (
-        <div className="space-y-3">
+        <div className="space-y-2">
           <input
             type="text"
             value={editData.title}
             onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-            className="w-full bg-white/20 border border-white/30 rounded px-3 py-2 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full bg-white/20 border border-white/30 rounded px-2 py-1 text-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
             placeholder="Tytuł zadania"
           />
           <textarea
             value={editData.description}
             onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-            className="w-full bg-white/20 border border-white/30 rounded px-3 py-2 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
-            rows={3}
+            className="w-full bg-white/20 border border-white/30 rounded px-2 py-1 text-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+            rows={2}
             placeholder="Opis zadania"
           />
           <select
             value={editData.category}
             onChange={(e) => setEditData({ ...editData, category: e.target.value as Task['category'] })}
-            className="w-full bg-white/20 border border-white/30 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full bg-white/20 border border-white/30 rounded px-2 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
           >
             <option value="Frontend">Frontend</option>
             <option value="Backend">Backend</option>
@@ -96,16 +97,16 @@ export default function TaskCard({
             <option value="RAG">RAG</option>
             <option value="Other">Other</option>
           </select>
-          <div className="flex space-x-2">
+          <div className="flex space-x-1">
             <button
               onClick={handleSave}
-              className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition-colors"
+              className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs transition-colors"
             >
               Zapisz
             </button>
             <button
               onClick={handleCancel}
-              className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm transition-colors"
+              className="bg-gray-600 hover:bg-gray-700 text-white px-2 py-1 rounded text-xs transition-colors"
             >
               Anuluj
             </button>
@@ -114,23 +115,23 @@ export default function TaskCard({
       ) : (
         <>
           {/* Category Badge */}
-          <div className="flex justify-between items-start mb-2">
+          <div className="flex justify-between items-start mb-1">
             <span
-              className={`px-2 py-1 rounded-full text-xs font-medium text-white ${getCategoryColor(task.category)}`}
+              className={`px-1.5 py-0.5 rounded-full text-xs font-medium text-white ${getCategoryColor(task.category)}`}
             >
               {task.category}
             </span>
             <div className="flex space-x-1">
               <button
                 onClick={handleEdit}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white transition-colors text-xs"
                 title="Edytuj"
               >
                 ✏️
               </button>
               <button
                 onClick={handleDelete}
-                className="text-gray-400 hover:text-red-400 transition-colors"
+                className="text-gray-400 hover:text-red-400 transition-colors text-xs"
                 title="Usuń"
               >
                 🗑️
@@ -139,23 +140,20 @@ export default function TaskCard({
           </div>
 
           {/* Task Title */}
-          <h3 className="text-white font-semibold mb-2 line-clamp-2">
+          <h3 className="text-white font-semibold mb-1 text-sm line-clamp-2">
             {task.title}
           </h3>
 
           {/* Task Description */}
           {task.description && (
-            <p className="text-gray-300 text-sm mb-3 line-clamp-3">
+            <p className="text-gray-300 text-xs mb-2 line-clamp-2">
               {task.description}
             </p>
           )}
 
           {/* Task Meta */}
-          <div className="text-xs text-gray-400 space-y-1">
-            <p>Utworzone: {formatDate(task.createdAt)}</p>
-            {task.updatedAt.getTime() !== task.createdAt.getTime() && (
-              <p>Zaktualizowane: {formatDate(task.updatedAt)}</p>
-            )}
+          <div className="text-xs text-gray-400">
+            <p className="text-xs">{formatDate(task.createdAt)}</p>
           </div>
         </>
       )}

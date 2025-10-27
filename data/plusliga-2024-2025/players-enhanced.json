@@ -5,7 +5,10 @@
     "merged_at": "2025-10-26T11:03:43.249Z",
     "total_players": 100,
     "total_matches": 2229,
-    "source_files": 5
+    "source_files": 5,
+    "positions_updated_at": "2025-10-27T19:42:03.739Z",
+    "positions_found": 70,
+    "positions_not_found": 30
   },
   "players": [
     {
@@ -843,7 +846,8 @@
         }
       ],
       "matches_count": 27,
-      "scraped_at": "2025-10-25T23:13:24.691Z"
+      "scraped_at": "2025-10-25T23:13:24.691Z",
+      "position": "Atakujący"
     },
     {
       "id": "33",
@@ -1767,7 +1771,8 @@
         }
       ],
       "matches_count": 22,
-      "scraped_at": "2025-10-25T23:14:48.686Z"
+      "scraped_at": "2025-10-25T23:14:48.686Z",
+      "position": "Środkowy"
     },
     {
       "id": "42",
@@ -2304,7 +2309,8 @@
         }
       ],
       "matches_count": 17,
-      "scraped_at": "2025-10-25T23:15:36.726Z"
+      "scraped_at": "2025-10-25T23:15:36.726Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "126",
@@ -3126,7 +3132,8 @@
       "season_totals": {},
       "match_by_match": [],
       "matches_count": 0,
-      "scraped_at": "2025-10-25T23:20:23.086Z"
+      "scraped_at": "2025-10-25T23:20:23.086Z",
+      "position": "Atakujący"
     },
     {
       "id": "169",
@@ -5553,7 +5560,8 @@
         }
       ],
       "matches_count": 28,
-      "scraped_at": "2025-10-25T23:24:13.763Z"
+      "scraped_at": "2025-10-25T23:24:13.763Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "235",
@@ -6630,7 +6638,8 @@
         }
       ],
       "matches_count": 35,
-      "scraped_at": "2025-10-25T23:25:56.195Z"
+      "scraped_at": "2025-10-25T23:25:56.195Z",
+      "position": "Atakujący"
     },
     {
       "id": "250",
@@ -7674,7 +7683,8 @@
         }
       ],
       "matches_count": 10,
-      "scraped_at": "2025-10-25T23:27:29.732Z"
+      "scraped_at": "2025-10-25T23:27:29.732Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "253",
@@ -8844,7 +8854,8 @@
         }
       ],
       "matches_count": 38,
-      "scraped_at": "2025-10-25T23:29:24.953Z"
+      "scraped_at": "2025-10-25T23:29:24.953Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "263",
@@ -10944,7 +10955,8 @@
         }
       ],
       "matches_count": 37,
-      "scraped_at": "2025-10-25T23:32:45.187Z"
+      "scraped_at": "2025-10-25T23:32:45.187Z",
+      "position": "Atakujący"
     },
     {
       "id": "278",
@@ -12834,7 +12846,8 @@
         }
       ],
       "matches_count": 32,
-      "scraped_at": "2025-10-25T23:35:46.514Z"
+      "scraped_at": "2025-10-25T23:35:46.514Z",
+      "position": "Środkowy"
     },
     {
       "id": "280",
@@ -13854,7 +13867,8 @@
         }
       ],
       "matches_count": 33,
-      "scraped_at": "2025-10-25T23:37:25.794Z"
+      "scraped_at": "2025-10-25T23:37:25.794Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "282",
@@ -16158,7 +16172,8 @@
         }
       ],
       "matches_count": 30,
-      "scraped_at": "2025-10-25T23:41:50.454Z"
+      "scraped_at": "2025-10-25T23:41:50.454Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "301",
@@ -17088,7 +17103,8 @@
         }
       ],
       "matches_count": 30,
-      "scraped_at": "2025-10-25T23:43:19.872Z"
+      "scraped_at": "2025-10-25T23:43:19.872Z",
+      "position": "Atakujący"
     },
     {
       "id": "302",
@@ -17655,7 +17671,8 @@
         }
       ],
       "matches_count": 18,
-      "scraped_at": "2025-10-25T23:44:10.531Z"
+      "scraped_at": "2025-10-25T23:44:10.531Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "305",
@@ -18585,7 +18602,8 @@
         }
       ],
       "matches_count": 30,
-      "scraped_at": "2025-10-25T23:45:41.456Z"
+      "scraped_at": "2025-10-25T23:45:41.456Z",
+      "position": "Środkowy"
     },
     {
       "id": "313",
@@ -20415,7 +20433,8 @@
         }
       ],
       "matches_count": 34,
-      "scraped_at": "2025-10-25T23:48:36.880Z"
+      "scraped_at": "2025-10-25T23:48:36.880Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "316",
@@ -20952,7 +20971,8 @@
         }
       ],
       "matches_count": 17,
-      "scraped_at": "2025-10-25T23:49:25.300Z"
+      "scraped_at": "2025-10-25T23:49:25.300Z",
+      "position": "Libero"
     },
     {
       "id": "318",
@@ -21879,7 +21899,8 @@
         }
       ],
       "matches_count": 30,
-      "scraped_at": "2025-10-25T23:50:51.472Z"
+      "scraped_at": "2025-10-25T23:50:51.472Z",
+      "position": "Libero"
     },
     {
       "id": "323",
@@ -22503,7 +22524,8 @@
         }
       ],
       "matches_count": 3,
-      "scraped_at": "2025-10-25T23:51:43.780Z"
+      "scraped_at": "2025-10-25T23:51:43.780Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "341",
@@ -23580,7 +23602,8 @@
         }
       ],
       "matches_count": 35,
-      "scraped_at": "2025-10-25T23:54:25.523Z"
+      "scraped_at": "2025-10-25T23:54:25.523Z",
+      "position": "Rozgrywający"
     },
     {
       "id": "362",
@@ -24540,7 +24563,8 @@
         }
       ],
       "matches_count": 31,
-      "scraped_at": "2025-10-25T23:55:59.751Z"
+      "scraped_at": "2025-10-25T23:55:59.751Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "382",
@@ -24897,7 +24921,8 @@
         }
       ],
       "matches_count": 11,
-      "scraped_at": "2025-10-25T23:56:30.428Z"
+      "scraped_at": "2025-10-25T23:56:30.428Z",
+      "position": "Środkowy"
     },
     {
       "id": "405",
@@ -27351,7 +27376,8 @@
         }
       ],
       "matches_count": 30,
-      "scraped_at": "2025-10-26T00:00:22.128Z"
+      "scraped_at": "2025-10-26T00:00:22.128Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "412",
@@ -27558,7 +27584,8 @@
         }
       ],
       "matches_count": 6,
-      "scraped_at": "2025-10-26T00:00:37.408Z"
+      "scraped_at": "2025-10-26T00:00:37.408Z",
+      "position": "Środkowy"
     },
     {
       "id": "413",
@@ -28398,7 +28425,8 @@
         }
       ],
       "matches_count": 27,
-      "scraped_at": "2025-10-26T00:01:57.378Z"
+      "scraped_at": "2025-10-26T00:01:57.378Z",
+      "position": "Atakujący"
     },
     {
       "id": "418",
@@ -29085,7 +29113,8 @@
         }
       ],
       "matches_count": 22,
-      "scraped_at": "2025-10-26T00:03:00.171Z"
+      "scraped_at": "2025-10-26T00:03:00.171Z",
+      "position": "Atakujący"
     },
     {
       "id": "419",
@@ -30312,7 +30341,8 @@
         }
       ],
       "matches_count": 40,
-      "scraped_at": "2025-10-26T00:04:56.313Z"
+      "scraped_at": "2025-10-26T00:04:56.313Z",
+      "position": "Libero"
     },
     {
       "id": "423",
@@ -31059,7 +31089,8 @@
         }
       ],
       "matches_count": 24,
-      "scraped_at": "2025-10-26T00:09:32.082Z"
+      "scraped_at": "2025-10-26T00:09:32.082Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "426",
@@ -31956,7 +31987,8 @@
         }
       ],
       "matches_count": 29,
-      "scraped_at": "2025-10-26T00:10:55.483Z"
+      "scraped_at": "2025-10-26T00:10:55.483Z",
+      "position": "Atakujący"
     },
     {
       "id": "436",
@@ -32946,7 +32978,8 @@
         }
       ],
       "matches_count": 32,
-      "scraped_at": "2025-10-26T00:12:29.602Z"
+      "scraped_at": "2025-10-26T00:12:29.602Z",
+      "position": "Środkowy"
     },
     {
       "id": "462",
@@ -33486,7 +33519,8 @@
         }
       ],
       "matches_count": 17,
-      "scraped_at": "2025-10-26T00:13:20.716Z"
+      "scraped_at": "2025-10-26T00:13:20.716Z",
+      "position": "Środkowy"
     },
     {
       "id": "468",
@@ -34653,7 +34687,8 @@
         }
       ],
       "matches_count": 7,
-      "scraped_at": "2025-10-26T00:15:10.020Z"
+      "scraped_at": "2025-10-26T00:15:10.020Z",
+      "position": "Libero"
     },
     {
       "id": "482",
@@ -35433,7 +35468,8 @@
         }
       ],
       "matches_count": 25,
-      "scraped_at": "2025-10-26T00:16:24.810Z"
+      "scraped_at": "2025-10-26T00:16:24.810Z",
+      "position": "Środkowy"
     },
     {
       "id": "487",
@@ -36513,7 +36549,8 @@
         }
       ],
       "matches_count": 35,
-      "scraped_at": "2025-10-26T00:18:10.975Z"
+      "scraped_at": "2025-10-26T00:18:10.975Z",
+      "position": "Środkowy"
     },
     {
       "id": "497",
@@ -41061,7 +41098,8 @@
         }
       ],
       "matches_count": 35,
-      "scraped_at": "2025-10-26T00:25:19.302Z"
+      "scraped_at": "2025-10-26T00:25:19.302Z",
+      "position": "Libero"
     },
     {
       "id": "604",
@@ -41268,7 +41306,8 @@
         }
       ],
       "matches_count": 6,
-      "scraped_at": "2025-10-26T00:25:35.291Z"
+      "scraped_at": "2025-10-26T00:25:35.291Z",
+      "position": "Libero"
     },
     {
       "id": "618",
@@ -41415,7 +41454,8 @@
         }
       ],
       "matches_count": 4,
-      "scraped_at": "2025-10-26T00:25:45.018Z"
+      "scraped_at": "2025-10-26T00:25:45.018Z",
+      "position": "Rozgrywający"
     },
     {
       "id": "626",
@@ -42966,7 +43006,8 @@
         }
       ],
       "matches_count": 34,
-      "scraped_at": "2025-10-26T00:28:03.569Z"
+      "scraped_at": "2025-10-26T00:28:03.569Z",
+      "position": "Rozgrywający"
     },
     {
       "id": "682",
@@ -43917,7 +43958,8 @@
         }
       ],
       "matches_count": 7,
-      "scraped_at": "2025-10-26T00:29:24.114Z"
+      "scraped_at": "2025-10-26T00:29:24.114Z",
+      "position": "Środkowy"
     },
     {
       "id": "726",
@@ -44937,7 +44979,8 @@
         }
       ],
       "matches_count": 33,
-      "scraped_at": "2025-10-26T00:31:02.451Z"
+      "scraped_at": "2025-10-26T00:31:02.451Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "741",
@@ -45867,7 +45910,8 @@
         }
       ],
       "matches_count": 30,
-      "scraped_at": "2025-10-26T00:32:31.727Z"
+      "scraped_at": "2025-10-26T00:32:31.727Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "777",
@@ -47184,7 +47228,8 @@
         }
       ],
       "matches_count": 26,
-      "scraped_at": "2025-10-26T00:34:35.951Z"
+      "scraped_at": "2025-10-26T00:34:35.951Z",
+      "position": "Atakujący"
     },
     {
       "id": "785",
@@ -47481,7 +47526,8 @@
         }
       ],
       "matches_count": 9,
-      "scraped_at": "2025-10-26T00:35:01.105Z"
+      "scraped_at": "2025-10-26T00:35:01.105Z",
+      "position": "Libero"
     },
     {
       "id": "786",
@@ -48411,7 +48457,8 @@
         }
       ],
       "matches_count": 30,
-      "scraped_at": "2025-10-26T00:36:31.722Z"
+      "scraped_at": "2025-10-26T00:36:31.722Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "798",
@@ -49458,7 +49505,8 @@
         }
       ],
       "matches_count": 9,
-      "scraped_at": "2025-10-26T00:38:08.487Z"
+      "scraped_at": "2025-10-26T00:38:08.487Z",
+      "position": "Libero"
     },
     {
       "id": "803",
@@ -50568,7 +50616,8 @@
         }
       ],
       "matches_count": 36,
-      "scraped_at": "2025-10-26T00:39:56.166Z"
+      "scraped_at": "2025-10-26T00:39:56.166Z",
+      "position": "Środkowy"
     },
     {
       "id": "807",
@@ -51192,7 +51241,8 @@
         }
       ],
       "matches_count": 8,
-      "scraped_at": "2025-10-26T00:40:47.869Z"
+      "scraped_at": "2025-10-26T00:40:47.869Z",
+      "position": "Libero"
     },
     {
       "id": "815",
@@ -51789,7 +51839,8 @@
         }
       ],
       "matches_count": 19,
-      "scraped_at": "2025-10-26T00:41:41.896Z"
+      "scraped_at": "2025-10-26T00:41:41.896Z",
+      "position": "Środkowy"
     },
     {
       "id": "816",
@@ -52386,7 +52437,8 @@
         }
       ],
       "matches_count": 19,
-      "scraped_at": "2025-10-26T00:42:35.056Z"
+      "scraped_at": "2025-10-26T00:42:35.056Z",
+      "position": "Środkowy"
     },
     {
       "id": "821",
@@ -53133,7 +53185,8 @@
         }
       ],
       "matches_count": 24,
-      "scraped_at": "2025-10-26T00:43:44.596Z"
+      "scraped_at": "2025-10-26T00:43:44.596Z",
+      "position": "Rozgrywający"
     },
     {
       "id": "825",
@@ -54240,7 +54293,8 @@
         }
       ],
       "matches_count": 36,
-      "scraped_at": "2025-10-26T00:45:30.926Z"
+      "scraped_at": "2025-10-26T00:45:30.926Z",
+      "position": "Libero"
     },
     {
       "id": "834",
@@ -55107,7 +55161,8 @@
         }
       ],
       "matches_count": 28,
-      "scraped_at": "2025-10-26T00:46:51.440Z"
+      "scraped_at": "2025-10-26T00:46:51.440Z",
+      "position": "Środkowy"
     },
     {
       "id": "836",
@@ -55776,7 +55831,8 @@
         }
       ],
       "matches_count": 21,
-      "scraped_at": "2025-10-26T00:47:55.856Z"
+      "scraped_at": "2025-10-26T00:47:55.856Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "842",
@@ -56253,7 +56309,8 @@
         }
       ],
       "matches_count": 15,
-      "scraped_at": "2025-10-26T00:48:38.444Z"
+      "scraped_at": "2025-10-26T00:48:38.444Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "855",
@@ -57480,7 +57537,8 @@
         }
       ],
       "matches_count": 40,
-      "scraped_at": "2025-10-26T00:50:34.681Z"
+      "scraped_at": "2025-10-26T00:50:34.681Z",
+      "position": "Rozgrywający"
     },
     {
       "id": "858",
@@ -58350,7 +58408,8 @@
         }
       ],
       "matches_count": 28,
-      "scraped_at": "2025-10-26T00:51:58.562Z"
+      "scraped_at": "2025-10-26T00:51:58.562Z",
+      "position": "Atakujący"
     },
     {
       "id": "864",
@@ -59337,7 +59396,8 @@
         }
       ],
       "matches_count": 32,
-      "scraped_at": "2025-10-26T00:53:31.184Z"
+      "scraped_at": "2025-10-26T00:53:31.184Z",
+      "position": "Środkowy"
     },
     {
       "id": "876",
@@ -59751,7 +59811,8 @@
         }
       ],
       "matches_count": 8,
-      "scraped_at": "2025-10-26T00:54:03.735Z"
+      "scraped_at": "2025-10-26T00:54:03.735Z",
+      "position": "Libero"
     },
     {
       "id": "929",
@@ -60441,7 +60502,8 @@
         }
       ],
       "matches_count": 22,
-      "scraped_at": "2025-10-26T00:55:09.573Z"
+      "scraped_at": "2025-10-26T00:55:09.573Z",
+      "position": "Środkowy"
     },
     {
       "id": "937",
@@ -60738,7 +60800,8 @@
         }
       ],
       "matches_count": 9,
-      "scraped_at": "2025-10-26T00:55:34.568Z"
+      "scraped_at": "2025-10-26T00:55:34.568Z",
+      "position": "Środkowy"
     },
     {
       "id": "941",
@@ -61725,7 +61788,8 @@
         }
       ],
       "matches_count": 32,
-      "scraped_at": "2025-10-26T00:57:07.057Z"
+      "scraped_at": "2025-10-26T00:57:07.057Z",
+      "position": "Rozgrywający"
     },
     {
       "id": "982",
@@ -62745,7 +62809,8 @@
         }
       ],
       "matches_count": 33,
-      "scraped_at": "2025-10-26T00:58:46.076Z"
+      "scraped_at": "2025-10-26T00:58:46.076Z",
+      "position": "Środkowy"
     },
     {
       "id": "1011",
@@ -62777,7 +62842,8 @@
       },
       "match_by_match": [],
       "matches_count": 0,
-      "scraped_at": "2025-10-26T00:58:49.919Z"
+      "scraped_at": "2025-10-26T00:58:49.919Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "1020",
@@ -63704,7 +63770,8 @@
         }
       ],
       "matches_count": 30,
-      "scraped_at": "2025-10-26T01:00:16.236Z"
+      "scraped_at": "2025-10-26T01:00:16.236Z",
+      "position": "Rozgrywający"
     },
     {
       "id": "1022",
@@ -64778,7 +64845,8 @@
         }
       ],
       "matches_count": 6,
-      "scraped_at": "2025-10-26T01:01:53.158Z"
+      "scraped_at": "2025-10-26T01:01:53.158Z",
+      "position": "Libero"
     },
     {
       "id": "1029",
@@ -65525,7 +65593,8 @@
         }
       ],
       "matches_count": 24,
-      "scraped_at": "2025-10-26T01:03:01.592Z"
+      "scraped_at": "2025-10-26T01:03:01.592Z",
+      "position": "Rozgrywający"
     },
     {
       "id": "1036",
@@ -67265,7 +67334,8 @@
         }
       ],
       "matches_count": 30,
-      "scraped_at": "2025-10-26T01:05:49.350Z"
+      "scraped_at": "2025-10-26T01:05:49.350Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "1043",
@@ -67919,7 +67989,8 @@
         }
       ],
       "matches_count": 6,
-      "scraped_at": "2025-10-26T01:06:44.406Z"
+      "scraped_at": "2025-10-26T01:06:44.406Z",
+      "position": "Przyjmujący"
     },
     {
       "id": "1055",
@@ -68876,7 +68947,8 @@
         }
       ],
       "matches_count": 31,
-      "scraped_at": "2025-10-26T01:08:14.022Z"
+      "scraped_at": "2025-10-26T01:08:14.022Z",
+      "position": "Libero"
     },
     {
       "id": "1069",
@@ -69653,7 +69725,8 @@
         }
       ],
       "matches_count": 25,
-      "scraped_at": "2025-10-26T01:09:26.474Z"
+      "scraped_at": "2025-10-26T01:09:26.474Z",
+      "position": "Przyjmujący"
     }
   ]
 }

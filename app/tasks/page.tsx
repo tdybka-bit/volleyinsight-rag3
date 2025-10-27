@@ -10,7 +10,8 @@ export interface Task {
   title: string;
   description: string;
   category: 'Frontend' | 'Backend' | 'Scraping' | 'Data' | 'RAG' | 'Other';
-  status: 'todo' | 'in-progress' | 'done';
+  status: 'todo' | 'in-progress' | 'done' | 'parking-lot';
+  order: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -26,10 +27,12 @@ export default function TasksPage() {
     const savedTasks = localStorage.getItem('tasks');
     if (savedTasks) {
       try {
-        const parsedTasks = JSON.parse(savedTasks).map((task: any) => ({
+        const parsedTasks = JSON.parse(savedTasks).map((task: any, index: number) => ({
           ...task,
           createdAt: new Date(task.createdAt),
           updatedAt: new Date(task.updatedAt),
+          // Dodaj pole order jeśli nie istnieje (migracja starych danych)
+          order: task.order || index + 1,
         }));
         setTasks(parsedTasks);
       } catch (error) {
@@ -43,10 +46,14 @@ export default function TasksPage() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
 
-  const addTask = (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const addTask = (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'>) => {
+    const tasksInStatus = tasks.filter(task => task.status === taskData.status);
+    const maxOrder = tasksInStatus.length > 0 ? Math.max(...tasksInStatus.map(t => t.order || 0)) : 0;
+    
     const newTask: Task = {
       ...taskData,
       id: Date.now().toString(),
+      order: maxOrder + 1,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -69,11 +76,68 @@ export default function TasksPage() {
   };
 
   const moveTask = (taskId: string, newStatus: Task['status']) => {
-    updateTask(taskId, { status: newStatus });
+    setTasks(prev => {
+      const taskToMove = prev.find(task => task.id === taskId);
+      if (!taskToMove) return prev;
+      
+      // Znajdź maksymalny order w nowej sekcji
+      const tasksInNewStatus = prev.filter(task => task.status === newStatus);
+      const maxOrder = tasksInNewStatus.length > 0 ? Math.max(...tasksInNewStatus.map(t => t.order || 0)) : 0;
+      
+      return prev.map(task => 
+        task.id === taskId 
+          ? { 
+              ...task, 
+              status: newStatus, 
+              order: maxOrder + 1,
+              updatedAt: new Date() 
+            }
+          : task
+      );
+    });
+  };
+
+  const reorderTask = (taskId: string, newOrder: number, status: Task['status']) => {
+    setTasks(prev => {
+      // Znajdź wszystkie zadania w tej sekcji
+      const tasksInStatus = prev.filter(task => task.status === status);
+      const sortedTasks = tasksInStatus.sort((a, b) => (a.order || 0) - (b.order || 0));
+      
+      // Znajdź zadanie do przesunięcia
+      const taskToMove = sortedTasks.find(task => task.id === taskId);
+      if (!taskToMove) {
+        return prev;
+      }
+      
+      const currentIndex = sortedTasks.findIndex(task => task.id === taskId);
+      
+      // Jeśli ta sama pozycja, nie rób nic
+      if (currentIndex === newOrder) {
+        return prev;
+      }
+      
+      // Utwórz nową tablicę z przesuniętym zadaniem
+      const newTasks = [...sortedTasks];
+      const [movedTask] = newTasks.splice(currentIndex, 1);
+      newTasks.splice(newOrder, 0, movedTask);
+      
+      // Przypisz nowe order
+      const reorderedTasks = newTasks.map((task, index) => ({
+        ...task,
+        order: index + 1,
+        updatedAt: new Date()
+      }));
+      
+      // Połącz z zadaniami z innych sekcji
+      const otherTasks = prev.filter(task => task.status !== status);
+      return [...otherTasks, ...reorderedTasks];
+    });
   };
 
   const getTasksByStatus = (status: Task['status']) => {
-    return tasks.filter(task => task.status === status);
+    return tasks
+      .filter(task => task.status === status)
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
   };
 
   const getCategoryColor = (category: Task['category']) => {
@@ -109,16 +173,16 @@ export default function TasksPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Task Tracker</h1>
-          <p className="text-blue-200">Zarządzaj swoimi zadaniami w trzech kolumnach</p>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-white mb-1">Task Tracker</h1>
+          <p className="text-blue-200 text-sm">Zarządzaj swoimi zadaniami w trzech kolumnach</p>
         </div>
 
         {/* Add Task Button */}
-        <div className="mb-6">
+        <div className="mb-4">
           <button
             onClick={() => setShowForm(true)}
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg text-sm"
           >
             + Dodaj nowe zadanie
           </button>
@@ -134,12 +198,13 @@ export default function TasksPage() {
         )}
 
         {/* Task Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <TaskColumn
             title="To Do"
             status="todo"
             tasks={getTasksByStatus('todo')}
             onMoveTask={moveTask}
+            onReorderTask={reorderTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}
             getCategoryColor={getCategoryColor}
@@ -149,6 +214,7 @@ export default function TasksPage() {
             status="in-progress"
             tasks={getTasksByStatus('in-progress')}
             onMoveTask={moveTask}
+            onReorderTask={reorderTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}
             getCategoryColor={getCategoryColor}
@@ -158,6 +224,17 @@ export default function TasksPage() {
             status="done"
             tasks={getTasksByStatus('done')}
             onMoveTask={moveTask}
+            onReorderTask={reorderTask}
+            onUpdateTask={updateTask}
+            onDeleteTask={deleteTask}
+            getCategoryColor={getCategoryColor}
+          />
+          <TaskColumn
+            title="Parking Lot"
+            status="parking-lot"
+            tasks={getTasksByStatus('parking-lot')}
+            onMoveTask={moveTask}
+            onReorderTask={reorderTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}
             getCategoryColor={getCategoryColor}
