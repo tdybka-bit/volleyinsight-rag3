@@ -174,18 +174,19 @@ export default function TasksPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white mb-1">Task Tracker</h1>
-          <p className="text-blue-200 text-sm">Zarządzaj swoimi zadaniami w trzech kolumnach</p>
-        </div>
-
-        {/* Add Task Button */}
-        <div className="mb-4">
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg text-sm"
-          >
-            + Dodaj nowe zadanie
-          </button>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-white mb-1">Task Tracker</h1>
+              <p className="text-blue-200 text-sm">Zarządzaj swoimi zadaniami w trzech kolumnach</p>
+            </div>
+            {/* Add Task Button */}
+            <button
+              onClick={() => setShowForm(true)}
+              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg text-sm"
+            >
+              + Dodaj nowe zadanie
+            </button>
+          </div>
         </div>
 
         {/* Task Form Modal */}

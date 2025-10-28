@@ -86,7 +86,7 @@ export default function TaskForm({ categories, onSubmit, onCancel }: TaskFormPro
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              className="w-full bg-slate-700 border border-white/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
             >
               {categories.map((category) => (
                 <option key={category} value={category} className="bg-slate-800">
@@ -106,7 +106,7 @@ export default function TaskForm({ categories, onSubmit, onCancel }: TaskFormPro
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              className="w-full bg-slate-700 border border-white/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
             >
               <option value="todo" className="bg-slate-800">To Do</option>
               <option value="in-progress" className="bg-slate-800">In Progress</option>

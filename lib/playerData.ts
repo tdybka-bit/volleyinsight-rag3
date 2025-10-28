@@ -165,39 +165,39 @@ export function getAllPlayersEnhanced(): PlayerWithCombinedStats[] {
   const seasons = ['2023-2024', '2024-2025'];
 
   // First pass: calculate career totals
-  seasons.forEach(season => {
-    const enhancedFile = path.join(dataDir, `plusliga-${season}`, 'players-enhanced.json');
-    
-    if (fs.existsSync(enhancedFile)) {
-      const content = fs.readFileSync(enhancedFile, 'utf-8');
-      const data = JSON.parse(content);
+seasons.forEach(season => {
+  const enhancedFile = path.join(dataDir, `plusliga-${season}`, 'players-enhanced.json');
+  
+  if (fs.existsSync(enhancedFile)) {
+    const content = fs.readFileSync(enhancedFile, 'utf-8');
+    const data = JSON.parse(content);
 
-      data.players?.forEach((p: any) => {
-        const playerId = p.id;
-        const currentStats = p.season_totals || {};
-        
-        const existing = careerMap.get(playerId) || {
-          matches: 0, sets: 0, points: 0, attacks: 0, attackEfficiency: 0,
-          blocks: 0, aces: 0, serves: 0, serveEfficiency: 0,
-          reception: 0, receptionEfficiency: 0
-        };
+    data.players?.forEach((p: any) => {
+      const playerId = p.id;
+      const matches = p.match_by_match || [];
+      
+      const existing = careerMap.get(playerId) || {
+        matches: 0, sets: 0, points: 0, attacks: 0, attackEfficiency: 0,
+        blocks: 0, aces: 0, serves: 0, serveEfficiency: 0,
+        reception: 0, receptionEfficiency: 0
+      };
 
-        careerMap.set(playerId, {
-          matches: existing.matches + (currentStats.matches || 0),
-          sets: existing.sets + (currentStats.sets || 0),
-          points: existing.points + (currentStats.points || 0),
-          attacks: existing.attacks + (currentStats.attack_total || 0),
-          attackEfficiency: 0,
-          blocks: existing.blocks + (currentStats.block_points || 0),
-          aces: existing.aces + (currentStats.aces || 0),
-          serves: existing.serves + (currentStats.serve_total || 0),
-          serveEfficiency: 0,
-          reception: existing.reception + (currentStats.reception_total || 0),
-          receptionEfficiency: 0
-        });
+      careerMap.set(playerId, {
+        matches: existing.matches + matches.length,
+        sets: existing.sets + matches.reduce((sum: number, m: any) => sum + (m.sets || 0), 0),
+        points: existing.points + matches.reduce((sum: number, m: any) => sum + (m.points_total || 0), 0),
+        attacks: existing.attacks + matches.reduce((sum: number, m: any) => sum + (m.attack_total || 0), 0),
+        attackEfficiency: 0,
+        blocks: existing.blocks + matches.reduce((sum: number, m: any) => sum + (m.block_points || 0), 0),
+        aces: existing.aces + matches.reduce((sum: number, m: any) => sum + (m.serve_aces || 0), 0),
+        serves: existing.serves + matches.reduce((sum: number, m: any) => sum + (m.serve_total || 0), 0),
+        serveEfficiency: 0,
+        reception: existing.reception + matches.reduce((sum: number, m: any) => sum + (m.reception_total || 0), 0),
+        receptionEfficiency: 0
       });
-    }
-  });
+    });
+  }
+});
 
   // Second pass: create player entries for each season
   seasons.forEach(season => {

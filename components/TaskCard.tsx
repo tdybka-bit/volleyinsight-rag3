@@ -88,14 +88,15 @@ export default function TaskCard({
           <select
             value={editData.category}
             onChange={(e) => setEditData({ ...editData, category: e.target.value as Task['category'] })}
-            className="w-full bg-white/20 border border-white/30 rounded px-2 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full bg-slate-700 border border-white/30 rounded px-2 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+            style={{ backgroundColor: '#334155' }}
           >
-            <option value="Frontend">Frontend</option>
-            <option value="Backend">Backend</option>
-            <option value="Scraping">Scraping</option>
-            <option value="Data">Data</option>
-            <option value="RAG">RAG</option>
-            <option value="Other">Other</option>
+            <option value="Frontend" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>Frontend</option>
+            <option value="Backend" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>Backend</option>
+            <option value="Scraping" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>Scraping</option>
+            <option value="Data" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>Data</option>
+            <option value="RAG" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>RAG</option>
+            <option value="Other" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>Other</option>
           </select>
           <div className="flex space-x-1">
             <button
