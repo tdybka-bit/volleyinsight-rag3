@@ -1,0 +1,154 @@
+{
+  "meta": {
+    "year": 2024,
+    "championship_id": 961,
+    "phase_id": 5,
+    "scraped_at": "2025-10-30T21:42:10.026Z",
+    "total_giornate": 4,
+    "total_matches": 14
+  },
+  "calendar": {
+    "Gara 1 Quarti - Domenica 9 Marzo 2025": {
+      "matches": [
+        {
+          "match_number": "1400",
+          "date": "Sabato 8/3/2025Ore 20:30",
+          "home_team": "Itas Trentino",
+          "away_team": "Cisterna Volley",
+          "result": "3-0",
+          "home_score": 3,
+          "away_score": 0
+        },
+        {
+          "match_number": "1401",
+          "date": "Domenica 9/3/2025Ore 19:30",
+          "home_team": "Rana Verona",
+          "away_team": "Gas Sales Bluenergy Piacenza",
+          "result": "1-3",
+          "home_score": 1,
+          "away_score": 3
+        },
+        {
+          "match_number": "1402",
+          "date": "Sabato 8/3/2025Ore 16:00",
+          "home_team": "Sir Susa Vim Perugia",
+          "away_team": "Valsa Group Modena",
+          "result": "3-1",
+          "home_score": 3,
+          "away_score": 1
+        },
+        {
+          "match_number": "1403",
+          "date": "Domenica 9/3/2025Ore 17:00",
+          "home_team": "Cucine Lube Civitanova",
+          "away_team": "Allianz Milano",
+          "result": "2-3",
+          "home_score": 2,
+          "away_score": 3
+        }
+      ]
+    },
+    "Gara 2 Quarti - Domenica 16 Marzo 2025 Ore 18:00": {
+      "matches": [
+        {
+          "match_number": "1404",
+          "date": "Domenica 16/3/2025Ore 18:00",
+          "home_team": "Cisterna Volley",
+          "away_team": "Itas Trentino",
+          "result": "3-1",
+          "home_score": 3,
+          "away_score": 1
+        },
+        {
+          "match_number": "1405",
+          "date": "Domenica 16/3/2025Ore 16:00",
+          "home_team": "Gas Sales Bluenergy Piacenza",
+          "away_team": "Rana Verona",
+          "result": "3-0",
+          "home_score": 3,
+          "away_score": 0
+        },
+        {
+          "match_number": "1406",
+          "date": "Domenica 16/3/2025Ore 19:00",
+          "home_team": "Valsa Group Modena",
+          "away_team": "Sir Susa Vim Perugia",
+          "result": "0-3",
+          "home_score": 0,
+          "away_score": 3
+        },
+        {
+          "match_number": "1407",
+          "date": "Domenica 16/3/2025Ore 17:00",
+          "home_team": "Allianz Milano",
+          "away_team": "Cucine Lube Civitanova",
+          "result": "0-3",
+          "home_score": 0,
+          "away_score": 3
+        }
+      ]
+    },
+    "Gara 3 Quarti - Domenica 23 Marzo 2025 Ore 18:00": {
+      "matches": [
+        {
+          "match_number": "1408",
+          "date": "Domenica 23/3/2025Ore 15:30",
+          "home_team": "Itas Trentino",
+          "away_team": "Cisterna Volley",
+          "result": "3-1",
+          "home_score": 3,
+          "away_score": 1
+        },
+        {
+          "match_number": "1409",
+          "date": "Sabato 22/3/2025Ore 21:00",
+          "home_team": "Rana Verona",
+          "away_team": "Gas Sales Bluenergy Piacenza",
+          "result": "1-3",
+          "home_score": 1,
+          "away_score": 3
+        },
+        {
+          "match_number": "1410",
+          "date": "Domenica 23/3/2025Ore 19:00",
+          "home_team": "Sir Susa Vim Perugia",
+          "away_team": "Valsa Group Modena",
+          "result": "3-1",
+          "home_score": 3,
+          "away_score": 1
+        },
+        {
+          "match_number": "1411",
+          "date": "Domenica 23/3/2025Ore 18:00",
+          "home_team": "Cucine Lube Civitanova",
+          "away_team": "Allianz Milano",
+          "result": "3-1",
+          "home_score": 3,
+          "away_score": 1
+        }
+      ]
+    },
+    "Gara 4 Quarti - Mercoledí 26 Marzo 2025 Ore 20:30": {
+      "matches": [
+        {
+          "match_number": "1412",
+          "date": "Mercoledí 26/3/2025Ore 20:30",
+          "home_team": "Cisterna Volley",
+          "away_team": "Itas Trentino",
+          "result": "1-3",
+          "home_score": 1,
+          "away_score": 3
+        },
+        {
+          "match_number": "1415",
+          "date": "Mercoledí 26/3/2025Ore 20:30",
+          "home_team": "Allianz Milano",
+          "away_team": "Cucine Lube Civitanova",
+          "result": "1-3",
+          "home_score": 1,
+          "away_score": 3
+        }
+      ]
+    }
+  }
+}

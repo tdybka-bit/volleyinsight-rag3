@@ -7,6 +7,7 @@ interface TaskCardProps {
   task: Task;
   onUpdate: (taskId: string, updates: Partial<Task>) => void;
   onDelete: (taskId: string) => void;
+  onCopy: (task: Task) => void;
   getCategoryColor: (category: Task['category']) => string;
 }
 
@@ -14,6 +15,7 @@ export default function TaskCard({
   task,
   onUpdate,
   onDelete,
+  onCopy,
   getCategoryColor,
 }: TaskCardProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -129,6 +131,13 @@ export default function TaskCard({
                 title="Edytuj"
               >
                 ✏️
+              </button>
+              <button
+                onClick={() => onCopy(task)}
+                className="text-gray-400 hover:text-blue-400 transition-colors text-xs"
+                title="Kopiuj zadanie"
+              >
+                📋
               </button>
               <button
                 onClick={handleDelete}

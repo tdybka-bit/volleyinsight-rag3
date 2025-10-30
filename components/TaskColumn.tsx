@@ -12,6 +12,7 @@ interface TaskColumnProps {
   onReorderTask: (taskId: string, newOrder: number, status: Task['status']) => void;
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
   onDeleteTask: (taskId: string) => void;
+  onCopyTask: (task: Task) => void;
   getCategoryColor: (category: Task['category']) => string;
 }
 
@@ -23,6 +24,7 @@ export default function TaskColumn({
   onReorderTask,
   onUpdateTask,
   onDeleteTask,
+  onCopyTask,
   getCategoryColor,
 }: TaskColumnProps) {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -170,6 +172,7 @@ export default function TaskColumn({
                 task={task}
                 onUpdate={onUpdateTask}
                 onDelete={onDeleteTask}
+                onCopy={onCopyTask}
                 getCategoryColor={getCategoryColor}
               />
               

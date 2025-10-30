@@ -47,12 +47,17 @@ async function loadCalendar(year, championshipId, phases) {
 }
 
 /**
- * Find match details in calendar
+ * Find match details in calendar for specific team and giornata
  */
 function findMatchInCalendar(calendar, giornata, playerTeam) {
-  // Try to find giornata in calendar
+  // Extract giornata number (e.g., "RSA1 - 1 Andata" -> "1")
+  const giornataNum = giornata.match(/(\d+)/)?.[1];
+  if (!giornataNum) return null;
+  
   for (const [key, value] of Object.entries(calendar)) {
-    if (key.toLowerCase().includes(giornata.toLowerCase())) {
+    const calendarGiornataNum = key.match(/(\d+)/)?.[1];
+    
+    if (calendarGiornataNum === giornataNum) {
       // Find match where playerTeam played
       for (const match of value.matches) {
         if (match.home_team === playerTeam) {
@@ -84,9 +89,9 @@ function findMatchInCalendar(calendar, giornata, playerTeam) {
 /**
  * Scrape player profile
  */
-async function scrapePlayer(playerId, playerName, year, serie, calendar) {
+async function scrapePlayer(playerId, playerName, playerTeam, year, serie, calendar) {
   try {
-    console.log(`\n🔥 [${playerId}] ${playerName}`);
+    console.log(`\n🔥 [${playerId}] ${playerName} (${playerTeam})`);
     
     const url = `https://www.legavolley.it/statistiche/?TipoStat=2.2&Serie=${serie}&AnnoInizio=${year}&Fase=100&Giornata=0&Atleta=${playerId}`;
     const response = await axios.get(url, {
@@ -96,25 +101,18 @@ async function scrapePlayer(playerId, playerName, year, serie, calendar) {
 
     const $ = cheerio.load(response.data);
     
-    // Extract player team (from page context)
-    let playerTeam = 'Unknown';
-    // Team might be in breadcrumbs or somewhere else - we'll extract from match data
-    
-    // Find match-by-match stats table
+    // Collect matches
     const matches = [];
     $('table#Statistica tbody tr').each((i, row) => {
       const $row = $(row);
       const cells = $row.find('td');
       
-      // Skip header rows
       if (cells.length < 10) return;
       
       const giornata = cleanText(cells.eq(0).text());
       
-      // Skip if it's a header or summary row
       if (!giornata || giornata.includes('Giornata') || giornata === '') return;
       
-      // Extract stats
       const matchData = {
         giornata: giornata,
         sets: parseNumber(cells.eq(1).text()),
@@ -142,7 +140,7 @@ async function scrapePlayer(playerId, playerName, year, serie, calendar) {
         points_per_set: parseNumber(cells.eq(23).text())
       };
       
-      // Try to find match in calendar
+      // Enrich with calendar data
       const calendarMatch = findMatchInCalendar(calendar, giornata, playerTeam);
       if (calendarMatch) {
         Object.assign(matchData, calendarMatch);
@@ -183,7 +181,7 @@ async function main() {
   
   const [year, serie, startIndex, endIndex] = args.map(Number);
   
-  // Load players list
+  // Load players list (now with teams!)
   const playersListFile = path.join(__dirname, '..', 'data', `legavolley-${year}`, `players-list-serie${serie}.json`);
   console.log(`\n📂 Loading ${playersListFile}...`);
   
@@ -217,7 +215,14 @@ async function main() {
     
     console.log(`${progress} Progress: ${successCount} success, ${failCount} failed`);
     
-    const player = await scrapePlayer(playerInfo.id, playerInfo.name, year, serie, calendar);
+    const player = await scrapePlayer(
+      playerInfo.id, 
+      playerInfo.name, 
+      playerInfo.team,  // Now we have team from players list!
+      year, 
+      serie, 
+      calendar
+    );
     
     if (player) {
       players.push(player);

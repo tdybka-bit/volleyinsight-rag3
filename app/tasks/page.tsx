@@ -47,17 +47,26 @@ export default function TasksPage() {
   }, [tasks]);
 
   const addTask = (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'>) => {
+    // Znajdź wszystkie zadania w tym samym statusie
     const tasksInStatus = tasks.filter(task => task.status === taskData.status);
-    const maxOrder = tasksInStatus.length > 0 ? Math.max(...tasksInStatus.map(t => t.order || 0)) : 0;
     
+    // Przesuń wszystkie istniejące zadania w tym statusie o 1 w dół (zwiększ ich order)
+    const updatedTasks = tasks.map(task => 
+      task.status === taskData.status 
+        ? { ...task, order: (task.order || 0) + 1, updatedAt: new Date() }
+        : task
+    );
+    
+    // Utwórz nowe zadanie z order = 0 (na górze)
     const newTask: Task = {
       ...taskData,
       id: Date.now().toString(),
-      order: maxOrder + 1,
+      order: 0,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    setTasks(prev => [...prev, newTask]);
+    
+    setTasks(prev => [...updatedTasks, newTask]);
     setShowForm(false);
   };
 
@@ -73,6 +82,27 @@ export default function TasksPage() {
 
   const deleteTask = (taskId: string) => {
     setTasks(prev => prev.filter(task => task.id !== taskId));
+  };
+
+  const copyTask = (originalTask: Task) => {
+    // Przesuń wszystkie istniejące zadania w tym samym statusie o 1 w dół
+    const updatedTasks = tasks.map(task => 
+      task.status === originalTask.status 
+        ? { ...task, order: (task.order || 0) + 1, updatedAt: new Date() }
+        : task
+    );
+    
+    // Utwórz skopiowane zadanie z order = 0 (na górze)
+    const copiedTask: Task = {
+      ...originalTask,
+      id: Date.now().toString(),
+      title: `${originalTask.title} (kopia)`,
+      order: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    
+    setTasks(prev => [...updatedTasks, copiedTask]);
   };
 
   const moveTask = (taskId: string, newStatus: Task['status']) => {
@@ -208,6 +238,7 @@ export default function TasksPage() {
             onReorderTask={reorderTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}
+            onCopyTask={copyTask}
             getCategoryColor={getCategoryColor}
           />
           <TaskColumn
@@ -218,6 +249,7 @@ export default function TasksPage() {
             onReorderTask={reorderTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}
+            onCopyTask={copyTask}
             getCategoryColor={getCategoryColor}
           />
           <TaskColumn
@@ -228,6 +260,7 @@ export default function TasksPage() {
             onReorderTask={reorderTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}
+            onCopyTask={copyTask}
             getCategoryColor={getCategoryColor}
           />
           <TaskColumn
@@ -238,6 +271,7 @@ export default function TasksPage() {
             onReorderTask={reorderTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}
+            onCopyTask={copyTask}
             getCategoryColor={getCategoryColor}
           />
         </div>

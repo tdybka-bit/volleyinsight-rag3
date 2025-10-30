@@ -1,0 +1,856 @@
+{
+  "meta": {
+    "league": "tauronliga",
+    "season": "2022-2023",
+    "scraped_at": "2025-10-30T20:52:38.795Z",
+    "total_players": 169,
+    "source_url": "https://www.tauronliga.pl/statsPlayers/tournament_1/42.html"
+  },
+  "players": [
+    {
+      "id": "45",
+      "name": "Adriana Adamek",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/45.html"
+    },
+    {
+      "id": "46",
+      "name": "Adrianna Kukulska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/46.html"
+    },
+    {
+      "id": "48",
+      "name": "Adrianna Rybak-Czyrniańska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/48.html"
+    },
+    {
+      "id": "49",
+      "name": "Adrianna Szady",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/49.html"
+    },
+    {
+      "id": "54",
+      "name": "Agata Nowak",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/54.html"
+    },
+    {
+      "id": "60",
+      "name": "Agata Witkowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/60.html"
+    },
+    {
+      "id": "61",
+      "name": "Agnieszka Adamek",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/61.html"
+    },
+    {
+      "id": "66",
+      "name": "Agnieszka Korneluk",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/66.html"
+    },
+    {
+      "id": "88",
+      "name": "Aleksandra Cygan",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/88.html"
+    },
+    {
+      "id": "89",
+      "name": "Aleksandra Dudek",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/89.html"
+    },
+    {
+      "id": "92",
+      "name": "Aleksandra Gromadowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/92.html"
+    },
+    {
+      "id": "93",
+      "name": "Aleksandra Gryka",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/93.html"
+    },
+    {
+      "id": "95",
+      "name": "Aleksandra Jedut",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/95.html"
+    },
+    {
+      "id": "98",
+      "name": "Aleksandra Justka",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/98.html"
+    },
+    {
+      "id": "99",
+      "name": "Aleksandra Kazała",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/99.html"
+    },
+    {
+      "id": "105",
+      "name": "Aleksandra Rasińska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/105.html"
+    },
+    {
+      "id": "111",
+      "name": "Aleksandra Szczepańska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/111.html"
+    },
+    {
+      "id": "112",
+      "name": "Aleksandra Szczygłowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/112.html"
+    },
+    {
+      "id": "118",
+      "name": "Aleksandra Wenerska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/118.html"
+    },
+    {
+      "id": "119",
+      "name": "Aleksandra Żurawska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/119.html"
+    },
+    {
+      "id": "139",
+      "name": "Alicja Grabka",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/139.html"
+    },
+    {
+      "id": "147",
+      "name": "Alina Bartkowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/147.html"
+    },
+    {
+      "id": "154",
+      "name": "Amelia Senica",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/154.html"
+    },
+    {
+      "id": "160",
+      "name": "Anastasiya Kraiduba",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/160.html"
+    },
+    {
+      "id": "163",
+      "name": "Anastazja Hryshchuk",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/163.html"
+    },
+    {
+      "id": "187",
+      "name": "Angela Mroczek",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/187.html"
+    },
+    {
+      "id": "189",
+      "name": "Angelika Gajer",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/189.html"
+    },
+    {
+      "id": "193",
+      "name": "Ann Kalandadze",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/193.html"
+    },
+    {
+      "id": "194",
+      "name": "Anna Bączyńska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/194.html"
+    },
+    {
+      "id": "205",
+      "name": "Anna Lewandowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/205.html"
+    },
+    {
+      "id": "211",
+      "name": "Anna Obiała",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/211.html"
+    },
+    {
+      "id": "212",
+      "name": "Anna Pawłowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/212.html"
+    },
+    {
+      "id": "218",
+      "name": "Anneclaire Ter Brugge",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/218.html"
+    },
+    {
+      "id": "266",
+      "name": "Barbara Cembrzyńska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/266.html"
+    },
+    {
+      "id": "448",
+      "name": "Daria Przybyła",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/448.html"
+    },
+    {
+      "id": "449",
+      "name": "Daria Skomorowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/449.html"
+    },
+    {
+      "id": "499",
+      "name": "Diana Dąbrowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/499.html"
+    },
+    {
+      "id": "527",
+      "name": "Dominika Milun",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/527.html"
+    },
+    {
+      "id": "529",
+      "name": "Dominika Mras-Paliwoda",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/529.html"
+    },
+    {
+      "id": "532",
+      "name": "Dominika Pierzchała",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/532.html"
+    },
+    {
+      "id": "534",
+      "name": "Dominika Sobolska-Tarasova",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/534.html"
+    },
+    {
+      "id": "536",
+      "name": "Dominika Witowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/536.html"
+    },
+    {
+      "id": "556",
+      "name": "Elena Becheva",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/556.html"
+    },
+    {
+      "id": "562",
+      "name": "Ellen Braga",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/562.html"
+    },
+    {
+      "id": "599",
+      "name": "Ewelina Wilińska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/599.html"
+    },
+    {
+      "id": "600",
+      "name": "Ewelina Żurowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/600.html"
+    },
+    {
+      "id": "605",
+      "name": "Fabiola Almeida de Sousa",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/605.html"
+    },
+    {
+      "id": "644",
+      "name": "Gabriela Dębowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/644.html"
+    },
+    {
+      "id": "647",
+      "name": "Gabriela Makarowska-Kulej",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/647.html"
+    },
+    {
+      "id": "648",
+      "name": "Gabriela Orvosova",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/648.html"
+    },
+    {
+      "id": "650",
+      "name": "Gabriela Ponikowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/650.html"
+    },
+    {
+      "id": "661",
+      "name": "Gozde Yilmaz",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/661.html"
+    },
+    {
+      "id": "722",
+      "name": "Iga Wasilewska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/722.html"
+    },
+    {
+      "id": "759",
+      "name": "Izabela Bałucka",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/759.html"
+    },
+    {
+      "id": "764",
+      "name": "Izabela Śliwa",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/764.html"
+    },
+    {
+      "id": "765",
+      "name": "Izabella Rapacz",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/765.html"
+    },
+    {
+      "id": "872",
+      "name": "Janet Kalaniuvalu",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/872.html"
+    },
+    {
+      "id": "892",
+      "name": "Jelena Blagojević",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/892.html"
+    },
+    {
+      "id": "912",
+      "name": "Joanna Chorąża",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/912.html"
+    },
+    {
+      "id": "922",
+      "name": "Joanna Lelonkiewicz",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/922.html"
+    },
+    {
+      "id": "924",
+      "name": "Joanna Sikorska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/924.html"
+    },
+    {
+      "id": "942",
+      "name": "Jovana Brakocevic-Canzian",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/942.html"
+    },
+    {
+      "id": "948",
+      "name": "Judyta Gawlak",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/948.html"
+    },
+    {
+      "id": "949",
+      "name": "Julia Bartczak",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/949.html"
+    },
+    {
+      "id": "950",
+      "name": "Julia Bińczycka",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/950.html"
+    },
+    {
+      "id": "953",
+      "name": "Julia Gliwa",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/953.html"
+    },
+    {
+      "id": "955",
+      "name": "Julia Kąkol",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/955.html"
+    },
+    {
+      "id": "958",
+      "name": "Julia Lenik",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/958.html"
+    },
+    {
+      "id": "959",
+      "name": "Julia Mazur",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/959.html"
+    },
+    {
+      "id": "961",
+      "name": "Julia Nowicka",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/961.html"
+    },
+    {
+      "id": "970",
+      "name": "Julia Stancelewska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/970.html"
+    },
+    {
+      "id": "971",
+      "name": "Julia Szczurowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/971.html"
+    },
+    {
+      "id": "978",
+      "name": "Julita Piasecka",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/978.html"
+    },
+    {
+      "id": "987",
+      "name": "Justyna Kędziora",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/987.html"
+    },
+    {
+      "id": "988",
+      "name": "Justyna Łukasik",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/988.html"
+    },
+    {
+      "id": "990",
+      "name": "Justyna Łysiak",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/990.html"
+    },
+    {
+      "id": "1061",
+      "name": "Kamila Kobus",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1061.html"
+    },
+    {
+      "id": "1062",
+      "name": "Kamila Witkowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1062.html"
+    },
+    {
+      "id": "1066",
+      "name": "Karina Chmielewska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1066.html"
+    },
+    {
+      "id": "1088",
+      "name": "Karolina Drużkowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1088.html"
+    },
+    {
+      "id": "1089",
+      "name": "Karolina Fedorek",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1089.html"
+    },
+    {
+      "id": "1106",
+      "name": "Katarzyna Bagrowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1106.html"
+    },
+    {
+      "id": "1117",
+      "name": "Katarzyna Marcyniuk",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1117.html"
+    },
+    {
+      "id": "1123",
+      "name": "Katarzyna Połeć",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1123.html"
+    },
+    {
+      "id": "1131",
+      "name": "Katarzyna Wawrzyniak",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1131.html"
+    },
+    {
+      "id": "1132",
+      "name": "Katarzyna Wenerska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1132.html"
+    },
+    {
+      "id": "1156",
+      "name": "Kinga Drabek",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1156.html"
+    },
+    {
+      "id": "1161",
+      "name": "Kinga Różyńska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1161.html"
+    },
+    {
+      "id": "1162",
+      "name": "Kinga Stronias",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1162.html"
+    },
+    {
+      "id": "1163",
+      "name": "Kinga Szűcs",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1163.html"
+    },
+    {
+      "id": "1167",
+      "name": "Klaudia Alagierska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1167.html"
+    },
+    {
+      "id": "1173",
+      "name": "Klaudia Kulig",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1173.html"
+    },
+    {
+      "id": "1176",
+      "name": "Klaudia Nowakowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1176.html"
+    },
+    {
+      "id": "1180",
+      "name": "Koleta Łyszkiewicz",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1180.html"
+    },
+    {
+      "id": "1197",
+      "name": "Kornelia Garita",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1197.html"
+    },
+    {
+      "id": "1207",
+      "name": "Krystyna Strasz",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1207.html"
+    },
+    {
+      "id": "1241",
+      "name": "Lana Conceicao",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1241.html"
+    },
+    {
+      "id": "1242",
+      "name": "Lana Scuka",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1242.html"
+    },
+    {
+      "id": "1248",
+      "name": "Lenka Oveckova",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1248.html"
+    },
+    {
+      "id": "1267",
+      "name": "Lucie Muhlsteinova",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1267.html"
+    },
+    {
+      "id": "1277",
+      "name": "Łucja Kuriata",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1277.html"
+    },
+    {
+      "id": "1358",
+      "name": "Madison Bugg",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1358.html"
+    },
+    {
+      "id": "1361",
+      "name": "Magda Kubas",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1361.html"
+    },
+    {
+      "id": "1363",
+      "name": "Magdalena Damaske-Dawid",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1363.html"
+    },
+    {
+      "id": "1368",
+      "name": "Magdalena Janiuk",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1368.html"
+    },
+    {
+      "id": "1369",
+      "name": "Magdalena Jurczyk",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1369.html"
+    },
+    {
+      "id": "1372",
+      "name": "Magdalena Mazurek",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1372.html"
+    },
+    {
+      "id": "1373",
+      "name": "Magdalena Ociepa",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1373.html"
+    },
+    {
+      "id": "1375",
+      "name": "Magdalena Saad",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1375.html"
+    },
+    {
+      "id": "1385",
+      "name": "Maira Cipriano",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1385.html"
+    },
+    {
+      "id": "1390",
+      "name": "Maja Szymańska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1390.html"
+    },
+    {
+      "id": "1392",
+      "name": "Majka Szczepańska-Pogoda",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1392.html"
+    },
+    {
+      "id": "1410",
+      "name": "Małgorzata Jasek",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1410.html"
+    },
+    {
+      "id": "1413",
+      "name": "Małgorzata Lisiak",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1413.html"
+    },
+    {
+      "id": "1490",
+      "name": "Margarita Stepanenko",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1490.html"
+    },
+    {
+      "id": "1492",
+      "name": "Maria Stenzel",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1492.html"
+    },
+    {
+      "id": "1501",
+      "name": "Marina Mazenko",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1501.html"
+    },
+    {
+      "id": "1530",
+      "name": "Marlena Kowalewska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1530.html"
+    },
+    {
+      "id": "1536",
+      "name": "Marta Duda",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1536.html"
+    },
+    {
+      "id": "1543",
+      "name": "Marta Łyczakowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1543.html"
+    },
+    {
+      "id": "1545",
+      "name": "Marta Orzyłowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1545.html"
+    },
+    {
+      "id": "1547",
+      "name": "Marta Pol",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1547.html"
+    },
+    {
+      "id": "1559",
+      "name": "Martyna Borowczak",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1559.html"
+    },
+    {
+      "id": "1560",
+      "name": "Martyna Czyrniańska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1560.html"
+    },
+    {
+      "id": "1562",
+      "name": "Martyna Grajber-Nowakowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1562.html"
+    },
+    {
+      "id": "1563",
+      "name": "Martyna Łazowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1563.html"
+    },
+    {
+      "id": "1564",
+      "name": "Martyna Łukasik",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1564.html"
+    },
+    {
+      "id": "1567",
+      "name": "Martyna Piotrowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1567.html"
+    },
+    {
+      "id": "1646",
+      "name": "Melis Durul",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1646.html"
+    },
+    {
+      "id": "1647",
+      "name": "Melissa Evans",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1647.html"
+    },
+    {
+      "id": "1770",
+      "name": "Monika Fedusio",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1770.html"
+    },
+    {
+      "id": "1771",
+      "name": "Monika Gałkowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1771.html"
+    },
+    {
+      "id": "1773",
+      "name": "Monika Jagła",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1773.html"
+    },
+    {
+      "id": "1798",
+      "name": "Natalia Dróżdż",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1798.html"
+    },
+    {
+      "id": "1801",
+      "name": "Natalia Kecher",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1801.html"
+    },
+    {
+      "id": "1805",
+      "name": "Natalia Mędrzyk",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1805.html"
+    },
+    {
+      "id": "1807",
+      "name": "Natalia Murek",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1807.html"
+    },
+    {
+      "id": "1808",
+      "name": "Natalia Pajdak",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1808.html"
+    },
+    {
+      "id": "1817",
+      "name": "Neira Ortiz",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1817.html"
+    },
+    {
+      "id": "1833",
+      "name": "Nikola Abramajtys",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1833.html"
+    },
+    {
+      "id": "1836",
+      "name": "Nikola Krawczyk",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1836.html"
+    },
+    {
+      "id": "1843",
+      "name": "Nikolina Lukić",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1843.html"
+    },
+    {
+      "id": "1877",
+      "name": "Oliwia Sieradzka",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1877.html"
+    },
+    {
+      "id": "1926",
+      "name": "Paulina Bałdyga",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1926.html"
+    },
+    {
+      "id": "1929",
+      "name": "Paulina Damaske",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1929.html"
+    },
+    {
+      "id": "1934",
+      "name": "Paulina Maj-Erwardt",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1934.html"
+    },
+    {
+      "id": "1935",
+      "name": "Paulina Majkowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1935.html"
+    },
+    {
+      "id": "1941",
+      "name": "Paulina Zaborowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/1941.html"
+    },
+    {
+      "id": "2027",
+      "name": "Pola Janicka",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2027.html"
+    },
+    {
+      "id": "2029",
+      "name": "Pola Nowakowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2029.html"
+    },
+    {
+      "id": "2092",
+      "name": "Regiane Bidias",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2092.html"
+    },
+    {
+      "id": "2094",
+      "name": "Renata Biała",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2094.html"
+    },
+    {
+      "id": "2113",
+      "name": "Roberta Ratzke",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2113.html"
+    },
+    {
+      "id": "2137",
+      "name": "Samara de Almeida Coelho",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2137.html"
+    },
+    {
+      "id": "2200",
+      "name": "Sonia Stefanik",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2200.html"
+    },
+    {
+      "id": "2246",
+      "name": "T'ara Ceasar",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2246.html"
+    },
+    {
+      "id": "2331",
+      "name": "Valentina Diouf",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2331.html"
+    },
+    {
+      "id": "2353",
+      "name": "Vivian Pellegrino",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2353.html"
+    },
+    {
+      "id": "2368",
+      "name": "Weronika Centka-Tietianiec",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2368.html"
+    },
+    {
+      "id": "2372",
+      "name": "Weronika Sobiczewska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2372.html"
+    },
+    {
+      "id": "2373",
+      "name": "Weronika Szlagowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2373.html"
+    },
+    {
+      "id": "2390",
+      "name": "Wiktoria Kowalska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2390.html"
+    },
+    {
+      "id": "2395",
+      "name": "Wiktoria Szumera",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2395.html"
+    },
+    {
+      "id": "2441",
+      "name": "Yulia Gerasymova",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2441.html"
+    },
+    {
+      "id": "2454",
+      "name": "Zofia Sobanty",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2454.html"
+    },
+    {
+      "id": "2458",
+      "name": "Zuzanna Efimienko-Młotkowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2458.html"
+    },
+    {
+      "id": "2459",
+      "name": "Zuzanna Górecka",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2459.html"
+    },
+    {
+      "id": "2460",
+      "name": "Zuzanna Kamińska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2460.html"
+    },
+    {
+      "id": "2462",
+      "name": "Zuzanna Kuligowska",
+      "url": "https://www.tauronliga.pl/statsPlayers/id/2462.html"
+    }
+  ]
+}

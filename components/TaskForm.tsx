@@ -5,7 +5,7 @@ import { Task } from '@/app/tasks/page';
 
 interface TaskFormProps {
   categories: readonly Task['category'][];
-  onSubmit: (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  onSubmit: (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'order'>) => void;
   onCancel: () => void;
 }
 
