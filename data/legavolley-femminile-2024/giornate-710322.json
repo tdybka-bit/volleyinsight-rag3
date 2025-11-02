@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "year": 2024,
+    "championship_id": 710322,
+    "scraped_at": "2025-11-02T17:25:43.769Z",
+    "total_giornate": 10
+  },
+  "giornate": [
+    {
+      "id": "713181",
+      "name": "1a Giornata",
+      "phase": "Quarti",
+      "date": "09/03/2025",
+      "full_name": "1a Giornata  - Quarti - 09/03/2025"
+    },
+    {
+      "id": "713182",
+      "name": "2a Giornata",
+      "phase": "Quarti",
+      "date": "16/03/2025",
+      "full_name": "2a Giornata  - Quarti - 16/03/2025"
+    },
+    {
+      "id": "713183",
+      "name": "3a Giornata",
+      "phase": "Quarti",
+      "date": "19/03/2025",
+      "full_name": "3a Giornata  - Quarti - 19/03/2025"
+    },
+    {
+      "id": "713184",
+      "name": "1a Giornata",
+      "phase": "Semifinali",
+      "date": "23/03/2025",
+      "full_name": "1a Giornata  - Semifinali - 23/03/2025"
+    },
+    {
+      "id": "713185",
+      "name": "2a Giornata",
+      "phase": "Semifinali",
+      "date": "29/03/2025",
+      "full_name": "2a Giornata  - Semifinali - 29/03/2025"
+    },
+    {
+      "id": "713186",
+      "name": "3a Giornata",
+      "phase": "Semifinali",
+      "date": "06/04/2025",
+      "full_name": "3a Giornata  - Semifinali - 06/04/2025"
+    },
+    {
+      "id": "713191",
+      "name": "4a Giornata",
+      "phase": "Semifinali",
+      "date": "09/04/2025",
+      "full_name": "4a Giornata  - Semifinali - 09/04/2025"
+    },
+    {
+      "id": "713196",
+      "name": "1a Giornata",
+      "phase": "Finale",
+      "date": "16/04/2025",
+      "full_name": "1a Giornata  - Finale - 16/04/2025"
+    },
+    {
+      "id": "713197",
+      "name": "2a Giornata",
+      "phase": "Finale",
+      "date": "19/04/2025",
+      "full_name": "2a Giornata  - Finale - 19/04/2025"
+    },
+    {
+      "id": "713198",
+      "name": "3a Giornata",
+      "phase": "Finale",
+      "date": "22/04/2025",
+      "full_name": "3a Giornata  - Finale - 22/04/2025"
+    }
+  ]
+}

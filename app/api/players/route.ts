@@ -1,111 +1,67 @@
 /**
  * API Route: /api/players
- * Zwraca listę graczy z sumami sezonowymi
+ * Zwraca listę graczy z danymi enhanced (wszystkie ligi i sezony)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-
-interface PlayerSeasonTotals {
-  matches: number;
-  sets: number;
-  points: number;
-  aces: number;
-  serve_errors: number;
-  attack_points?: number;
-  block_points: number;
-  reception_total: number;
-  attack_total: number;
-}
-
-interface Player {
-  id: string;
-  name: string;
-  url: string;
-  season: string;
-  season_totals: PlayerSeasonTotals;
-  matches_count: number;
-}
-
-interface PlayersData {
-  meta: {
-    league: string;
-    season: string;
-    total_players: number;
-  };
-  players: Player[];
-}
+import { getAllPlayersEnhanced } from '@/lib/playerData';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const minMatches = parseInt(searchParams.get('minMatches') || '0');
-    const sortBy = searchParams.get('sortBy') || 'points';
-    const limit = parseInt(searchParams.get('limit') || '0');
-    const league = searchParams.get('league') || 'plusliga'; // plusliga or tauronliga
-    const season = searchParams.get('season') || '2024-2025'; // 2024-2025, 2023-2024, 2022-2023
-
-    // Ścieżki do plików z graczami (wybór folderu na podstawie ligi i sezonu)
-    const dataDir = path.join(
-      process.cwd(), 
-      'data', 
-      `${league}-${season}`
-    );
-    const files = await fs.readdir(dataDir);
+    const league = searchParams.get('league'); // null = wszystkie
+    const gender = searchParams.get('gender'); // null = wszystkie
+    const season = searchParams.get('season'); // null = wszystkie
     
-    // Znajdujemy wszystkie pliki *-full.json
-    const fullFiles = files.filter(f => f.includes('-full.json'));
+    console.log('🔍 Fetching all players enhanced...');
     
-    if (fullFiles.length === 0) {
-      return NextResponse.json({
-        error: 'No player data found',
-        message: 'Run scraper first: node scripts/scrape-players-extended.js'
-      }, { status: 404 });
-    }
-
-    // Łączymy dane ze wszystkich plików
-    let allPlayers: Player[] = [];
+    // Pobierz wszystkich graczy z folderów -enhanced
+    let allPlayers = getAllPlayersEnhanced();
     
-    for (const file of fullFiles) {
-      const filePath = path.join(dataDir, file);
-      const fileContent = await fs.readFile(filePath, 'utf-8');
-      const data: PlayersData = JSON.parse(fileContent);
-      allPlayers = allPlayers.concat(data.players);
-    }
+    console.log('📊 Total players loaded:', allPlayers.length);
 
-    // Filtrowanie po minimalnej liczbie meczów
-    let filteredPlayers = allPlayers.filter(
-      p => p.season_totals.matches >= minMatches
-    );
-
-    // Sortowanie
-    filteredPlayers.sort((a, b) => {
-      const aValue = a.season_totals[sortBy as keyof PlayerSeasonTotals] || 0;
-      const bValue = b.season_totals[sortBy as keyof PlayerSeasonTotals] || 0;
-      return (bValue as number) - (aValue as number);
+    // Filtrowanie
+    let filteredPlayers = allPlayers.filter(p => {
+      if (minMatches > 0 && (p.currentSeasonStats?.matches || 0) < minMatches) {
+        return false;
+      }
+      if (league && p.league !== league) {
+        return false;
+      }
+      if (gender && p.gender !== gender) {
+        return false;
+      }
+      if (season && p.season !== season) {
+        return false;
+      }
+      return true;
     });
 
-    // Limit (jeśli podany)
-    if (limit > 0) {
-      filteredPlayers = filteredPlayers.slice(0, limit);
-    }
+    console.log('✅ Filtered players:', filteredPlayers.length);
+
+    // Sortowanie po punktach
+    filteredPlayers.sort((a, b) => 
+      (b.currentSeasonStats?.points || 0) - (a.currentSeasonStats?.points || 0)
+    );
 
     return NextResponse.json({
       meta: {
-        league: league,
         total_players: allPlayers.length,
         filtered_players: filteredPlayers.length,
         min_matches: minMatches,
-        sort_by: sortBy
+        filters: { league, gender, season }
       },
       players: filteredPlayers
     });
 
   } catch (error) {
-    console.error('Error loading players:', error);
+    console.error('❌ Error loading players:', error);
     return NextResponse.json(
-      { error: 'Failed to load players data' },
+      { 
+        error: 'Failed to load players data',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

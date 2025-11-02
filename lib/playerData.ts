@@ -148,10 +148,6 @@ export function getPlayerById(id: string): PlayerWithCombinedStats | null {
 
 /**
  * Get all players with enhanced data (includes match dates, W/L, phase)
- * Reads from multiple seasons and combines player data
- */
-/**
- * Get all players with enhanced data (includes match dates, W/L, phase)
  * Returns separate entry for each player-season combination
  */
 export function getAllPlayersEnhanced(): PlayerWithCombinedStats[] {
@@ -161,89 +157,152 @@ export function getAllPlayersEnhanced(): PlayerWithCombinedStats[] {
   // Map to track player career totals across all seasons
   const careerMap = new Map<string, SeasonStats>();
 
-  // Read enhanced data from all seasons
-  const seasons = ['2023-2024', '2024-2025'];
+  // Define all leagues and seasons to read
+  const leagueConfigs = [
+    { league: 'plusliga', seasons: ['2022-2023', '2023-2024', '2024-2025'], gender: 'men' },
+    { league: 'tauronliga', seasons: ['2022-2023', '2023-2024', '2024-2025'], gender: 'women' },
+    { league: 'legavolley', seasons: ['2024-2025'], gender: 'men' },
+    { league: 'legavolley-femminile', seasons: ['2024-2025'], gender: 'women' }
+  ];
 
   // First pass: calculate career totals
-seasons.forEach(season => {
-  const enhancedFile = path.join(dataDir, `plusliga-${season}`, 'players-enhanced.json');
-  
-  if (fs.existsSync(enhancedFile)) {
-    const content = fs.readFileSync(enhancedFile, 'utf-8');
-    const data = JSON.parse(content);
-
-    data.players?.forEach((p: any) => {
-      const playerId = p.id;
-      const matches = p.match_by_match || [];
+  leagueConfigs.forEach(({ league, seasons, gender }) => {
+    seasons.forEach(season => {
+      const enhancedDir = path.join(dataDir, `${league}-${season}-enhanced`);
       
-      const existing = careerMap.get(playerId) || {
-        matches: 0, sets: 0, points: 0, attacks: 0, attackEfficiency: 0,
-        blocks: 0, aces: 0, serves: 0, serveEfficiency: 0,
-        reception: 0, receptionEfficiency: 0
-      };
+      if (!fs.existsSync(enhancedDir)) return;
+      
+      // Read all player files in the directory
+      const files = fs.readdirSync(enhancedDir).filter(f => f.startsWith('players-') && f.endsWith('.json'));
+      
+      files.forEach(file => {
+        const filePath = path.join(enhancedDir, file);
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const data = JSON.parse(content);
 
-      careerMap.set(playerId, {
-        matches: existing.matches + matches.length,
-        sets: existing.sets + matches.reduce((sum: number, m: any) => sum + (m.sets || 0), 0),
-        points: existing.points + matches.reduce((sum: number, m: any) => sum + (m.points_total || 0), 0),
-        attacks: existing.attacks + matches.reduce((sum: number, m: any) => sum + (m.attack_total || 0), 0),
-        attackEfficiency: 0,
-        blocks: existing.blocks + matches.reduce((sum: number, m: any) => sum + (m.block_points || 0), 0),
-        aces: existing.aces + matches.reduce((sum: number, m: any) => sum + (m.serve_aces || 0), 0),
-        serves: existing.serves + matches.reduce((sum: number, m: any) => sum + (m.serve_total || 0), 0),
-        serveEfficiency: 0,
-        reception: existing.reception + matches.reduce((sum: number, m: any) => sum + (m.reception_total || 0), 0),
-        receptionEfficiency: 0
-      });
-    });
-  }
-});
-
-  // Second pass: create player entries for each season
-  seasons.forEach(season => {
-    const enhancedFile = path.join(dataDir, `plusliga-${season}`, 'players-enhanced.json');
-    
-    if (fs.existsSync(enhancedFile)) {
-      console.log(`📊 Reading enhanced data for ${season}...`);
-      const content = fs.readFileSync(enhancedFile, 'utf-8');
-      const data = JSON.parse(content);
-
-      data.players?.forEach((p: any) => {
-        const currentStats = p.season_totals || {};
-        
-        result.push({
-          id: p.id,
-          name: p.name,
-          team: p.team || 'Unknown',
-          league: p.league || 'plusliga',
-          season: season,
-          position: p.position || 'Unknown',
-          career_totals: {},
-          season_totals: currentStats,
-          match_by_match: p.match_by_match || [],
-          currentSeasonStats: {
-            matches: p.match_by_match?.length || 0,
-            sets: p.match_by_match?.reduce((sum: number, m: any) => sum + (m.sets || 0), 0) || 0,
-            points: p.match_by_match?.reduce((sum: number, m: any) => sum + (m.points_total || 0), 0) || 0,
-            attacks: p.match_by_match?.reduce((sum: number, m: any) => sum + (m.attack_total || 0), 0) || 0,
-            attackEfficiency: 0,
-            blocks: p.match_by_match?.reduce((sum: number, m: any) => sum + (m.block_points || 0), 0) || 0,
-            aces: p.match_by_match?.reduce((sum: number, m: any) => sum + (m.serve_aces || 0), 0) || 0,
-            serves: p.match_by_match?.reduce((sum: number, m: any) => sum + (m.serve_total || 0), 0) || 0,
-            serveEfficiency: 0,
-            reception: p.match_by_match?.reduce((sum: number, m: any) => sum + (m.reception_total || 0), 0) || 0,
-            receptionEfficiency: 0
-          },
-          careerTotals: careerMap.get(p.id) || {
+        data.players?.forEach((p: any) => {
+          const playerId = `${league}-${p.id}`;
+          const matches = p.match_by_match || [];
+          
+          const existing = careerMap.get(playerId) || {
             matches: 0, sets: 0, points: 0, attacks: 0, attackEfficiency: 0,
             blocks: 0, aces: 0, serves: 0, serveEfficiency: 0,
             reception: 0, receptionEfficiency: 0
-          }
+          };
+
+          // Sum up stats - use season_totals when available
+          const matchesCount = matches.length;
+          const sets = matches.reduce((sum: number, m: any) => sum + (parseInt(m.sets) || 0), 0);
+          const points = matches.reduce((sum: number, m: any) => sum + (parseInt(m.points_total) || 0), 0);
+          const attacks = matches.reduce((sum: number, m: any) => sum + (parseInt(m.attack_total) || parseInt(m.attack_won) || 0), 0);
+          const blocks = matches.reduce((sum: number, m: any) => sum + (parseInt(m.block_points) || 0), 0);
+          const aces = matches.reduce((sum: number, m: any) => sum + (parseInt(m.serve_aces) || 0), 0);
+          const serves = matches.reduce((sum: number, m: any) => sum + (parseInt(m.serve_total) || 0), 0);
+          
+          // Reception - prefer season_totals (PlusLiga/TauronLiga), fallback to summing matches (LegaVolley)
+          const receptionTotal = p.season_totals?.reception_total || 
+            matches.reduce((sum: number, m: any) => sum + (parseInt(m.reception_total) || 0), 0);
+          const receptionPerfect = p.season_totals?.reception_perfect || 
+            matches.reduce((sum: number, m: any) => sum + (parseInt(m.reception_perfect) || parseInt(m.receptionPerfect) || 0), 0);
+
+          careerMap.set(playerId, {
+            matches: existing.matches + matchesCount,
+            sets: existing.sets + sets,
+            points: existing.points + points,
+            attacks: existing.attacks + attacks,
+            attackEfficiency: 0,
+            blocks: existing.blocks + blocks,
+            aces: existing.aces + aces,
+            serves: existing.serves + serves,
+            serveEfficiency: 0,
+            reception: existing.reception + receptionTotal,
+            receptionEfficiency: 0  // Calculate at the end
+          });
         });
       });
-    }
+    });
   });
 
-  console.log(`✅ Loaded ${result.length} player-season entries`);
+  // Second pass: create player objects with both current season and career stats
+  leagueConfigs.forEach(({ league, seasons, gender }) => {
+    seasons.forEach(season => {
+      const enhancedDir = path.join(dataDir, `${league}-${season}-enhanced`);
+      
+      if (!fs.existsSync(enhancedDir)) return;
+      
+      const files = fs.readdirSync(enhancedDir).filter(f => f.startsWith('players-') && f.endsWith('.json'));
+      
+      files.forEach(file => {
+        const filePath = path.join(enhancedDir, file);
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const data = JSON.parse(content);
+
+        data.players?.forEach((p: any) => {
+          const playerId = `${league}-${p.id}`;
+          const matches = p.match_by_match || [];
+          
+          // Calculate current season stats
+          const matchesCount = matches.length;
+          const sets = matches.reduce((sum: number, m: any) => sum + (parseInt(m.sets) || 0), 0);
+          const points = matches.reduce((sum: number, m: any) => sum + (parseInt(m.points_total) || 0), 0);
+          const attacks = matches.reduce((sum: number, m: any) => sum + (parseInt(m.attack_total) || parseInt(m.attack_won) || 0), 0);
+          const blocks = matches.reduce((sum: number, m: any) => sum + (parseInt(m.block_points) || 0), 0);
+          const aces = matches.reduce((sum: number, m: any) => sum + (parseInt(m.serve_aces) || 0), 0);
+          const serves = matches.reduce((sum: number, m: any) => sum + (parseInt(m.serve_total) || 0), 0);
+          
+          // Reception - prefer season_totals (PlusLiga/TauronLiga), fallback to summing matches (LegaVolley)
+          const receptionTotal = p.season_totals?.reception_total || 
+            matches.reduce((sum: number, m: any) => sum + (parseInt(m.reception_total) || 0), 0);
+          const receptionPerfect = p.season_totals?.reception_perfect || 
+            matches.reduce((sum: number, m: any) => sum + (parseInt(m.reception_perfect) || parseInt(m.receptionPerfect) || 0), 0);
+
+          const currentSeasonStats: SeasonStats = {
+            matches: matchesCount,
+            sets,
+            points,
+            attacks,
+            attackEfficiency: attacks > 0 ? (points / attacks) * 100 : 0,
+            blocks,
+            aces,
+            serves,
+            serveEfficiency: serves > 0 ? (aces / serves) * 100 : 0,
+            reception: receptionTotal,
+            receptionEfficiency: receptionTotal > 0 ? (receptionPerfect / receptionTotal) * 100 : 0
+          };
+
+          const careerTotals = careerMap.get(playerId);
+
+          result.push({
+            id: playerId,
+            name: p.name || 'Unknown',
+            team: p.team || 'Unknown',
+            league,
+            gender,
+            season,
+            currentSeasonStats,
+            careerTotals,
+            matchByMatch: matches
+          } as any);
+        });
+      });
+    });
+  });
+
+  // Recalculate career reception efficiency
+  careerMap.forEach((career, playerId) => {
+    const playerMatches = result.filter(p => p.id === playerId);
+    const totalPerfect = playerMatches.reduce((sum, p) => {
+      const matchByMatch = (p as any).matchByMatch || [];
+      const seasonPerfect = matchByMatch.reduce((s: number, m: any) => 
+        s + (parseInt(m.reception_perfect) || parseInt(m.receptionPerfect) || 0), 0
+      );
+      return sum + seasonPerfect;
+    }, 0);
+    
+    career.receptionEfficiency = career.reception > 0 
+      ? (totalPerfect / career.reception) * 100 
+      : 0;
+  });
+
   return result;
 }

@@ -10,9 +10,10 @@ interface PlayerData {
   team: string;
   season: string;
   league: string;
+  gender?: string;
   currentSeasonStats: any;
   careerTotals: any;
-  match_by_match: any[];
+  matchByMatch: any[];  // ← ZMIANA: camelCase zamiast snake_case
 }
 
 interface SPCData {
@@ -98,10 +99,30 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
   }
 
   const player = selectedPlayer;
-  const matches = player.match_by_match || [];
   
+  console.log('🎯 selectedPlayer:', selectedPlayer);
+  console.log('🎯 matchByMatch exists?', !!selectedPlayer?.matchByMatch);
+  console.log('🎯 matchByMatch length:', selectedPlayer?.matchByMatch?.length);
+  console.log('🎯 matchByMatch type:', typeof selectedPlayer?.matchByMatch);
+  console.log('🎯 Is array?', Array.isArray(selectedPlayer?.matchByMatch));
+    
+  const matches = (player.matchByMatch || []).filter((m: any) => {
+    // Usuń agregaty (totalsy, średnie)
+    const giornata = m.giornata || '';
+    return !giornata.match(/^\d+$/) && // nie same cyfry jak "121"
+           !giornata.includes('Media') && // nie średnie
+           !giornata.includes('Totale') && // nie totale
+           m.points_total !== undefined; // musi mieć punkty
+  });
+
+  console.log('🎯 matches length after:', matches.length);
+  console.log('🔍 First match structure:', matches[0]);
+  console.log('🔍 Match 35:', matches[34]); // array starts at 0
+
   const totalPoints = matches.map(m => parseInt(m.points_total) || 0);
-  const attackPoints = matches.map(m => parseInt(m.attack_points) || 0);
+  const attackPoints = matches.map(m => 
+  parseInt(m.attack_winning) || parseInt(m.attack_perfect) || 0
+  );
   const blockPoints = matches.map(m => parseInt(m.block_points) || 0);
   const aces = matches.map(m => parseInt(m.serve_aces) || 0);
 
@@ -159,9 +180,15 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
                 }}
                 className="px-4 py-2 bg-slate-700 text-white rounded-lg border border-blue-800/30"
               >
-                {allPlayers.map(p => (
-                  <option key={`${p.league}-${p.season}`} value={`${p.league}-${p.season}`}>
-                    {p.season} • {p.league === 'plusliga' ? 'PlusLiga' : 'TauronLiga'}
+                {allPlayers.map((p, idx) => (
+                   <option key={`${p.id}-${p.season}-${idx}`} value={`${p.league}-${p.season}`}>
+                    {p.season} • {
+                      p.league === 'plusliga' ? 'PlusLiga' : 
+                      p.league === 'tauronliga' ? 'TauronLiga' :
+                      p.league === 'legavolley' ? 'LegaVolley (IT)' :
+                      p.league === 'legavolley-femminile' ? 'LegaVolley Femminile (IT)' :
+                      p.league
+                    }
                   </option>
                 ))}
               </select>
