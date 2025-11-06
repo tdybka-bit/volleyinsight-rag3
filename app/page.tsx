@@ -108,7 +108,7 @@ export default function VolleyInsight() {
     
     // Specjalna obsługa dla dashboardu
     if (module.id === 'dashboard') {
-      window.location.href = '/players'
+      window.location.href = '/stats'
       return
     }
     

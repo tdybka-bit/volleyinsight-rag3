@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, ComposedChart } from 'recharts';
 
@@ -13,7 +13,7 @@ interface PlayerData {
   gender?: string;
   currentSeasonStats: any;
   careerTotals: any;
-  matchByMatch: any[];  // ← ZMIANA: camelCase zamiast snake_case
+  matchByMatch: any[];
 }
 
 interface SPCData {
@@ -40,12 +40,12 @@ function calculateSPC(values: number[], matches: any[]): SPCData {
   const ucl = mean + 3 * stdDev;
   const lcl = Math.max(0, mean - 3 * stdDev);
   
-  const data = values.map((value, index) => ({
-    match: `M${index + 1}`,
+  const data = values.map((value, i) => ({
+    match: `M${i + 1}`,
     value,
     isOutlier: value > ucl || value < lcl,
-    opponent: matches[index]?.opponent || 'N/A',
-    date: matches[index]?.date || 'N/A',
+    opponent: matches[i]?.opponent || 'Unknown',
+    date: matches[i]?.date || '',
     uclLine: ucl,
     lclLine: lcl
   }));
@@ -54,10 +54,10 @@ function calculateSPC(values: number[], matches: any[]): SPCData {
 }
 
 export default function PlayerProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const [playerId, setPlayerId] = useState<string>('');
   const [allPlayers, setAllPlayers] = useState<PlayerData[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [playerId, setPlayerId] = useState('');
 
   useEffect(() => {
     params.then(async (p) => {
@@ -77,59 +77,58 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
     });
   }, [params]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Ładowanie danych gracza...</div>
-      </div>
-    );
-  }
+  // useMemo PRZED warunkami!
+  const { player, matches, stats, career, spcTotal, spcAttack, spcBlock, spcAces } = useMemo(() => {
+    console.log('🔄 useMemo recalculating!');
+    console.log('🎯 selectedPlayer:', selectedPlayer?.season, selectedPlayer?.league);
 
-  if (!selectedPlayer || allPlayers.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-white text-xl mb-4">Gracz nie znaleziony</div>
-          <Link href="/stats" className="text-orange-400 hover:text-orange-300">
-            ← Powrót do dashboardu
-          </Link>
-        </div>
-      </div>
-    );
-  }
+    if (!selectedPlayer) {
+      return {
+        player: null,
+        matches: [],
+        stats: { points: 0, aces: 0, blocks: 0, matches: 0, sets: 0 },
+        career: null,
+        spcTotal: { mean: 0, ucl: 0, lcl: 0, data: [] },
+        spcAttack: { mean: 0, ucl: 0, lcl: 0, data: [] },
+        spcBlock: { mean: 0, ucl: 0, lcl: 0, data: [] },
+        spcAces: { mean: 0, ucl: 0, lcl: 0, data: [] }
+      };
+    }
 
-  const player = selectedPlayer;
-  
-  console.log('🎯 selectedPlayer:', selectedPlayer);
-  console.log('🎯 matchByMatch exists?', !!selectedPlayer?.matchByMatch);
-  console.log('🎯 matchByMatch length:', selectedPlayer?.matchByMatch?.length);
-  console.log('🎯 matchByMatch type:', typeof selectedPlayer?.matchByMatch);
-  console.log('🎯 Is array?', Array.isArray(selectedPlayer?.matchByMatch));
-    
-  const matches = (player.matchByMatch || []).filter((m: any) => {
-    // Usuń agregaty (totalsy, średnie)
-    const giornata = m.giornata || '';
-    return !giornata.match(/^\d+$/) && // nie same cyfry jak "121"
-           !giornata.includes('Media') && // nie średnie
-           !giornata.includes('Totale') && // nie totale
-           m.points_total !== undefined; // musi mieć punkty
-  });
+    const player = selectedPlayer;
+        
+    const matches = (player.matchByMatch || []).filter((m: any) => {
+      const giornata = m.giornata || '';
+      return !giornata.match(/^\d+$/) && 
+             !giornata.includes('Media') && 
+             !giornata.includes('Totale') && 
+             m.points_total !== undefined;
+    });
 
-  console.log('🎯 matches length after:', matches.length);
-  console.log('🔍 First match structure:', matches[0]);
-  console.log('🔍 Match 35:', matches[34]); // array starts at 0
+    console.log('📊 Filtered matches count:', matches.length);
+    console.log('📋 First match:', matches[0]);
+    console.log('🔢 Total points array length:', matches.map(m => parseInt(m.points_total) || 0).length);
 
-  const totalPoints = matches.map(m => parseInt(m.points_total) || 0);
-  const attackPoints = matches.map(m => 
-  parseInt(m.attack_winning) || parseInt(m.attack_perfect) || 0
-  );
-  const blockPoints = matches.map(m => parseInt(m.block_points) || 0);
-  const aces = matches.map(m => parseInt(m.serve_aces) || 0);
+    const totalPoints = matches.map(m => parseInt(m.points_total) || 0);
+    const attackPoints = matches.map(m => {
+      if (m.attack_points !== undefined) {
+        return parseInt(m.attack_points) || 0;
+      }
+      return (parseInt(m.attack_winning) || 0) + (parseInt(m.attack_perfect) || 0);
+    });
+    const blockPoints = matches.map(m => parseInt(m.block_points) || 0);
+    const aces = matches.map(m => parseInt(m.serve_aces) || 0);
 
-  const spcTotal = calculateSPC(totalPoints, matches);
-  const spcAttack = calculateSPC(attackPoints, matches);
-  const spcBlock = calculateSPC(blockPoints, matches);
-  const spcAces = calculateSPC(aces, matches);
+    const spcTotal = calculateSPC(totalPoints, matches);
+    const spcAttack = calculateSPC(attackPoints, matches);
+    const spcBlock = calculateSPC(blockPoints, matches);
+    const spcAces = calculateSPC(aces, matches);
+
+    const stats = player.currentSeasonStats;
+    const career = player.careerTotals;
+
+    return { player, matches, stats, career, spcTotal, spcAttack, spcBlock, spcAces };
+  }, [selectedPlayer]);
 
   const CustomDot = (props: any) => {
     const { cx, cy, payload } = props;
@@ -157,8 +156,27 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
     return null;
   };
 
-  const stats = player.currentSeasonStats;
-  const career = player.careerTotals;
+  // Warunki loading/empty
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
+        <div className="text-white text-2xl">Ładowanie...</div>
+      </div>
+    );
+  }
+
+  if (!selectedPlayer || allPlayers.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-white text-2xl mb-4">Nie znaleziono gracza</p>
+          <Link href="/stats" className="text-orange-400 hover:text-orange-300">
+            ← Powrót do dashboardu
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-8">
@@ -176,6 +194,8 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
                 value={`${player.league}-${player.season}`}
                 onChange={(e) => {
                   const selected = allPlayers.find(p => `${p.league}-${p.season}` === e.target.value);
+                  console.log('📝 Dropdown changed to:', e.target.value);
+                  console.log('📦 Found player:', selected?.season, selected?.league);
                   if (selected) setSelectedPlayer(selected);
                 }}
                 className="px-4 py-2 bg-slate-700 text-white rounded-lg border border-blue-800/30"
@@ -347,7 +367,53 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
                 </ResponsiveContainer>
               </div>
             </div>
-          </>
+          
+          
+          {/* TABELA MECZ PO MECZU - NOWA SEKCJA */}
+           <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 mt-6">
+             <h2 className="text-xl font-bold text-white mb-4">
+               📋 Mecze szczegółowo ({matches.length})
+             </h2>
+             <div className="overflow-x-auto">
+               <table className="w-full text-sm">
+                 <thead>
+                   <tr className="border-b border-white/20">
+                     <th className="text-left p-2 text-gray-300">#</th>
+                     <th className="text-left p-2 text-gray-300">Data</th>
+                     <th className="text-left p-2 text-gray-300">Przeciwnik</th>
+                     <th className="text-center p-2 text-gray-300">Wynik</th>
+                     <th className="text-center p-2 text-gray-300">Pkt</th>
+                     <th className="text-center p-2 text-gray-300">Atak</th>
+                     <th className="text-center p-2 text-gray-300">Blok</th>
+                     <th className="text-center p-2 text-gray-300">Asy</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   {matches.map((match, idx) => (
+                     <tr key={idx} className="border-b border-white/10 hover:bg-white/5">
+                       <td className="p-2 text-gray-400">{idx + 1}</td>
+                       <td className="p-2 text-white text-xs">{match.date}</td>
+                       <td className="p-2 text-white">{match.opponent}</td>
+                       <td className="p-2 text-center">
+                         <span className={`px-2 py-1 rounded text-xs ${
+                           match.result === 'W' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
+                         }`}>
+                           {match.result || '-'}
+                         </span>
+                       </td>
+                       <td className="p-2 text-center text-yellow-300 font-bold">{match.points_total || 0}</td>
+                       <td className="p-2 text-center text-orange-300">
+                         {match.attack_points || match.attack_winning || 0}
+                       </td>
+                       <td className="p-2 text-center text-purple-300">{match.block_points || 0}</td>
+                       <td className="p-2 text-center text-green-300">{match.serve_aces || 0}</td>
+                     </tr>
+                   ))}
+                 </tbody>
+               </table>
+             </div>
+           </div>
+         </>
         ) : (
           <div className="bg-white/10 backdrop-blur-lg rounded-xl p-8 border border-white/20 text-center">
             <p className="text-gray-400">Brak danych meczowych dla tego sezonu</p>

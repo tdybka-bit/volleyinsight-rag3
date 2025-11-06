@@ -13,15 +13,26 @@ const DELAY_MS = 3000;
 const MATCH_DELAY_MS = 2000;
 const BATCH_SIZE = 50;
 
-// League config
-const LEAGUE_CONFIG = {
+// Tournament IDs by season
+const TOURNAMENT_IDS = {
   'plusliga': {
-    baseUrl: 'https://www.plusliga.pl',
-    tournamentId: '47'
+    '2022-2023': '41',
+    '2023-2024': '44',
+    '2024-2025': '47'
   },
   'tauronliga': {
-    baseUrl: 'https://www.tauronliga.pl',
-    tournamentId: '48'
+    '2022-2023': '42',
+    '2023-2024': '45', 
+    '2024-2025': '48'
+  }
+};
+
+const LEAGUE_CONFIG = {
+  'plusliga': {
+    baseUrl: 'https://www.plusliga.pl'
+  },
+  'tauronliga': {
+    baseUrl: 'https://www.tauronliga.pl'
   }
 };
 
@@ -222,11 +233,17 @@ async function extractMatchByMatchStats($, teamName, baseUrl) {
   return matches;
 }
 
-async function scrapePlayer(playerId, playerName, season, league, baseUrl, tournamentId) {
+async function scrapePlayer(playerId, playerName, season, league, baseUrl) {  // ← USUŃ tournamentId z parametrów
   try {
     console.log(`\n🔥 [${playerId}] ${playerName}`);
     
+    const tournamentId = TOURNAMENT_IDS[league][season];
+    if (!tournamentId) {
+      throw new Error(`Unknown season ${season} for league ${league}`);
+    }
+
     const html = await fetchPlayerPage(playerId, baseUrl, tournamentId);
+
     if (!html) {
       console.log(`   ⚠️ Not found (404)`);
       return null;
@@ -324,7 +341,7 @@ async function main() {
     
     console.log(`${progress} Progress: ${successCount} success, ${failCount} failed`);
     
-    const player = await scrapePlayer(playerInfo.id, playerInfo.name, season, league, baseUrl, tournamentId);
+    const player = await scrapePlayer(playerInfo.id, playerInfo.name, season, league, baseUrl);
     
     if (player) {
       players.push(player);
