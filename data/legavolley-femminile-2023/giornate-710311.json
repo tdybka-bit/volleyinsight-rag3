@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "year": 2023,
+    "championship_id": 710311,
+    "scraped_at": "2025-11-07T23:41:48.949Z",
+    "total_giornate": 10
+  },
+  "giornate": [
+    {
+      "id": "713063",
+      "name": "1a Giornata",
+      "phase": "Quarti",
+      "date": "27/03/2024",
+      "full_name": "1a Giornata  - Quarti - 27/03/2024"
+    },
+    {
+      "id": "713064",
+      "name": "2a Giornata",
+      "phase": "Quarti",
+      "date": "31/03/2024",
+      "full_name": "2a Giornata  - Quarti - 31/03/2024"
+    },
+    {
+      "id": "713065",
+      "name": "3a Giornata",
+      "phase": "Quarti",
+      "date": "03/04/2024",
+      "full_name": "3a Giornata  - Quarti - 03/04/2024"
+    },
+    {
+      "id": "713074",
+      "name": "1a Giornata",
+      "phase": "Semifinali",
+      "date": "06/04/2024",
+      "full_name": "1a Giornata  - Semifinali - 06/04/2024"
+    },
+    {
+      "id": "713075",
+      "name": "2a Giornata",
+      "phase": "Semifinali",
+      "date": "10/04/2024",
+      "full_name": "2a Giornata  - Semifinali - 10/04/2024"
+    },
+    {
+      "id": "713076",
+      "name": "3a Giornata",
+      "phase": "Semifinali",
+      "date": "13/04/2024",
+      "full_name": "3a Giornata  - Semifinali - 13/04/2024"
+    },
+    {
+      "id": "713077",
+      "name": "1a Giornata",
+      "phase": "Finale",
+      "date": "17/04/2024",
+      "full_name": "1a Giornata  - Finale - 17/04/2024"
+    },
+    {
+      "id": "713078",
+      "name": "2a Giornata",
+      "phase": "Finale",
+      "date": "20/04/2024",
+      "full_name": "2a Giornata  - Finale - 20/04/2024"
+    },
+    {
+      "id": "713079",
+      "name": "3a Giornata",
+      "phase": "Finale",
+      "date": "24/04/2024",
+      "full_name": "3a Giornata  - Finale - 24/04/2024"
+    },
+    {
+      "id": "713080",
+      "name": "4a Giornata",
+      "phase": "Finale",
+      "date": "27/04/2024",
+      "full_name": "4a Giornata  - Finale - 27/04/2024"
+    }
+  ]
+}

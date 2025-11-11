@@ -100,8 +100,7 @@ async function scrapePlayerGiornata(playerId, giornataId, year) {
       
       // Block stats (columns 22-24)
       stats.block_points = parseNumber(cells.eq(23).text());
-      
-      return false; // Found the row, stop searching
+            
     });
     
     // Return stats only if we found data
@@ -196,19 +195,32 @@ async function main() {
   }
   
   // Load giornate (Regular Season + Play-offs)
-  console.log(`\n📅 Loading giornate...`);
-  const giornateRegular = await loadGiornate(year, 710313); // Regular season
-  const giornatePlayoffs = await loadGiornate(year, 710322); // Play-offs
-  const giornate = [...giornateRegular, ...giornatePlayoffs];
-  console.log(`✅ Loaded ${giornate.length} giornate (${giornateRegular.length} regular + ${giornatePlayoffs.length} playoffs)`);
-  
-  const playersToScrape = playersList.players.slice(startIndex, endIndex + 1);
-  
-  console.log(`\n🚀 Starting: LegaVolley Femminile ${year} - Players ${startIndex}-${endIndex} (${playersToScrape.length} players)\n`);
-  
-  const players = [];
-  let successCount = 0;
-  let failCount = 0;
+console.log(`\n📅 Loading giornate...`);
+
+// Championship IDs by year
+const CHAMPIONSHIP_IDS = {
+  2024: { regular: 710313, playoff: 710322 },
+  2023: { regular: 710303, playoff: 710311 },
+  2022: { regular: 710276, playoff: 710284 }
+};
+
+const ids = CHAMPIONSHIP_IDS[year];
+if (!ids) {
+  throw new Error(`Unknown year: ${year}. Available years: 2022, 2023, 2024`);
+}
+
+const giornateRegular = await loadGiornate(year, ids.regular);
+const giornatePlayoffs = await loadGiornate(year, ids.playoff);
+const giornate = [...giornateRegular, ...giornatePlayoffs];
+console.log(`✅ Loaded ${giornate.length} giornate (${giornateRegular.length} regular + ${giornatePlayoffs.length} playoffs)`);
+
+const playersToScrape = playersList.players.slice(startIndex, endIndex + 1);
+
+console.log(`\n🚀 Starting: LegaVolley Femminile ${year} - Players ${startIndex}-${endIndex} (${playersToScrape.length} players)\n`);
+
+const players = [];
+let successCount = 0;
+let failCount = 0;
   
   for (let i = 0; i < playersToScrape.length; i++) {
     const playerInfo = playersToScrape[i];

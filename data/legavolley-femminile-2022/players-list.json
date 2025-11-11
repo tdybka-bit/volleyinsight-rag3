@@ -1,0 +1,1876 @@
+{
+  "meta": {
+    "year": 2022,
+    "season": "2022-2023",
+    "serie": "A1",
+    "scraped_at": "2025-11-07T23:45:36.333Z",
+    "total_clubs": 14,
+    "total_players": 224
+  },
+  "clubs": [
+    {
+      "id": "710908",
+      "name": "Bartoccini Mc Restauri Perugia",
+      "slug": "bartoccini-mc-restauri-perugia"
+    },
+    {
+      "id": "710909",
+      "name": "Bergamo",
+      "slug": "bergamo"
+    },
+    {
+      "id": "710935",
+      "name": "Cbf Balducci Hr Macerata",
+      "slug": "cbf-balducci-hr-macerata"
+    },
+    {
+      "id": "710910",
+      "name": "Eurotek Laica Uyba",
+      "slug": "eurotek-laica-uyba"
+    },
+    {
+      "id": "710911",
+      "name": "Honda Cuneo Granda Volley",
+      "slug": "honda-cuneo-granda-volley"
+    },
+    {
+      "id": "710912",
+      "name": "Igor Gorgonzola Novara",
+      "slug": "igor-gorgonzola-novara"
+    },
+    {
+      "id": "710913",
+      "name": "Il Bisonte Firenze",
+      "slug": "il-bisonte-firenze"
+    },
+    {
+      "id": "710914",
+      "name": "Megabox Ond Savio Vallefoglia",
+      "slug": "megabox-ond-savio-vallefoglia"
+    },
+    {
+      "id": "710915",
+      "name": "Numia Vero Volley Milano",
+      "slug": "numia-vero-volley-milano"
+    },
+    {
+      "id": "710936",
+      "name": "Omag Mt San Giovanni In M No",
+      "slug": "omag-mt-san-giovanni-in-m-no"
+    },
+    {
+      "id": "710916",
+      "name": "Prosecco Doc A Carraro Imoco Conegliano",
+      "slug": "prosecco-doc-a-carraro-imoco-conegliano"
+    },
+    {
+      "id": "710917",
+      "name": "Reale Mutua Fenera Chieri 76",
+      "slug": "reale-mutua-fenera-chieri-76"
+    },
+    {
+      "id": "710918",
+      "name": "Savino Del Bene Scandicci",
+      "slug": "savino-del-bene-scandicci"
+    },
+    {
+      "id": "710919",
+      "name": "Wash4green Monviso Volley",
+      "slug": "wash4green-monviso-volley"
+    }
+  ],
+  "players": [
+    {
+      "id": "PRO-CLA-98",
+      "first_name": "Claudia",
+      "last_name": "Provaroni",
+      "name": "Claudia Provaroni",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "AVE-GIO-94",
+      "first_name": "Giorgia",
+      "last_name": "Avenia",
+      "name": "Giorgia Avenia",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "POL-TES-97",
+      "first_name": "Tessa",
+      "last_name": "Polder",
+      "name": "Tessa Polder",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "GAR-BEA-03",
+      "first_name": "Beatrice",
+      "last_name": "Gardini",
+      "name": "Beatrice Gardini",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "GAL-MON-96",
+      "first_name": "Monika",
+      "last_name": "Galkowska",
+      "name": "Monika Galkowska",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "RUM-CHI-98",
+      "first_name": "Chiara",
+      "last_name": "Rumori",
+      "name": "Chiara Rumori",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "SAN-RAY-92",
+      "first_name": "Raymariely",
+      "last_name": "Santos",
+      "name": "Raymariely Santos",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "ARM-MAR-02",
+      "first_name": "Martina",
+      "last_name": "Armini",
+      "name": "Martina Armini",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "BAR-BEN-99",
+      "first_name": "Benedetta",
+      "last_name": "Bartolini",
+      "name": "Benedetta Bartolini",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "GUE-ANA-96",
+      "first_name": "Anastasia",
+      "last_name": "Guerra",
+      "name": "Anastasia Guerra",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "GAL-ANA-01",
+      "first_name": "Anamarija",
+      "last_name": "Galic",
+      "name": "Anamarija Galic",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "GAR-CLE-97",
+      "first_name": "Clémence",
+      "last_name": "Garcia",
+      "name": "Clémence Garcia",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "NWA-LIN-02",
+      "first_name": "Linda",
+      "last_name": "Nwakalor",
+      "name": "Linda Nwakalor",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "LAZ-ALE-94",
+      "first_name": "Alexandra",
+      "last_name": "Lazic",
+      "name": "Alexandra Lazic",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "SAM-STE-98",
+      "first_name": "Stephanie",
+      "last_name": "Samedy",
+      "name": "Stephanie Samedy",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "DIL-VIC-99",
+      "first_name": "Victoria",
+      "last_name": "Dilfer",
+      "name": "Victoria Dilfer",
+      "team": "Bartoccini Mc Restauri Perugia",
+      "team_id": "710908"
+    },
+    {
+      "id": "BOV-LAU-96",
+      "first_name": "Laura",
+      "last_name": "Bovo",
+      "name": "Laura Bovo",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "BUT-BOZ-00",
+      "first_name": "Bozana",
+      "last_name": "Butigan",
+      "name": "Bozana Butigan",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "PAR-LAU-91",
+      "first_name": "Laura",
+      "last_name": "Partenio",
+      "name": "Laura Partenio",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "CEC-GIA-91",
+      "first_name": "Giada",
+      "last_name": "Cecchetto",
+      "name": "Giada Cecchetto",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "DAS-LOR-99",
+      "first_name": "Lorrayna Marys",
+      "last_name": "Da Silva",
+      "name": "Lorrayna Marys Da Silva",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "CIC-LUN-04",
+      "first_name": "Luna",
+      "last_name": "Cicola",
+      "name": "Luna Cicola",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "TUR-SOF-98",
+      "first_name": "Sofia",
+      "last_name": "Turlà",
+      "name": "Sofia Turlà",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "MAY-MAC-99",
+      "first_name": "Mackenzie",
+      "last_name": "May",
+      "name": "Mackenzie May",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "FRO-GIO-02",
+      "first_name": "Giorgia",
+      "last_name": "Frosini",
+      "name": "Giorgia Frosini",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "LAN-KHA-98",
+      "first_name": "Khalia",
+      "last_name": "Lanier",
+      "name": "Khalia Lanier",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "CAG-EMM-02",
+      "first_name": "Emma",
+      "last_name": "Cagnin",
+      "name": "Emma Cagnin",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "STU-PAO-88",
+      "first_name": "Federica",
+      "last_name": "Stufi",
+      "name": "Federica Stufi",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "GEN-GIU-96",
+      "first_name": "Giulia",
+      "last_name": "Gennari",
+      "name": "Giulia Gennari",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "LAI-ELI",
+      "first_name": "Elia",
+      "last_name": "Laise",
+      "name": "Elia Laise",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "BON-GIO",
+      "first_name": "Gianni",
+      "last_name": "Bonacina",
+      "name": "Gianni Bonacina",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "AND-FRA",
+      "first_name": "Francesco",
+      "last_name": "Andreoni",
+      "name": "Francesco Andreoni",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "GAN-MAT",
+      "first_name": "Matteo",
+      "last_name": "Gandolfi",
+      "name": "Matteo Gandolfi",
+      "team": "Bergamo",
+      "team_id": "710909"
+    },
+    {
+      "id": "COS-FRA-00",
+      "first_name": "Francesca",
+      "last_name": "Cosi",
+      "name": "Francesca Cosi",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "FIO-SIL-94",
+      "first_name": "Silvia",
+      "last_name": "Fiori",
+      "name": "Silvia Fiori",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "ABB-SYM-96",
+      "first_name": "Symone",
+      "last_name": "Abbott",
+      "name": "Symone Abbott",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "NAP-FRA-99",
+      "first_name": "Francesca",
+      "last_name": "Napodano",
+      "name": "Francesca Napodano",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "CHA-CLA-00",
+      "first_name": "Claire",
+      "last_name": "Chaussee",
+      "name": "Claire Chaussee",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "RIC-MAR-96",
+      "first_name": "Maria Irene",
+      "last_name": "Ricci",
+      "name": "Maria Irene Ricci",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "QUA-GIO-95",
+      "first_name": "Giorgia",
+      "last_name": "Quarchioni",
+      "name": "Giorgia Quarchioni",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "OKE-AKU-98",
+      "first_name": "Akuabata Felisa",
+      "last_name": "Okenwa",
+      "name": "Akuabata Felisa Okenwa",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "MOL-BEA-95",
+      "first_name": "Beatrice",
+      "last_name": "Molinaro",
+      "name": "Beatrice Molinaro",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "FIE-ALE-94",
+      "first_name": "Alessia",
+      "last_name": "Fiesoli",
+      "name": "Alessia Fiesoli",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "MAL-POL-98",
+      "first_name": "Polina",
+      "last_name": "Malik",
+      "name": "Polina Malik",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "POL-AUR-99",
+      "first_name": "Aurora",
+      "last_name": "Poli",
+      "name": "Aurora Poli",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "AEL-FRE-90",
+      "first_name": "Freya",
+      "last_name": "Aelbrecht",
+      "name": "Freya Aelbrecht",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "DIJ-LAU-90",
+      "first_name": "Laura",
+      "last_name": "Dijkema",
+      "name": "Laura Dijkema",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "LIP-ALE-98",
+      "first_name": "Aleksandra",
+      "last_name": "Lipska",
+      "name": "Aleksandra Lipska",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "MIL-NIK-02",
+      "first_name": "Nikol",
+      "last_name": "Milanova",
+      "name": "Nikol Milanova",
+      "team": "Cbf Balducci Hr Macerata",
+      "team_id": "710935"
+    },
+    {
+      "id": "BAT-VAL",
+      "first_name": "Valeria",
+      "last_name": "Battista",
+      "name": "Valeria Battista",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "DEG-ALI-96",
+      "first_name": "Alice",
+      "last_name": "Degradi",
+      "name": "Alice Degradi",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "LLO-CAR-89",
+      "first_name": "Carli",
+      "last_name": "Lloyd",
+      "name": "Carli Lloyd",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "MON-SOF-02",
+      "first_name": "Sofia",
+      "last_name": "Monza",
+      "name": "Sofia Monza",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "MON-ROS-94",
+      "first_name": "Rosamaria",
+      "last_name": "Montibeller",
+      "name": "Rosamaria Montibeller",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "LUA-GIU-95",
+      "first_name": "Giuditta",
+      "last_name": "Lualdi",
+      "name": "Giuditta Lualdi",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "STI-LEN-21",
+      "first_name": "Lena",
+      "last_name": "Stigrot",
+      "name": "Lena Stigrot",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "COL-VAL-03",
+      "first_name": "Valentina",
+      "last_name": "Colombo",
+      "name": "Valentina Colombo",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "OLI-ROS-91",
+      "first_name": "Rossella",
+      "last_name": "Olivotto",
+      "name": "Rossella Olivotto",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "ZAN-GIO-98",
+      "first_name": "Giorgia",
+      "last_name": "Zannoni",
+      "name": "Giorgia Zannoni",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "OMO-LOV-02",
+      "first_name": "Loveth Oghosasere",
+      "last_name": "Omoruyi",
+      "name": "Loveth Oghosasere Omoruyi",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "ZAK-KAT-98",
+      "first_name": "Katerina",
+      "last_name": "Zakchaiou",
+      "name": "Katerina Zakchaiou",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "BRE-CHI-02",
+      "first_name": "Chiara",
+      "last_name": "Bressan",
+      "name": "Chiara Bressan",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "MEN-ROB",
+      "first_name": "Roberto",
+      "last_name": "Menegolo",
+      "name": "Roberto Menegolo",
+      "team": "Eurotek Laica Uyba",
+      "team_id": "710910"
+    },
+    {
+      "id": "KUZ-SOF-99",
+      "first_name": "Sofya",
+      "last_name": "Kuznetsova",
+      "name": "Sofya Kuznetsova",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "DAN-DRE-99",
+      "first_name": "Danielle",
+      "last_name": "Drews",
+      "name": "Danielle Drews",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "KLE-KIM-02",
+      "first_name": "Kim",
+      "last_name": "Klein Lankhorst",
+      "name": "Kim Klein Lankhorst",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "CEC-AGN-99",
+      "first_name": "Agnese",
+      "last_name": "Cecconello",
+      "name": "Agnese Cecconello",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "CAR-LAR-94",
+      "first_name": "Lara",
+      "last_name": "Caravello",
+      "name": "Lara Caravello",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "BAS-CAM-06",
+      "first_name": "Camilla",
+      "last_name": "Basso",
+      "name": "Camilla Basso",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "AGR-BEA-94",
+      "first_name": "Beatrice",
+      "last_name": "Agrifoglio",
+      "name": "Beatrice Agrifoglio",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "SZA-GRE-91",
+      "first_name": "Greta",
+      "last_name": "Szakmary",
+      "name": "Greta Szakmary",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "GIC-LUC-97",
+      "first_name": "Lucille",
+      "last_name": "Gicquel",
+      "name": "Lucille Gicquel",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "MAG-FRA-02",
+      "first_name": "Francesca",
+      "last_name": "Magazza",
+      "name": "Francesca Magazza",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "SIG-NOE-90",
+      "first_name": "Noemi",
+      "last_name": "Signorile",
+      "name": "Noemi Signorile",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "STE-ANN-99",
+      "first_name": "Anna",
+      "last_name": "Hall",
+      "name": "Anna Hall",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "CAR-SAR-01",
+      "first_name": "Sara",
+      "last_name": "Caruso",
+      "name": "Sara Caruso",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "DIO-BIN-02",
+      "first_name": "Binto",
+      "last_name": "Diop",
+      "name": "Binto Diop",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "GAY-ALI-02",
+      "first_name": "Alice",
+      "last_name": "Gay",
+      "name": "Alice Gay",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "GEN-FAB",
+      "first_name": "Fabio",
+      "last_name": "Genre",
+      "name": "Fabio Genre",
+      "team": "Honda Cuneo Granda Volley",
+      "team_id": "710911"
+    },
+    {
+      "id": "POU-JOR-97",
+      "first_name": "Jordyn",
+      "last_name": "Poulter",
+      "name": "Jordyn Poulter",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "CAM-CAR-96",
+      "first_name": "Carlotta",
+      "last_name": "Cambi",
+      "name": "Carlotta Cambi",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "ADA-MCK-92",
+      "first_name": "Mckenzie Elise",
+      "last_name": "Adams",
+      "name": "Mckenzie Elise Adams",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "BRE-GIU-92",
+      "first_name": "Giulia",
+      "last_name": "Bresciani",
+      "name": "Giulia Bresciani",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "GIO-GAI-01",
+      "first_name": "Gaia",
+      "last_name": "Giovannini",
+      "name": "Gaia Giovannini",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "BAT-ILA-96",
+      "first_name": "Ilaria",
+      "last_name": "Battistoni",
+      "name": "Ilaria Battistoni",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "FER-ELE-00",
+      "first_name": "Eleonora",
+      "last_name": "Fersino",
+      "name": "Eleonora Fersino",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "BOS-CAT-94",
+      "first_name": "Caterina",
+      "last_name": "Bosetti",
+      "name": "Caterina Bosetti",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "CHI-CRI-94",
+      "first_name": "Cristina",
+      "last_name": "Chirichella",
+      "name": "Cristina Chirichella",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "DAN-ANN-96",
+      "first_name": "Anna",
+      "last_name": "Danesi",
+      "name": "Anna Danesi",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "VAR-LUC-03",
+      "first_name": "Lucia",
+      "last_name": "Varela Gomez",
+      "name": "Lucia Varela Gomez",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "BON-SAR-96",
+      "first_name": "Sara",
+      "last_name": "Bonifacio",
+      "name": "Sara Bonifacio",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "CAR-KEN-86",
+      "first_name": "Kenia",
+      "last_name": "Carcaces",
+      "name": "Kenia Carcaces",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "ITU-JUL-04",
+      "first_name": "Julia",
+      "last_name": "Ituma",
+      "name": "Julia Ituma",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "KAR-EBR-00",
+      "first_name": "Ebrar",
+      "last_name": "Karakurt",
+      "name": "Ebrar Karakurt",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "GAD-MAI",
+      "first_name": "Mattia",
+      "last_name": "Gadda",
+      "name": "Mattia Gadda",
+      "team": "Igor Gorgonzola Novara",
+      "team_id": "710912"
+    },
+    {
+      "id": "ALH-RHA-96",
+      "first_name": "Rhamat",
+      "last_name": "Alhassan",
+      "name": "Rhamat Alhassan",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "SYL-AMA-00",
+      "first_name": "Amandha",
+      "last_name": "Sylves",
+      "name": "Amandha Sylves",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "HER-BRI-99",
+      "first_name": "Britt",
+      "last_name": "Herbots",
+      "name": "Britt Herbots",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "LOT-SIL-93",
+      "first_name": "Silvia",
+      "last_name": "Lotti",
+      "name": "Silvia Lotti",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "GUI-GAI-02",
+      "first_name": "Gaia",
+      "last_name": "Guiducci",
+      "name": "Gaia Guiducci",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "VAN-CEL-97",
+      "first_name": "Celine",
+      "last_name": "Van Gestel",
+      "name": "Celine Van Gestel",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "PAN-SAR-00",
+      "first_name": "Sara",
+      "last_name": "Panetoni",
+      "name": "Sara Panetoni",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "KNO-JOL-03",
+      "first_name": "Jolien",
+      "last_name": "Knollema",
+      "name": "Jolien Knollema",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "ADE-ANN-03",
+      "first_name": "Anna",
+      "last_name": "Adelusi",
+      "name": "Anna Adelusi",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "ENW-TER-00",
+      "first_name": "Terry Ruth",
+      "last_name": "Enweonwu",
+      "name": "Terry Ruth Enweonwu",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "GRA-EMM-02",
+      "first_name": "Emma",
+      "last_name": "Graziani",
+      "name": "Emma Graziani",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "NWA-SYL-99",
+      "first_name": "Sylvia",
+      "last_name": "Nwakalor",
+      "name": "Sylvia Nwakalor",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "LAX-BIX-02",
+      "first_name": "Bianca",
+      "last_name": "Lapini",
+      "name": "Bianca Lapini",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "KOS-DAY-99",
+      "first_name": "Dayana",
+      "last_name": "Kosareva",
+      "name": "Dayana Kosareva",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "MAL-OFE-96",
+      "first_name": "Ofelia",
+      "last_name": "Malinov",
+      "name": "Ofelia Malinov",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "LIB-LOR",
+      "first_name": "Lorenzo",
+      "last_name": "Librio",
+      "name": "Lorenzo Librio",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "CAM-CAR-96",
+      "first_name": "Carlotta",
+      "last_name": "Cambi",
+      "name": "Carlotta Cambi",
+      "team": "Il Bisonte Firenze",
+      "team_id": "710913"
+    },
+    {
+      "id": "PIA-VIT-98",
+      "first_name": "Vittoria",
+      "last_name": "Piani",
+      "name": "Vittoria Piani",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "FUR-ELE-95",
+      "first_name": "Eleonora",
+      "last_name": "Furlan",
+      "name": "Eleonora Furlan",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "DRE-ANN-93",
+      "first_name": "Andrea Carrie",
+      "last_name": "Drews",
+      "name": "Andrea Carrie Drews",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "DOD-SOF-97",
+      "first_name": "Sofia",
+      "last_name": "D'Odorico",
+      "name": "Sofia D'Odorico",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "SIR-IMM-90",
+      "first_name": "Imma",
+      "last_name": "Sirressi",
+      "name": "Imma Sirressi",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "ALE-MAJ-97",
+      "first_name": "Maja",
+      "last_name": "Aleksic",
+      "name": "Maja Aleksic",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "PAP-VAL-89",
+      "first_name": "Valeria",
+      "last_name": "Papa",
+      "name": "Valeria Papa",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "MAN-GIU-98",
+      "first_name": "Giulia",
+      "last_name": "Mancini",
+      "name": "Giulia Mancini",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "HAN-MIC-92",
+      "first_name": "Micha Danielle",
+      "last_name": "Hancock",
+      "name": "Micha Danielle Hancock",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "BAR-EMM-04",
+      "first_name": "Emma",
+      "last_name": "Barbero",
+      "name": "Emma Barbero",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "BER-BEA-96",
+      "first_name": "Beatrice",
+      "last_name": "Berti",
+      "name": "Beatrice Berti",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "KOS-TAT-88",
+      "first_name": "Tatiana",
+      "last_name": "Kosheleva",
+      "name": "Tatiana Kosheleva",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "LAZ-RAQ-00",
+      "first_name": "Raquel",
+      "last_name": "Lazàro Castellanos",
+      "name": "Raquel Lazàro Castellanos",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "SPA-MAT",
+      "first_name": "Matteo",
+      "last_name": "Spadoni",
+      "name": "Matteo Spadoni",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "CAR-GIU-94",
+      "first_name": "Giulia",
+      "last_name": "Carraro",
+      "name": "Giulia Carraro",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "LUT-MER-94",
+      "first_name": "Merete Suzanne",
+      "last_name": "Lutz",
+      "name": "Merete Suzanne Lutz",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "MAR-MEL-93",
+      "first_name": "Melissa",
+      "last_name": "Martinelli",
+      "name": "Melissa Martinelli",
+      "team": "Megabox Ond Savio Vallefoglia",
+      "team_id": "710914"
+    },
+    {
+      "id": "STY-MAG-00",
+      "first_name": "Magdalena",
+      "last_name": "Stysiak",
+      "name": "Magdalena Stysiak",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "ALL-AVE-99",
+      "first_name": "Averie",
+      "last_name": "Allard",
+      "name": "Averie Allard",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "FOL-RAP-91",
+      "first_name": "Raphaela",
+      "last_name": "Folie",
+      "name": "Raphaela Folie",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "ORR-ALE-98",
+      "first_name": "Alessia",
+      "last_name": "Orro",
+      "name": "Alessia Orro",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "CAM-LET-92",
+      "first_name": "Letizia",
+      "last_name": "Camera",
+      "name": "Letizia Camera",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "PAR-BEA",
+      "first_name": "Beatrice",
+      "last_name": "Parrocchiale",
+      "name": "Beatrice Parrocchiale",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "BEG-EDI-92",
+      "first_name": "Edina",
+      "last_name": "Begic",
+      "name": "Edina Begic",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "THO-JOR-97",
+      "first_name": "Jordan",
+      "last_name": "Thompson",
+      "name": "Jordan Thompson",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "RET-DAN-99",
+      "first_name": "Dana",
+      "last_name": "Rettke",
+      "name": "Dana Rettke",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "STE-JOV-92",
+      "first_name": "Jovana",
+      "last_name": "Stevanovic",
+      "name": "Jovana Stevanovic",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "NEG-BEA",
+      "first_name": "Beatrice",
+      "last_name": "Negretti",
+      "name": "Beatrice Negretti",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "SYL-MIR-95",
+      "first_name": "Myriam",
+      "last_name": "Sylla",
+      "name": "Myriam Sylla",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "DAV-HAN-00",
+      "first_name": "Anna",
+      "last_name": "Davyskiba",
+      "name": "Anna Davyskiba",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "LAR-JOR-86",
+      "first_name": "Jordan",
+      "last_name": "Larson",
+      "name": "Jordan Larson",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "CAN-SON-93",
+      "first_name": "Sonia",
+      "last_name": "Candi",
+      "name": "Sonia Candi",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "CON-DAN",
+      "first_name": "Danilo",
+      "last_name": "Contrario",
+      "name": "Danilo Contrario",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "MAR-PAU-02",
+      "first_name": "Pauline",
+      "last_name": "Martin",
+      "name": "Pauline Martin",
+      "team": "Numia Vero Volley Milano",
+      "team_id": "710915"
+    },
+    {
+      "id": "PRO-NIK-94",
+      "first_name": "Nikoleta",
+      "last_name": "Perovic",
+      "name": "Nikoleta Perovic",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "BIA-GIU-00",
+      "first_name": "Giulia",
+      "last_name": "Biagini",
+      "name": "Giulia Biagini",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "BOL-ALE-02",
+      "first_name": "Alessia",
+      "last_name": "Bolzonetti",
+      "name": "Alessia Bolzonetti",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "SAL-CHI-03",
+      "first_name": "Chiara",
+      "last_name": "Salvatori",
+      "name": "Chiara Salvatori",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "CAN-SOF-05",
+      "first_name": "Sofia",
+      "last_name": "Cangini",
+      "name": "Sofia Cangini",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "RAC-VAN-70",
+      "first_name": "Vangeliya",
+      "last_name": "Rachkovska",
+      "name": "Vangeliya Rachkovska",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "COV-CLA-01",
+      "first_name": "Clarissa",
+      "last_name": "Covino",
+      "name": "Clarissa Covino",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "SAG-GIU-91",
+      "first_name": "Giulia",
+      "last_name": "Saguatti",
+      "name": "Giulia Saguatti",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "PAR-SVE-01",
+      "first_name": "Sveva",
+      "last_name": "Parini",
+      "name": "Sveva Parini",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "ALU-MAR",
+      "first_name": "Mariaelena",
+      "last_name": "Aluigi",
+      "name": "Mariaelena Aluigi",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "TUR-ALI-00",
+      "first_name": "Alice",
+      "last_name": "Turco",
+      "name": "Alice Turco",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "CAF-GIO-94",
+      "first_name": "Giorgia",
+      "last_name": "Caforio",
+      "name": "Giorgia Caforio",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "BAB-MAR-98",
+      "first_name": "Maria Adelaide",
+      "last_name": "Babatunde",
+      "name": "Maria Adelaide Babatunde",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "ROM-RIC",
+      "first_name": "Riccardo",
+      "last_name": "Romani",
+      "name": "Riccardo Romani",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "COL-FED",
+      "first_name": "Federica",
+      "last_name": "Colabufalo",
+      "name": "Federica Colabufalo",
+      "team": "Omag Mt San Giovanni In M No",
+      "team_id": "710936"
+    },
+    {
+      "id": "CAR-ROB-98",
+      "first_name": "Roberta",
+      "last_name": "Carraro",
+      "name": "Roberta Carraro",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "PLU-KAT-98",
+      "first_name": "Kathryn",
+      "last_name": "Plummer",
+      "name": "Kathryn Plummer",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "ROB-KEL-92",
+      "first_name": "Kelsey",
+      "last_name": "Robinson-Cook",
+      "name": "Kelsey Robinson-Cook",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "SQU-FED",
+      "first_name": "Federica",
+      "last_name": "Squarcini",
+      "name": "Federica Squarcini",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "DEK-ROB-91",
+      "first_name": "Robin",
+      "last_name": "De Kruijf",
+      "name": "Robin De Kruijf",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "GEN-ALE-91",
+      "first_name": "Alessia",
+      "last_name": "Gennari",
+      "name": "Alessia Gennari",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "SAM-STE-98",
+      "first_name": "Stephanie",
+      "last_name": "Samedy",
+      "name": "Stephanie Samedy",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "GRA-ALE-94",
+      "first_name": "Alexa",
+      "last_name": "Gray",
+      "name": "Alexa Gray",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "LUB-MAR-00",
+      "first_name": "Marina",
+      "last_name": "Lubian",
+      "name": "Marina Lubian",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "DEG-MON-87",
+      "first_name": "Monica",
+      "last_name": "De Gennaro",
+      "name": "Monica De Gennaro",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "HAA-ISA-99",
+      "first_name": "Isabelle",
+      "last_name": "Haak",
+      "name": "Isabelle Haak",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "PER-YLE-94",
+      "first_name": "Ylenia",
+      "last_name": "Pericati",
+      "name": "Ylenia Pericati",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "WOL-JOA-90",
+      "first_name": "Joanna",
+      "last_name": "Wolosz",
+      "name": "Joanna Wolosz",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "FAH-SAR-01",
+      "first_name": "Sarah",
+      "last_name": "Fahr",
+      "name": "Sarah Fahr",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "FUR-ELE-95",
+      "first_name": "Eleonora",
+      "last_name": "Furlan",
+      "name": "Eleonora Furlan",
+      "team": "Prosecco Doc A Carraro Imoco Conegliano",
+      "team_id": "710916"
+    },
+    {
+      "id": "CAZ-HEL-97",
+      "first_name": "Helena",
+      "last_name": "Cazaute",
+      "name": "Helena Cazaute",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "MOR-RAC",
+      "first_name": "Rachele",
+      "last_name": "Morello",
+      "name": "Rachele Morello",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "ROZ-OLI-97",
+      "first_name": "Olivia",
+      "last_name": "Rozanski",
+      "name": "Olivia Rozanski",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "BOS-FRA-97",
+      "first_name": "Francesca",
+      "last_name": "Bosio",
+      "name": "Francesca Bosio",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "SPI-ILA-94",
+      "first_name": "Ilaria",
+      "last_name": "Spirito",
+      "name": "Ilaria Spirito",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "FIN-ALE-04",
+      "first_name": "Alessia",
+      "last_name": "Fini",
+      "name": "Alessia Fini",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "NER-STE-03",
+      "first_name": "Stella",
+      "last_name": "Nervini",
+      "name": "Stella Nervini",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "GRO-KAJ-95",
+      "first_name": "Kaja",
+      "last_name": "Grobelna",
+      "name": "Kaja Grobelna",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "VIL-FRA-95",
+      "first_name": "Francesca",
+      "last_name": "Villani",
+      "name": "Francesca Villani",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "BUT-BRI-99",
+      "first_name": "Brionne",
+      "last_name": "Butler",
+      "name": "Brionne Butler",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "STO-MAJ-98",
+      "first_name": "Maja",
+      "last_name": "Storck",
+      "name": "Maja Storck",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "MAZ-ALE-98",
+      "first_name": "Alessia",
+      "last_name": "Mazzaro",
+      "name": "Alessia Mazzaro",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "KON-FAT",
+      "first_name": "Fatim Yassimina",
+      "last_name": "Kone",
+      "name": "Fatim Yassimina Kone",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "WEI-CAM-00",
+      "first_name": "Camilla",
+      "last_name": "Weitzel",
+      "name": "Camilla Weitzel",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "GAR-MAR-92",
+      "first_name": "Marie-France",
+      "last_name": "Garreau Djé",
+      "name": "Marie-France Garreau Djé",
+      "team": "Reale Mutua Fenera Chieri 76",
+      "team_id": "710917"
+    },
+    {
+      "id": "SOR-IND-88",
+      "first_name": "Indre",
+      "last_name": "Sorokaite",
+      "name": "Indre Sorokaite",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "ALB-SAR-93",
+      "first_name": "Sara",
+      "last_name": "Alberti",
+      "name": "Sara Alberti",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "BEL-YVO-93",
+      "first_name": "Yvon",
+      "last_name": "Belien",
+      "name": "Yvon Belien",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "TIN-ZHU-94",
+      "first_name": "Ting",
+      "last_name": "Zhu",
+      "name": "Ting Zhu",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "GAM-NIC-98",
+      "first_name": "Nicole",
+      "last_name": "Gamba",
+      "name": "Nicole Gamba",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "PIE-ELE-00",
+      "first_name": "Elena",
+      "last_name": "Pietrini",
+      "name": "Elena Pietrini",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "MER-ENR-88",
+      "first_name": "Enrica",
+      "last_name": "Merlo",
+      "name": "Enrica Merlo",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "MIN-CAM-97",
+      "first_name": "Camilla",
+      "last_name": "Mingardi",
+      "name": "Camilla Mingardi",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "DI-YAO-92",
+      "first_name": "Di",
+      "last_name": "Yao",
+      "name": "Di Yao",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "SHC-YAN-89",
+      "first_name": "Yana",
+      "last_name": "Shcherban",
+      "name": "Yana Shcherban",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "ANG-VER-86",
+      "first_name": "Veronica",
+      "last_name": "Angeloni",
+      "name": "Veronica Angeloni",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "GUI-LUD-92",
+      "first_name": "Ludovica",
+      "last_name": "Guidi",
+      "name": "Ludovica Guidi",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "WAS-HAL-95",
+      "first_name": "Haleigh",
+      "last_name": "Washington",
+      "name": "Haleigh Washington",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "ANT-EKA-03",
+      "first_name": "Ekaterina",
+      "last_name": "Antropova",
+      "name": "Ekaterina Antropova",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "CAS-BRE-92",
+      "first_name": "Brenda",
+      "last_name": "Castillo",
+      "name": "Brenda Castillo",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "DII-ISA-91",
+      "first_name": "Isabella",
+      "last_name": "Di Iulio",
+      "name": "Isabella Di Iulio",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "GAB-FAB",
+      "first_name": "Fabio",
+      "last_name": "Gabban",
+      "name": "Fabio Gabban",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "MAL-OFE-96",
+      "first_name": "Ofelia",
+      "last_name": "Malinov",
+      "name": "Ofelia Malinov",
+      "team": "Savino Del Bene Scandicci",
+      "team_id": "710918"
+    },
+    {
+      "id": "GRA-MAR-95",
+      "first_name": "Martyna",
+      "last_name": "Grajber",
+      "name": "Martyna Grajber",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "MIA-YIW-00",
+      "first_name": "Yiwen",
+      "last_name": "Miao",
+      "name": "Yiwen Miao",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "CAR-FED-00",
+      "first_name": "Federica",
+      "last_name": "Carletti",
+      "name": "Federica Carletti",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "GUE-MIC-03",
+      "first_name": "Michelle",
+      "last_name": "Gueli",
+      "name": "Michelle Gueli",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "REN-SOF-97",
+      "first_name": "Sofia",
+      "last_name": "Renieri",
+      "name": "Sofia Renieri",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "BUS-SIL-93",
+      "first_name": "Silvia",
+      "last_name": "Bussoli",
+      "name": "Silvia Bussoli",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "MOR-ILE-99",
+      "first_name": "Ilenia",
+      "last_name": "Moro",
+      "name": "Ilenia Moro",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "PRA-VIT",
+      "first_name": "Vittoria",
+      "last_name": "Prandi",
+      "name": "Vittoria Prandi",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "ZAG-VAL-90",
+      "first_name": "Valentina",
+      "last_name": "Zago",
+      "name": "Valentina Zago",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "BOR-LAU-96",
+      "first_name": "Laura",
+      "last_name": "Bortoli",
+      "name": "Laura Bortoli",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "RAI-JON-00",
+      "first_name": "0",
+      "last_name": "Jones Rainelle",
+      "name": "0 Jones Rainelle",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "GRA-ANN-96",
+      "first_name": "Anna",
+      "last_name": "Gray",
+      "name": "Anna Gray",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "AKR-YAS-93",
+      "first_name": "Yasmina",
+      "last_name": "Akrari",
+      "name": "Yasmina Akrari",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "UNG-ADE-00",
+      "first_name": "Adelina",
+      "last_name": "Ungureanu",
+      "name": "Adelina Ungureanu",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    },
+    {
+      "id": "TIM-VER-95",
+      "first_name": "Veronika",
+      "last_name": "Trnkova",
+      "name": "Veronika Trnkova",
+      "team": "Wash4green Monviso Volley",
+      "team_id": "710919"
+    }
+  ]
+}

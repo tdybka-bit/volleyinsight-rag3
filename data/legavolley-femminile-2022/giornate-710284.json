@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "year": 2022,
+    "championship_id": 710284,
+    "scraped_at": "2025-11-07T23:45:47.828Z",
+    "total_giornate": 11
+  },
+  "giornate": [
+    {
+      "id": "712842",
+      "name": "1a Giornata",
+      "phase": "Quarti",
+      "date": "16/04/2023",
+      "full_name": "1a Giornata  - Quarti - 16/04/2023"
+    },
+    {
+      "id": "712843",
+      "name": "2a Giornata",
+      "phase": "Quarti",
+      "date": "19/04/2023",
+      "full_name": "2a Giornata  - Quarti - 19/04/2023"
+    },
+    {
+      "id": "712845",
+      "name": "3a Giornata",
+      "phase": "Quarti",
+      "date": "23/04/2023",
+      "full_name": "3a Giornata  - Quarti - 23/04/2023"
+    },
+    {
+      "id": "712858",
+      "name": "1a Giornata",
+      "phase": "Semifinali",
+      "date": "26/04/2023",
+      "full_name": "1a Giornata  - Semifinali - 26/04/2023"
+    },
+    {
+      "id": "712859",
+      "name": "2a Giornata",
+      "phase": "Semifinali",
+      "date": "30/04/2023",
+      "full_name": "2a Giornata  - Semifinali - 30/04/2023"
+    },
+    {
+      "id": "712860",
+      "name": "3a Giornata",
+      "phase": "Semifinali",
+      "date": "03/05/2023",
+      "full_name": "3a Giornata  - Semifinali - 03/05/2023"
+    },
+    {
+      "id": "712862",
+      "name": "1a Giornata",
+      "phase": "Finale",
+      "date": "06/05/2023",
+      "full_name": "1a Giornata  - Finale - 06/05/2023"
+    },
+    {
+      "id": "712863",
+      "name": "2a Giornata",
+      "phase": "Finale",
+      "date": "09/05/2023",
+      "full_name": "2a Giornata  - Finale - 09/05/2023"
+    },
+    {
+      "id": "712864",
+      "name": "3a Giornata",
+      "phase": "Finale",
+      "date": "11/05/2023",
+      "full_name": "3a Giornata  - Finale - 11/05/2023"
+    },
+    {
+      "id": "712865",
+      "name": "4a Giornata",
+      "phase": "Finale",
+      "date": "13/05/2023",
+      "full_name": "4a Giornata  - Finale - 13/05/2023"
+    },
+    {
+      "id": "712866",
+      "name": "5a Giornata",
+      "phase": "Finale",
+      "date": "15/05/2023",
+      "full_name": "5a Giornata  - Finale - 15/05/2023"
+    }
+  ]
+}

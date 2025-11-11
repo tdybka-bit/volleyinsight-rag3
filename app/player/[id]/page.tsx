@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, ComposedChart } from 'recharts';
+import { LineChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, ComposedChart } from 'recharts';
 
 interface PlayerData {
   id: string;
@@ -57,6 +57,8 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
   const [playerId, setPlayerId] = useState<string>('');
   const [allPlayers, setAllPlayers] = useState<PlayerData[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerData | null>(null);
+  const [compareWith, setCompareWith] = useState<string | null>(null);
+  const [selectedSeason, setSelectedSeason] = useState<string>('2024-2025');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -66,8 +68,11 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
         const res = await fetch(`/api/player/${p.id}/all-seasons`);
         const data = await res.json();
         setAllPlayers(data.players || []);
+        
+        // Znajdź gracza z selectedSeason
         if (data.players && data.players.length > 0) {
-          setSelectedPlayer(data.players[0]);
+          const playerInSeason = data.players.find(pl => pl.season === selectedSeason);
+          setSelectedPlayer(playerInSeason || data.players[0]);
         }
       } catch (error) {
         console.error('Error fetching player:', error);
@@ -75,13 +80,23 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
         setLoading(false);
       }
     });
-  }, [params]);
-
+  }, [params, selectedSeason]); // Dodaj selectedSeason!
+  
+  // Dodaj useEffect do zmiany sezonu
+  useEffect(() => {
+    if (allPlayers.length > 0) {
+      const playerInSeason = allPlayers.find(p => p.season === selectedSeason);
+      if (playerInSeason) {
+        setSelectedPlayer(playerInSeason);
+      }
+    }
+  }, [selectedSeason, allPlayers]);
+  
   // useMemo PRZED warunkami!
-  const { player, matches, stats, career, spcTotal, spcAttack, spcBlock, spcAces } = useMemo(() => {
+  const { player, matches, stats, career, spcTotal, spcAttack, spcBlock, spcAces, compareData } = useMemo(() => {
     console.log('🔄 useMemo recalculating!');
     console.log('🎯 selectedPlayer:', selectedPlayer?.season, selectedPlayer?.league);
-
+  
     if (!selectedPlayer) {
       return {
         player: null,
@@ -91,10 +106,11 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
         spcTotal: { mean: 0, ucl: 0, lcl: 0, data: [] },
         spcAttack: { mean: 0, ucl: 0, lcl: 0, data: [] },
         spcBlock: { mean: 0, ucl: 0, lcl: 0, data: [] },
-        spcAces: { mean: 0, ucl: 0, lcl: 0, data: [] }
+        spcAces: { mean: 0, ucl: 0, lcl: 0, data: [] },
+        compareData: null
       };
     }
-
+  
     const player = selectedPlayer;
         
     const matches = (player.matchByMatch || []).filter((m: any) => {
@@ -104,52 +120,110 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
              !giornata.includes('Totale') && 
              m.points_total !== undefined;
     });
-
+  
     console.log('📊 Filtered matches count:', matches.length);
     console.log('📋 First match:', matches[0]);
     console.log('🔢 Total points array length:', matches.map(m => parseInt(m.points_total) || 0).length);
-
+  
     const totalPoints = matches.map(m => parseInt(m.points_total) || 0);
     const attackPoints = matches.map(m => {
+      // LegaVolley uses attack_won, PlusLiga uses attack_points
       if (m.attack_points !== undefined) {
         return parseInt(m.attack_points) || 0;
+      }
+      if (m.attack_won !== undefined) {
+        return parseInt(m.attack_won) || 0;
       }
       return (parseInt(m.attack_winning) || 0) + (parseInt(m.attack_perfect) || 0);
     });
     const blockPoints = matches.map(m => parseInt(m.block_points) || 0);
     const aces = matches.map(m => parseInt(m.serve_aces) || 0);
-
+  
     const spcTotal = calculateSPC(totalPoints, matches);
     const spcAttack = calculateSPC(attackPoints, matches);
     const spcBlock = calculateSPC(blockPoints, matches);
     const spcAces = calculateSPC(aces, matches);
 
-    const stats = player.currentSeasonStats;
-    const career = player.careerTotals;
+  // Dodaj breakdown do spcTotal.data
+  spcTotal.data = spcTotal.data.map((point, idx) => ({
+    ...point,
+    attack: attackPoints[idx] || 0,
+    block: blockPoints[idx] || 0,
+    ace: aces[idx] || 0
+  }));
 
-    return { player, matches, stats, career, spcTotal, spcAttack, spcBlock, spcAces };
-  }, [selectedPlayer]);
 
-  const CustomDot = (props: any) => {
-    const { cx, cy, payload } = props;
-    if (payload.isOutlier) {
-      return (
-        <circle cx={cx} cy={cy} r={6} fill="#ef4444" stroke="#fff" strokeWidth={2} />
-      );
+  const stats = player.currentSeasonStats;
+  const career = player.careerTotals;
+
+  // Dane porównawcze z innego sezonu
+  let compareData = null;
+  if (compareWith && player) {
+    const comparePlayer = allPlayers.find(p => 
+      p.id === player.id && 
+      p.season === compareWith && 
+      p.league === player.league
+    );
+    
+    if (comparePlayer?.matchByMatch) {
+      const compareMatches = comparePlayer.matchByMatch
+        .filter((m: any) => {
+          const giornata = m.giornata || '';
+          return !giornata.match(/^\d+$/) && 
+                 !giornata.includes('Media') && 
+                 !giornata.includes('Totale') && 
+                 m.points_total !== undefined;
+        })
+        .slice(0, matches.length);
+      
+      compareData = compareMatches.map((m, idx) => ({
+        match: idx + 1,
+        value: parseInt(m.points_total) || 0
+      }));
     }
-    return <circle cx={cx} cy={cy} r={4} fill="#fbbf24" />;
-  };
+  }
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  return { player, matches, stats, career, spcTotal, spcAttack, spcBlock, spcAces, compareData };
+}, [selectedPlayer, compareWith]); // Dodaj compareWith!
+
+const BAR_SIZE = 12;
+const BAR_MIN_POINT_SIZE = 1; // łatwo wrócić do starego ustawienia ustawiając 0
+const CHART_AXIS_FONT_SIZE = 11;
+const CHART_LEFT_MARGIN = -24; // ustaw na 0, żeby wrócić do poprzedniego wyglądu
+
+const CustomDot = (props: any) => {
+  const { cx, cy, payload } = props;
+  if (payload.isOutlier) {
+    return (
+      <circle cx={cx} cy={cy} r={6} fill="#ef4444" stroke="#fff" strokeWidth={2} />
+    );
+  }
+  return <circle cx={cx} cy={cy} r={4} fill="#fbbf24" />;
+};
+
+  const CustomTooltip = ({ active, payload, mean }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-slate-800 border border-slate-600 rounded-lg p-3 shadow-lg">
-          <p className="text-white font-bold">{data.match}</p>
+        <div className="bg-slate-800 border border-slate-600 rounded-lg p-4 shadow-lg">
+          <p className="text-white font-bold text-sm">{data.match}</p>
           <p className="text-gray-300 text-sm">{data.opponent}</p>
-          <p className="text-gray-400 text-xs">{data.date}</p>
-          <p className="text-yellow-400 font-bold mt-2">Wartość: {data.value}</p>
-          {data.isOutlier && <p className="text-red-400 text-xs mt-1">⚠️ Outlier</p>}
+          <p className="text-gray-400 text-xs mb-2">{data.date}</p>
+          
+          <div className="border-t border-slate-600 my-2"></div>
+          
+          <div className="space-y-1">
+            <p className="text-sm" style={{ color: '#3B82F6' }}>⚔️ Punkty atakiem: {data.attack || 0}</p>
+            <p className="text-sm" style={{ color: '#FCB07C' }}>🛡️ Punkty blokiem: {data.block || 0}</p>
+            <p className="text-green-400 text-sm">🎯 Punkty asami: {data.ace || 0}</p>
+          </div>
+          
+          <div className="border-t border-slate-600 my-2"></div>
+          
+          <p className="text-yellow-400 font-bold">📊 TOTAL: {data.value} punktów</p>
+          <p className="text-gray-400 text-xs mt-1">📈 Średnia sezonu: {mean?.toFixed(1) || '-'}</p>
+          
+          {data.isOutlier && <p className="text-red-400 text-xs mt-2">⚠️ Outlier</p>}
         </div>
       );
     }
@@ -263,163 +337,193 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
         {matches.length > 0 ? (
           <>
             <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 mb-6">
-              <h2 className="text-xl font-bold text-white mb-4">
-                📊 Wszystkie punkty per mecz (SPC)
-              </h2>
+              {/* Nagłówek z wyborem sezonu */}
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-white">
+                  📊 Wszystkie punkty per mecz (SPC)
+                </h2>
+                
+                <select 
+                  value={selectedSeason} 
+                  onChange={(e) => setSelectedSeason(e.target.value)}
+                  className="bg-slate-700 text-white px-4 py-2 rounded-lg text-sm border border-slate-600 hover:bg-slate-600"
+                >
+                  <option value="2024-2025">Sezon 2024-2025</option>
+                  <option value="2023-2024">Sezon 2023-2024</option>
+                  <option value="2022-2023">Sezon 2022-2023</option>
+                </select>
+              </div>
+
+              {/* Statystyki SPC */}
               <p className="text-sm text-gray-400 mb-4">
                 Średnia: {spcTotal.mean.toFixed(1)} | 
                 <span className="text-red-300"> UCL: {spcTotal.ucl.toFixed(1)}</span> | 
                 <span className="text-red-300"> LCL: {spcTotal.lcl.toFixed(1)}</span>
                 <span className="ml-4 text-red-400">● Outlier</span>
               </p>
+
+              {/* Porównanie z innym sezonem */}
+              <div className="mb-4 flex items-center gap-4">
+                <label className="text-gray-300 text-sm">Porównaj z:</label>
+                <select 
+                  value={compareWith || ''} 
+                  onChange={(e) => setCompareWith(e.target.value || null)}
+                  className="bg-slate-700 text-white px-3 py-2 rounded-lg text-sm"
+                >
+                  <option value="">Brak porównania</option>
+                  <option value="2023-2024">Sezon 2023-2024</option>
+                  <option value="2022-2023">Sezon 2022-2023</option>
+                </select>
+              </div>
+              
               <ResponsiveContainer width="100%" height={350}>
-                <ComposedChart data={spcTotal.data}>
-                  <defs>
-                    <linearGradient id="controlArea" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10b981" stopOpacity={0.3} />
-                      <stop offset="100%" stopColor="#10b981" stopOpacity={0.1} />
-                    </linearGradient>
-                  </defs>
+                <ComposedChart
+                  data={spcTotal.data}
+                  barCategoryGap="28%"
+                  barGap={0}
+                  margin={{ top: 20, right: 0, bottom: 0, left: CHART_LEFT_MARGIN }}
+                >
                   <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" vertical={true} />
-                  <XAxis dataKey="match" stroke="#94a3b8" interval={1} />
-                  <YAxis stroke="#94a3b8" />
-                  <Tooltip content={<CustomTooltip />} />
+                  <XAxis
+                    dataKey="match"
+                    stroke="#94a3b8"
+                    interval={1}
+                    tick={{ fill: '#94a3b8', fontSize: CHART_AXIS_FONT_SIZE }}
+                  />
+                  <YAxis stroke="#94a3b8" tick={{ fill: '#94a3b8', fontSize: CHART_AXIS_FONT_SIZE }} />
+                  <Tooltip content={<CustomTooltip mean={spcTotal.mean}  />} />
                   <Legend />
-                  <Area type="monotone" dataKey="uclLine" stroke="none" fill="url(#controlArea)" fillOpacity={0.5} />
+                  
+                  {/* Stacked Bars */}
+                  <Bar
+                    dataKey="attack"
+                    stackId="points"
+                    fill="#3B82F6"
+                    name="Punkty atakiem"
+                    barSize={BAR_SIZE}
+                    maxBarSize={BAR_SIZE}
+                    minPointSize={BAR_MIN_POINT_SIZE}
+                  />
+                  <Bar
+                    dataKey="block"
+                    stackId="points"
+                    fill="#FCB07C"
+                    name="Punkty blokiem"
+                    barSize={BAR_SIZE}
+                    maxBarSize={BAR_SIZE}
+                    minPointSize={BAR_MIN_POINT_SIZE}
+                  />
+                  <Bar
+                    dataKey="ace"
+                    stackId="points"
+                    fill="#10b981"
+                    name="Punkty asami"
+                    barSize={BAR_SIZE}
+                    maxBarSize={BAR_SIZE}
+                    minPointSize={BAR_MIN_POINT_SIZE}
+                  />
+                  
+                  {/* Overlay */}
+                  {compareData && (
+                    <Line 
+                      type="monotone" 
+                      data={compareData}
+                      dataKey="value" 
+                      stroke="#8b5cf6" 
+                      strokeWidth={2}
+                      strokeDasharray="5 5"
+                      dot={false}
+                      name={`Sezon ${compareWith}`}
+                    />
+                  )}
+
+                  {/* SPC Lines */}
                   <ReferenceLine y={spcTotal.mean} stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" label="Średnia" />
                   <ReferenceLine y={spcTotal.ucl} stroke="#ef4444" strokeWidth={2} strokeDasharray="3 3" label="UCL" />
                   <ReferenceLine y={spcTotal.lcl} stroke="#ef4444" strokeWidth={2} strokeDasharray="3 3" label="LCL" />
-                  <Line type="monotone" dataKey="value" stroke="#fbbf24" strokeWidth={3} name="Punkty" dot={<CustomDot />} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-                <h3 className="text-lg font-bold text-white mb-2">🔥 Atak (SPC)</h3>
-                <p className="text-xs text-gray-400 mb-3">Śr: {spcAttack.mean.toFixed(1)} | UCL: {spcAttack.ucl.toFixed(1)}</p>
-                <ResponsiveContainer width="100%" height={280}>
-                  <ComposedChart data={spcAttack.data}>
-                    <defs>
-                      <linearGradient id="attackArea" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.2} />
-                        <stop offset="100%" stopColor="#f59e0b" stopOpacity={0.05} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" vertical={true} />
-                    <XAxis dataKey="match" stroke="#94a3b8" tick={{ fontSize: 10 }} interval={1} />
-                    <YAxis stroke="#94a3b8" tick={{ fontSize: 10 }} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Area type="monotone" dataKey="uclLine" stroke="none" fill="url(#attackArea)" />
-                    <ReferenceLine y={spcAttack.mean} stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" />
-                    <ReferenceLine y={spcAttack.ucl} stroke="#ef4444" strokeWidth={1.5} strokeDasharray="3 3" />
-                    <ReferenceLine y={spcAttack.lcl} stroke="#ef4444" strokeWidth={1.5} strokeDasharray="3 3" />
-                    <Line type="monotone" dataKey="value" stroke="#f59e0b" strokeWidth={2} dot={<CustomDot />} />
-                  </ComposedChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-                <h3 className="text-lg font-bold text-white mb-2">🛡️ Blok (SPC)</h3>
-                <p className="text-xs text-gray-400 mb-3">Śr: {spcBlock.mean.toFixed(1)} | UCL: {spcBlock.ucl.toFixed(1)}</p>
-                <ResponsiveContainer width="100%" height={280}>
-                  <ComposedChart data={spcBlock.data}>
-                    <defs>
-                      <linearGradient id="blockArea" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.2} />
-                        <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.05} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" vertical={true} />
-                    <XAxis dataKey="match" stroke="#94a3b8" tick={{ fontSize: 10 }} interval={1} />
-                    <YAxis stroke="#94a3b8" tick={{ fontSize: 10 }} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Area type="monotone" dataKey="uclLine" stroke="none" fill="url(#blockArea)" />
-                    <ReferenceLine y={spcBlock.mean} stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" />
-                    <ReferenceLine y={spcBlock.ucl} stroke="#ef4444" strokeWidth={1.5} strokeDasharray="3 3" />
-                    <ReferenceLine y={spcBlock.lcl} stroke="#ef4444" strokeWidth={1.5} strokeDasharray="3 3" />
-                    <Line type="monotone" dataKey="value" stroke="#8b5cf6" strokeWidth={2} dot={<CustomDot />} />
-                  </ComposedChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20">
-                <h3 className="text-lg font-bold text-white mb-2">⚡ Asy (SPC)</h3>
-                <p className="text-xs text-gray-400 mb-3">Śr: {spcAces.mean.toFixed(1)} | UCL: {spcAces.ucl.toFixed(1)}</p>
-                <ResponsiveContainer width="100%" height={280}>
-                  <ComposedChart data={spcAces.data}>
-                    <defs>
-                      <linearGradient id="acesArea" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#10b981" stopOpacity={0.2} />
-                        <stop offset="100%" stopColor="#10b981" stopOpacity={0.05} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" vertical={true} />
-                    <XAxis dataKey="match" stroke="#94a3b8" tick={{ fontSize: 10 }} interval={1} />
-                    <YAxis stroke="#94a3b8" tick={{ fontSize: 10 }} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Area type="monotone" dataKey="uclLine" stroke="none" fill="url(#acesArea)" />
-                    <ReferenceLine y={spcAces.mean} stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" />
-                    <ReferenceLine y={spcAces.ucl} stroke="#ef4444" strokeWidth={1.5} strokeDasharray="3 3" />
-                    <ReferenceLine y={spcAces.lcl} stroke="#ef4444" strokeWidth={1.5} strokeDasharray="3 3" />
-                    <Line type="monotone" dataKey="value" stroke="#10b981" strokeWidth={2} dot={<CustomDot />} />
-                  </ComposedChart>
-                </ResponsiveContainer>
+            {/* TABELA MECZ PO MECZU */}
+            <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 mt-6">
+              <h2 className="text-xl font-bold text-white mb-4">
+                📋 Mecze szczegółowo ({matches.length})
+              </h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-white/20">
+                      <th className="text-left p-2 text-gray-300">#</th>
+                      <th className="text-left p-2 text-gray-300">Data</th>
+                      <th className="text-left p-2 text-gray-300">Mecz</th>
+                      <th className="text-center p-2 text-gray-300">Wynik</th>
+                      <th className="text-center p-2 text-gray-300">Pkt</th>
+                      <th className="text-center p-2 text-gray-300">Atak</th>
+                      <th className="text-center p-2 text-gray-300">Blok</th>
+                      <th className="text-center p-2 text-gray-300">Asy</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {matches.map((match, idx) => {
+                      // Formatuj mecz: ZAWSZE Gospodarz - Gość
+                      let matchDisplay = match.opponent;
+                      
+                      // Dla polskich lig (format: "Team A - Team B")
+                      if (match.opponent && match.opponent.includes(' -')) {
+                        const teams = match.opponent.split(' -').map(t => t.trim());
+                        if (teams.length === 2) {
+                          matchDisplay = `${teams[0]} - ${teams[1]}`;
+                        }
+                      }
+                      
+                      // Wynik: ZAWSZE sety gospodarza : sety gościa
+                      let resultDisplay = '-';
+                      if (match.sets && typeof match.sets === 'number') {
+                        // Jeśli mamy liczbę setów gracza
+                        const playerSets = match.sets;
+                        // Oblicz sety przeciwnika (zakładając że mecz był do 3 lub 5 setów)
+                        const totalSets = playerSets >= 3 ? 5 : 3;
+                        const opponentSets = totalSets - playerSets;
+                        
+                        // Sprawdź czy gracz był gospodarzem (is_home odwrócone!)
+                        if (!match.is_home) {
+                          // Gracz był gospodarzem
+                          resultDisplay = `${playerSets}:${opponentSets}`;
+                        } else {
+                          // Gracz był gościem
+                          resultDisplay = `${opponentSets}:${playerSets}`;
+                        }
+                      }
+                      
+                      return (
+                        <tr key={idx} className="border-b border-white/10 hover:bg-white/5">
+                          <td className="p-2 text-gray-400">{idx + 1}</td>
+                          <td className="p-2 text-white text-xs">{match.date}</td>
+                          <td className="p-2 text-white text-sm">{matchDisplay}</td>
+                          <td className="p-2 text-center text-gray-300 font-mono">{resultDisplay}</td>
+                          <td className="p-2 text-center text-yellow-300 font-bold">{match.points_total || 0}</td>
+                          <td className="p-2 text-center" style={{ color: '#3B82F6' }}>
+                            {match.attack_points || match.attack_winning || 0}
+                          </td>
+                          <td className="p-2 text-center" style={{ color: '#F97316' }}>
+                            {match.block_points || 0}
+                          </td>
+                          <td className="p-2 text-center text-green-300">{match.serve_aces || 0}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </div>
-          
-          
-          {/* TABELA MECZ PO MECZU - NOWA SEKCJA */}
-           <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 mt-6">
-             <h2 className="text-xl font-bold text-white mb-4">
-               📋 Mecze szczegółowo ({matches.length})
-             </h2>
-             <div className="overflow-x-auto">
-               <table className="w-full text-sm">
-                 <thead>
-                   <tr className="border-b border-white/20">
-                     <th className="text-left p-2 text-gray-300">#</th>
-                     <th className="text-left p-2 text-gray-300">Data</th>
-                     <th className="text-left p-2 text-gray-300">Przeciwnik</th>
-                     <th className="text-center p-2 text-gray-300">Wynik</th>
-                     <th className="text-center p-2 text-gray-300">Pkt</th>
-                     <th className="text-center p-2 text-gray-300">Atak</th>
-                     <th className="text-center p-2 text-gray-300">Blok</th>
-                     <th className="text-center p-2 text-gray-300">Asy</th>
-                   </tr>
-                 </thead>
-                 <tbody>
-                   {matches.map((match, idx) => (
-                     <tr key={idx} className="border-b border-white/10 hover:bg-white/5">
-                       <td className="p-2 text-gray-400">{idx + 1}</td>
-                       <td className="p-2 text-white text-xs">{match.date}</td>
-                       <td className="p-2 text-white">{match.opponent}</td>
-                       <td className="p-2 text-center">
-                         <span className={`px-2 py-1 rounded text-xs ${
-                           match.result === 'W' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
-                         }`}>
-                           {match.result || '-'}
-                         </span>
-                       </td>
-                       <td className="p-2 text-center text-yellow-300 font-bold">{match.points_total || 0}</td>
-                       <td className="p-2 text-center text-orange-300">
-                         {match.attack_points || match.attack_winning || 0}
-                       </td>
-                       <td className="p-2 text-center text-purple-300">{match.block_points || 0}</td>
-                       <td className="p-2 text-center text-green-300">{match.serve_aces || 0}</td>
-                     </tr>
-                   ))}
-                 </tbody>
-               </table>
-             </div>
-           </div>
-         </>
+          </>
         ) : (
           <div className="bg-white/10 backdrop-blur-lg rounded-xl p-8 border border-white/20 text-center">
             <p className="text-gray-400">Brak danych meczowych dla tego sezonu</p>
           </div>
         )}
-      </div>
+       </div>
     </div>
   );
-}
+} 

@@ -112,7 +112,7 @@ allPlayers.push(...tauronliga2022);
   console.log('\n📂 Loading LegaVolley Men...');
   
   const legavolley2024 = await loadAllPlayers(
-    path.join(__dirname, '..', 'data', 'legavolley-2024-enhanced'),
+    path.join(__dirname, '..', 'data', 'legavolley-2024-2025-enhanced'),
     'legavolley',
     'men'
   );

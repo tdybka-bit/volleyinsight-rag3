@@ -161,8 +161,8 @@ export function getAllPlayersEnhanced(): PlayerWithCombinedStats[] {
   const leagueConfigs = [
     { league: 'plusliga', seasons: ['2022-2023', '2023-2024', '2024-2025'], gender: 'men' },
     { league: 'tauronliga', seasons: ['2022-2023', '2023-2024', '2024-2025'], gender: 'women' },
-    { league: 'legavolley', seasons: ['2024-2025'], gender: 'men' },
-    { league: 'legavolley-femminile', seasons: ['2024-2025'], gender: 'women' }
+    { league: 'legavolley', seasons: ['2024'], gender: 'men' },
+    { league: 'legavolley-femminile', seasons: ['2022-2023', '2023-2024', '2024-2025'], gender: 'women' }
   ];
 
   // First pass: calculate career totals

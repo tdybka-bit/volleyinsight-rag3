@@ -1,0 +1,192 @@
+{
+  "meta": {
+    "year": 2022,
+    "championship_id": 710276,
+    "scraped_at": "2025-11-07T23:45:46.057Z",
+    "total_giornate": 26
+  },
+  "giornate": [
+    {
+      "id": "712725",
+      "name": "1a Giornata",
+      "phase": "Andata",
+      "date": "23/10/2022",
+      "full_name": "1a Giornata  - Andata - 23/10/2022"
+    },
+    {
+      "id": "712726",
+      "name": "2a Giornata",
+      "phase": "Andata",
+      "date": "26/10/2022",
+      "full_name": "2a Giornata  - Andata - 26/10/2022"
+    },
+    {
+      "id": "712727",
+      "name": "3a Giornata",
+      "phase": "Andata",
+      "date": "30/10/2022",
+      "full_name": "3a Giornata  - Andata - 30/10/2022"
+    },
+    {
+      "id": "712728",
+      "name": "4a Giornata",
+      "phase": "Andata",
+      "date": "02/11/2022",
+      "full_name": "4a Giornata  - Andata - 02/11/2022"
+    },
+    {
+      "id": "712729",
+      "name": "5a Giornata",
+      "phase": "Andata",
+      "date": "06/11/2022",
+      "full_name": "5a Giornata  - Andata - 06/11/2022"
+    },
+    {
+      "id": "712730",
+      "name": "6a Giornata",
+      "phase": "Andata",
+      "date": "13/11/2022",
+      "full_name": "6a Giornata  - Andata - 13/11/2022"
+    },
+    {
+      "id": "712731",
+      "name": "7a Giornata",
+      "phase": "Andata",
+      "date": "16/11/2022",
+      "full_name": "7a Giornata  - Andata - 16/11/2022"
+    },
+    {
+      "id": "712732",
+      "name": "8a Giornata",
+      "phase": "Andata",
+      "date": "20/11/2022",
+      "full_name": "8a Giornata  - Andata - 20/11/2022"
+    },
+    {
+      "id": "712733",
+      "name": "9a Giornata",
+      "phase": "Andata",
+      "date": "27/11/2022",
+      "full_name": "9a Giornata  - Andata - 27/11/2022"
+    },
+    {
+      "id": "712734",
+      "name": "10a Giornata",
+      "phase": "Andata",
+      "date": "04/12/2022",
+      "full_name": "10a Giornata  - Andata - 04/12/2022"
+    },
+    {
+      "id": "712735",
+      "name": "11a Giornata",
+      "phase": "Andata",
+      "date": "11/12/2022",
+      "full_name": "11a Giornata  - Andata - 11/12/2022"
+    },
+    {
+      "id": "712736",
+      "name": "12a Giornata",
+      "phase": "Andata",
+      "date": "18/12/2022",
+      "full_name": "12a Giornata  - Andata - 18/12/2022"
+    },
+    {
+      "id": "712737",
+      "name": "13a Giornata",
+      "phase": "Andata",
+      "date": "26/12/2022",
+      "full_name": "13a Giornata  - Andata - 26/12/2022"
+    },
+    {
+      "id": "712738",
+      "name": "1a Giornata",
+      "phase": "Ritorno",
+      "date": "08/01/2023",
+      "full_name": "1a Giornata  - Ritorno - 08/01/2023"
+    },
+    {
+      "id": "712739",
+      "name": "2a Giornata",
+      "phase": "Ritorno",
+      "date": "15/01/2023",
+      "full_name": "2a Giornata  - Ritorno - 15/01/2023"
+    },
+    {
+      "id": "712740",
+      "name": "3a Giornata",
+      "phase": "Ritorno",
+      "date": "22/01/2023",
+      "full_name": "3a Giornata  - Ritorno - 22/01/2023"
+    },
+    {
+      "id": "712741",
+      "name": "4a Giornata",
+      "phase": "Ritorno",
+      "date": "05/02/2023",
+      "full_name": "4a Giornata  - Ritorno - 05/02/2023"
+    },
+    {
+      "id": "712742",
+      "name": "5a Giornata",
+      "phase": "Ritorno",
+      "date": "12/02/2023",
+      "full_name": "5a Giornata  - Ritorno - 12/02/2023"
+    },
+    {
+      "id": "712743",
+      "name": "6a Giornata",
+      "phase": "Ritorno",
+      "date": "19/02/2023",
+      "full_name": "6a Giornata  - Ritorno - 19/02/2023"
+    },
+    {
+      "id": "712744",
+      "name": "7a Giornata",
+      "phase": "Ritorno",
+      "date": "26/02/2023",
+      "full_name": "7a Giornata  - Ritorno - 26/02/2023"
+    },
+    {
+      "id": "712745",
+      "name": "8a Giornata",
+      "phase": "Ritorno",
+      "date": "05/03/2023",
+      "full_name": "8a Giornata  - Ritorno - 05/03/2023"
+    },
+    {
+      "id": "712746",
+      "name": "9a Giornata",
+      "phase": "Ritorno",
+      "date": "12/03/2023",
+      "full_name": "9a Giornata  - Ritorno - 12/03/2023"
+    },
+    {
+      "id": "712747",
+      "name": "10a Giornata",
+      "phase": "Ritorno",
+      "date": "19/03/2023",
+      "full_name": "10a Giornata  - Ritorno - 19/03/2023"
+    },
+    {
+      "id": "712748",
+      "name": "11a Giornata",
+      "phase": "Ritorno",
+      "date": "26/03/2023",
+      "full_name": "11a Giornata  - Ritorno - 26/03/2023"
+    },
+    {
+      "id": "712749",
+      "name": "12a Giornata",
+      "phase": "Ritorno",
+      "date": "02/04/2023",
+      "full_name": "12a Giornata  - Ritorno - 02/04/2023"
+    },
+    {
+      "id": "712750",
+      "name": "13a Giornata",
+      "phase": "Ritorno",
+      "date": "08/04/2023",
+      "full_name": "13a Giornata  - Ritorno - 08/04/2023"
+    }
+  ]
+}
