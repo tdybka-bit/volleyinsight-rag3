@@ -1,0 +1,2384 @@
+{
+  "season": "2024-2025",
+  "league": "plusliga",
+  "scraped_at": "2025-11-11T20:29:33.257Z",
+  "total_matches": 264,
+  "matches": [
+    {
+      "match_id": "1103460",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "13.09.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103464",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "14.09.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103467",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "14.09.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103461",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "14.09.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103466",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "15.09.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103463",
+      "home_team": "GKS Katowice",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "15.09.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103465",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "17.09.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103462",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "30.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103600",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "20.09.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103606",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "21.09.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103607",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "21.09.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103601",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22.09.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103602",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "22.09.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103604",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "23.09.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103605",
+      "home_team": "GKS Katowice",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "23.09.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103603",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "08.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103611",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "26.09.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103615",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "27.09.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103609",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "28.09.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103610",
+      "home_team": "GKS Katowice",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "28.09.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103614",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "28.09.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103612",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "29.09.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103608",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "29.09.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103613",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "30.09.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103623",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "18.09.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103617",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "01.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103621",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "01.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103616",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "02.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103622",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "02.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103619",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "09.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103618",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "15.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103620",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "16.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103629",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "04.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103624",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "05.10.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103630",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "05.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103627",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "05.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103631",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "06.10.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103628",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "06.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103625",
+      "home_team": "GKS Katowice",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "07.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103626",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "07.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103639",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "11.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103636",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "11.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103633",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "12.10.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103638",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "12.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103632",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "13.10.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103637",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "13.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103635",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "13.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103634",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "14.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103641",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "16.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103647",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "18.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103643",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "18.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103644",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "19.10.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103646",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "19.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103640",
+      "home_team": "GKS Katowice",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "19.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103645",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "20.10.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103642",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "20.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103655",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "18.09.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103654",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "22.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103652",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103651",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "23.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103648",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "23.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103650",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "13.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103653",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "26.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103649",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "27.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103662",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "25.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103656",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "26.10.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103658",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "27.10.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103660",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "27.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103657",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "27.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103661",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "28.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103659",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "28.10.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103663",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "29.10.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103668",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "01.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103670",
+      "home_team": "GKS Katowice",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "01.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103667",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "02.11.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103664",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "02.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103671",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "02.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103666",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "03.11.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103669",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "03.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103665",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "04.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103679",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "07.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103672",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "08.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103673",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "08.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103678",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "09.11.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103677",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "09.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103676",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "09.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103675",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "10.11.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103674",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "11.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103683",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "14.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103687",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "15.11.2024, 17:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103685",
+      "home_team": "GKS Katowice",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "15.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103682",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "16.11.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103680",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "16.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103681",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "16.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103684",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "17.11.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103686",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "17.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103688",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103693",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "23.11.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103691",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "23.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103692",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "24.11.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103694",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "24.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103695",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "24.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103690",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "25.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103689",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "25.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103701",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "28.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103700",
+      "home_team": "GKS Katowice",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "29.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103697",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "29.11.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103699",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "30.11.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103696",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "30.11.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103698",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "01.12.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103703",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "01.12.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103702",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "02.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103704",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "06.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103707",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "07.12.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103710",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "07.12.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103708",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "07.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103711",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "08.12.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103705",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "08.12.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103706",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "08.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103709",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "09.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103716",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "12.12.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103715",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "GKS Katowice",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "13.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103712",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "14.12.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103718",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "14.12.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103713",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "14.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103714",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "15.12.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103717",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "15.12.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103719",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "16.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103721",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "19.12.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103723",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "20.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103726",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "21.12.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103722",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "21.12.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103831",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "21.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103720",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "22.12.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103724",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22.12.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103725",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "22.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103727",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "28.12.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103731",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "28.12.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103730",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "29.12.2024, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103733",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "29.12.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103734",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "29.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103728",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "30.12.2024, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103729",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "30.12.2024, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103732",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "27.02.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103739",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "03.01.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103741",
+      "home_team": "GKS Katowice",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "04.01.2025, 12:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103735",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "04.01.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103738",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "04.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103736",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "05.01.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103737",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "05.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103740",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "06.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103742",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "06.01.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103744",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "GKS Katowice",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "09.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103748",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "10.01.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103745",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "11.01.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103743",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "11.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103746",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "12.01.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103747",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "12.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103750",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "12.01.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103749",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "13.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103754",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "17.01.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103756",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "18.01.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103758",
+      "home_team": "GKS Katowice",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "18.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103753",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "18.01.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103752",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "19.01.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103751",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "19.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103755",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "21.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103757",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "21.01.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103765",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "23.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103764",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "24.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103762",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "24.01.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103760",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "25.01.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103763",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "25.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103759",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "25.01.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103766",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "26.01.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103761",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "27.01.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103769",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "31.01.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103767",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "01.02.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103774",
+      "home_team": "GKS Katowice",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "01.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103772",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "01.02.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103773",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "02.02.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103770",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "02.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103771",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "02.02.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103768",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "03.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103778",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "06.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103775",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "07.02.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103779",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "08.02.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103777",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "08.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103776",
+      "home_team": "GKS Katowice",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "08.02.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103780",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "09.02.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103781",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "09.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103782",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "10.02.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103785",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "13.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103786",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "14.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103790",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "14.02.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103784",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "15.02.2025, 12:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103789",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "15.02.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103783",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "16.02.2025, 18:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103788",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "16.02.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103787",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "17.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103794",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "21.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103796",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22.02.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103798",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "22.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103793",
+      "home_team": "GKS Katowice",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "22.02.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103797",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "23.02.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103792",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "23.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103791",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "23.02.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103795",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "24.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103805",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "28.02.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103802",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "28.02.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103800",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "01.03.2025, 12:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103803",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "01.03.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103799",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "01.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103801",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "02.03.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103804",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "02.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103806",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "03.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103812",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "06.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103813",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "06.03.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103809",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Trefl Gdańsk",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "08.03.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103811",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "08.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103807",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "08.03.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103814",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "09.03.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103808",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "09.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103810",
+      "home_team": "GKS Katowice",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "10.03.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103819",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "GKS Katowice",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "04.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103822",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "14.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103816",
+      "home_team": "PSG Stal Nysa",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "14.03.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103815",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "15.03.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103818",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "15.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103817",
+      "home_team": "Nowak-Mosty MKS Będzin",
+      "away_team": "Barkom Każany Lwów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "15.03.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103820",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "16.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103821",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "17.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103829",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "PSG Stal Nysa",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "20.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103827",
+      "home_team": "GKS Katowice",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "21.03.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103830",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "22.03.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103825",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "22.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103826",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22.03.2025, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103824",
+      "home_team": "Trefl Gdańsk",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "23.03.2025, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103828",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Nowak-Mosty MKS Będzin",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "23.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1103823",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "24.03.2025, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104115",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Steam Hemarpol Norwid Częstochowa",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "28.03.2025, 17:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104116",
+      "home_team": "Steam Hemarpol Norwid Częstochowa",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "01.04.2025, 17:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104109",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "28.03.2025, 20:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104108",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "05.04.2025, 17:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104110",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "29.03.2025, 14:45",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104117",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "05.04.2025, 14:45",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104112",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "29.03.2025, 17:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104111",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "01.04.2025, 20:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104114",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "06.04.2025, 14:45",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104124",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "18.04.2025, 20:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104121",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "23.04.2025, 20:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104125",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "26.04.2025, 14:45",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104123",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "19.04.2025, 14:45",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104119",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "23.04.2025, 17:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104118",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "26.04.2025, 17:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104122",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "19.04.2025, 17:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104126",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "24.04.2025, 17:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104120",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "30.04.2025, 20:45",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104127",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "04.05.2025, 20:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104131",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "PGE Projekt Warszawa",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "07.05.2025, 17:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104134",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "30.04.2025, 18:00",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104135",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "03.05.2025, 14:45",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104129",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "07.05.2025, 20:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1104130",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "10.05.2025, 17:30",
+      "phase": "playoff"
+    }
+  ]
+}

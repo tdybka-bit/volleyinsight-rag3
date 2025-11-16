@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { LineChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, ComposedChart } from 'recharts';
+import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
 
 interface PlayerData {
   id: string;
@@ -149,9 +149,14 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
     ...point,
     attack: attackPoints[idx] || 0,
     block: blockPoints[idx] || 0,
-    ace: aces[idx] || 0
+    ace: aces[idx] || 0,
+    phase: matches[idx]?.phase || 'regular'
   }));
 
+  // DEBUG
+  console.log('📊 Playoff index:', spcTotal.data.findIndex(d => d.phase === 'playoff'));
+  console.log('📋 First 5 phases:', spcTotal.data.slice(0, 5).map(d => d.phase));
+  console.log('📋 Last 5 phases:', spcTotal.data.slice(-5).map(d => d.phase));
 
   const stats = player.currentSeasonStats;
   const career = player.careerTotals;
@@ -441,6 +446,34 @@ const CustomDot = (props: any) => {
                   <ReferenceLine y={spcTotal.mean} stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" label="Średnia" />
                   <ReferenceLine y={spcTotal.ucl} stroke="#ef4444" strokeWidth={2} strokeDasharray="3 3" label="UCL" />
                   <ReferenceLine y={spcTotal.lcl} stroke="#ef4444" strokeWidth={2} strokeDasharray="3 3" label="LCL" />
+                
+                  {/* Obszar Playoff - przeszklony */}
+                  {(() => {
+                    const playoffStartIndex = spcTotal.data.findIndex(d => d.phase === 'playoff');
+                    if (playoffStartIndex > 0) {
+                      return (
+                        <ReferenceArea
+                          x1={`M${playoffStartIndex}`}
+                          x2={`M${spcTotal.data.length}`}
+                          fill="#ffffff"        // Białe szkło
+                          fillOpacity={0.08}     // Bardzo delikatne (8%)
+                          stroke="#94a3b8"       // Szary border
+                          strokeOpacity={0.3}    // Delikatny border
+                          strokeWidth={1}
+                          strokeDasharray="5 5"  // Przerywana linia
+                          label={{ 
+                            value: "PLAYOFF", 
+                            position: "insideTopRight", 
+                            fill: "#cbd5e1",     // Jasny szary tekst
+                            fontSize: 12, 
+                            fontWeight: "bold",
+                            opacity: 0.7
+                          }}
+                        />
+                      );
+                    }
+                    return null;
+                  })()}
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
@@ -466,35 +499,15 @@ const CustomDot = (props: any) => {
                   </thead>
                   <tbody>
                     {matches.map((match, idx) => {
-                      // Formatuj mecz: ZAWSZE Gospodarz - Gość
-                      let matchDisplay = match.opponent;
-                      
-                      // Dla polskich lig (format: "Team A - Team B")
-                      if (match.opponent && match.opponent.includes(' -')) {
-                        const teams = match.opponent.split(' -').map(t => t.trim());
-                        if (teams.length === 2) {
-                          matchDisplay = `${teams[0]} - ${teams[1]}`;
-                        }
-                      }
-                      
-                      // Wynik: ZAWSZE sety gospodarza : sety gościa
-                      let resultDisplay = '-';
-                      if (match.sets && typeof match.sets === 'number') {
-                        // Jeśli mamy liczbę setów gracza
-                        const playerSets = match.sets;
-                        // Oblicz sety przeciwnika (zakładając że mecz był do 3 lub 5 setów)
-                        const totalSets = playerSets >= 3 ? 5 : 3;
-                        const opponentSets = totalSets - playerSets;
-                        
-                        // Sprawdź czy gracz był gospodarzem (is_home odwrócone!)
-                        if (!match.is_home) {
-                          // Gracz był gospodarzem
-                          resultDisplay = `${playerSets}:${opponentSets}`;
-                        } else {
-                          // Gracz był gościem
-                          resultDisplay = `${opponentSets}:${playerSets}`;
-                        }
-                      }
+                      // Wynik - teraz mamy prawdziwe dane z matches-calendar!
+                      const homeSets = match.home_sets ?? 0;
+                      const awaySets = match.away_sets ?? 0;
+                      const homeTeam = match.home_team || '';
+                      const awayTeam = match.away_team || '';
+
+                      // ZAWSZE: Gospodarz - Gość (sety gospodarza : sety gościa)
+                      const matchDisplay = `${homeTeam} - ${awayTeam}`;
+                      const resultDisplay = `${homeSets}:${awaySets}`;
                       
                       return (
                         <tr key={idx} className="border-b border-white/10 hover:bg-white/5">
@@ -512,18 +525,18 @@ const CustomDot = (props: any) => {
                           <td className="p-2 text-center text-green-300">{match.serve_aces || 0}</td>
                         </tr>
                       );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-8 border border-white/20 text-center">
-            <p className="text-gray-400">Brak danych meczowych dla tego sezonu</p>
-          </div>
-        )}
-       </div>
-    </div>
-  );
-} 
+                      })}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                </>
+                              ) : (
+                                <div className="bg-white/10 backdrop-blur-lg rounded-xl p-8 border border-white/20 text-center">
+                                  <p className="text-gray-400">Brak danych meczowych dla tego sezonu</p>
+                                </div>
+                              )}
+                             </div>
+                          </div>
+                        );
+                      }

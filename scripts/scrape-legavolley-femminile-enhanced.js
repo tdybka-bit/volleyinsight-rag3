@@ -40,12 +40,12 @@ async function loadGiornate(year, championshipId) {
 }
 
 /**
- * Scrape player stats for one giornata
+ * Scrape player stats for one giornata - FIX: filtruj po numerze giornaty!
  */
-async function scrapePlayerGiornata(playerId, giornataId, year) {
+async function scrapePlayerGiornata(playerId, giornataId, year, giornataNumber) {
   const stagione = `${year}%2F${parseInt(year) + 1}`;
   const url = `https://ww5.legavolleyfemminile.it/Statistiche_i.asp?TipoStat=2.2&Serie=1&AnnoInizio=${year}&Giornata=${giornataId}&Atleta=${playerId}&Stagione=${stagione}`;
-  
+
   try {
     const response = await axios.get(url, {
       headers: { 'User-Agent': 'Mozilla/5.0' },
@@ -53,63 +53,55 @@ async function scrapePlayerGiornata(playerId, giornataId, year) {
     });
 
     const $ = cheerio.load(response.data);
-    
-    // Find the main stats table
     const stats = {};
+
+    // Parsuj wiersz dla KONKRETNEJ giornaty (nie pierwszy!)
+    let foundMatch = false;
     
-    // Find rows with data (skip header and total rows)
     $('table tr').each((i, row) => {
+      if (foundMatch) return;
+      
       const $row = $(row);
       const cells = $row.find('td');
-      
-      // Skip if not enough cells or if it's header/total row
       if (cells.length < 20) return;
-      
+
       const firstCell = cleanText(cells.eq(0).text());
       
-      // Check if this is a match row (e.g., "4 Andata", "1 Ritorno")
-      if (!firstCell.match(/\d+\s+(Andata|Ritorno|Quarti|Semifinali|Finale)/i)) return;
+      // Extract numer giornaty z "1 Andata", "2 Ritorno" etc
+      const giornataMatch = firstCell.match(/^(\d+)\s+(Andata|Ritorno|Quarti|Semifinali|Finale)/i);
+      if (!giornataMatch) return;
       
-      // Parse cells by index (based on table structure)
+      const rowGiornataNum = parseInt(giornataMatch[1]);
+      
+      // KLUCZOWE: Sprawdź czy to właściwa giornata!
+      if (rowGiornataNum !== giornataNumber) return;
+
       const sets = parseNumber(cells.eq(1).text());
-      
-      // Only process if player actually played (sets > 0)
       if (sets === 0) return;
-      
+
+      // Parse wszystkie stats
       stats.sets = sets;
       stats.points_total = parseNumber(cells.eq(2).text());
       stats.points_won = parseNumber(cells.eq(3).text());
       stats.points_bp = parseNumber(cells.eq(4).text());
-      
-      // Serve stats (columns 5-9)
       stats.serve_total = parseNumber(cells.eq(5).text());
       stats.serve_aces = parseNumber(cells.eq(6).text());
       stats.serve_errors = parseNumber(cells.eq(7).text());
-      
-      // Reception stats (columns 10-15)
       stats.reception_total = parseNumber(cells.eq(10).text());
       stats.reception_errors = parseNumber(cells.eq(11).text());
       stats.reception_negative = parseNumber(cells.eq(12).text());
       stats.reception_perfect = parseNumber(cells.eq(13).text());
-      
-      // Attack stats (columns 16-21)
       stats.attack_total = parseNumber(cells.eq(16).text());
       stats.attack_errors = parseNumber(cells.eq(17).text());
       stats.attack_blocked = parseNumber(cells.eq(18).text());
       stats.attack_won = parseNumber(cells.eq(19).text());
-      
-      // Block stats (columns 22-24)
       stats.block_points = parseNumber(cells.eq(23).text());
-            
+      
+      foundMatch = true;
     });
-    
-    // Return stats only if we found data
-    if (Object.keys(stats).length > 0) {
-      return stats;
-    }
-    
-    return null;
-    
+
+    return Object.keys(stats).length > 0 ? stats : null;
+
   } catch (error) {
     console.log(`     ⚠️  Failed giornata ${giornataId}: ${error.message}`);
     return null;
@@ -122,14 +114,17 @@ async function scrapePlayerGiornata(playerId, giornataId, year) {
 async function scrapePlayer(player, year, giornate) {
   try {
     console.log(`\n🔥 [${player.id}] ${player.name} (${player.team})`);
-    
+
     const matches = [];
     let successCount = 0;
     let emptyCount = 0;
-    
+
     for (const giornata of giornate) {
-      const stats = await scrapePlayerGiornata(player.id, giornata.id, year);
+      // Wyciągnij numer z "1a Giornata" -> 1
+      const giornataNum = parseInt(giornata.name.match(/(\d+)/)?.[1] || 0);
       
+      const stats = await scrapePlayerGiornata(player.id, giornata.id, year, giornataNum);
+
       if (stats && stats.sets > 0) {
         matches.push({
           giornata: giornata.name,
@@ -142,13 +137,13 @@ async function scrapePlayer(player, year, giornate) {
       } else {
         emptyCount++;
       }
-      
+
       // Small delay between giornate
       await delay(200);
     }
-    
+
     console.log(`   ✅ ${matches.length} matches (${successCount} with data, ${emptyCount} empty)`);
-    
+
     return {
       id: player.id,
       name: player.name,
@@ -158,10 +153,9 @@ async function scrapePlayer(player, year, giornate) {
       gender: 'women',
       season: `${year}-${parseInt(year) + 1}`,
       match_by_match: matches,
-      matches_count: matches.length,
-      scraped_at: new Date().toISOString()
+      matches_count: matches.length
     };
-    
+
   } catch (error) {
     console.log(`   ❌ Error: ${error.message}`);
     return null;
@@ -195,32 +189,32 @@ async function main() {
   }
   
   // Load giornate (Regular Season + Play-offs)
-console.log(`\n📅 Loading giornate...`);
+  console.log(`\n📅 Loading giornate...`);
 
-// Championship IDs by year
-const CHAMPIONSHIP_IDS = {
-  2024: { regular: 710313, playoff: 710322 },
-  2023: { regular: 710303, playoff: 710311 },
-  2022: { regular: 710276, playoff: 710284 }
-};
+  // Championship IDs by year
+  const CHAMPIONSHIP_IDS = {
+    2024: { regular: 710313, playoff: 710322 },
+    2023: { regular: 710303, playoff: 710311 },
+    2022: { regular: 710276, playoff: 710284 }
+  };
 
-const ids = CHAMPIONSHIP_IDS[year];
-if (!ids) {
-  throw new Error(`Unknown year: ${year}. Available years: 2022, 2023, 2024`);
-}
+  const ids = CHAMPIONSHIP_IDS[year];
+  if (!ids) {
+    throw new Error(`Unknown year: ${year}. Available years: 2022, 2023, 2024`);
+  }
 
-const giornateRegular = await loadGiornate(year, ids.regular);
-const giornatePlayoffs = await loadGiornate(year, ids.playoff);
-const giornate = [...giornateRegular, ...giornatePlayoffs];
-console.log(`✅ Loaded ${giornate.length} giornate (${giornateRegular.length} regular + ${giornatePlayoffs.length} playoffs)`);
+  const giornateRegular = await loadGiornate(year, ids.regular);
+  const giornatePlayoffs = await loadGiornate(year, ids.playoff);
+  const giornate = [...giornateRegular, ...giornatePlayoffs];
+  console.log(`✅ Loaded ${giornate.length} giornate (${giornateRegular.length} regular + ${giornatePlayoffs.length} playoffs)`);
 
-const playersToScrape = playersList.players.slice(startIndex, endIndex + 1);
+  const playersToScrape = playersList.players.slice(startIndex, endIndex + 1);
 
-console.log(`\n🚀 Starting: LegaVolley Femminile ${year} - Players ${startIndex}-${endIndex} (${playersToScrape.length} players)\n`);
+  console.log(`\n🚀 Starting: LegaVolley Femminile ${year} - Players ${startIndex}-${endIndex} (${playersToScrape.length} players)\n`);
 
-const players = [];
-let successCount = 0;
-let failCount = 0;
+  const players = [];
+  let successCount = 0;
+  let failCount = 0;
   
   for (let i = 0; i < playersToScrape.length; i++) {
     const playerInfo = playersToScrape[i];
@@ -243,7 +237,7 @@ let failCount = 0;
   }
   
   // Save results
-  const outputDir = path.join(__dirname, '..', 'data', `legavolley-femminile-${year}-enhanced`);
+  const outputDir = path.join(__dirname, '..', 'data', `legavolley-femminile-${year}-${parseInt(year)+1}-enhanced`);
   await fs.mkdir(outputDir, { recursive: true });
   
   const outputFile = path.join(outputDir, `players-${startIndex}-${endIndex}.json`);

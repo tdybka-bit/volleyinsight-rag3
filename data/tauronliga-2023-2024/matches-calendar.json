@@ -1,0 +1,413 @@
+{
+  "season": "2023-2024",
+  "league": "tauronliga",
+  "scraped_at": "2025-11-15T21:05:49.883Z",
+  "total_matches": 45,
+  "matches": [
+    {
+      "match_id": "1104523",
+      "home_team": "KS DevelopRes Rzeszów",
+      "away_team": "MOYA Radomka Radom",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "piątek, 31 paź, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104417",
+      "home_team": "ITA TOOLS  STAL Mielec",
+      "away_team": "Metalkas Pałac Bydgoszcz",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "sobota, 1 lis, 12:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104418",
+      "home_team": "BKS BOSTIK ZGO Bielsko-Biała",
+      "away_team": "#VolleyWrocław",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "niedziela, 2 lis, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104415",
+      "home_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "niedziela, 2 lis, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "145",
+      "home_team": "KS DevelopRes Rzeszów",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "środa, 5 lis, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104422",
+      "home_team": "MOYA Radomka Radom",
+      "away_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "czwartek, 6 lis, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104525",
+      "home_team": "LOTTO Chemik Police",
+      "away_team": "KS DevelopRes Rzeszów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "piątek, 7 lis, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104526",
+      "home_team": "Metalkas Pałac Bydgoszcz",
+      "away_team": "BKS BOSTIK ZGO Bielsko-Biała",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "sobota, 8 lis, 12:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104419",
+      "home_team": "#VolleyWrocław",
+      "away_team": "PGE Budowlani Łódź",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "niedziela, 9 lis, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104420",
+      "home_team": "UNI Opole",
+      "away_team": "ITA TOOLS  STAL Mielec",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "poniedziałek, 10 lis, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104421",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "Sokół & Hagric Mogilno",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "poniedziałek, 10 lis, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104527",
+      "home_team": "Sokół & Hagric Mogilno",
+      "away_team": "MOYA Radomka Radom",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "czwartek, 13 lis, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104425",
+      "home_team": "PGE Budowlani Łódź",
+      "away_team": "Metalkas Pałac Bydgoszcz",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "piątek, 14 lis, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104528",
+      "home_team": "BKS BOSTIK ZGO Bielsko-Biała",
+      "away_team": "UNI Opole",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "piątek, 14 lis, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104423",
+      "home_team": "KS DevelopRes Rzeszów",
+      "away_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "sobota, 15 lis, 12:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104424",
+      "home_team": "ITA TOOLS  STAL Mielec",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "poniedziałek, 17 lis, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104426",
+      "home_team": "LOTTO Chemik Police",
+      "away_team": "#VolleyWrocław",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "wtorek, 18 lis, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104530",
+      "home_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
+      "away_team": "Sokół & Hagric Mogilno",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "czwartek, 20 lis, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104429",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "BKS BOSTIK ZGO Bielsko-Biała",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "piątek, 21 lis, 16:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104430",
+      "home_team": "ITA TOOLS  STAL Mielec",
+      "away_team": "MOYA Radomka Radom",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "piątek, 21 lis, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104529",
+      "home_team": "PGE Budowlani Łódź",
+      "away_team": "UNI Opole",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 22 lis, 12:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104427",
+      "home_team": "#VolleyWrocław",
+      "away_team": "KS DevelopRes Rzeszów",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 22 lis, 16:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104428",
+      "home_team": "Metalkas Pałac Bydgoszcz",
+      "away_team": "LOTTO Chemik Police",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 22 lis, 20:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104435",
+      "home_team": "#VolleyWrocław",
+      "away_team": "Metalkas Pałac Bydgoszcz",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "piątek, 28 lis, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104432",
+      "home_team": "ITA TOOLS  STAL Mielec",
+      "away_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 29 lis, 12:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104531",
+      "home_team": "PGE Budowlani Łódź",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 29 lis, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104431",
+      "home_team": "KS DevelopRes Rzeszów",
+      "away_team": "Sokół & Hagric Mogilno",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "niedziela, 30 lis, 16:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104433",
+      "home_team": "BKS BOSTIK ZGO Bielsko-Biała",
+      "away_team": "MOYA Radomka Radom",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "niedziela, 30 lis, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104434",
+      "home_team": "LOTTO Chemik Police",
+      "away_team": "UNI Opole",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "poniedziałek, 1 gru, 20:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104533",
+      "home_team": "Sokół & Hagric Mogilno",
+      "away_team": "ITA TOOLS  STAL Mielec",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "piątek, 5 gru, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104436",
+      "home_team": "Metalkas Pałac Bydgoszcz",
+      "away_team": "KS DevelopRes Rzeszów",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 6 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104437",
+      "home_team": "UNI Opole",
+      "away_team": "#VolleyWrocław",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 6 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104532",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "LOTTO Chemik Police",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 6 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104438",
+      "home_team": "MOYA Radomka Radom",
+      "away_team": "PGE Budowlani Łódź",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 6 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104439",
+      "home_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
+      "away_team": "BKS BOSTIK ZGO Bielsko-Biała",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 6 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104440",
+      "home_team": "KS DevelopRes Rzeszów",
+      "away_team": "ITA TOOLS  STAL Mielec",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 13 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104441",
+      "home_team": "BKS BOSTIK ZGO Bielsko-Biała",
+      "away_team": "Sokół & Hagric Mogilno",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 13 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104442",
+      "home_team": "PGE Budowlani Łódź",
+      "away_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 13 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104443",
+      "home_team": "LOTTO Chemik Police",
+      "away_team": "MOYA Radomka Radom",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 13 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104444",
+      "home_team": "#VolleyWrocław",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 13 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104521",
+      "home_team": "Metalkas Pałac Bydgoszcz",
+      "away_team": "UNI Opole",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 13 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104506",
+      "home_team": "BKS BOSTIK ZGO Bielsko-Biała",
+      "away_team": "PGE Budowlani Łódź",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 20 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104446",
+      "home_team": "MOYA Radomka Radom",
+      "away_team": "UNI Opole",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 20 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104507",
+      "home_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
+      "away_team": "Metalkas Pałac Bydgoszcz",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 20 grudnia",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104447",
+      "home_team": "Sokół & Hagric Mogilno",
+      "away_team": "#VolleyWrocław",
+      "home_sets": 0,
+      "away_sets": 0,
+      "date": "sobota, 20 grudnia",
+      "phase": "regular"
+    }
+  ]
+}
