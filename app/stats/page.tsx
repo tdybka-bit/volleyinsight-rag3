@@ -2,6 +2,8 @@ import { getAllPlayersEnhanced } from '@/lib/playerData';
 import StatsTableWithFilters from '@/components/stats/StatsTableWithFilters';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic'; // ← DODAJ TĘ LINIĘ TUTAJ!
+
 export default function StatsPage() {
   const allPlayers = getAllPlayersEnhanced();
 
