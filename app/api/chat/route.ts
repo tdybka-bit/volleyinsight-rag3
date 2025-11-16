@@ -59,6 +59,16 @@ Wykorzystuj dostępną wiedzę z dokumentacji siatkówki.`;
 
     if (ragContext) {
       systemPrompt += `\n\nMasz dostęp do następującej wiedzy z bazy dokumentów:\n${ragContext}`;
+      
+      // CRITICAL: Player stats accuracy rules
+      systemPrompt += `\n\n🎯 KRYTYCZNE ZASADY dla statystyk graczy:
+    1. Używaj TYLKO liczb bezpośrednio ze źródeł powyżej - ZERO halucynacji!
+    2. Jeśli pytanie dotyczy konkretnego sezonu/ligi - cytuj TYLKO dane z tego sezonu/ligi
+    3. Jeśli gracz grał w wielu ligach - wymień wszystkie i porównaj
+    4. Jeśli nie masz pewnych danych - powiedz "nie mam tych danych"
+    5. ZAWSZE podawaj ligę i sezon przy statystykach
+    
+    Przykład: "Aleksandra Gryka w sezonie 2024-2025 w LegaVolley Femminile zdobyła 95 punktów w 32 meczach."`;
     }
 
     // ✅ Pobierz klienta OpenAI dopiero tutaj

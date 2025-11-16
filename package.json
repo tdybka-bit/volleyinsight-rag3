@@ -24,6 +24,7 @@
     "next": "15.5.4",
     "openai": "^5.23.2",
     "pdf-parse": "^2.2.16",
+    "puppeteer": "^24.30.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "recharts": "^3.3.0"

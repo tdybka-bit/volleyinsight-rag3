@@ -1,8 +1,12 @@
 {
-  "season": "2024-2025",
-  "league": "tauronliga",
-  "scraped_at": "2025-11-15T21:05:33.778Z",
-  "total_matches": 45,
+  "meta": {
+    "league": "tauronliga",
+    "season": "2024-2025",
+    "tour_id": 48,
+    "scraped_at": "2025-11-16T21:17:22.831Z",
+    "total_matches": 45,
+    "scraper": "puppeteer"
+  },
   "matches": [
     {
       "match_id": "1104523",
