@@ -725,7 +725,7 @@
           "assists": 4,
           "is_home": true,
           "date": "25.03.2025, 18:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -755,7 +755,7 @@
           "assists": 6,
           "is_home": true,
           "date": "04.04.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -1442,7 +1442,7 @@
           "assists": 18,
           "is_home": true,
           "date": "25.03.2025, 18:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -1472,7 +1472,7 @@
           "assists": 27,
           "is_home": true,
           "date": "04.04.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -2249,7 +2249,7 @@
           "assists": 10,
           "is_home": true,
           "date": "22.03.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -2279,7 +2279,7 @@
           "assists": 1,
           "is_home": true,
           "date": "26.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -2309,7 +2309,7 @@
           "assists": 2,
           "is_home": true,
           "date": "10.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -2339,7 +2339,7 @@
           "assists": 2,
           "is_home": true,
           "date": "14.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -3716,7 +3716,7 @@
           "assists": 0,
           "is_home": true,
           "date": "22.03.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -3746,7 +3746,7 @@
           "assists": 0,
           "is_home": true,
           "date": "26.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -3776,7 +3776,7 @@
           "assists": 1,
           "is_home": true,
           "date": "04.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -3806,7 +3806,7 @@
           "assists": 0,
           "is_home": true,
           "date": "08.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -3836,7 +3836,7 @@
           "assists": 0,
           "is_home": true,
           "date": "15.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -3866,7 +3866,7 @@
           "assists": 1,
           "is_home": true,
           "date": "18.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -3896,7 +3896,7 @@
           "assists": 0,
           "is_home": true,
           "date": "22.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -4943,7 +4943,7 @@
           "assists": 0,
           "is_home": true,
           "date": "22.03.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -4973,7 +4973,7 @@
           "assists": 0,
           "is_home": true,
           "date": "26.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -5003,7 +5003,7 @@
           "assists": 0,
           "is_home": true,
           "date": "04.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -5480,7 +5480,7 @@
           "assists": 0,
           "is_home": true,
           "date": "04.04.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -5597,7 +5597,7 @@
           "assists": 0,
           "is_home": true,
           "date": "16.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -5627,7 +5627,7 @@
           "assists": 0,
           "is_home": true,
           "date": "19.04.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -5657,7 +5657,7 @@
           "assists": 0,
           "is_home": true,
           "date": "22.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -6104,7 +6104,7 @@
           "assists": 1,
           "is_home": false,
           "date": "20.03.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -6134,7 +6134,7 @@
           "assists": 0,
           "is_home": false,
           "date": "27.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -6164,7 +6164,7 @@
           "assists": 0,
           "is_home": false,
           "date": "30.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -6194,7 +6194,7 @@
           "assists": 0,
           "is_home": false,
           "date": "10.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -6224,7 +6224,7 @@
           "assists": 0,
           "is_home": false,
           "date": "14.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -6854,7 +6854,7 @@
           "assists": 34,
           "is_home": true,
           "date": "20.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -6884,7 +6884,7 @@
           "assists": 24,
           "is_home": true,
           "date": "24.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -6914,7 +6914,7 @@
           "assists": 34,
           "is_home": true,
           "date": "11.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -6944,7 +6944,7 @@
           "assists": 29,
           "is_home": true,
           "date": "16.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -8438,7 +8438,7 @@
           "assists": 5,
           "is_home": true,
           "date": "22.03.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -8468,7 +8468,7 @@
           "assists": 2,
           "is_home": true,
           "date": "26.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -8498,7 +8498,7 @@
           "assists": 5,
           "is_home": true,
           "date": "04.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -8528,7 +8528,7 @@
           "assists": 4,
           "is_home": true,
           "date": "08.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -8558,7 +8558,7 @@
           "assists": 3,
           "is_home": true,
           "date": "15.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -8588,7 +8588,7 @@
           "assists": 4,
           "is_home": true,
           "date": "18.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -8618,7 +8618,7 @@
           "assists": 3,
           "is_home": true,
           "date": "22.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -9365,7 +9365,7 @@
           "assists": 7,
           "is_home": false,
           "date": "27.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -9395,7 +9395,7 @@
           "assists": 4,
           "is_home": false,
           "date": "30.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -9425,7 +9425,7 @@
           "assists": 7,
           "is_home": false,
           "date": "10.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -9455,7 +9455,7 @@
           "assists": 5,
           "is_home": false,
           "date": "14.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -9782,7 +9782,7 @@
           "assists": 0,
           "is_home": true,
           "date": "19.04.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -9812,7 +9812,7 @@
           "assists": 0,
           "is_home": true,
           "date": "22.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -10589,7 +10589,7 @@
           "assists": 35,
           "is_home": true,
           "date": "21.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -10619,7 +10619,7 @@
           "assists": 29,
           "is_home": true,
           "date": "26.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -10649,7 +10649,7 @@
           "assists": 35,
           "is_home": true,
           "date": "04.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -10679,7 +10679,7 @@
           "assists": 50,
           "is_home": true,
           "date": "08.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -10709,7 +10709,7 @@
           "assists": 35,
           "is_home": true,
           "date": "16.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -10739,7 +10739,7 @@
           "assists": 41,
           "is_home": true,
           "date": "19.04.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -10769,7 +10769,7 @@
           "assists": 52,
           "is_home": true,
           "date": "22.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -11546,7 +11546,7 @@
           "assists": 0,
           "is_home": true,
           "date": "20.03.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -11576,7 +11576,7 @@
           "assists": 0,
           "is_home": true,
           "date": "27.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -11606,7 +11606,7 @@
           "assists": 0,
           "is_home": true,
           "date": "04.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -11636,7 +11636,7 @@
           "assists": 0,
           "is_home": true,
           "date": "08.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -11666,7 +11666,7 @@
           "assists": 0,
           "is_home": true,
           "date": "15.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -11696,7 +11696,7 @@
           "assists": 0,
           "is_home": true,
           "date": "18.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -11726,7 +11726,7 @@
           "assists": 0,
           "is_home": true,
           "date": "22.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -12236,7 +12236,7 @@
           "assists": 2,
           "is_home": true,
           "date": "20.03.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -12266,7 +12266,7 @@
           "assists": 2,
           "is_home": true,
           "date": "27.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -12296,7 +12296,7 @@
           "assists": 0,
           "is_home": true,
           "date": "30.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -12326,7 +12326,7 @@
           "assists": 1,
           "is_home": true,
           "date": "04.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -12356,7 +12356,7 @@
           "assists": 8,
           "is_home": true,
           "date": "08.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -12386,7 +12386,7 @@
           "assists": 2,
           "is_home": true,
           "date": "15.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -12416,7 +12416,7 @@
           "assists": 9,
           "is_home": true,
           "date": "18.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -12446,7 +12446,7 @@
           "assists": 3,
           "is_home": true,
           "date": "22.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -13133,7 +13133,7 @@
           "assists": 0,
           "is_home": true,
           "date": "25.03.2025, 18:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -13163,7 +13163,7 @@
           "assists": 1,
           "is_home": true,
           "date": "04.04.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -13883,7 +13883,7 @@
           "assists": 0,
           "is_home": true,
           "date": "25.03.2025, 18:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -14543,7 +14543,7 @@
           "assists": 0,
           "is_home": true,
           "date": "20.03.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -14573,7 +14573,7 @@
           "assists": 0,
           "is_home": true,
           "date": "27.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -14603,7 +14603,7 @@
           "assists": 0,
           "is_home": true,
           "date": "30.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -14633,7 +14633,7 @@
           "assists": 1,
           "is_home": true,
           "date": "04.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -14663,7 +14663,7 @@
           "assists": 1,
           "is_home": true,
           "date": "08.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -14693,7 +14693,7 @@
           "assists": 0,
           "is_home": true,
           "date": "15.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -14723,7 +14723,7 @@
           "assists": 1,
           "is_home": true,
           "date": "18.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -15473,7 +15473,7 @@
           "assists": 1,
           "is_home": true,
           "date": "25.03.2025, 18:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -15503,7 +15503,7 @@
           "assists": 5,
           "is_home": true,
           "date": "04.04.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -16250,7 +16250,7 @@
           "assists": 0,
           "is_home": true,
           "date": "22.03.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -16280,7 +16280,7 @@
           "assists": 0,
           "is_home": true,
           "date": "26.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -16310,7 +16310,7 @@
           "assists": 0,
           "is_home": true,
           "date": "04.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -16340,7 +16340,7 @@
           "assists": 0,
           "is_home": true,
           "date": "15.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -16940,7 +16940,7 @@
           "assists": 0,
           "is_home": true,
           "date": "20.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -16970,7 +16970,7 @@
           "assists": 0,
           "is_home": true,
           "date": "16.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -18374,7 +18374,7 @@
           "assists": 1,
           "is_home": true,
           "date": "22.03.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -18404,7 +18404,7 @@
           "assists": 0,
           "is_home": true,
           "date": "26.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -18434,7 +18434,7 @@
           "assists": 0,
           "is_home": true,
           "date": "10.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -18464,7 +18464,7 @@
           "assists": 0,
           "is_home": true,
           "date": "14.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -18944,7 +18944,7 @@
           "assists": 0,
           "is_home": true,
           "date": "04.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -18974,7 +18974,7 @@
           "assists": 2,
           "is_home": true,
           "date": "16.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -19004,7 +19004,7 @@
           "assists": 0,
           "is_home": true,
           "date": "19.04.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -19034,7 +19034,7 @@
           "assists": 0,
           "is_home": true,
           "date": "22.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -19631,7 +19631,7 @@
           "assists": 0,
           "is_home": true,
           "date": "21.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -19661,7 +19661,7 @@
           "assists": 0,
           "is_home": true,
           "date": "26.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -19691,7 +19691,7 @@
           "assists": 1,
           "is_home": true,
           "date": "11.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -19721,7 +19721,7 @@
           "assists": 1,
           "is_home": true,
           "date": "16.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -20471,7 +20471,7 @@
           "assists": 0,
           "is_home": true,
           "date": "25.03.2025, 18:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -20501,7 +20501,7 @@
           "assists": 0,
           "is_home": true,
           "date": "04.04.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -21251,7 +21251,7 @@
           "assists": 0,
           "is_home": false,
           "date": "20.03.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -21281,7 +21281,7 @@
           "assists": 0,
           "is_home": false,
           "date": "27.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -21311,7 +21311,7 @@
           "assists": 0,
           "is_home": false,
           "date": "30.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -21341,7 +21341,7 @@
           "assists": 0,
           "is_home": false,
           "date": "10.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -21371,7 +21371,7 @@
           "assists": 0,
           "is_home": false,
           "date": "14.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -21731,7 +21731,7 @@
           "assists": 0,
           "is_home": true,
           "date": "22.03.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -22328,7 +22328,7 @@
           "assists": 6,
           "is_home": true,
           "date": "26.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -23552,7 +23552,7 @@
           "assists": 0,
           "is_home": false,
           "date": "20.03.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -23582,7 +23582,7 @@
           "assists": 0,
           "is_home": false,
           "date": "27.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -23612,7 +23612,7 @@
           "assists": 0,
           "is_home": false,
           "date": "30.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -23642,7 +23642,7 @@
           "assists": 0,
           "is_home": false,
           "date": "10.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -23672,7 +23672,7 @@
           "assists": 0,
           "is_home": false,
           "date": "14.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -24392,7 +24392,7 @@
           "assists": 5,
           "is_home": true,
           "date": "20.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -24422,7 +24422,7 @@
           "assists": 3,
           "is_home": true,
           "date": "24.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -24452,7 +24452,7 @@
           "assists": 5,
           "is_home": true,
           "date": "11.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -24482,7 +24482,7 @@
           "assists": 2,
           "is_home": true,
           "date": "16.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -25229,7 +25229,7 @@
           "assists": 0,
           "is_home": true,
           "date": "26.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -25259,7 +25259,7 @@
           "assists": 1,
           "is_home": true,
           "date": "04.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -25289,7 +25289,7 @@
           "assists": 3,
           "is_home": true,
           "date": "08.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -25319,7 +25319,7 @@
           "assists": 1,
           "is_home": true,
           "date": "16.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -25349,7 +25349,7 @@
           "assists": 2,
           "is_home": true,
           "date": "19.04.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -25379,7 +25379,7 @@
           "assists": 2,
           "is_home": true,
           "date": "22.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -25829,7 +25829,7 @@
           "assists": 0,
           "is_home": true,
           "date": "25.03.2025, 18:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -25859,7 +25859,7 @@
           "assists": 2,
           "is_home": true,
           "date": "04.04.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -26576,7 +26576,7 @@
           "assists": 1,
           "is_home": true,
           "date": "20.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -26606,7 +26606,7 @@
           "assists": 0,
           "is_home": true,
           "date": "24.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -26636,7 +26636,7 @@
           "assists": 0,
           "is_home": true,
           "date": "04.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -26666,7 +26666,7 @@
           "assists": 0,
           "is_home": true,
           "date": "08.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -26696,7 +26696,7 @@
           "assists": 0,
           "is_home": true,
           "date": "16.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -26726,7 +26726,7 @@
           "assists": 0,
           "is_home": true,
           "date": "19.04.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -27956,7 +27956,7 @@
           "assists": 0,
           "is_home": true,
           "date": "25.03.2025, 18:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -27986,7 +27986,7 @@
           "assists": 0,
           "is_home": true,
           "date": "04.04.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -28706,7 +28706,7 @@
           "assists": 47,
           "is_home": true,
           "date": "25.03.2025, 18:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -28736,7 +28736,7 @@
           "assists": 44,
           "is_home": true,
           "date": "04.04.2025, 19:00",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -30230,7 +30230,7 @@
           "assists": 52,
           "is_home": true,
           "date": "20.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -30260,7 +30260,7 @@
           "assists": 36,
           "is_home": true,
           "date": "24.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -30290,7 +30290,7 @@
           "assists": 9,
           "is_home": true,
           "date": "04.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -30320,7 +30320,7 @@
           "assists": 27,
           "is_home": true,
           "date": "08.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -30350,7 +30350,7 @@
           "assists": 39,
           "is_home": true,
           "date": "16.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -30380,7 +30380,7 @@
           "assists": 46,
           "is_home": true,
           "date": "19.04.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -30410,7 +30410,7 @@
           "assists": 52,
           "is_home": true,
           "date": "22.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -31160,7 +31160,7 @@
           "assists": 1,
           "is_home": true,
           "date": "20.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -31190,7 +31190,7 @@
           "assists": 0,
           "is_home": true,
           "date": "24.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -31220,7 +31220,7 @@
           "assists": 1,
           "is_home": true,
           "date": "04.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -31250,7 +31250,7 @@
           "assists": 0,
           "is_home": true,
           "date": "08.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -31280,7 +31280,7 @@
           "assists": 0,
           "is_home": true,
           "date": "16.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -31310,7 +31310,7 @@
           "assists": 1,
           "is_home": true,
           "date": "19.04.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -31340,7 +31340,7 @@
           "assists": 0,
           "is_home": true,
           "date": "22.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -32597,7 +32597,7 @@
           "assists": 2,
           "is_home": true,
           "date": "21.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -32627,7 +32627,7 @@
           "assists": 3,
           "is_home": true,
           "date": "26.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -32657,7 +32657,7 @@
           "assists": 3,
           "is_home": true,
           "date": "04.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -32687,7 +32687,7 @@
           "assists": 3,
           "is_home": true,
           "date": "08.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -32717,7 +32717,7 @@
           "assists": 5,
           "is_home": true,
           "date": "16.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -32747,7 +32747,7 @@
           "assists": 9,
           "is_home": true,
           "date": "19.04.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -32777,7 +32777,7 @@
           "assists": 3,
           "is_home": true,
           "date": "22.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -33434,7 +33434,7 @@
           "assists": 1,
           "is_home": true,
           "date": "20.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -33464,7 +33464,7 @@
           "assists": 2,
           "is_home": true,
           "date": "24.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -33494,7 +33494,7 @@
           "assists": 0,
           "is_home": true,
           "date": "16.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -34184,7 +34184,7 @@
           "assists": 3,
           "is_home": true,
           "date": "04.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -34214,7 +34214,7 @@
           "assists": 0,
           "is_home": true,
           "date": "15.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -34901,7 +34901,7 @@
           "assists": 0,
           "is_home": true,
           "date": "21.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -34931,7 +34931,7 @@
           "assists": 0,
           "is_home": true,
           "date": "26.03.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -34961,7 +34961,7 @@
           "assists": 0,
           "is_home": true,
           "date": "04.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -34991,7 +34991,7 @@
           "assists": 0,
           "is_home": true,
           "date": "08.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -35021,7 +35021,7 @@
           "assists": 1,
           "is_home": true,
           "date": "16.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -35051,7 +35051,7 @@
           "assists": 0,
           "is_home": true,
           "date": "19.04.2025, 12:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -35081,7 +35081,7 @@
           "assists": 1,
           "is_home": true,
           "date": "22.04.2025, 17:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {
@@ -35531,7 +35531,7 @@
           "assists": 0,
           "is_home": true,
           "date": "26.03.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "L"
         },
         {
@@ -35561,7 +35561,7 @@
           "assists": 0,
           "is_home": true,
           "date": "22.04.2025, 20:30",
-          "phase": "regular",
+          "phase": "playoff",
           "result": "W"
         },
         {

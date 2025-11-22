@@ -102,43 +102,52 @@ async function scrapeMatches(year, tourId) {
         const matchId = gameDiv.getAttribute('data-game-id');
         if (!matchId) return;
         
-        // Check phase from previous elements
-        const prevElements = Array.from(document.querySelectorAll('*'));
-        const gameIndex = prevElements.indexOf(gameDiv);
-        for (let i = gameIndex - 1; i >= Math.max(0, gameIndex - 10); i--) {
-          const text = prevElements[i].textContent || '';
-          if (text.toLowerCase().includes('play') || text.toLowerCase().includes('playoff')) {
-            currentPhase = 'playoff';
+        // Check phase - if "Kolejka: X" found = regular, otherwise = playoff
+        let currentPhase = 'playoff'; // DEFAULT: playoff
+        
+        // Look for "Kolejka: X" in nearby headers
+        const parentSection = gameDiv.closest('section') || gameDiv;
+        let sibling = parentSection.previousElementSibling;
+        
+        // Search up to 10 previous siblings for "Kolejka"
+        for (let i = 0; i < 10 && sibling; i++) {
+          const text = sibling.textContent || '';
+          if (text.match(/Kolejka[:\s]*\d+/i)) {
+            currentPhase = 'regular';
             break;
           }
+          sibling = sibling.previousElementSibling;
         }
         
         // Try multiple selectors for teams
         let homeTeam = '';
         let awayTeam = '';
         
-        // Strategy 1: .gamesbox-body > .team
+        // Strategy 1: .gamesbox-body > .team (main list)
         const teamsGamesbox = gameDiv.querySelectorAll('.gamesbox-body > .team');
         if (teamsGamesbox.length >= 2) {
           homeTeam = teamsGamesbox[0].querySelector('.name')?.textContent.trim() || '';
           awayTeam = teamsGamesbox[1].querySelector('.name')?.textContent.trim() || '';
         }
         
-        // Strategy 2: .game-box .team (for slider matches)
+        // Strategy 2: .game-team (SLIDER MATCHES!)
         if (!homeTeam || !awayTeam) {
-          const teamsGameBox = gameDiv.querySelectorAll('.game-box .team');
-          if (teamsGameBox.length >= 2) {
-            homeTeam = teamsGameBox[0].querySelector('.name')?.textContent.trim() || '';
-            awayTeam = teamsGameBox[1].querySelector('.name')?.textContent.trim() || '';
+          const allTeams = gameDiv.querySelectorAll('.game-team, .notranslate.game-team');
+          if (allTeams.length >= 2) {
+            homeTeam = allTeams[0].textContent.trim().replace(/\s+/g, ' ');
+            awayTeam = allTeams[1].textContent.trim().replace(/\s+/g, ' ');
+          } else if (allTeams.length === 1) {
+            // Only one team visible, try to find the other
+            awayTeam = allTeams[0].textContent.trim().replace(/\s+/g, ' ');
           }
         }
         
-        // Strategy 3: Any .team in game div
+        // Strategy 3: .game-box .team (alternative)
         if (!homeTeam || !awayTeam) {
-          const teamsAny = gameDiv.querySelectorAll('.team');
-          if (teamsAny.length >= 2) {
-            homeTeam = teamsAny[0].querySelector('.name')?.textContent.trim() || '';
-            awayTeam = teamsAny[1].querySelector('.name')?.textContent.trim() || '';
+          const teamsGameBox = gameDiv.querySelectorAll('.game-box .team');
+          if (teamsGameBox.length >= 2) {
+            homeTeam = teamsGameBox[0].querySelector('.name')?.textContent.trim() || teamsGameBox[0].textContent.trim();
+            awayTeam = teamsGameBox[1].querySelector('.name')?.textContent.trim() || teamsGameBox[1].textContent.trim();
           }
         }
         
@@ -216,7 +225,7 @@ async function main() {
   const TOUR_IDS = {
     2024: 48, // 2024-2025 (FIXED!)
     2023: 45, // 2023-2024
-    2022: 43  // 2022-2023
+    2022: 42  // 2022-2023
   };
   
   const tourId = TOUR_IDS[year];

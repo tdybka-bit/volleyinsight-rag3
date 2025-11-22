@@ -1,413 +1,1236 @@
 {
-  "season": "2022-2023",
-  "league": "tauronliga",
-  "scraped_at": "2025-11-15T20:42:17.996Z",
-  "total_matches": 45,
+  "meta": {
+    "league": "tauronliga",
+    "season": "2022-2023",
+    "tour_id": 42,
+    "scraped_at": "2025-11-22T21:47:34.841Z",
+    "total_matches": 136,
+    "scraper": "reverse-build-from-players"
+  },
   "matches": [
     {
-      "match_id": "1104523",
-      "home_team": "KS DevelopRes Rzeszów",
-      "away_team": "MOYA Radomka Radom",
-      "home_sets": 3,
-      "away_sets": 0,
-      "date": "piątek, 31 paź, 19:00",
-      "phase": "regular"
-    },
-    {
-      "match_id": "1104417",
-      "home_team": "ITA TOOLS  STAL Mielec",
-      "away_team": "Metalkas Pałac Bydgoszcz",
+      "match_id": "1102037",
+      "home_team": "Energa MKS Kalisz",
+      "away_team": "ŁKS Commercecon Łódź",
       "home_sets": 0,
       "away_sets": 3,
-      "date": "sobota, 1 lis, 12:30",
+      "date": "11.11.2022, 20:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104418",
-      "home_team": "BKS BOSTIK ZGO Bielsko-Biała",
+      "match_id": "1102038",
+      "home_team": "#VolleyWrocław",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "12.11.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102039",
+      "home_team": "MOYA Radomka Lotnisko Radom",
+      "away_team": "#VolleyWrocław",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "18.11.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102040",
+      "home_team": "#VolleyWrocław",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "28.11.2022, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102041",
+      "home_team": "UNI Opole",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "28.10.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102042",
+      "home_team": "Grot Budowlani Łódź",
+      "away_team": "MOYA Radomka Lotnisko Radom",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "31.10.2022, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102043",
+      "home_team": "OnlyBio Pałac Bydgoszcz",
+      "away_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "29.10.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102044",
+      "home_team": "#VolleyWrocław",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "31.10.2022, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102045",
+      "home_team": "Grupa Azoty Chemik Police",
       "away_team": "#VolleyWrocław",
       "home_sets": 3,
       "away_sets": 2,
-      "date": "niedziela, 2 lis, 14:45",
+      "date": "05.11.2022, 17:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104415",
-      "home_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
-      "away_team": "ŁKS Commercecon Łódź",
+      "match_id": "1102046",
+      "home_team": "OnlyBio Pałac Bydgoszcz",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
       "home_sets": 0,
       "away_sets": 3,
-      "date": "niedziela, 2 lis, 17:30",
+      "date": "06.11.2022, 19:00",
       "phase": "regular"
     },
     {
-      "match_id": "145",
-      "home_team": "KS DevelopRes Rzeszów",
-      "away_team": "ŁKS Commercecon Łódź",
-      "home_sets": 3,
-      "away_sets": 1,
-      "date": "środa, 5 lis, 17:30",
-      "phase": "regular"
-    },
-    {
-      "match_id": "1104422",
-      "home_team": "MOYA Radomka Radom",
-      "away_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
+      "match_id": "1102047",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "Grot Budowlani Łódź",
       "home_sets": 3,
       "away_sets": 0,
-      "date": "czwartek, 6 lis, 19:00",
+      "date": "05.11.2022, 19:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104525",
-      "home_team": "LOTTO Chemik Police",
-      "away_team": "KS DevelopRes Rzeszów",
+      "match_id": "1102048",
+      "home_team": "MOYA Radomka Lotnisko Radom",
+      "away_team": "UNI Opole",
       "home_sets": 1,
       "away_sets": 3,
-      "date": "piątek, 7 lis, 17:30",
+      "date": "04.11.2022, 17:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104526",
-      "home_team": "Metalkas Pałac Bydgoszcz",
-      "away_team": "BKS BOSTIK ZGO Bielsko-Biała",
-      "home_sets": 3,
-      "away_sets": 2,
-      "date": "sobota, 8 lis, 12:30",
-      "phase": "regular"
-    },
-    {
-      "match_id": "1104419",
-      "home_team": "#VolleyWrocław",
-      "away_team": "PGE Budowlani Łódź",
-      "home_sets": 0,
-      "away_sets": 3,
-      "date": "niedziela, 9 lis, 20:30",
-      "phase": "regular"
-    },
-    {
-      "match_id": "1104420",
+      "match_id": "1102050",
       "home_team": "UNI Opole",
-      "away_team": "ITA TOOLS  STAL Mielec",
-      "home_sets": 3,
-      "away_sets": 0,
-      "date": "poniedziałek, 10 lis, 17:30",
-      "phase": "regular"
-    },
-    {
-      "match_id": "1104421",
-      "home_team": "ŁKS Commercecon Łódź",
-      "away_team": "Sokół & Hagric Mogilno",
-      "home_sets": 3,
-      "away_sets": 0,
-      "date": "poniedziałek, 10 lis, 20:30",
-      "phase": "regular"
-    },
-    {
-      "match_id": "1104527",
-      "home_team": "Sokół & Hagric Mogilno",
-      "away_team": "MOYA Radomka Radom",
+      "away_team": "Grupa Azoty Chemik Police",
       "home_sets": 3,
       "away_sets": 1,
-      "date": "czwartek, 13 lis, 17:30",
+      "date": "29.11.2022, 17:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104425",
-      "home_team": "PGE Budowlani Łódź",
-      "away_team": "Metalkas Pałac Bydgoszcz",
+      "match_id": "1102051",
+      "home_team": "OnlyBio Pałac Bydgoszcz",
+      "away_team": "MOYA Radomka Lotnisko Radom",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "12.11.2022, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102052",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "ROLESKI GRUPA AZOTY Tarnów",
       "home_sets": 3,
       "away_sets": 0,
-      "date": "piątek, 14 lis, 17:30",
+      "date": "14.11.2022, 17:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104528",
-      "home_team": "BKS BOSTIK ZGO Bielsko-Biała",
-      "away_team": "UNI Opole",
+      "match_id": "1102053",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
       "home_sets": 0,
       "away_sets": 3,
-      "date": "piątek, 14 lis, 20:30",
+      "date": "22.11.2022, 19:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104423",
-      "home_team": "KS DevelopRes Rzeszów",
-      "away_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
+      "match_id": "1102054",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "OnlyBio Pałac Bydgoszcz",
       "home_sets": 3,
       "away_sets": 0,
-      "date": "sobota, 15 lis, 12:30",
+      "date": "21.11.2022, 17:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104424",
-      "home_team": "ITA TOOLS  STAL Mielec",
+      "match_id": "1102056",
+      "home_team": "UNI Opole",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "17.11.2022, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102057",
+      "home_team": "Energa MKS Kalisz",
+      "away_team": "UNI Opole",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "25.11.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102059",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "MOYA Radomka Lotnisko Radom",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "28.11.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102060",
+      "home_team": "Grupa Azoty Chemik Police",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "03.12.2022, 16:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102061",
+      "home_team": "MOYA Radomka Lotnisko Radom",
+      "away_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "04.12.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102062",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "02.12.2022, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102064",
+      "home_team": "Energa MKS Kalisz",
+      "away_team": "Grupa Azoty Chemik Police",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "10.12.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102065",
+      "home_team": "Grot Budowlani Łódź",
+      "away_team": "Energa MKS Kalisz",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "03.12.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102066",
+      "home_team": "OnlyBio Pałac Bydgoszcz",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "09.12.2022, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102067",
+      "home_team": "#VolleyWrocław",
+      "away_team": "UNI Opole",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "08.12.2022, 21:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102068",
+      "home_team": "#VolleyWrocław",
+      "away_team": "Energa MKS Kalisz",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "23.12.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102069",
+      "home_team": "MOYA Radomka Lotnisko Radom",
       "away_team": "ŁKS Commercecon Łódź",
       "home_sets": 0,
-      "away_sets": 0,
-      "date": "poniedziałek, 17 lis, 17:30",
+      "away_sets": 3,
+      "date": "30.12.2022, 19:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104426",
-      "home_team": "LOTTO Chemik Police",
+      "match_id": "1102070",
+      "home_team": "Grupa Azoty Chemik Police",
+      "away_team": "MOYA Radomka Lotnisko Radom",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "18.12.2022, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102072",
+      "home_team": "UNI Opole",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "16.12.2022, 17:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102073",
+      "home_team": "Grot Budowlani Łódź",
+      "away_team": "#VolleyWrocław",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "17.12.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102074",
+      "home_team": "Energa MKS Kalisz",
+      "away_team": "OnlyBio Pałac Bydgoszcz",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "19.12.2022, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102075",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "29.12.2022, 18:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102076",
+      "home_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "away_team": "UNI Opole",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "29.12.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102079",
+      "home_team": "UNI Opole",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "05.01.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102080",
+      "home_team": "Grot Budowlani Łódź",
+      "away_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "09.01.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102081",
+      "home_team": "Energa MKS Kalisz",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "06.01.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102083",
+      "home_team": "ROLESKI GRUPA AZOTY Tarnów",
       "away_team": "#VolleyWrocław",
       "home_sets": 0,
-      "away_sets": 0,
-      "date": "wtorek, 18 lis, 19:00",
+      "away_sets": 3,
+      "date": "13.01.2023, 19:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104530",
-      "home_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
-      "away_team": "Sokół & Hagric Mogilno",
+      "match_id": "1102084",
+      "home_team": "OnlyBio Pałac Bydgoszcz",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
       "home_sets": 0,
-      "away_sets": 0,
-      "date": "czwartek, 20 lis, 17:30",
+      "away_sets": 3,
+      "date": "13.01.2023, 17:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104429",
+      "match_id": "1102085",
+      "home_team": "MOYA Radomka Lotnisko Radom",
+      "away_team": "Energa MKS Kalisz",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "12.01.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102086",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "Grupa Azoty Chemik Police",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "14.01.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102088",
       "home_team": "ŁKS Commercecon Łódź",
-      "away_team": "BKS BOSTIK ZGO Bielsko-Biała",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "piątek, 21 lis, 16:00",
-      "phase": "regular"
-    },
-    {
-      "match_id": "1104430",
-      "home_team": "ITA TOOLS  STAL Mielec",
-      "away_team": "MOYA Radomka Radom",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "piątek, 21 lis, 17:30",
-      "phase": "regular"
-    },
-    {
-      "match_id": "1104529",
-      "home_team": "PGE Budowlani Łódź",
       "away_team": "UNI Opole",
-      "home_sets": 0,
+      "home_sets": 3,
       "away_sets": 0,
-      "date": "sobota, 22 lis, 12:30",
+      "date": "22.01.2023, 16:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104427",
+      "match_id": "1102089",
+      "home_team": "MOYA Radomka Lotnisko Radom",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "23.01.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102090",
+      "home_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "away_team": "OnlyBio Pałac Bydgoszcz",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "23.01.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102091",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "#VolleyWrocław",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22.01.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102092",
       "home_team": "#VolleyWrocław",
-      "away_team": "KS DevelopRes Rzeszów",
+      "away_team": "Grupa Azoty Chemik Police",
       "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 22 lis, 16:00",
+      "away_sets": 3,
+      "date": "27.01.2023, 19:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104428",
-      "home_team": "Metalkas Pałac Bydgoszcz",
-      "away_team": "LOTTO Chemik Police",
-      "home_sets": 0,
+      "match_id": "1102093",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "OnlyBio Pałac Bydgoszcz",
+      "home_sets": 3,
       "away_sets": 0,
-      "date": "sobota, 22 lis, 20:00",
+      "date": "26.01.2023, 19:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104435",
-      "home_team": "#VolleyWrocław",
-      "away_team": "Metalkas Pałac Bydgoszcz",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "piątek, 28 lis, 17:30",
+      "match_id": "1102094",
+      "home_team": "Grot Budowlani Łódź",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "29.01.2023, 17:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104432",
-      "home_team": "ITA TOOLS  STAL Mielec",
-      "away_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 29 lis, 12:30",
+      "match_id": "1102095",
+      "home_team": "UNI Opole",
+      "away_team": "MOYA Radomka Lotnisko Radom",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "26.01.2023, 17:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104531",
-      "home_team": "PGE Budowlani Łódź",
+      "match_id": "1102097",
+      "home_team": "Grupa Azoty Chemik Police",
+      "away_team": "UNI Opole",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "04.02.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102099",
+      "home_team": "MOYA Radomka Lotnisko Radom",
+      "away_team": "OnlyBio Pałac Bydgoszcz",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "06.02.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102100",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "#VolleyWrocław",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "02.02.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102101",
+      "home_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "03.02.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102102",
+      "home_team": "OnlyBio Pałac Bydgoszcz",
       "away_team": "ŁKS Commercecon Łódź",
       "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 29 lis, 17:30",
+      "away_sets": 3,
+      "date": "13.02.2023, 20:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104431",
-      "home_team": "KS DevelopRes Rzeszów",
-      "away_team": "Sokół & Hagric Mogilno",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "niedziela, 30 lis, 16:00",
-      "phase": "regular"
-    },
-    {
-      "match_id": "1104433",
-      "home_team": "BKS BOSTIK ZGO Bielsko-Biała",
-      "away_team": "MOYA Radomka Radom",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "niedziela, 30 lis, 19:00",
-      "phase": "regular"
-    },
-    {
-      "match_id": "1104434",
-      "home_team": "LOTTO Chemik Police",
+      "match_id": "1102104",
+      "home_team": "Grot Budowlani Łódź",
       "away_team": "UNI Opole",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "poniedziałek, 1 gru, 20:00",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "10.02.2023, 17:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104533",
-      "home_team": "Sokół & Hagric Mogilno",
-      "away_team": "ITA TOOLS  STAL Mielec",
-      "home_sets": 0,
+      "match_id": "1102105",
+      "home_team": "Grupa Azoty Chemik Police",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 3,
       "away_sets": 0,
-      "date": "piątek, 5 gru, 17:30",
+      "date": "16.02.2023, 17:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104436",
-      "home_team": "Metalkas Pałac Bydgoszcz",
-      "away_team": "KS DevelopRes Rzeszów",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 6 grudnia",
+      "match_id": "1102106",
+      "home_team": "UNI Opole",
+      "away_team": "Energa MKS Kalisz",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "20.02.2023, 17:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104437",
+      "match_id": "1102109",
+      "home_team": "Energa MKS Kalisz",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "30.10.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102110",
+      "home_team": "Energa MKS Kalisz",
+      "away_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "04.11.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102112",
+      "home_team": "Grupa Azoty Chemik Police",
+      "away_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "17.11.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102113",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "16.12.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102114",
+      "home_team": "OnlyBio Pałac Bydgoszcz",
+      "away_team": "Grupa Azoty Chemik Police",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "29.12.2022, 21:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102115",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "19.02.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102116",
+      "home_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "away_team": "MOYA Radomka Lotnisko Radom",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "24.02.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102117",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "26.02.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102119",
+      "home_team": "OnlyBio Pałac Bydgoszcz",
+      "away_team": "UNI Opole",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "25.02.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102120",
+      "home_team": "Grupa Azoty Chemik Police",
+      "away_team": "Energa MKS Kalisz",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "04.03.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102121",
+      "home_team": "Grot Budowlani Łódź",
+      "away_team": "OnlyBio Pałac Bydgoszcz",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "05.03.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102122",
       "home_team": "UNI Opole",
       "away_team": "#VolleyWrocław",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 6 grudnia",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "03.03.2023, 20:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104532",
+      "match_id": "1102124",
+      "home_team": "MOYA Radomka Lotnisko Radom",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "06.03.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102125",
+      "home_team": "MOYA Radomka Lotnisko Radom",
+      "away_team": "Grupa Azoty Chemik Police",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "10.03.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102126",
       "home_team": "ŁKS Commercecon Łódź",
-      "away_team": "LOTTO Chemik Police",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 6 grudnia",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "10.03.2023, 19:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104438",
-      "home_team": "MOYA Radomka Radom",
-      "away_team": "PGE Budowlani Łódź",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 6 grudnia",
+      "match_id": "1102128",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "UNI Opole",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "10.03.2023, 17:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104439",
-      "home_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
-      "away_team": "BKS BOSTIK ZGO Bielsko-Biała",
+      "match_id": "1102129",
+      "home_team": "OnlyBio Pałac Bydgoszcz",
+      "away_team": "Energa MKS Kalisz",
       "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 6 grudnia",
+      "away_sets": 3,
+      "date": "12.03.2023, 20:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104440",
-      "home_team": "KS DevelopRes Rzeszów",
-      "away_team": "ITA TOOLS  STAL Mielec",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 13 grudnia",
+      "match_id": "1102130",
+      "home_team": "Grupa Azoty Chemik Police",
+      "away_team": "OnlyBio Pałac Bydgoszcz",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "21.03.2023, 19:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104441",
-      "home_team": "BKS BOSTIK ZGO Bielsko-Biała",
-      "away_team": "Sokół & Hagric Mogilno",
-      "home_sets": 0,
+      "match_id": "1102131",
+      "home_team": "Energa MKS Kalisz",
+      "away_team": "#VolleyWrocław",
+      "home_sets": 3,
       "away_sets": 0,
-      "date": "sobota, 13 grudnia",
+      "date": "17.03.2023, 20:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104442",
-      "home_team": "PGE Budowlani Łódź",
-      "away_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 13 grudnia",
+      "match_id": "1102132",
+      "home_team": "Grot Budowlani Łódź",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "18.03.2023, 17:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104443",
-      "home_team": "LOTTO Chemik Police",
-      "away_team": "MOYA Radomka Radom",
-      "home_sets": 0,
+      "match_id": "1102134",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "MOYA Radomka Lotnisko Radom",
+      "home_sets": 3,
       "away_sets": 0,
-      "date": "sobota, 13 grudnia",
+      "date": "19.03.2023, 14:45",
       "phase": "regular"
     },
     {
-      "match_id": "1104444",
+      "match_id": "1102135",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "Grupa Azoty Chemik Police",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "25.03.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102137",
+      "home_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "24.03.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102138",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "Energa MKS Kalisz",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "25.03.2023, 16:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102139",
       "home_team": "#VolleyWrocław",
+      "away_team": "OnlyBio Pałac Bydgoszcz",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "27.03.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102141",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "OnlyBio Pałac Bydgoszcz",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "30.03.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102142",
+      "home_team": "Energa MKS Kalisz",
+      "away_team": "MOYA Radomka Lotnisko Radom",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "28.03.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102143",
+      "home_team": "Grot Budowlani Łódź",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "28.03.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102144",
+      "home_team": "Grupa Azoty Chemik Police",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "29.03.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102145",
+      "home_team": "Grot Budowlani Łódź",
+      "away_team": "Grupa Azoty Chemik Police",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "25.11.2022, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102146",
+      "home_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "26.11.2022, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102147",
+      "home_team": "UNI Opole",
+      "away_team": "OnlyBio Pałac Bydgoszcz",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "05.12.2022, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102149",
+      "home_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "11.12.2022, 16:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102150",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "MOYA Radomka Lotnisko Radom",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "09.12.2022, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102151",
+      "home_team": "Grupa Azoty Chemik Police",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "08.01.2023, 14:45",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102152",
+      "home_team": "OnlyBio Pałac Bydgoszcz",
+      "away_team": "#VolleyWrocław",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "07.01.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102153",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "15.01.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102154",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "Energa MKS Kalisz",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "21.01.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102155",
+      "home_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "away_team": "Energa MKS Kalisz",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "27.01.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102156",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "Energa MKS Kalisz",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "05.02.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102157",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "12.02.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102158",
+      "home_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "away_team": "Grupa Azoty Chemik Police",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "12.02.2023, 16:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102159",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "#VolleyWrocław",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "19.02.2023, 16:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102160",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "Grupa Azoty Chemik Police",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "26.02.2023, 18:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102161",
+      "home_team": "Energa MKS Kalisz",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "26.02.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102162",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "06.03.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102163",
+      "home_team": "#VolleyWrocław",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "08.03.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102164",
+      "home_team": "UNI Opole",
+      "away_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "18.03.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102165",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "UNI Opole",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "22.03.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102166",
+      "home_team": "#VolleyWrocław",
+      "away_team": "ROLESKI GRUPA AZOTY Tarnów",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "30.03.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102167",
+      "home_team": "#VolleyWrocław",
+      "away_team": "MOYA Radomka Lotnisko Radom",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "13.02.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102168",
+      "home_team": "MOYA Radomka Lotnisko Radom",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "17.02.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102649",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "OnlyBio Pałac Bydgoszcz",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "05.04.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102650",
+      "home_team": "OnlyBio Pałac Bydgoszcz",
       "away_team": "ŁKS Commercecon Łódź",
       "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 13 grudnia",
+      "away_sets": 3,
+      "date": "11.04.2023, 17:30",
       "phase": "regular"
     },
     {
-      "match_id": "1104521",
-      "home_team": "Metalkas Pałac Bydgoszcz",
+      "match_id": "1102652",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "#VolleyWrocław",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "04.04.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102653",
+      "home_team": "#VolleyWrocław",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "12.04.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102655",
+      "home_team": "Grupa Azoty Chemik Police",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "05.04.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102656",
+      "home_team": "Grot Budowlani Łódź",
+      "away_team": "Grupa Azoty Chemik Police",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "11.04.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102657",
+      "home_team": "Grupa Azoty Chemik Police",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "15.04.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102658",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "Energa MKS Kalisz",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "04.04.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102659",
+      "home_team": "Energa MKS Kalisz",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "11.04.2023, 19:00",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102661",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22.04.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102662",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "25.04.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102664",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "21.04.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102665",
+      "home_team": "Grot Budowlani Łódź",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "25.04.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102667",
+      "home_team": "MOYA Radomka Lotnisko Radom",
       "away_team": "UNI Opole",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 13 grudnia",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "06.04.2023, 19:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104506",
-      "home_team": "BKS BOSTIK ZGO Bielsko-Biała",
-      "away_team": "PGE Budowlani Łódź",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 20 grudnia",
+      "match_id": "1102668",
+      "home_team": "UNI Opole",
+      "away_team": "MOYA Radomka Lotnisko Radom",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "12.04.2023, 12:00",
       "phase": "regular"
     },
     {
-      "match_id": "1104446",
-      "home_team": "MOYA Radomka Radom",
-      "away_team": "UNI Opole",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 20 grudnia",
-      "phase": "regular"
-    },
-    {
-      "match_id": "1104507",
-      "home_team": "EcoHarpoon NOWEL LOS Nowy Dwór Mazowiecki",
-      "away_team": "Metalkas Pałac Bydgoszcz",
-      "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 20 grudnia",
-      "phase": "regular"
-    },
-    {
-      "match_id": "1104447",
-      "home_team": "Sokół & Hagric Mogilno",
+      "match_id": "1102669",
+      "home_team": "OnlyBio Pałac Bydgoszcz",
       "away_team": "#VolleyWrocław",
       "home_sets": 0,
-      "away_sets": 0,
-      "date": "sobota, 20 grudnia",
+      "away_sets": 3,
+      "date": "16.04.2023, 19:00",
       "phase": "regular"
+    },
+    {
+      "match_id": "1102670",
+      "home_team": "#VolleyWrocław",
+      "away_team": "OnlyBio Pałac Bydgoszcz",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "21.04.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102671",
+      "home_team": "Energa MKS Kalisz",
+      "away_team": "Grupa Azoty Chemik Police",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "20.04.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102672",
+      "home_team": "Grupa Azoty Chemik Police",
+      "away_team": "Energa MKS Kalisz",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "23.04.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102673",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "02.05.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102674",
+      "home_team": "BKS BOSTIK Bielsko-Biała",
+      "away_team": "Grot Budowlani Łódź",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "09.05.2023, 17:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102675",
+      "home_team": "Grot Budowlani Łódź",
+      "away_team": "BKS BOSTIK Bielsko-Biała",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "06.05.2023, 20:30",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1102678",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "03.05.2023, 17:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1102679",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "07.05.2023, 14:45",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1102680",
+      "home_team": "ŁKS Commercecon Łódź",
+      "away_team": "Developres BELLA DOLINA Rzeszów",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "10.05.2023, 17:30",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "1102681",
+      "home_team": "Developres BELLA DOLINA Rzeszów",
+      "away_team": "ŁKS Commercecon Łódź",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "13.05.2023, 18:00",
+      "phase": "playoff"
     }
   ]
 }

@@ -479,64 +479,70 @@ const CustomDot = (props: any) => {
             </div>
 
             {/* TABELA MECZ PO MECZU */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 mt-6">
-              <h2 className="text-xl font-bold text-white mb-4">
-                📋 Mecze szczegółowo ({matches.length})
-              </h2>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-white/20">
-                      <th className="text-left p-2 text-gray-300">#</th>
-                      <th className="text-left p-2 text-gray-300">Data</th>
-                      <th className="text-left p-2 text-gray-300">Mecz</th>
-                      <th className="text-center p-2 text-gray-300">Wynik</th>
-                      <th className="text-center p-2 text-gray-300">Pkt</th>
-                      <th className="text-center p-2 text-gray-300">Atak</th>
-                      <th className="text-center p-2 text-gray-300">Blok</th>
-                      <th className="text-center p-2 text-gray-300">Asy</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {matches.map((match, idx) => {
-                      // Wynik - teraz mamy prawdziwe dane z matches-calendar!
-                      const homeSets = match.home_sets ?? 0;
-                      const awaySets = match.away_sets ?? 0;
-                      const homeTeam = match.home_team || '';
-                      const awayTeam = match.away_team || '';
-
-                      // ZAWSZE: Gospodarz - Gość (sety gospodarza : sety gościa)
-                      const matchDisplay = `${homeTeam} - ${awayTeam}`;
-                      const resultDisplay = `${homeSets}:${awaySets}`;
-                      
-                      return (
-                        <tr key={idx} className="border-b border-white/10 hover:bg-white/5">
-                          <td className="p-2 text-gray-400">{idx + 1}</td>
-                          <td className="p-2 text-white text-xs">{match.date}</td>
-                          <td className="p-2 text-white text-sm">{matchDisplay}</td>
-                          <td className="p-2 text-center text-gray-300 font-mono">{resultDisplay}</td>
-                          <td className="p-2 text-center text-yellow-300 font-bold">{match.points_total || 0}</td>
-                          <td className="p-2 text-center" style={{ color: '#3B82F6' }}>
-                            {match.attack_points || match.attack_winning || 0}
-                          </td>
-                          <td className="p-2 text-center" style={{ color: '#F97316' }}>
-                            {match.block_points || 0}
-                          </td>
-                          <td className="p-2 text-center text-green-300">{match.serve_aces || 0}</td>
-                        </tr>
-                      );
-                      })}
-                                        </tbody>
-                                      </table>
-                                    </div>
-                                  </div>
-                                </>
-                              ) : (
-                                <div className="bg-white/10 backdrop-blur-lg rounded-xl p-8 border border-white/20 text-center">
-                                  <p className="text-gray-400">Brak danych meczowych dla tego sezonu</p>
-                                </div>
-                              )}
-                             </div>
-                          </div>
-                        );
-                      }
+<div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 mt-6">
+  <h2 className="text-xl font-bold text-white mb-4">
+    📋 Mecze szczegółowo ({matches.length})
+  </h2>
+  <div className="overflow-x-auto">
+    <table className="w-full text-sm">
+      <thead>
+        <tr className="border-b border-white/20">
+          <th className="text-left p-2 text-gray-300">#</th>
+          <th className="text-left p-2 text-gray-300">Data</th>
+          <th className="text-left p-2 text-gray-300">Mecz</th>
+          <th className="text-center p-2 text-gray-300">Wynik</th>
+          <th className="text-center p-2 text-gray-300">Pkt</th>
+          <th className="text-center p-2 text-gray-300">Atak</th>
+          <th className="text-center p-2 text-gray-300">Blok</th>
+          <th className="text-center p-2 text-gray-300">Asy</th>
+        </tr>
+      </thead>
+      <tbody>
+        {matches.map((match, idx) => {
+          const homeSets = match.home_sets ?? 0;
+          const awaySets = match.away_sets ?? 0;
+          const homeTeam = match.home_team || '';
+          const awayTeam = match.away_team || '';
+          
+          // Determine actual is_home based on player's team
+          const playerTeam = player.team || '';
+          const actualIsHome = homeTeam.toLowerCase().includes(playerTeam.toLowerCase()) || 
+                              playerTeam.toLowerCase().includes(homeTeam.toLowerCase().split(' ')[0]);
+          
+          const playerSets = actualIsHome ? homeSets : awaySets;
+          const opponentSets = actualIsHome ? awaySets : homeSets;
+          
+          // Show full match: Home - Away (ZAWSZE gospodarz - gość)
+          const matchDisplay = (homeTeam && awayTeam) 
+            ? `${homeTeam} - ${awayTeam}` 
+            : match.opponent || '-';
+          
+          const resultDisplay = `${playerSets}:${opponentSets}`;
+          
+          return (
+            <tr key={idx} className="border-b border-white/10 hover:bg-white/5">
+              <td className="p-2 text-gray-400">{idx + 1}</td>
+              <td className="p-2 text-white text-xs">{match.date}</td>
+              <td className="p-2 text-white text-sm">{matchDisplay}</td>
+              <td className="p-2 text-center text-gray-300 font-mono">{resultDisplay}</td>
+              <td className="p-2 text-center text-yellow-300 font-bold">{match.points_total || 0}</td>
+              <td className="p-2 text-center" style={{ color: '#3B82F6' }}>{match.attack_points || match.attack_winning || 0}</td>
+              <td className="p-2 text-center" style={{ color: '#F97316' }}>{match.block_points || 0}</td>
+              <td className="p-2 text-center text-green-300">{match.serve_aces || 0}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+</div>
+          </>
+        ) : (
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl p-8 border border-white/20 text-center">
+            <p className="text-gray-400">Brak danych meczowych dla tego sezonu</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
