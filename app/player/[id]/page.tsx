@@ -115,9 +115,12 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
         
     const matches = (player.matchByMatch || []).filter((m: any) => {
       const giornata = m.giornata || '';
+      const opponent = m.opponent || '';
       return !giornata.match(/^\d+$/) && 
              !giornata.includes('Media') && 
              !giornata.includes('Totale') && 
+             !opponent.includes('Średnia') &&  // 🔧 NOWE!
+             !opponent.includes('średnia') &&  // 🔧 NOWE!
              m.points_total !== undefined;
     });
   
@@ -456,7 +459,7 @@ const CustomDot = (props: any) => {
                           x1={`M${playoffStartIndex}`}
                           x2={`M${spcTotal.data.length}`}
                           fill="#ffffff"        // Białe szkło
-                          fillOpacity={0.08}     // Bardzo delikatne (8%)
+                          fillOpacity={0.15}     // Bardzo delikatne (15%)
                           stroke="#94a3b8"       // Szary border
                           strokeOpacity={0.3}    // Delikatny border
                           strokeWidth={1}

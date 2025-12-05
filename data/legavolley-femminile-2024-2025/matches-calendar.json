@@ -2,8 +2,2019 @@
   "meta": {
     "league": "legavolley-femminile",
     "season": "2024-2025",
-    "scraped_at": "2025-11-16T14:28:53.029Z",
-    "total_matches": 0
+    "scraped_at": "2025-11-23T22:36:28.947Z",
+    "total_matches": 201
   },
-  "matches": []
+  "matches": [
+    {
+      "match_id": "3004",
+      "giornata_id": "746916",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "05/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3001",
+      "giornata_id": "746913",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "06/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3005",
+      "giornata_id": "746917",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "06/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3006",
+      "giornata_id": "746918",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Bergamo",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "06/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3007",
+      "giornata_id": "746919",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "06/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3003",
+      "giornata_id": "746915",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "06/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3002",
+      "giornata_id": "746914",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "06/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3014",
+      "giornata_id": "746926",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "12/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3008",
+      "giornata_id": "746920",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "13/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3009",
+      "giornata_id": "746921",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "13/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3010",
+      "giornata_id": "746922",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "13/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3012",
+      "giornata_id": "746924",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "13/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3013",
+      "giornata_id": "746925",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Bergamo",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "13/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3011",
+      "giornata_id": "746923",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "13/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3015",
+      "giornata_id": "746927",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "19/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3017",
+      "giornata_id": "746929",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "20/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3016",
+      "giornata_id": "746928",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "20/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3018",
+      "giornata_id": "746930",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "20/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3019",
+      "giornata_id": "746931",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "20/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3021",
+      "giornata_id": "746933",
+      "home_team": "Bergamo",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "20/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3020",
+      "giornata_id": "746932",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "20/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3022",
+      "giornata_id": "746934",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "26/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3024",
+      "giornata_id": "746936",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "26/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3026",
+      "giornata_id": "746938",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "26/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3023",
+      "giornata_id": "746935",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Bergamo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "27/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3027",
+      "giornata_id": "746939",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "27/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3028",
+      "giornata_id": "746940",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "27/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3025",
+      "giornata_id": "746937",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "27/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3029",
+      "giornata_id": "746941",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "29/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3031",
+      "giornata_id": "746943",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "30/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3032",
+      "giornata_id": "746944",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "30/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3033",
+      "giornata_id": "746945",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "30/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3034",
+      "giornata_id": "746946",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Bergamo",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "30/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3035",
+      "giornata_id": "746947",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "30/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3030",
+      "giornata_id": "746942",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "30/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3040",
+      "giornata_id": "746952",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "02/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3038",
+      "giornata_id": "746950",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "03/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3036",
+      "giornata_id": "746948",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "03/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3039",
+      "giornata_id": "746951",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "03/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3041",
+      "giornata_id": "746953",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "03/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3042",
+      "giornata_id": "746954",
+      "home_team": "Bergamo",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "03/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3037",
+      "giornata_id": "746949",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "03/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3045",
+      "giornata_id": "746957",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "09/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3044",
+      "giornata_id": "746956",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "10/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3049",
+      "giornata_id": "746961",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Bergamo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "10/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3043",
+      "giornata_id": "746955",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "10/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3048",
+      "giornata_id": "746960",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "10/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3047",
+      "giornata_id": "746959",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "10/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3046",
+      "giornata_id": "746958",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "11/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3054",
+      "giornata_id": "746966",
+      "home_team": "Bergamo",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "16/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3055",
+      "giornata_id": "746967",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "17/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3050",
+      "giornata_id": "746962",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "17/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3051",
+      "giornata_id": "746963",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "17/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3053",
+      "giornata_id": "746965",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "17/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3056",
+      "giornata_id": "746968",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "17/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3052",
+      "giornata_id": "746964",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "17/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3058",
+      "giornata_id": "746970",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "22/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3059",
+      "giornata_id": "746971",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "23/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3063",
+      "giornata_id": "746975",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "23/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3062",
+      "giornata_id": "746974",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "24/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3057",
+      "giornata_id": "746969",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Bergamo",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "24/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3060",
+      "giornata_id": "746972",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "24/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3061",
+      "giornata_id": "746973",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "24/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3067",
+      "giornata_id": "746979",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "30/11/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3069",
+      "giornata_id": "746981",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "01/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3064",
+      "giornata_id": "746976",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "01/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3066",
+      "giornata_id": "746978",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "01/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3068",
+      "giornata_id": "746980",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "01/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3070",
+      "giornata_id": "746982",
+      "home_team": "Bergamo",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "01/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3065",
+      "giornata_id": "746977",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "01/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3077",
+      "giornata_id": "746989",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "04/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3071",
+      "giornata_id": "746983",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "04/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3072",
+      "giornata_id": "746984",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "04/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3073",
+      "giornata_id": "746985",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Bergamo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "04/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3074",
+      "giornata_id": "746986",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "04/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3075",
+      "giornata_id": "746987",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "04/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3076",
+      "giornata_id": "746988",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "04/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3080",
+      "giornata_id": "746992",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "07/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3079",
+      "giornata_id": "746991",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "07/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3082",
+      "giornata_id": "746994",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "08/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3078",
+      "giornata_id": "746990",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "08/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3081",
+      "giornata_id": "746993",
+      "home_team": "Bergamo",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "08/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3083",
+      "giornata_id": "746995",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "08/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3084",
+      "giornata_id": "746996",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "08/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3090",
+      "giornata_id": "747002",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "16/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3086",
+      "giornata_id": "746998",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "17/10/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3091",
+      "giornata_id": "747003",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "14/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3087",
+      "giornata_id": "746999",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "15/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3088",
+      "giornata_id": "747000",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "15/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3089",
+      "giornata_id": "747001",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Bergamo",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "15/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3085",
+      "giornata_id": "746997",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "15/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3096",
+      "giornata_id": "747008",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "21/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3094",
+      "giornata_id": "747006",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3095",
+      "giornata_id": "747007",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "22/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3098",
+      "giornata_id": "747010",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "22/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3097",
+      "giornata_id": "747009",
+      "home_team": "Bergamo",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3092",
+      "giornata_id": "747004",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "29/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3093",
+      "giornata_id": "747005",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "29/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3104",
+      "giornata_id": "747016",
+      "home_team": "Bergamo",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "26/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3099",
+      "giornata_id": "747011",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "26/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3100",
+      "giornata_id": "747012",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "26/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3101",
+      "giornata_id": "747013",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "26/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3103",
+      "giornata_id": "747015",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "26/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3105",
+      "giornata_id": "747017",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "26/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3102",
+      "giornata_id": "747014",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "26/12/2024",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3110",
+      "giornata_id": "747022",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "04/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3107",
+      "giornata_id": "747019",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "05/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3109",
+      "giornata_id": "747021",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "05/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3111",
+      "giornata_id": "747023",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "05/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3112",
+      "giornata_id": "747024",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Bergamo",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "05/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3106",
+      "giornata_id": "747018",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "05/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3108",
+      "giornata_id": "747020",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "05/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3116",
+      "giornata_id": "747028",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "11/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3119",
+      "giornata_id": "747031",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "11/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3114",
+      "giornata_id": "747026",
+      "home_team": "Bergamo",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "12/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3115",
+      "giornata_id": "747027",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "12/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3113",
+      "giornata_id": "747025",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "12/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3117",
+      "giornata_id": "747029",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "12/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3118",
+      "giornata_id": "747030",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "12/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3123",
+      "giornata_id": "747035",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "15/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3120",
+      "giornata_id": "747032",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "15/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3121",
+      "giornata_id": "747033",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "15/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3122",
+      "giornata_id": "747034",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "15/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3124",
+      "giornata_id": "747036",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "15/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3125",
+      "giornata_id": "747037",
+      "home_team": "Bergamo",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "15/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3126",
+      "giornata_id": "747038",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "15/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3128",
+      "giornata_id": "747040",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "18/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3131",
+      "giornata_id": "747043",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "18/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3132",
+      "giornata_id": "747044",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "19/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3127",
+      "giornata_id": "747039",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "19/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3129",
+      "giornata_id": "747041",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "19/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3130",
+      "giornata_id": "747042",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "19/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3133",
+      "giornata_id": "747045",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Bergamo",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "19/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3134",
+      "giornata_id": "747046",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "25/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3139",
+      "giornata_id": "747051",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "26/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3136",
+      "giornata_id": "747048",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "26/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3137",
+      "giornata_id": "747049",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "26/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3138",
+      "giornata_id": "747050",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "26/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3140",
+      "giornata_id": "747052",
+      "home_team": "Bergamo",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "26/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3135",
+      "giornata_id": "747047",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "26/01/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3142",
+      "giornata_id": "747054",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "01/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3147",
+      "giornata_id": "747059",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "01/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3145",
+      "giornata_id": "747057",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Bergamo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "01/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3143",
+      "giornata_id": "747055",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "02/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3141",
+      "giornata_id": "747053",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "02/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3144",
+      "giornata_id": "747056",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "02/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3146",
+      "giornata_id": "747058",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "02/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3153",
+      "giornata_id": "747065",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "11/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3151",
+      "giornata_id": "747063",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "12/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3148",
+      "giornata_id": "747060",
+      "home_team": "Bergamo",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "12/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3150",
+      "giornata_id": "747062",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "12/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3152",
+      "giornata_id": "747064",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "12/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3154",
+      "giornata_id": "747066",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "12/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3149",
+      "giornata_id": "747061",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "12/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3160",
+      "giornata_id": "747072",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "15/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3156",
+      "giornata_id": "747068",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "16/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3155",
+      "giornata_id": "747067",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "16/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3158",
+      "giornata_id": "747070",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "16/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3159",
+      "giornata_id": "747071",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "16/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3157",
+      "giornata_id": "747069",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "16/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3161",
+      "giornata_id": "747073",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Bergamo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "16/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3163",
+      "giornata_id": "747075",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3165",
+      "giornata_id": "747077",
+      "home_team": "Cda Volley Talmassons Fvg",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "22/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3166",
+      "giornata_id": "747078",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "22/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3167",
+      "giornata_id": "747079",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "23/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3162",
+      "giornata_id": "747074",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "23/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3164",
+      "giornata_id": "747076",
+      "home_team": "Bergamo",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "23/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3168",
+      "giornata_id": "747080",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "23/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3170",
+      "giornata_id": "747082",
+      "home_team": "Il Bisonte Firenze",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "25/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3173",
+      "giornata_id": "747085",
+      "home_team": "Bartoccini-Mc Restauri Perugia",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "26/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3169",
+      "giornata_id": "747081",
+      "home_team": "Wash4green Pinerolo",
+      "away_team": "Reale Mutua Fenera Chieri '76",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "26/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3171",
+      "giornata_id": "747083",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "26/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3172",
+      "giornata_id": "747084",
+      "home_team": "Honda Olivero Cuneo",
+      "away_team": "Bergamo",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "26/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3174",
+      "giornata_id": "747086",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Smi Roma Volley",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "26/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3175",
+      "giornata_id": "747087",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "26/02/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3176",
+      "giornata_id": "747088",
+      "home_team": "Smi Roma Volley",
+      "away_team": "Wash4green Pinerolo",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "01/03/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3177",
+      "giornata_id": "747089",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Bartoccini-Mc Restauri Perugia",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "01/03/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3178",
+      "giornata_id": "747090",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "01/03/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3179",
+      "giornata_id": "747091",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Honda Olivero Cuneo",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "01/03/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3180",
+      "giornata_id": "747092",
+      "home_team": "Bergamo",
+      "away_team": "Il Bisonte Firenze",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "01/03/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3181",
+      "giornata_id": "747093",
+      "home_team": "Reale Mutua Fenera Chieri '76",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "01/03/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "3182",
+      "giornata_id": "747094",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Cda Volley Talmassons Fvg",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "01/03/2025",
+      "phase": "regular"
+    },
+    {
+      "match_id": "4002",
+      "giornata_id": "747401",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Reale Mutua Fenera Chieri",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "08/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4001",
+      "giornata_id": "747400",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Bergamo",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "09/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4004",
+      "giornata_id": "747403",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Eurotek Uyba Busto Arsizio",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "09/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4003",
+      "giornata_id": "747402",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Megabox Ond. Savio Vallefoglia",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "09/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4008",
+      "giornata_id": "747407",
+      "home_team": "Eurotek Uyba Busto Arsizio",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "16/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4007",
+      "giornata_id": "747406",
+      "home_team": "Megabox Ond. Savio Vallefoglia",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "16/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4005",
+      "giornata_id": "747404",
+      "home_team": "Bergamo",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "16/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4006",
+      "giornata_id": "747405",
+      "home_team": "Reale Mutua Fenera Chieri",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "16/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4009",
+      "giornata_id": "747408",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Reale Mutua Fenera Chieri",
+      "home_sets": 3,
+      "away_sets": 2,
+      "date": "19/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4010",
+      "giornata_id": "747409",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4011",
+      "giornata_id": "747410",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "23/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4012",
+      "giornata_id": "747411",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "29/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4013",
+      "giornata_id": "747412",
+      "home_team": "Savino Del Bene Scandicci",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 2,
+      "away_sets": 3,
+      "date": "30/03/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4014",
+      "giornata_id": "747413",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Igor Gorgonzola Novara",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "06/04/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4015",
+      "giornata_id": "747414",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Savino Del Bene Scandicci",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "06/04/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4016",
+      "giornata_id": "747419",
+      "home_team": "Igor Gorgonzola Novara",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 1,
+      "away_sets": 3,
+      "date": "09/04/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4017",
+      "giornata_id": "747424",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 3,
+      "away_sets": 1,
+      "date": "16/04/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4018",
+      "giornata_id": "747425",
+      "home_team": "Numia Vero Volley Milano",
+      "away_team": "Prosecco Doc Imoco Conegliano",
+      "home_sets": 0,
+      "away_sets": 3,
+      "date": "19/04/2025",
+      "phase": "playoff"
+    },
+    {
+      "match_id": "4019",
+      "giornata_id": "747426",
+      "home_team": "Prosecco Doc Imoco Conegliano",
+      "away_team": "Numia Vero Volley Milano",
+      "home_sets": 3,
+      "away_sets": 0,
+      "date": "22/04/2025",
+      "phase": "playoff"
+    }
+  ]
 }
