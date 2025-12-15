@@ -1,0 +1,30 @@
+{
+  "id": "251",
+  "name": "Artur Sługocki",
+  "url": "https://www.plusliga.pl/statsPlayers/id/251.html",
+  "season": "2025-2026",
+  "team": "Unknown",
+  "season_totals": {
+    "matches": 8,
+    "sets": 16,
+    "points": 0,
+    "serve_total": 14,
+    "aces": 0,
+    "serve_errors": 4,
+    "aces_per_set": 0,
+    "reception_total": 7,
+    "reception_errors": 0,
+    "reception_negative": 2,
+    "reception_perfect": 1,
+    "reception_perfect_percent": 14.2857,
+    "attack_total": 1,
+    "attack_errors": 0,
+    "attack_blocked": 0,
+    "attack_perfect": 0,
+    "attack_perfect_percent": 0,
+    "block_points": 0,
+    "block_points_per_set": 0
+  },
+  "match_by_match": [],
+  "matches_count": 0
+}

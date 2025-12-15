@@ -1,0 +1,30 @@
+{
+  "id": "815",
+  "name": "Jakub Macyra",
+  "url": "https://www.plusliga.pl/statsPlayers/id/815.html",
+  "season": "2025-2026",
+  "team": "Unknown",
+  "season_totals": {
+    "matches": 81,
+    "sets": 242,
+    "points": 352,
+    "serve_total": 747,
+    "aces": 25,
+    "serve_errors": 88,
+    "aces_per_set": 0.1033,
+    "reception_total": 82,
+    "reception_errors": 8,
+    "reception_negative": 5,
+    "reception_perfect": 22,
+    "reception_perfect_percent": 26.8293,
+    "attack_total": 425,
+    "attack_errors": 28,
+    "attack_blocked": 34,
+    "attack_perfect": 242,
+    "attack_perfect_percent": 56.9412,
+    "block_points": 85,
+    "block_points_per_set": 0.3512
+  },
+  "match_by_match": [],
+  "matches_count": 0
+}

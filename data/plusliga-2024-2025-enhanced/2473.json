@@ -1,0 +1,32 @@
+{
+  "id": "2473",
+  "name": "Wojciech Więcławski",
+  "url": "https://www.plusliga.pl/statsPlayers/id/2473.html",
+  "season": "2024-2025",
+  "league": "plusliga",
+  "team": "Unknown",
+  "season_totals": {
+    "matches": 7,
+    "sets": 12,
+    "points": 6,
+    "serve_total": 13,
+    "aces": 1,
+    "serve_errors": 6,
+    "aces_per_set": 0.0833,
+    "reception_total": 0,
+    "reception_errors": 0,
+    "reception_negative": 0,
+    "reception_perfect": 0,
+    "reception_perfect_percent": 0,
+    "attack_total": 13,
+    "attack_errors": 2,
+    "attack_blocked": 3,
+    "attack_perfect": 5,
+    "attack_perfect_percent": 38.4615,
+    "block_points": 0,
+    "block_points_per_set": 0
+  },
+  "match_by_match": [],
+  "matches_count": 0,
+  "scraped_at": "2025-11-09T02:15:33.653Z"
+}

@@ -1,0 +1,30 @@
+{
+  "id": "834",
+  "name": "Jakub Strulak",
+  "url": "https://www.plusliga.pl/statsPlayers/id/834.html",
+  "season": "2025-2026",
+  "team": "Unknown",
+  "season_totals": {
+    "matches": 51,
+    "sets": 151,
+    "points": 227,
+    "serve_total": 375,
+    "aces": 9,
+    "serve_errors": 48,
+    "aces_per_set": 0.0596,
+    "reception_total": 47,
+    "reception_errors": 4,
+    "reception_negative": 14,
+    "reception_perfect": 8,
+    "reception_perfect_percent": 17.0213,
+    "attack_total": 280,
+    "attack_errors": 14,
+    "attack_blocked": 21,
+    "attack_perfect": 160,
+    "attack_perfect_percent": 57.1429,
+    "block_points": 58,
+    "block_points_per_set": 0.3841
+  },
+  "match_by_match": [],
+  "matches_count": 0
+}

@@ -1,0 +1,30 @@
+{
+  "id": "2691",
+  "name": "Paulina Jędrzejczak",
+  "url": "https://www.tauronliga.pl/statsPlayers/id/2691.html",
+  "season": "2025-2026",
+  "team": "Unknown",
+  "season_totals": {
+    "matches": 1,
+    "sets": 1,
+    "points": 0,
+    "serve_total": 0,
+    "aces": 0,
+    "serve_errors": 0,
+    "aces_per_set": 0,
+    "reception_total": 0,
+    "reception_errors": 0,
+    "reception_negative": 0,
+    "reception_perfect": 0,
+    "reception_perfect_percent": 0,
+    "attack_total": 1,
+    "attack_errors": 0,
+    "attack_blocked": 1,
+    "attack_perfect": 0,
+    "attack_perfect_percent": 0,
+    "block_points": 0,
+    "block_points_per_set": 0
+  },
+  "match_by_match": [],
+  "matches_count": 0
+}

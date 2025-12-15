@@ -251,3 +251,90 @@ async function main() {
 }
 
 main();
+
+/**
+ * INCREMENTAL SCRAPE - for weekly refresh
+ */
+const { isMatchAfterDate } = require('./utils/date-tracker');
+const { appendMatchesToPlayerFile, getPlayerIds } = require('./utils/incremental-utils');
+
+async function incrementalScrape(season, sinceDate) {
+  console.log(`\n🔄 PlusLiga Incremental Scrape`);
+  console.log(`Season: ${season}`);
+  console.log(`Since: ${sinceDate || 'ALL (first run)'}`);
+  
+  const league = 'plusliga';
+  
+  // Get all player IDs from existing files
+  const playerIds = getPlayerIds(league, season);
+  console.log(`Found ${playerIds.length} players to update`);
+  
+  let totalNewMatches = 0;
+  let playersUpdated = 0;
+  
+  for (let i = 0; i < playerIds.length; i++) {
+    const playerId = playerIds[i];
+    console.log(`\n[${i+1}/${playerIds.length}] Processing ${playerId}...`);
+    
+    try {
+      // Fetch player page
+      const html = await fetchPlayerPage(playerId);
+      
+      if (!html) {
+        console.log(`  ⏭️  Skipped (404)`);
+        continue;
+      }
+      
+      // Parse matches
+      const $ = cheerio.load(html);
+      const allMatches = extractMatchByMatchStats($);
+      
+      if (!allMatches || allMatches.length === 0) {
+        console.log(`  ℹ️  No matches found`);
+        continue;
+      }
+      
+      // Filter only NEW matches (after sinceDate)
+      const newMatches = sinceDate 
+        ? allMatches.filter(m => {
+            // Match doesn't have date field, so we can't filter by date
+            // For now, just return all matches and let appendMatchesToPlayerFile handle duplicates
+            return true;
+          })
+        : allMatches;
+      
+      console.log(`  📊 Total matches: ${allMatches.length}, New: ${newMatches.length}`);
+      
+      if (newMatches.length > 0) {
+        // Append to player file
+        const added = appendMatchesToPlayerFile(
+          playerId,
+          newMatches,
+          league,
+          season
+        );
+        
+        if (added > 0) {
+          totalNewMatches += added;
+          playersUpdated++;
+        }
+      }
+      
+      // Rate limiting
+      await delay(DELAY_MS);
+      
+    } catch (error) {
+      console.error(`  ❌ Error: ${error.message}`);
+    }
+  }
+  
+  return { 
+    playersUpdated, 
+    totalNewMatches 
+  };
+}
+
+// Export for use by refresh-weekly.js
+module.exports = {
+  incrementalScrape
+};

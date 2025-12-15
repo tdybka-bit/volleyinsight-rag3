@@ -1,0 +1,30 @@
+{
+  "id": "1011",
+  "name": "Kacper Sienkiewicz",
+  "url": "https://www.plusliga.pl/statsPlayers/id/1011.html",
+  "season": "2025-2026",
+  "team": "Unknown",
+  "season_totals": {
+    "matches": 6,
+    "sets": 7,
+    "points": 2,
+    "serve_total": 2,
+    "aces": 0,
+    "serve_errors": 2,
+    "aces_per_set": 0,
+    "reception_total": 1,
+    "reception_errors": 0,
+    "reception_negative": 0,
+    "reception_perfect": 0,
+    "reception_perfect_percent": 0,
+    "attack_total": 4,
+    "attack_errors": 0,
+    "attack_blocked": 1,
+    "attack_perfect": 2,
+    "attack_perfect_percent": 50,
+    "block_points": 0,
+    "block_points_per_set": 0
+  },
+  "match_by_match": [],
+  "matches_count": 0
+}

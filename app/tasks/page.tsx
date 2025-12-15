@@ -183,13 +183,13 @@ export default function TasksPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-yellow-900/20 to-green-900/30">
       {/* Navigation */}
-      <nav className="border-b border-blue-800/30 bg-slate-900/50 backdrop-blur-sm">
+      <nav className="border-b border-yellow-500/30 bg-slate-900/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex space-x-8">
-              <Link href="/" className="text-orange-400 hover:text-orange-300 font-semibold">
+              <Link href="/" className="text-yellow-400 hover:text-yellow-300 font-semibold">
                 Home
               </Link>
               <Link href="/tasks" className="text-white font-semibold">
@@ -207,12 +207,12 @@ export default function TasksPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-white mb-1">Task Tracker</h1>
-              <p className="text-blue-200 text-sm">Zarządzaj swoimi zadaniami w trzech kolumnach</p>
+              <p className="text-green-200 text-sm">Zarządzaj swoimi zadaniami w trzech kolumnach</p>
             </div>
             {/* Add Task Button */}
             <button
               onClick={() => setShowForm(true)}
-              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg text-sm"
+              className="bg-gradient-to-r from-yellow-500 to-green-600 hover:from-yellow-600 hover:to-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg text-sm"
             >
               + Dodaj nowe zadanie
             </button>

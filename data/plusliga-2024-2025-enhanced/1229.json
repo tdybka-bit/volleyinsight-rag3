@@ -1,0 +1,32 @@
+{
+  "id": "1229",
+  "name": "Krzysztof Rejno",
+  "url": "https://www.plusliga.pl/statsPlayers/id/1229.html",
+  "season": "2024-2025",
+  "league": "plusliga",
+  "team": "Unknown",
+  "season_totals": {
+    "matches": 226,
+    "sets": 659,
+    "points": 1082,
+    "serve_total": 1857,
+    "aces": 79,
+    "serve_errors": 186,
+    "aces_per_set": 0.1199,
+    "reception_total": 91,
+    "reception_errors": 9,
+    "reception_negative": 22,
+    "reception_perfect": 20,
+    "reception_perfect_percent": 21.978,
+    "attack_total": 1225,
+    "attack_errors": 31,
+    "attack_blocked": 56,
+    "attack_perfect": 705,
+    "attack_perfect_percent": 57.551,
+    "block_points": 298,
+    "block_points_per_set": 0.4522
+  },
+  "match_by_match": [],
+  "matches_count": 0,
+  "scraped_at": "2025-11-09T00:16:14.879Z"
+}

@@ -55,7 +55,7 @@ export default function TaskForm({ categories, onSubmit, onCancel }: TaskFormPro
               value={formData.title}
               onChange={handleChange}
               required
-              className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
               placeholder="Wprowadź tytuł zadania"
             />
           </div>
@@ -71,7 +71,7 @@ export default function TaskForm({ categories, onSubmit, onCancel }: TaskFormPro
               value={formData.description}
               onChange={handleChange}
               rows={3}
-              className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-none"
+              className="w-full bg-white/20 border border-white/30 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all resize-none"
               placeholder="Wprowadź opis zadania (opcjonalnie)"
             />
           </div>
@@ -86,7 +86,7 @@ export default function TaskForm({ categories, onSubmit, onCancel }: TaskFormPro
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="w-full bg-slate-700 border border-white/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              className="w-full bg-slate-700 border border-white/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
             >
               {categories.map((category) => (
                 <option key={category} value={category} className="bg-slate-800">
@@ -106,7 +106,7 @@ export default function TaskForm({ categories, onSubmit, onCancel }: TaskFormPro
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full bg-slate-700 border border-white/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+              className="w-full bg-slate-700 border border-white/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
             >
               <option value="todo" className="bg-slate-800">To Do</option>
               <option value="in-progress" className="bg-slate-800">In Progress</option>
@@ -119,7 +119,7 @@ export default function TaskForm({ categories, onSubmit, onCancel }: TaskFormPro
           <div className="flex space-x-2 pt-3">
             <button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg text-sm"
+              className="flex-1 bg-gradient-to-r from-yellow-500 to-green-600 hover:from-yellow-600 hover:to-green-700 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg text-sm"
             >
               Dodaj zadanie
             </button>

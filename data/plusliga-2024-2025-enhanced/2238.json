@@ -1,0 +1,32 @@
+{
+  "id": "2238",
+  "name": "Szymon Patecki",
+  "url": "https://www.plusliga.pl/statsPlayers/id/2238.html",
+  "season": "2024-2025",
+  "league": "plusliga",
+  "team": "Unknown",
+  "season_totals": {
+    "matches": 1,
+    "sets": 1,
+    "points": 0,
+    "serve_total": 0,
+    "aces": 0,
+    "serve_errors": 0,
+    "aces_per_set": 0,
+    "reception_total": 0,
+    "reception_errors": 0,
+    "reception_negative": 0,
+    "reception_perfect": 0,
+    "reception_perfect_percent": 0,
+    "attack_total": 0,
+    "attack_errors": 0,
+    "attack_blocked": 0,
+    "attack_perfect": 0,
+    "attack_perfect_percent": 0,
+    "block_points": 0,
+    "block_points_per_set": 0
+  },
+  "match_by_match": [],
+  "matches_count": 0,
+  "scraped_at": "2025-11-09T01:50:50.678Z"
+}

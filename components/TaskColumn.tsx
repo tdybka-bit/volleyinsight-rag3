@@ -101,11 +101,11 @@ export default function TaskColumn({
   const getColumnColor = () => {
     switch (status) {
       case 'todo':
-        return 'border-blue-500/30 bg-blue-900/10';
-      case 'in-progress':
         return 'border-yellow-500/30 bg-yellow-900/10';
-      case 'done':
+      case 'in-progress':
         return 'border-green-500/30 bg-green-900/10';
+      case 'done':
+        return 'border-green-600/40 bg-green-900/20';
       case 'parking-lot':
         return 'border-gray-500/30 bg-gray-900/10';
       default:
@@ -116,11 +116,11 @@ export default function TaskColumn({
   const getHeaderColor = () => {
     switch (status) {
       case 'todo':
-        return 'text-blue-300';
-      case 'in-progress':
         return 'text-yellow-300';
-      case 'done':
+      case 'in-progress':
         return 'text-green-300';
+      case 'done':
+        return 'text-green-400';
       case 'parking-lot':
         return 'text-gray-300';
       default:
@@ -160,12 +160,12 @@ export default function TaskColumn({
               onDrop={(e) => handleTaskDrop(e, index)}
               onDragOver={(e) => handleTaskDragOver(e, index)}
               className={`transition-all duration-200 ${
-                draggedOverIndex === index ? 'bg-blue-500/20 rounded-lg' : ''
+                draggedOverIndex === index ? 'bg-yellow-500/20 rounded-lg' : ''
               }`}
             >
               {/* Wskaźnik pozycji przed zadaniem */}
               {draggedOverIndex === index && dragOverPosition === 'top' && (
-                <div className="h-1 bg-blue-500 rounded-full mb-2 mx-2"></div>
+                <div className="h-1 bg-yellow-500 rounded-full mb-2 mx-2"></div>
               )}
               
               <TaskCard
@@ -178,7 +178,7 @@ export default function TaskColumn({
               
               {/* Wskaźnik pozycji po zadaniu */}
               {draggedOverIndex === index && dragOverPosition === 'bottom' && (
-                <div className="h-1 bg-blue-500 rounded-full mt-2 mx-2"></div>
+                <div className="h-1 bg-yellow-500 rounded-full mt-2 mx-2"></div>
               )}
             </div>
           ))

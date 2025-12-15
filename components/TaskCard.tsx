@@ -77,20 +77,20 @@ export default function TaskCard({
             type="text"
             value={editData.title}
             onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-            className="w-full bg-white/20 border border-white/30 rounded px-2 py-1 text-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full bg-white/20 border border-white/30 rounded px-2 py-1 text-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
             placeholder="Tytuł zadania"
           />
           <textarea
             value={editData.description}
             onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-            className="w-full bg-white/20 border border-white/30 rounded px-2 py-1 text-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+            className="w-full bg-white/20 border border-white/30 rounded px-2 py-1 text-sm text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none"
             rows={2}
             placeholder="Opis zadania"
           />
           <select
             value={editData.category}
             onChange={(e) => setEditData({ ...editData, category: e.target.value as Task['category'] })}
-            className="w-full bg-slate-700 border border-white/30 rounded px-2 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full bg-slate-700 border border-white/30 rounded px-2 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
             style={{ backgroundColor: '#334155' }}
           >
             <option value="Frontend" style={{ backgroundColor: '#1e293b', color: '#ffffff' }}>Frontend</option>
@@ -134,7 +134,7 @@ export default function TaskCard({
               </button>
               <button
                 onClick={() => onCopy(task)}
-                className="text-gray-400 hover:text-blue-400 transition-colors text-xs"
+                className="text-gray-400 hover:text-green-400 transition-colors text-xs"
                 title="Kopiuj zadanie"
               >
                 📋

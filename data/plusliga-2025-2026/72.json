@@ -1,0 +1,30 @@
+{
+  "id": "72",
+  "name": "Alan Souza",
+  "url": "https://www.plusliga.pl/statsPlayers/id/72.html",
+  "season": "2025-2026",
+  "team": "Unknown",
+  "season_totals": {
+    "matches": 33,
+    "sets": 130,
+    "points": 623,
+    "serve_total": 483,
+    "aces": 40,
+    "serve_errors": 100,
+    "aces_per_set": 0.3077,
+    "reception_total": 26,
+    "reception_errors": 4,
+    "reception_negative": 11,
+    "reception_perfect": 4,
+    "reception_perfect_percent": 15.3846,
+    "attack_total": 1068,
+    "attack_errors": 71,
+    "attack_blocked": 83,
+    "attack_perfect": 523,
+    "attack_perfect_percent": 48.97,
+    "block_points": 60,
+    "block_points_per_set": 0.4615
+  },
+  "match_by_match": [],
+  "matches_count": 0
+}

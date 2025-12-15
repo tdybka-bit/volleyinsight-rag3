@@ -1,0 +1,34 @@
+{
+  "id": "GIU-POL-04",
+  "name": "Giulia Polesello",
+  "team": "Omag Mt San Giovanni In M No",
+  "team_id": "710936",
+  "league": "legavolley-femminile",
+  "gender": "women",
+  "season": "2024-2025",
+  "match_by_match": [
+    {
+      "giornata": "4a Giornata",
+      "giornata_id": "713191",
+      "date": "09/04/2025",
+      "phase": "Semifinali",
+      "sets": 3,
+      "points_total": 8,
+      "points_won": 7,
+      "points_bp": 1,
+      "serve_total": 7,
+      "serve_aces": 0,
+      "serve_errors": 1,
+      "reception_total": 2,
+      "reception_errors": 1,
+      "reception_negative": 0,
+      "reception_perfect": 0,
+      "attack_total": 4,
+      "attack_errors": 0,
+      "attack_blocked": 0,
+      "attack_won": 4,
+      "block_points": 4
+    }
+  ],
+  "matches_count": 1
+}
