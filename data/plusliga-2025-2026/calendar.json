@@ -1,0 +1,2054 @@
+{
+  "meta": {
+    "league": "plusliga",
+    "season": "2025-2026",
+    "tournament_id": 52,
+    "scraped_at": "2025-12-17T22:20:05.790Z",
+    "total_matches": 227
+  },
+  "matches": [
+    {
+      "match_id": "1104622",
+      "date": "sobota, 6 gru, 12:30",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "3",
+      "away_score": "0",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104619",
+      "date": "sobota, 6 gru, 14:45",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "0",
+      "away_score": "3",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104623",
+      "date": "sobota, 6 gru, 17:30",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "3",
+      "away_score": "0",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104621",
+      "date": "sobota, 6 gru, 20:00",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "3",
+      "away_score": "0",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104620",
+      "date": "niedziela, 7 gru, 14:45",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "3",
+      "away_score": "1",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104544",
+      "date": "niedziela, 7 gru, 20:00",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "3",
+      "away_score": "1",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104545",
+      "date": "czwartek, 11 gru, 17:30",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "3",
+      "away_score": "0",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104624",
+      "date": "sobota, 13 gru, 14:45",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "3",
+      "away_score": "1",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104625",
+      "date": "sobota, 13 gru, 17:30",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "0",
+      "away_score": "3",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104626",
+      "date": "sobota, 13 gru, 20:00",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "3",
+      "away_score": "0",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104628",
+      "date": "niedziela, 14 gru, 14:45",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "2",
+      "away_score": "3",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104546",
+      "date": "niedziela, 14 gru, 17:30",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "3",
+      "away_score": "1",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104633",
+      "date": "wtorek, 16 gru, 17:30",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "3",
+      "away_score": "1",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104634",
+      "date": "wtorek, 16 gru, 20:00",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "3",
+      "away_score": "1",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104629",
+      "date": "środa, 17 gru, 17:30",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "3",
+      "away_score": "1",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104547",
+      "date": "czwartek, 18 gru, 18:30",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104548",
+      "date": "piątek, 19 gru, 20:00",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104636",
+      "date": "sobota, 20 gru, 12:30",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104637",
+      "date": "sobota, 20 gru, 14:45",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104549",
+      "date": "sobota, 20 gru, 17:30",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104638",
+      "date": "niedziela, 21 gru, 14:45",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104635",
+      "date": "niedziela, 21 gru, 17:30",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104632",
+      "date": "wtorek, 23 gru, 17:30",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104630",
+      "date": "wtorek, 23 gru, 20:00",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "177",
+      "date": "niedziela, 28 grudnia",
+      "home_team": "zw. meczu nr. 30",
+      "away_team": "1 dr. 1 rundy FZ rozgrywek PL",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "178",
+      "date": "niedziela, 28 grudnia",
+      "home_team": "zw. meczu nr. 31",
+      "away_team": "4 dr. 1 rundy FZ rozgrywek PL",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "179",
+      "date": "niedziela, 28 grudnia",
+      "home_team": "3 dr. 1 rundy FZ rozgrywek PL",
+      "away_team": "6 dr. 1 rundy FZ rozgrywek PL",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "180",
+      "date": "niedziela, 28 grudnia",
+      "home_team": "2 dr. 1 rundy FZ rozgrywek PL",
+      "away_team": "5 dr. 1 rundy FZ rozgrywek PL",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104646",
+      "date": "piątek, 2 sty, 17:30",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104645",
+      "date": "sobota, 3 stycznia",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104647",
+      "date": "sobota, 3 stycznia",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104648",
+      "date": "sobota, 3 stycznia",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104649",
+      "date": "sobota, 3 stycznia",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104650",
+      "date": "sobota, 3 stycznia",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104551",
+      "date": "sobota, 3 stycznia",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "181",
+      "date": "sobota, 10 sty, 14:45",
+      "home_team": "zw. meczu nr. 32",
+      "away_team": "zw. meczu nr. 33",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "182",
+      "date": "sobota, 10 sty, 18:00",
+      "home_team": "zw. meczu nr. 34",
+      "away_team": "zw. meczu nr. 35",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "183",
+      "date": "niedziela, 11 sty, 14:45",
+      "home_team": "zw. meczu nr. 36",
+      "away_team": "zw. meczu nr. 37",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104652",
+      "date": "środa, 14 stycznia",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104715",
+      "date": "środa, 14 stycznia",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104552",
+      "date": "środa, 14 stycznia",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104653",
+      "date": "środa, 14 stycznia",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104654",
+      "date": "środa, 14 stycznia",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104553",
+      "date": "środa, 14 stycznia",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104655",
+      "date": "sobota, 17 stycznia",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "···",
+      "away_score": "···",
+      "phase": "regular"
+    },
+    {
+      "match_id": "1104708",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104575",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "1\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104572",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104574",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "2\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104571",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104709",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "1\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104573",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104579",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104580",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104711",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "2\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104577",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104576",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104578",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104710",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104586",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104584",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104712",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104581",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104582",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104583",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104585",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "1\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104587",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104589",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104590",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104592",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104591",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "1\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104713",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104588",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "2\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104596",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104597",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104535",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104593",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104534",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "1\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104595",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "2\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104594",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104601",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "2\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104598",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104600",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104537",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "2\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104602",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104536",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104599",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "2\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104603",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104605",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104538",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104607",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104604",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104539",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "1\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104606",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104542",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104610",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104540",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104608",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "2\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104611",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104541",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104609",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104614",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "2\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104613",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104616",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104618",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104615",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104617",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104612",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104543",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104622",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104619",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104623",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104621",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104620",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104544",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104627",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "2\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104545",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104624",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104625",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104626",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "3\n\t\t\t:\n\t\t\t0",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104628",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "2\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104546",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104631",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "0\n\t\t\t:\n\t\t\t3",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104633",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104634",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104629",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "3\n\t\t\t:\n\t\t\t1",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104547",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104632",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104630",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104643",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "3\n\t\t\t:\n\t\t\t2",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104548",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104636",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104637",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104549",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104638",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104635",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104640",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104641",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104642",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104644",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104714",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104550",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104639",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104646",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104645",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104647",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104648",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104649",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104650",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104551",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104652",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104653",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104654",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104715",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104552",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104553",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104651",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104655",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104656",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104657",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104658",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104659",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104554",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104555",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104660",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104661",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104662",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104663",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104664",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104556",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104557",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104665",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104666",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104667",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104668",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104669",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104558",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104559",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104670",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104671",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104672",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104673",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104674",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104560",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104561",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104675",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104676",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104677",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104678",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104679",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104680",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104562",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104681",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104683",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104684",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104685",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104563",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104564",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104682",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104686",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104687",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104688",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104689",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104690",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104691",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104565",
+      "date": "",
+      "home_team": "Cuprum Stilon Gorzów",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104693",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "Energa Trefl Gdańsk",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104694",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104695",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104696",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104566",
+      "date": "",
+      "home_team": "Steam Hemarpol Politechnika Częstochowa",
+      "away_team": "Asseco Resovia Rzeszów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104567",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104568",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104692",
+      "date": "",
+      "home_team": "Aluron CMC Warta Zawiercie",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104697",
+      "date": "",
+      "home_team": "ZAKSA Kędzierzyn-Koźle",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104698",
+      "date": "",
+      "home_team": "PGE Projekt Warszawa",
+      "away_team": "BOGDANKA LUK Lublin",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104699",
+      "date": "",
+      "home_team": "Indykpol AZS Olsztyn",
+      "away_team": "InPost ChKS Chełm",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104700",
+      "date": "",
+      "home_team": "Ślepsk Malow Suwałki",
+      "away_team": "PGE GiEK SKRA Bełchatów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104701",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "JSW Jastrzębski Węgiel",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104702",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Barkom Każany Lwów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104703",
+      "date": "",
+      "home_team": "Barkom Każany Lwów",
+      "away_team": "Ślepsk Malow Suwałki",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104704",
+      "date": "",
+      "home_team": "Asseco Resovia Rzeszów",
+      "away_team": "Indykpol AZS Olsztyn",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104705",
+      "date": "",
+      "home_team": "JSW Jastrzębski Węgiel",
+      "away_team": "Cuprum Stilon Gorzów",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104706",
+      "date": "",
+      "home_team": "InPost ChKS Chełm",
+      "away_team": "ZAKSA Kędzierzyn-Koźle",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104707",
+      "date": "",
+      "home_team": "BOGDANKA LUK Lublin",
+      "away_team": "Aluron CMC Warta Zawiercie",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104569",
+      "date": "",
+      "home_team": "Energa Trefl Gdańsk",
+      "away_team": "Steam Hemarpol Politechnika Częstochowa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    },
+    {
+      "match_id": "1104570",
+      "date": "",
+      "home_team": "PGE GiEK SKRA Bełchatów",
+      "away_team": "PGE Projekt Warszawa",
+      "home_score": "···\n\t\t\t:\n\t\t\t···",
+      "away_score": "",
+      "phase": "unknown"
+    }
+  ]
+}

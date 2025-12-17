@@ -16,6 +16,15 @@ const PLAYERS_LIST_FILE = path.join(__dirname, '..', 'data', 'plusliga-2025-2026
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+// Add after other requires at top
+const { loadCalendar, matchOpponentToCalendar } = require('./utils/calendar-matcher');
+
+// Load calendar once at startup
+const CALENDAR = loadCalendar('plusliga', '2025-2026');
+if (CALENDAR) {
+  console.log(`📅 Loaded ${CALENDAR.length} matches from calendar`);
+}
+
 function parseNumber(value) {
   if (!value || value === '-' || value === '') return 0;
   return parseFloat(value.replace(',', '.')) || 0;
@@ -157,19 +166,34 @@ async function scrapePlayer(playerId) {
       }
     }
     
-    // Add is_home field to each match
-    const matchesWithHome = matchByMatch.map(match => ({
-      ...match,
-      is_home: match.opponent ? match.opponent.trim().startsWith(teamName) : false
-    }));
+    // NOWE: Enhance matches with calendar data (date, phase, match_id)
+    const matchesWithCalendarData = matchByMatch.map(match => {
+      const calendarMatch = matchOpponentToCalendar(match.opponent, CALENDAR, teamName);
+      
+      if (calendarMatch) {
+        return {
+          ...match,
+          match_id: calendarMatch.match_id,
+          date: calendarMatch.date,
+          phase: calendarMatch.phase,
+          is_home: match.opponent ? match.opponent.trim().startsWith(teamName) : false
+        };
+      }
+      
+      // No calendar match - keep original
+      return {
+        ...match,
+        is_home: match.opponent ? match.opponent.trim().startsWith(teamName) : false
+      };
+    });
 
     const playerData = {
       ...basicInfo,
       season: SEASON,
       team: teamName,
       season_totals: seasonTotals,
-      match_by_match: matchesWithHome,
-      matches_count: matchesWithHome.length
+      match_by_match: matchesWithCalendarData,  // ZMIANA: użyj matchesWithCalendarData
+      matches_count: matchesWithCalendarData.length  // ZMIANA
     };
     
     console.log(`✅ ${basicInfo.name}: ${matchByMatch.length} meczów`);

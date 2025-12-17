@@ -72,10 +72,8 @@ function mergePlayerStats(folderName, batchFile) {
         const existingPlayer = JSON.parse(existingContent);
         
         // Check if update is needed
-        const hasDetailedStats = (player.season_totals || player.match_by_match || player.stats) && 
-          (Object.keys(player.season_totals || {}).length > 0 || 
-            (player.match_by_match && player.match_by_match.length > 0));
-        const existingHasDetailedStats = existingPlayer.stats && Object.keys(existingPlayer.stats).length > 0;
+        const hasDetailedStats = player.season_totals || player.match_by_match || (player.stats && Object.keys(player.stats).length > 0);
+        const existingHasDetailedStats = existingPlayer.season_totals || existingPlayer.match_by_match || (existingPlayer.stats && Object.keys(existingPlayer.stats).length > 0);
         
         if (hasDetailedStats && !existingHasDetailedStats) {
           // Update with detailed stats
