@@ -35,22 +35,7 @@ export async function POST(request: NextRequest) {
       console.error('RAG search error:', ragError);
       // Continue without RAG context
     }
-    // Wyszukaj podobne treści w RAG
-    let ragContext = '';
-    try {
-      console.log('🔍 RAG SEARCH START:', message); // ← DODAJ
-      const similarDocs = await searchSimilar(message, 3);
-      console.log('✅ RAG RESULTS:', similarDocs?.length || 0); // ← DODAJ
-      if (similarDocs && similarDocs.length > 0) {
-        ragContext = similarDocs
-          .map((doc) => `[${doc.metadata.type}] ${doc.content}`)
-          .join('\n\n');
-        console.log('📝 RAG CONTEXT LENGTH:', ragContext.length); // ← DODAJ
-      }
-    } catch (ragError) {
-      console.error('❌ RAG search error:', ragError); // To już masz
-      // Continue without RAG context
-    }
+        
     // System prompt zależny od kontekstu
     let systemPrompt = `Jesteś ekspertem od siatkówki i pomocnym asystentem AI dla aplikacji VolleyLive AI.`;
 
