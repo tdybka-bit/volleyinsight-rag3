@@ -42,6 +42,7 @@ export default function VolleyInsight() {
   const [messages, setMessages] = useState<Message[]>([])
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [useHybrid, setUseHybrid] = useState(false) // ← DODAJ TO
 
   // Track page view on mount
   useEffect(() => {
@@ -62,7 +63,7 @@ export default function VolleyInsight() {
     setIsLoading(true)
 
     try {
-      const response = await fetch('/api/chat-unified', {
+      const response = await fetch(useHybrid ? '/api/chat-hybrid' : '/api/chat-unified', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -337,6 +338,20 @@ export default function VolleyInsight() {
               Chat AI - VolleyInsight
             </h3>
             <p className="text-sm text-muted-foreground mt-1">Zadaj pytanie o siatkówkę, technikę lub strategię gry</p>
+            {/* Smart Chat Toggle */}
+            <div className="mt-3">
+              <label className="flex items-center gap-2 cursor-pointer text-sm">
+                <input
+                  type="checkbox"
+                  checked={useHybrid}
+                  onChange={(e) => setUseHybrid(e.target.checked)}
+                  className="w-4 h-4 rounded"
+                />
+                <span className="text-muted-foreground">
+                  🚀 Smart Chat (Expert Knowledge + Player Stats)
+                </span>
+              </label>
+            </div>
           </div>
 
           {/* Messages */}
