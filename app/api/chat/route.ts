@@ -74,23 +74,48 @@ Wykorzystuj dostępną wiedzę z dokumentacji siatkówki.`;
     // ✅ Pobierz klienta OpenAI dopiero tutaj
     const openai = getOpenAI();
 
-    // Wywołanie OpenAI
-    const completion = await openai.chat.completions.create({
+    // Wywołanie OpenAI z STREAMINGIEM
+    const stream = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: message }
       ],
       temperature: 0.7,
-      max_tokens: context === 'live-match' ? 200 : 500
+      max_tokens: context === 'live-match' ? 200 : 500,
+      stream: true  // ← STREAMING ENABLED!
     });
 
-    const response = completion.choices[0]?.message?.content || 'Przepraszam, nie mogę odpowiedzieć.';
+    // ✅ Create streaming response
+    const encoder = new TextEncoder();
+    const readable = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of stream) {
+            const content = chunk.choices[0]?.delta?.content || '';
+            if (content) {
+              const data = JSON.stringify({ 
+                content,
+                ragUsed: !!ragContext,
+                context: context || 'general'
+              });
+              controller.enqueue(encoder.encode(`data: ${data}\n\n`));
+            }
+          }
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+          controller.close();
+        } catch (error) {
+          controller.error(error);
+        }
+      }
+    });
 
-    return NextResponse.json({
-      response,
-      context: context || 'general',
-      ragUsed: !!ragContext
+    return new Response(readable, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
     });
 
   } catch (error) {

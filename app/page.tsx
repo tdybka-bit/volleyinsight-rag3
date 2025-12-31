@@ -54,68 +54,111 @@ export default function VolleyInsight() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const sendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return
+const sendMessage = async () => {
+  if (!inputMessage.trim() || isLoading) return
 
-    const userMessage: Message = { role: 'user', content: inputMessage }
-    setMessages(prev => [...prev, userMessage])
-    setInputMessage('')
-    setIsLoading(true)
+  const userMessage: Message = { role: 'user', content: inputMessage }
+  setMessages(prev => [...prev, userMessage])
+  setInputMessage('')
+  setIsLoading(true)
 
-    try {
-      const response = await fetch(useHybrid ? '/api/chat-hybrid' : '/api/chat-unified', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: inputMessage,
-          history: messages.map(m => ({
-            role: m.role,
-            content: m.content
-          }))
-        })
+  // Create placeholder for streaming response
+  const assistantMessageId = Date.now();
+  const assistantMessage: Message = {
+    role: 'assistant',
+    content: '',
+    queryType: undefined,
+    sources: undefined
+  }
+  
+  setMessages(prev => [...prev, assistantMessage])
+
+  try {
+    const response = await fetch(useHybrid ? '/api/chat-hybrid' : '/api/chat-unified', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: inputMessage,
+        history: messages.map(m => ({
+          role: m.role,
+          content: m.content
+        }))
       })
+    })
 
-      const data = await response.json()
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
 
-      if (data.error) {
-        throw new Error(data.error)
-      }
+    // ✅ HANDLE STREAMING RESPONSE
+    const reader = response.body?.getReader()
+    const decoder = new TextDecoder()
+    let buffer = ''
+    let fullContent = ''
+    let metadata: any = null
 
-      const assistantMessage: Message = {
-        role: 'assistant',
-        content: data.response,
-        queryType: data.queryType,
-        sources: data.sources
-      }
+    if (reader) {
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
 
-      setMessages(prev => [...prev, assistantMessage])
-    } catch (error) {
-      console.error('Chat error:', error)
-      setMessages(prev => [
-        ...prev,
-        {
-          role: 'assistant',
-          content: 'Przepraszam, wystąpił błąd. Spróbuj ponownie.',
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n\n')
+        buffer = lines.pop() || ''
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6)
+            
+            if (data === '[DONE]') {
+              continue
+            }
+
+            try {
+              const parsed = JSON.parse(data)
+              
+              // Handle metadata (queryType, sources)
+              if (parsed.metadata) {
+                metadata = parsed.metadata
+              }
+              
+              // Handle content chunks
+              if (parsed.content) {
+                fullContent += parsed.content
+                
+                // Update message in real-time
+                setMessages(prev => prev.map((msg, idx) => 
+                  idx === prev.length - 1
+                    ? {
+                        ...msg,
+                        content: fullContent,
+                        queryType: metadata?.queryType,
+                        sources: metadata?.sources
+                      }
+                    : msg
+                ))
+              }
+            } catch (e) {
+              console.error('Parse error:', e)
+            }
+          }
         }
-      ])
-    } finally {
-      setIsLoading(false)
+      }
     }
-  }
 
-  const handleModuleClick = (module: typeof trainingModules[0]) => {
-    // Track block click analytics
-    trackBlockClick(module.id, module.title, 'home')
-    
-    // Specjalna obsługa dla dashboardu
-    if (module.id === 'dashboard') {
-      window.location.href = '/stats'
-      return
-    }
-    
-    // Przekieruj do dedykowanej strony tematu
-    window.location.href = `/${module.id}`
+  } catch (error) {
+    console.error('Chat error:', error)
+    setMessages(prev => [
+      ...prev.slice(0, -1), // Remove placeholder
+      {
+        role: 'assistant',
+        content: 'Przepraszam, wystąpił błąd. Spróbuj ponownie.',
+      }
+    ])
+  } finally {
+    setIsLoading(false)
   }
+}
 
   const trainingModules = [
     {

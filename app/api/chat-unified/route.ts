@@ -1,6 +1,6 @@
 /**
  * Unified Chat API - intelligent routing between stats and expert content
- * NOW WITH HYBRID SUPPORT! 🔥
+ * NOW WITH HYBRID SUPPORT + STREAMING! 🔥
  * Usage: POST /api/chat-unified with { message, history }
  */
 
@@ -129,7 +129,7 @@ async function searchExpertContent(message: string, limit: number = 5) {
 }
 
 /**
- * Generate response using retrieved context - NOW WITH HYBRID! 🔥
+ * Generate STREAMING response using retrieved context 🔥
  */
 async function generateResponse(
   message: string,
@@ -150,7 +150,6 @@ async function generateResponse(
   let systemPrompt;
 
   if (queryType === 'hybrid') {
-    // 🔥 HYBRID MODE - Best of both worlds!
     systemPrompt = `Jesteś ekspertem od siatkówki z dostępem do dwóch źródeł:
 - STATYSTYK graczy i meczów (oznaczone [STATS])
 - WIEDZY EKSPERCKIEJ o taktyce, technice i treningach (oznaczone [EXPERT])
@@ -167,12 +166,6 @@ Odpowiadając na pytania wymagające obu źródeł ZAWSZE:
 - NIE wymyślaj statystyk których nie ma w danych
 - Lepiej powiedzieć "nie mam oddzielnych danych" niż zgadywać
 
-Przykład gdy BRAK breakdown:
-"Malwina Smarzek ma 36.41% skuteczności ataku w sezonie 2024-2025. 
-Nie mam oddzielnych statystyk dla playoff vs sezonu regularnego, ale 
-zawodnicy z doświadczeniem międzynarodowym zazwyczaj prezentują lepszą 
-formę w kluczowych meczach ze względu na..."
-
 Kontekst (używaj OBA źródła!):
 ${contextText}
 
@@ -187,7 +180,6 @@ ${contextText}
 Odpowiadaj po polsku, zwięźle i konkretnie. Zawsze podawaj źródło danych jeśli jest dostępne.`;
 
   } else {
-    // expert
     systemPrompt = `Jesteś ekspertem od siatkówki - taktyki, techniki i treningów. 
 Używaj kontekstu poniżej do odpowiedzi:
 
@@ -202,14 +194,15 @@ Odpowiadaj po polsku, merytorycznie i praktycznie. Odwoływaj się do kontekstu 
     { role: 'user', content: message }
   ];
 
-  const response = await openai.chat.completions.create({
+  const stream = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages,
     temperature: 0.7,
-    max_tokens: 1000
+    max_tokens: 1000,
+    stream: true  // ← STREAMING ENABLED!
   });
 
-  return response.choices[0].message.content;
+  return stream; // Return stream object!
 }
 
 export async function POST(request: NextRequest) {
@@ -222,7 +215,7 @@ export async function POST(request: NextRequest) {
 
     console.log('📨 Unified Chat - New message:', message.substring(0, 50));
 
-    // Step 1: Classify query (now returns: stats | expert | hybrid)
+    // Step 1: Classify query
     const queryType = await classifyQuery(message);
     console.log(`🔍 Query classified as: ${queryType}`);
 
@@ -230,36 +223,23 @@ export async function POST(request: NextRequest) {
     let context: any[] = [];
 
     if (queryType === 'hybrid') {
-      // 🔥 HYBRID MODE - Query BOTH sources!
       console.log('🔥 HYBRID MODE - Querying both stats and expert...');
       
       const [statsResults, expertResults] = await Promise.all([
-        searchStats(message, 3),           // Top 3 stats
-        searchExpertContent(message, 2)    // Top 2 expert
+        searchStats(message, 3),
+        searchExpertContent(message, 2)
       ]);
 
-      // Combine results
-      context = [
-        ...statsResults,
-        ...expertResults
-      ];
-
+      context = [...statsResults, ...expertResults];
       console.log(`✅ Hybrid results: ${statsResults.length} stats + ${expertResults.length} expert = ${context.length} total`);
 
     } else if (queryType === 'stats') {
       context = await searchStats(message, 5);
-      
     } else {
-      // expert
       context = await searchExpertContent(message, 5);
     }
 
     console.log(`📚 Found ${context.length} relevant documents`);
-
-    if (context.length > 0) {
-      console.log(`📝 First doc content length: ${context[0]?.content?.length || 0}`);
-      console.log(`📝 First doc source: ${context[0]?.source}`);
-    }
 
     if (context.length === 0) {
       return NextResponse.json({
@@ -269,18 +249,50 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Step 3: Generate response
-    const answer = await generateResponse(message, context, queryType, history);
+    // Step 3: Generate STREAMING response
+    const stream = await generateResponse(message, context, queryType, history);
 
-    return NextResponse.json({
-      response: answer,
-      queryType,
-      sources: context.slice(0, 3).map((doc, i) => ({
-        id: i + 1,
-        content: doc.content.substring(0, 200) + '...',
-        score: doc.score,
-        source: doc.source
-      }))
+    // ✅ Create streaming response
+    const encoder = new TextEncoder();
+    const readable = new ReadableStream({
+      async start(controller) {
+        try {
+          // Send metadata first
+          const metadata = {
+            queryType,
+            sources: context.slice(0, 3).map((doc, i) => ({
+              id: i + 1,
+              content: doc.content.substring(0, 200) + '...',
+              score: doc.score,
+              source: doc.source
+            }))
+          };
+          
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ metadata })}\n\n`));
+
+          // Stream response chunks
+          for await (const chunk of stream) {
+            const content = chunk.choices[0]?.delta?.content || '';
+            if (content) {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
+            }
+          }
+          
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+          controller.close();
+        } catch (error) {
+          console.error('Streaming error:', error);
+          controller.error(error);
+        }
+      }
+    });
+
+    return new Response(readable, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
     });
 
   } catch (error) {
