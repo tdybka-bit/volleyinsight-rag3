@@ -332,22 +332,22 @@ const sendMessage = async () => {
               </div>
             </div>
 
-            {/* LIVE Mecz - NOWY */}
+            {/* LIVE Commentary - AI Powered */}
             <div className="glass-card rounded-xl p-3 border-2 border-red-500/50">
               <h3 className="font-semibold text-card-foreground mb-2 flex items-center text-sm">
                 <div className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></div>
-                LIVE Mecz
+                🎤 LIVE Commentary
               </h3>
               <button 
-                onClick={() => window.location.href = '/live'}
+                onClick={() => window.location.href = '/live-commentary'}
                 className="w-full p-3 text-left text-sm font-semibold text-white bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 rounded-lg transition-all transform hover:scale-105"
               >
                 <div className="flex items-center justify-between">
-                  <span>🏐 Polska vs Brazylia</span>
+                  <span>🏐 Zawiercie vs Lublin</span>
                   <ChevronRight className="w-4 h-4" />
                 </div>
                 <div className="text-xs mt-1 opacity-90">
-                  Set 3 • 21:19 • NA ŻYWO
+                  Set 3 • AI Komentarz • 8 języków
                 </div>
               </button>
             </div>
