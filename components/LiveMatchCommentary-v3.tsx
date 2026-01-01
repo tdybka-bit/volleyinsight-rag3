@@ -45,17 +45,17 @@ interface CommentaryEntry {
   type: string;
 }
 
-type Language = 'pl' | 'en' | 'it' | 'de' | 'fr' | 'es' | 'pt' | 'jp';
+type Language = 'pl' | 'en' | 'it' | 'de' | 'tr' | 'es' | 'pt' | 'jp';
 type Mode = 'demo' | 'live';
 
 const languages: { code: Language; flag: string; name: string }[] = [
   { code: 'pl', flag: '🇵🇱', name: 'Polski' },
-  { code: 'en', flag: '🇬🇧', name: 'English' },
+  { code: 'en', flag: 'EN', name: 'English' },
   { code: 'it', flag: '🇮🇹', name: 'Italiano' },
   { code: 'de', flag: '🇩🇪', name: 'Deutsch' },
-  { code: 'fr', flag: '🇫🇷', name: 'Français' },
+  { code: 'tr', flag: '🇹🇷', name: 'Türkçe' },
   { code: 'es', flag: '🇪🇸', name: 'Español' },
-  { code: 'pt', flag: '🇧🇷', name: 'Português' },
+  { code: 'pt', flag: '🇵🇹', name: 'Português' },
   { code: 'jp', flag: '🇯🇵', name: '日本語' },
 ];
 
@@ -71,6 +71,15 @@ export default function LiveMatchCommentaryV3() {
   const [mode, setMode] = useState<Mode>('demo');
   const commentaryRef = useRef<HTMLDivElement>(null);
   const [isRetranslating, setIsRetranslating] = useState(false);
+  
+  // NEW: Player stats tracking
+  const [playerStats, setPlayerStats] = useState<Record<string, {
+    blocks: number;
+    aces: number;
+    attacks: number;
+    errors: number;
+    points: number;
+  }>>({});
 
   // Re-translate all commentaries when language changes
   useEffect(() => {
@@ -83,7 +92,8 @@ export default function LiveMatchCommentaryV3() {
     if (commentaries.length === 0 || isRetranslating) return;
     
     setIsRetranslating(true);
-    console.log('🌍 Re-translating', commentaries.length, 'commentaries to', language);
+    const currentLanguage = language; // Capture current language
+    console.log('🌍 Re-translating', commentaries.length, 'commentaries to', currentLanguage);
     
     // PARALLEL PROCESSING - all at once! 🚀
     const translationPromises = commentaries.map(async (commentary) => {
@@ -91,8 +101,8 @@ export default function LiveMatchCommentaryV3() {
       const rally = rallies.find(r => r.rally_number === commentary.rallyNumber);
       if (!rally) return null;
       
-      // Regenerate commentary in new language
-      const newText = await generateCommentary(rally);
+      // Regenerate commentary in new language - EXPLICIT LANGUAGE PARAM
+      const newText = await generateCommentaryInLanguage(rally, currentLanguage);
       
       return {
         ...commentary,
@@ -108,6 +118,60 @@ export default function LiveMatchCommentaryV3() {
     setCommentaries(translatedCommentaries);
     setIsRetranslating(false);
     console.log('✅ Re-translation complete in parallel!');
+  };
+  
+  // NEW: Generate with explicit language parameter
+  const generateCommentaryInLanguage = async (rally: Rally, targetLanguage: Language): Promise<string> => {
+    try {
+      console.log('🎤 Generating commentary for rally #', rally.rally_number, 'in', targetLanguage);
+      setIsGenerating(true);
+      
+      // Calculate player stats up to this rally
+      const updatedStats = calculatePlayerStats(rally);
+      
+      // Get recent rallies for momentum detection (last 10)
+      const rallyIndex = rallies.findIndex(r => r.rally_number === rally.rally_number);
+      const recentRallies = rallyIndex >= 0 ? rallies.slice(Math.max(0, rallyIndex - 9), rallyIndex + 1) : [];
+
+      const response = await fetch('/api/commentary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          rally, 
+          language: targetLanguage, // Use explicit language
+          playerStats: updatedStats,
+          recentRallies: recentRallies,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Commentary API failed');
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let commentary = '';
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          commentary += chunk;
+        }
+      }
+
+      setIsGenerating(false);
+      return commentary;
+    } catch (error) {
+      console.error('❌ Commentary generation error:', error);
+      setIsGenerating(false);
+      
+      const finalTouch = rally.touches[rally.touches.length - 1];
+      return `${finalTouch.player}: ${finalTouch.action}`;
+    }
   };
 
   useEffect(() => {
@@ -142,13 +206,25 @@ export default function LiveMatchCommentaryV3() {
     try {
       console.log('🎤 Generating commentary for rally #', rally.rally_number);
       setIsGenerating(true);
+      
+      // Calculate player stats up to this rally
+      const updatedStats = calculatePlayerStats(rally);
+      
+      // Get recent rallies for momentum detection (last 10)
+      const rallyIndex = rallies.findIndex(r => r.rally_number === rally.rally_number);
+      const recentRallies = rallyIndex >= 0 ? rallies.slice(Math.max(0, rallyIndex - 9), rallyIndex + 1) : [];
 
       const response = await fetch('/api/commentary', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ rally, language }),
+        body: JSON.stringify({ 
+          rally, 
+          language,
+          playerStats: updatedStats,
+          recentRallies: recentRallies,
+        }),
       });
 
       if (!response.ok) {
@@ -178,6 +254,51 @@ export default function LiveMatchCommentaryV3() {
       const finalTouch = rally.touches[rally.touches.length - 1];
       return `${finalTouch.player}: ${finalTouch.action}`;
     }
+  };
+  
+  // NEW: Calculate cumulative player stats up to current rally
+  const calculatePlayerStats = (currentRally: Rally) => {
+    const stats: Record<string, { blocks: number; aces: number; attacks: number; errors: number; points: number }> = {};
+    
+    // Process all rallies up to and including current
+    const currentIndex = rallies.findIndex(r => r.rally_number === currentRally.rally_number);
+    const ralliesToProcess = currentIndex >= 0 ? rallies.slice(0, currentIndex + 1) : [currentRally];
+    
+    ralliesToProcess.forEach(rally => {
+      rally.touches.forEach(touch => {
+        if (!stats[touch.player]) {
+          stats[touch.player] = { blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0 };
+        }
+        
+        const action = touch.action.toLowerCase();
+        
+        // Count actions
+        if (action.includes('block') && !action.includes('error')) {
+          stats[touch.player].blocks++;
+        }
+        if (action.includes('ace')) {
+          stats[touch.player].aces++;
+        }
+        if (action.includes('attack') && !action.includes('error')) {
+          stats[touch.player].attacks++;
+        }
+        if (action.includes('error')) {
+          stats[touch.player].errors++;
+        }
+      });
+      
+      // Count points for final action
+      const finalTouch = rally.touches[rally.touches.length - 1];
+      if (!finalTouch.action.toLowerCase().includes('error')) {
+        if (!stats[finalTouch.player]) {
+          stats[finalTouch.player] = { blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0 };
+        }
+        stats[finalTouch.player].points++;
+      }
+    });
+    
+    setPlayerStats(stats);
+    return stats;
   };
 
   const playMatch = async () => {
@@ -287,11 +408,12 @@ export default function LiveMatchCommentaryV3() {
                 <button
                   key={lang.code}
                   onClick={() => setLanguage(lang.code)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded-lg ${lang.code !== 'en' ? 'text-sm' : ''} font-medium transition-all ${
                     language === lang.code
                       ? 'bg-blue-500 text-white'
                       : 'bg-muted hover:bg-muted/80 text-muted-foreground'
                   }`}
+                  style={lang.code === 'en' ? { fontSize: '1.4rem', lineHeight: '1.4rem' } : undefined}
                   title={lang.name}
                 >
                   {lang.flag}
