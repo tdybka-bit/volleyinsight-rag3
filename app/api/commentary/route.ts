@@ -144,16 +144,29 @@ interface PlayerStats {
   points: number;
 }
 
+interface RallyAnalysis {
+  numTouches: number;
+  passQuality: string;
+  passPlayer: string;
+  serverPlayer: string;
+  setterPlayer: string;
+  attackerPlayer: string;
+  dramaScore: number;
+  isLongRally: boolean;
+  isDramatic: boolean;
+}
+
 interface CommentaryRequest {
   rally: RallyData;
   language?: string;
-  playerStats?: Record<string, PlayerStats>; // NEW: cumulative stats
-  recentRallies?: RallyData[]; // NEW: for momentum detection
+  playerStats?: Record<string, PlayerStats>;
+  recentRallies?: RallyData[];
+  rallyAnalysis?: RallyAnalysis; // NEW: touch-by-touch analysis
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { rally, language = 'pl', playerStats = {}, recentRallies = [] }: CommentaryRequest = await request.json();
+    const { rally, language = 'pl', playerStats = {}, recentRallies = [], rallyAnalysis }: CommentaryRequest = await request.json();
 
     if (!rally) {
       return new Response('Rally data is required', { status: 400 });
@@ -295,6 +308,22 @@ export async function POST(request: NextRequest) {
     const bogdankaLeading = rally.score_after.bogdanka > rally.score_after.aluron;
     const leadingTeamName = aluronLeading ? 'Aluron CMC Warta Zawiercie' : bogdankaLeading ? 'BOGDANKA LUK Lublin' : 'remis';
     
+    // NEW: Touch-by-touch context
+    let touchContext = '';
+    if (rallyAnalysis) {
+      touchContext = `
+RALLY COMPLEXITY:
+- Touches: ${rallyAnalysis.numTouches} ${rallyAnalysis.isLongRally ? '(DŁUGA WYMIANA!)' : ''}
+- Drama score: ${rallyAnalysis.dramaScore.toFixed(1)}/5.0 ${rallyAnalysis.isDramatic ? '⚡ DRAMATIC!' : ''}
+- Pass quality: ${rallyAnalysis.passQuality}${rallyAnalysis.passQuality === 'perfect' ? ' ✅' : rallyAnalysis.passQuality === 'error' ? ' ❌ ACE!' : rallyAnalysis.passQuality === 'negative' ? ' ⚠️ CHAOS!' : ''}
+
+KEY PLAYERS IN CHAIN:
+${rallyAnalysis.serverPlayer ? `- Serve: ${rallyAnalysis.serverPlayer}` : ''}
+${rallyAnalysis.passPlayer ? `- Pass: ${rallyAnalysis.passPlayer} (${rallyAnalysis.passQuality})` : ''}
+${rallyAnalysis.setterPlayer ? `- Set: ${rallyAnalysis.setterPlayer}` : ''}
+${rallyAnalysis.attackerPlayer ? `- Attack: ${rallyAnalysis.attackerPlayer}` : ''}`;
+    }
+    
     let situationContext = '';
     if (currentStreak >= 5) {
       situationContext += `\nMOMENTUM: ${streakTeam} ma serię ${currentStreak} punktów pod rząd!`;
@@ -323,14 +352,17 @@ Zawodnik który wykonał ostatnią akcję: ${scoringPlayer} (${playerTeamName})
 Akcja: ${scoringAction}
 Wynik po akcji: ${score}
 Punkt zdobyła: ${rally.team_scored}
-PROWADZI: ${leadingTeamName}${situationContext}${errorContext}
+PROWADZI: ${leadingTeamName}${touchContext}${situationContext}${errorContext}
 
 ${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
 
 INSTRUKCJE:
-- ${isHotSituation ? 'KOŃCÓWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkreśl momentum!' : milestone ? 'MILESTONE - wspomniej liczbę punktów/bloków/asów!' : isBigLead ? 'Duża przewaga - zauważ sytuację' : isEarlySet ? 'Początek - spokojnie' : 'Środek seta - rzeczowo'}
+- ${isHotSituation ? 'KOŃCÓWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkreśl momentum!' : milestone ? 'MILESTONE - wspomniej liczbę punktów/bloków/asów!' : rallyAnalysis?.isLongRally ? 'DŁUGA WYMIANA - podkreśl dramatyzm!' : rallyAnalysis?.passQuality === 'perfect' ? 'PERFEKCYJNE przyjęcie - płynna akcja!' : rallyAnalysis?.passQuality === 'negative' ? 'CHAOS w przyjęciu - trudna sytuacja!' : isBigLead ? 'Duża przewaga - zauważ sytuację' : isEarlySet ? 'Początek - spokojnie' : 'Środek seta - rzeczowo'}
 - ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwał ATAKUJĄCEGO, nie błąd bloku!` : ''}
 - ${milestone ? `WAŻNE: Wspomniej że to ${milestone}!` : ''}
+- ${rallyAnalysis?.isLongRally ? `To była DŁUGA wymiana (${rallyAnalysis.numTouches} dotknięć) - podkreśl wysiłek i dramatyzm!` : ''}
+- ${rallyAnalysis?.passQuality === 'perfect' ? `Przyjęcie było PERFEKCYJNE - wspomniej o łatwości wykonania akcji!` : ''}
+- ${rallyAnalysis?.passQuality === 'negative' ? `Przyjęcie w CHAOSIE - podkreśl trudność i walkę zespołu!` : ''}
 - Wynik ${score} - prowadzi ${leadingTeamName}
 - NIE mów "prowadząc" jeśli drużyna już prowadziła - powiedz "zwiększa/zmniejsza przewagę"
 - 1-2 zdania max, konkretnie i energicznie!

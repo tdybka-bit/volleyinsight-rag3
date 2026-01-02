@@ -213,6 +213,9 @@ export default function LiveMatchCommentaryV3() {
       // Get recent rallies for momentum detection (last 10)
       const rallyIndex = rallies.findIndex(r => r.rally_number === rally.rally_number);
       const recentRallies = rallyIndex >= 0 ? rallies.slice(Math.max(0, rallyIndex - 9), rallyIndex + 1) : [];
+      
+      // NEW: Analyze touch-by-touch details
+      const rallyAnalysis = analyzeRallyChain(rally);
 
       const response = await fetch('/api/commentary', {
         method: 'POST',
@@ -224,6 +227,7 @@ export default function LiveMatchCommentaryV3() {
           language,
           playerStats: updatedStats,
           recentRallies: recentRallies,
+          rallyAnalysis: rallyAnalysis, // NEW
         }),
       });
 
@@ -254,6 +258,63 @@ export default function LiveMatchCommentaryV3() {
       const finalTouch = rally.touches[rally.touches.length - 1];
       return `${finalTouch.player}: ${finalTouch.action}`;
     }
+  };
+  
+  // NEW: Analyze rally chain for enhanced commentary
+  const analyzeRallyChain = (rally: Rally) => {
+    const touches = rally.touches;
+    const numTouches = touches.length;
+    
+    // Extract pass quality (if exists)
+    let passQuality = 'unknown';
+    let passPlayer = '';
+    if (numTouches >= 2) {
+      const passAction = touches[1].action.toLowerCase();
+      passPlayer = touches[1].player;
+      
+      if (passAction.includes('perfect')) {
+        passQuality = 'perfect';
+      } else if (passAction.includes('error')) {
+        passQuality = 'error';
+      } else if (passAction.includes('negative')) {
+        passQuality = 'negative';
+      } else if (passAction.includes('pass')) {
+        passQuality = 'good';
+      }
+    }
+    
+    // Extract key players
+    const serverPlayer = touches[0]?.player || '';
+    const setterPlayer = numTouches >= 3 ? touches[2]?.player : '';
+    const attackerPlayer = numTouches >= 4 ? touches[3]?.player : '';
+    
+    // Calculate drama score
+    let dramaScore = numTouches / 4.0; // Base: 4 touches = 1.0, 8 = 2.0
+    
+    if (passQuality === 'error') {
+      dramaScore *= 1.5; // Ace is dramatic
+    } else if (passQuality === 'negative' && numTouches >= 4) {
+      dramaScore *= 2.0; // Won despite bad pass!
+    }
+    
+    const scoreDiff = Math.abs(rally.score_after.aluron - rally.score_after.bogdanka);
+    if (rally.score_after.aluron >= 20 && rally.score_after.bogdanka >= 20) {
+      dramaScore *= 2.0; // Hot situation
+    } else if (scoreDiff >= 5) {
+      dramaScore *= 1.3; // Underdog fighting
+    }
+    
+    return {
+      numTouches,
+      passQuality,
+      passPlayer,
+      serverPlayer,
+      setterPlayer,
+      attackerPlayer,
+      dramaScore: Math.min(dramaScore, 5.0),
+      isLongRally: numTouches >= 8,
+      isDramatic: dramaScore >= 3.0,
+    };
   };
   
   // NEW: Calculate cumulative player stats up to current rally
