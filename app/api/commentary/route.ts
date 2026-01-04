@@ -268,6 +268,48 @@ export async function POST(request: NextRequest) {
       streak: currentStreak > 0 ? `${streakTeam} ${currentStreak} points` : 'none',
     });
 
+     // KROK 1A: Query TACTICS namespace (NEW! 🎯)
+    const actionType = scoringAction.toLowerCase();
+    let tacticsQuery = '';
+    
+    if (actionType.includes('block')) {
+      tacticsQuery = 'block blok technique tactics timing';
+    } else if (actionType.includes('attack') || actionType.includes('kill')) {
+      tacticsQuery = 'attack atak spike technique';
+    } else if (actionType.includes('ace') || actionType.includes('serve')) {
+      tacticsQuery = 'serve zagrywka service technique';
+    } else if (actionType.includes('dig') || actionType.includes('defense')) {
+      tacticsQuery = 'defense obrona dig technique';
+    }
+
+    let tacticsContext = '';
+    if (tacticsQuery) {
+      console.log('🎯 Tactics query:', tacticsQuery);
+      
+      try {
+        const tacticsEmbedding = await openai.embeddings.create({
+          model: 'text-embedding-3-small',
+          input: tacticsQuery,
+        });
+        
+        const tacticsResults = await index.namespace('tactics').query({
+          vector: tacticsEmbedding.data[0].embedding,
+          topK: 2,
+          includeMetadata: true,
+        });
+        
+        if (tacticsResults.matches && tacticsResults.matches.length > 0) {
+          tacticsContext = tacticsResults.matches
+            .map((match) => match.metadata?.text || '')
+            .join('\n\n')
+            .substring(0, 400);
+          console.log('✅ Tactics context:', tacticsContext.substring(0, 80) + '...');
+        }
+      } catch (error) {
+        console.error('❌ Tactics error:', error);
+      }
+    }
+
     // KROK 1: Query RAG dla zawodnika
     const searchQuery = `${scoringPlayer} ${scoringAction} characteristics playing style`;
     console.log('🔍 RAG query:', searchQuery);
@@ -354,7 +396,7 @@ Wynik po akcji: ${score}
 Punkt zdobyła: ${rally.team_scored}
 PROWADZI: ${leadingTeamName}${touchContext}${situationContext}${errorContext}
 
-${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
+${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
 
 INSTRUKCJE:
 - ${isHotSituation ? 'KOŃCÓWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkreśl momentum!' : milestone ? 'MILESTONE - wspomniej liczbę punktów/bloków/asów!' : rallyAnalysis?.isLongRally ? 'DŁUGA WYMIANA - podkreśl dramatyzm!' : rallyAnalysis?.passQuality === 'perfect' ? 'PERFEKCYJNE przyjęcie - płynna akcja!' : rallyAnalysis?.passQuality === 'negative' ? 'CHAOS w przyjęciu - trudna sytuacja!' : isBigLead ? 'Duża przewaga - zauważ sytuację' : isEarlySet ? 'Początek - spokojnie' : 'Środek seta - rzeczowo'}
