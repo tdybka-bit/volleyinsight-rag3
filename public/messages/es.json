@@ -1,0 +1,99 @@
+{
+  "header": {
+    "title": "VolleyInsight",
+    "subtitle": "Plataforma IA"
+  },
+  "leftPanel": {
+    "myAccount": {
+      "title": "Mi Cuenta",
+      "profile": "Perfil de Usuario",
+      "settings": "Configuración de Cuenta",
+      "history": "Historial de Actividad"
+    },
+    "contacts": {
+      "title": "Contactos",
+      "coaches": "Equipo de Entrenadores",
+      "support": "Soporte Técnico",
+      "contactUs": "Contáctenos"
+    },
+    "quickQuestions": {
+      "title": "Preguntas Rápidas",
+      "q1": "¿Cómo mejorar la técnica de ataque?",
+      "q2": "¿Cuáles son las reglas básicas del voleibol?",
+      "q3": "¿Cómo ejecutar correctamente un bloqueo?",
+      "q4": "¿Cuáles son las reglas más importantes?"
+    },
+    "liveCommentary": {
+      "title": "Comentario EN VIVO",
+      "match": "Zawiercie vs Lublin",
+      "details": "Set 3 • Comentario IA • 8 idiomas"
+    },
+    "help": {
+      "title": "Ayuda",
+      "faq": "Preguntas Frecuentes",
+      "instructions": "Guía de Usuario",
+      "reportIssue": "Reportar Problema"
+    }
+  },
+  "chat": {
+    "title": "Chat IA - VolleyInsight",
+    "subtitle": "Pregunta sobre voleibol, técnica o estrategia de juego",
+    "smartChatLabel": "Chat Inteligente (Conocimiento Experto + Estadísticas)",
+    "placeholder": "Pregunta sobre estadísticas o técnica de voleibol...",
+    "autoSelectHint": "El chat selecciona automáticamente la fuente de datos según tu pregunta",
+    "emptyState": {
+      "title": "Chat VolleyInsight",
+      "subtitle": "Pregunta sobre estadísticas o técnica de voleibol",
+      "statsTag": "Estadísticas",
+      "expertTag": "Conocimiento Experto"
+    },
+    "sources": {
+      "show": "Mostrar fuentes",
+      "stats": "Estadísticas",
+      "expert": "Conocimiento Experto",
+      "score": "Puntuación"
+    }
+  },
+  "modules": {
+    "title": "Módulos de Entrenamiento",
+    "subtitle": "Haz clic en un módulo para comenzar una ruta de aprendizaje dedicada",
+    "progress": "Progreso",
+    "items": {
+      "block": {
+        "title": "Bloqueo",
+        "description": "Técnica y táctica de bloqueo",
+        "question": "¿Cómo mejorar la técnica de bloqueo?"
+      },
+      "defense": {
+        "title": "Defensa",
+        "description": "Fundamentos de defensa en voleibol",
+        "question": "¿Cuáles son los fundamentos de la defensa?"
+      },
+      "attack": {
+        "title": "Ataque",
+        "description": "Ataques efectivos y remates",
+        "question": "¿Cómo ejecutar un ataque efectivo?"
+      },
+      "serve": {
+        "title": "Saque",
+        "description": "Tipos y técnicas de saques",
+        "question": "¿Cuáles son los tipos de saques?"
+      },
+      "setting": {
+        "title": "Colocación",
+        "description": "Colocación adecuada del balón",
+        "question": "¿Cómo colocar correctamente el balón?"
+      },
+      "rules": {
+        "title": "Reglas",
+        "description": "Reglas y reglamento del juego",
+        "question": "¿Cuáles son las reglas más importantes?"
+      },
+      "dashboard": {
+        "title": "Panel de Jugadores",
+        "description": "Estadísticas y gráficos PlusLiga & Tauron Liga",
+        "question": "Ver estadísticas de jugadores"
+      }
+    }
+  }
+}

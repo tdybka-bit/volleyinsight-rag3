@@ -1,0 +1,99 @@
+{
+  "header": {
+    "title": "VolleyInsight",
+    "subtitle": "AI Platform"
+  },
+  "leftPanel": {
+    "myAccount": {
+      "title": "Moje konto",
+      "profile": "Profil użytkownika",
+      "settings": "Ustawienia konta",
+      "history": "Historia aktywności"
+    },
+    "contacts": {
+      "title": "Kontakty",
+      "coaches": "Zespół trenerów",
+      "support": "Wsparcie techniczne",
+      "contactUs": "Kontakt z nami"
+    },
+    "quickQuestions": {
+      "title": "Szybkie pytania",
+      "q1": "Jak poprawić technikę ataku?",
+      "q2": "Jakie są podstawowe zasady siatkówki?",
+      "q3": "Jak poprawnie wykonać blok?",
+      "q4": "Jakie są najważniejsze przepisy?"
+    },
+    "liveCommentary": {
+      "title": "LIVE Commentary",
+      "match": "Zawiercie vs Lublin",
+      "details": "Set 3 • AI Komentarz • 8 języków"
+    },
+    "help": {
+      "title": "Pomoc",
+      "faq": "FAQ",
+      "instructions": "Instrukcja użytkowania",
+      "reportIssue": "Zgłoś problem"
+    }
+  },
+  "chat": {
+    "title": "Chat AI - VolleyInsight",
+    "subtitle": "Zadaj pytanie o siatkówkę, technikę lub strategię gry",
+    "smartChatLabel": "Smart Chat (Expert Knowledge + Player Stats)",
+    "placeholder": "Zadaj pytanie o statystyki lub technikę siatkówki...",
+    "autoSelectHint": "Chat automatycznie wybiera źródło danych na podstawie Twojego pytania",
+    "emptyState": {
+      "title": "VolleyInsight Chat",
+      "subtitle": "Zadaj pytanie o statystyki lub technikę siatkówki",
+      "statsTag": "Statystyki",
+      "expertTag": "Wiedza ekspercka"
+    },
+    "sources": {
+      "show": "Pokaż źródła",
+      "stats": "Statystyki",
+      "expert": "Wiedza ekspercka",
+      "score": "Score"
+    }
+  },
+  "modules": {
+    "title": "Moduły treningowe",
+    "subtitle": "Kliknij na moduł aby rozpocząć dedykowaną ścieżkę nauki",
+    "progress": "Postęp",
+    "items": {
+      "block": {
+        "title": "Blok",
+        "description": "Technika i taktyka bloku",
+        "question": "Jak poprawić technikę bloku?"
+      },
+      "defense": {
+        "title": "Obrona",
+        "description": "Podstawy obrony w siatkówce",
+        "question": "Jakie są podstawy obrony w siatkówce?"
+      },
+      "attack": {
+        "title": "Atak",
+        "description": "Skuteczne ataki i finisze",
+        "question": "Jak wykonać skuteczny atak?"
+      },
+      "serve": {
+        "title": "Zagrywka",
+        "description": "Rodzaje i techniki zagrywek",
+        "question": "Jakie są rodzaje zagrywek?"
+      },
+      "setting": {
+        "title": "Ustawienia",
+        "description": "Prawidłowe ustawianie piłki",
+        "question": "Jak prawidłowo ustawiać piłkę?"
+      },
+      "rules": {
+        "title": "Przepisy",
+        "description": "Zasady i regulamin gry",
+        "question": "Jakie są najważniejsze przepisy gry?"
+      },
+      "dashboard": {
+        "title": "Dashboard Graczy",
+        "description": "Statystyki i wykresy PlusLiga & Tauron Liga",
+        "question": "Zobacz statystyki graczy"
+      }
+    }
+  }
+}

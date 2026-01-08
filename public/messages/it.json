@@ -1,0 +1,99 @@
+{
+  "header": {
+    "title": "VolleyInsight",
+    "subtitle": "Piattaforma IA"
+  },
+  "leftPanel": {
+    "myAccount": {
+      "title": "Il Mio Account",
+      "profile": "Profilo Utente",
+      "settings": "Impostazioni Account",
+      "history": "Cronologia Attività"
+    },
+    "contacts": {
+      "title": "Contatti",
+      "coaches": "Squadra Allenatori",
+      "support": "Supporto Tecnico",
+      "contactUs": "Contattaci"
+    },
+    "quickQuestions": {
+      "title": "Domande Rapide",
+      "q1": "Come migliorare la tecnica d'attacco?",
+      "q2": "Quali sono le regole base della pallavolo?",
+      "q3": "Come eseguire correttamente un muro?",
+      "q4": "Quali sono le regole più importanti?"
+    },
+    "liveCommentary": {
+      "title": "Commento LIVE",
+      "match": "Zawiercie vs Lublin",
+      "details": "Set 3 • Commento IA • 8 lingue"
+    },
+    "help": {
+      "title": "Aiuto",
+      "faq": "Domande Frequenti",
+      "instructions": "Guida Utente",
+      "reportIssue": "Segnala Problema"
+    }
+  },
+  "chat": {
+    "title": "Chat IA - VolleyInsight",
+    "subtitle": "Chiedi informazioni su pallavolo, tecnica o strategia di gioco",
+    "smartChatLabel": "Chat Intelligente (Conoscenza Esperta + Statistiche)",
+    "placeholder": "Chiedi informazioni su statistiche o tecnica pallavolo...",
+    "autoSelectHint": "La chat seleziona automaticamente la fonte dati in base alla tua domanda",
+    "emptyState": {
+      "title": "Chat VolleyInsight",
+      "subtitle": "Chiedi informazioni su statistiche o tecnica pallavolo",
+      "statsTag": "Statistiche",
+      "expertTag": "Conoscenza Esperta"
+    },
+    "sources": {
+      "show": "Mostra fonti",
+      "stats": "Statistiche",
+      "expert": "Conoscenza Esperta",
+      "score": "Punteggio"
+    }
+  },
+  "modules": {
+    "title": "Moduli di Allenamento",
+    "subtitle": "Clicca su un modulo per iniziare un percorso di apprendimento dedicato",
+    "progress": "Progresso",
+    "items": {
+      "block": {
+        "title": "Muro",
+        "description": "Tecnica e tattica del muro",
+        "question": "Come migliorare la tecnica del muro?"
+      },
+      "defense": {
+        "title": "Difesa",
+        "description": "Fondamentali della difesa nella pallavolo",
+        "question": "Quali sono i fondamentali della difesa?"
+      },
+      "attack": {
+        "title": "Attacco",
+        "description": "Attacchi efficaci e schiacciate",
+        "question": "Come eseguire un attacco efficace?"
+      },
+      "serve": {
+        "title": "Servizio",
+        "description": "Tipi e tecniche di servizio",
+        "question": "Quali sono i tipi di servizio?"
+      },
+      "setting": {
+        "title": "Alzata",
+        "description": "Alzata corretta della palla",
+        "question": "Come alzare correttamente la palla?"
+      },
+      "rules": {
+        "title": "Regole",
+        "description": "Regole e regolamento del gioco",
+        "question": "Quali sono le regole più importanti?"
+      },
+      "dashboard": {
+        "title": "Dashboard Giocatori",
+        "description": "Statistiche e grafici PlusLiga & Tauron Liga",
+        "question": "Visualizza statistiche giocatori"
+      }
+    }
+  }
+}

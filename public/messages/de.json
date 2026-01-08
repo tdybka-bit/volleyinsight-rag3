@@ -1,0 +1,99 @@
+{
+  "header": {
+    "title": "VolleyInsight",
+    "subtitle": "KI-Plattform"
+  },
+  "leftPanel": {
+    "myAccount": {
+      "title": "Mein Konto",
+      "profile": "Benutzerprofil",
+      "settings": "Kontoeinstellungen",
+      "history": "Aktivitätsverlauf"
+    },
+    "contacts": {
+      "title": "Kontakte",
+      "coaches": "Trainerteam",
+      "support": "Technischer Support",
+      "contactUs": "Kontaktieren Sie uns"
+    },
+    "quickQuestions": {
+      "title": "Schnellfragen",
+      "q1": "Wie verbessere ich die Angriffstechnik?",
+      "q2": "Was sind die Grundregeln des Volleyballs?",
+      "q3": "Wie führt man einen Block richtig aus?",
+      "q4": "Was sind die wichtigsten Regeln?"
+    },
+    "liveCommentary": {
+      "title": "LIVE Kommentar",
+      "match": "Zawiercie vs Lublin",
+      "details": "Satz 3 • KI-Kommentar • 8 Sprachen"
+    },
+    "help": {
+      "title": "Hilfe",
+      "faq": "Häufig gestellte Fragen",
+      "instructions": "Benutzerhandbuch",
+      "reportIssue": "Problem melden"
+    }
+  },
+  "chat": {
+    "title": "KI-Chat - VolleyInsight",
+    "subtitle": "Fragen Sie nach Volleyball, Technik oder Spielstrategie",
+    "smartChatLabel": "Smart Chat (Expertenwissen + Spielerstatistiken)",
+    "placeholder": "Fragen Sie nach Statistiken oder Volleyballtechnik...",
+    "autoSelectHint": "Der Chat wählt automatisch die Datenquelle basierend auf Ihrer Frage",
+    "emptyState": {
+      "title": "VolleyInsight Chat",
+      "subtitle": "Fragen Sie nach Statistiken oder Volleyballtechnik",
+      "statsTag": "Statistiken",
+      "expertTag": "Expertenwissen"
+    },
+    "sources": {
+      "show": "Quellen anzeigen",
+      "stats": "Statistiken",
+      "expert": "Expertenwissen",
+      "score": "Bewertung"
+    }
+  },
+  "modules": {
+    "title": "Trainingsmodule",
+    "subtitle": "Klicken Sie auf ein Modul, um einen dedizierten Lernpfad zu starten",
+    "progress": "Fortschritt",
+    "items": {
+      "block": {
+        "title": "Block",
+        "description": "Block-Technik und -Taktik",
+        "question": "Wie verbessere ich die Block-Technik?"
+      },
+      "defense": {
+        "title": "Abwehr",
+        "description": "Grundlagen der Volleyball-Abwehr",
+        "question": "Was sind die Grundlagen der Abwehr?"
+      },
+      "attack": {
+        "title": "Angriff",
+        "description": "Effektive Angriffe und Schmetterbälle",
+        "question": "Wie führt man einen effektiven Angriff aus?"
+      },
+      "serve": {
+        "title": "Aufschlag",
+        "description": "Arten und Techniken von Aufschlägen",
+        "question": "Welche Aufschlagarten gibt es?"
+      },
+      "setting": {
+        "title": "Zuspiel",
+        "description": "Richtiges Zuspiel des Balls",
+        "question": "Wie spielt man den Ball richtig zu?"
+      },
+      "rules": {
+        "title": "Regeln",
+        "description": "Spielregeln und Vorschriften",
+        "question": "Was sind die wichtigsten Spielregeln?"
+      },
+      "dashboard": {
+        "title": "Spieler-Dashboard",
+        "description": "Statistiken und Diagramme PlusLiga & Tauron Liga",
+        "question": "Spielerstatistiken anzeigen"
+      }
+    }
+  }
+}

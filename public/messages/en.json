@@ -1,0 +1,99 @@
+{
+  "header": {
+    "title": "VolleyInsight",
+    "subtitle": "AI Platform"
+  },
+  "leftPanel": {
+    "myAccount": {
+      "title": "My Account",
+      "profile": "User Profile",
+      "settings": "Account Settings",
+      "history": "Activity History"
+    },
+    "contacts": {
+      "title": "Contacts",
+      "coaches": "Coaching Team",
+      "support": "Technical Support",
+      "contactUs": "Contact Us"
+    },
+    "quickQuestions": {
+      "title": "Quick Questions",
+      "q1": "How to improve attack technique?",
+      "q2": "What are the basic rules of volleyball?",
+      "q3": "How to properly execute a block?",
+      "q4": "What are the most important rules?"
+    },
+    "liveCommentary": {
+      "title": "LIVE Commentary",
+      "match": "Zawiercie vs Lublin",
+      "details": "Set 3 • AI Commentary • 8 languages"
+    },
+    "help": {
+      "title": "Help",
+      "faq": "FAQ",
+      "instructions": "User Guide",
+      "reportIssue": "Report Issue"
+    }
+  },
+  "chat": {
+    "title": "AI Chat - VolleyInsight",
+    "subtitle": "Ask about volleyball, technique or game strategy",
+    "smartChatLabel": "Smart Chat (Expert Knowledge + Player Stats)",
+    "placeholder": "Ask about statistics or volleyball technique...",
+    "autoSelectHint": "Chat automatically selects data source based on your question",
+    "emptyState": {
+      "title": "VolleyInsight Chat",
+      "subtitle": "Ask about statistics or volleyball technique",
+      "statsTag": "Statistics",
+      "expertTag": "Expert Knowledge"
+    },
+    "sources": {
+      "show": "Show sources",
+      "stats": "Statistics",
+      "expert": "Expert Knowledge",
+      "score": "Score"
+    }
+  },
+  "modules": {
+    "title": "Training Modules",
+    "subtitle": "Click on a module to start a dedicated learning path",
+    "progress": "Progress",
+    "items": {
+      "block": {
+        "title": "Block",
+        "description": "Block technique and tactics",
+        "question": "How to improve blocking technique?"
+      },
+      "defense": {
+        "title": "Defense",
+        "description": "Volleyball defense basics",
+        "question": "What are the basics of volleyball defense?"
+      },
+      "attack": {
+        "title": "Attack",
+        "description": "Effective attacks and spikes",
+        "question": "How to execute an effective attack?"
+      },
+      "serve": {
+        "title": "Serve",
+        "description": "Types and techniques of serves",
+        "question": "What are the types of serves?"
+      },
+      "setting": {
+        "title": "Setting",
+        "description": "Proper ball setting",
+        "question": "How to properly set the ball?"
+      },
+      "rules": {
+        "title": "Rules",
+        "description": "Game rules and regulations",
+        "question": "What are the most important game rules?"
+      },
+      "dashboard": {
+        "title": "Player Dashboard",
+        "description": "Statistics and charts PlusLiga & Tauron Liga",
+        "question": "View player statistics"
+      }
+    }
+  }
+}

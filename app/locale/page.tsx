@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { useLanguage, locales, localeFlags, localeNames, type Locale } from '../components/LanguageContext'
+import { useTranslations, useLocale } from 'next-intl'
+import { useRouter, usePathname } from 'next/navigation'
 import { 
   Volleyball, 
   MessageCircle, 
@@ -21,9 +22,10 @@ import {
   HelpCircle,
   Languages
 } from 'lucide-react'
-import { useTheme } from '../components/ThemeProvider'
-import ThemeToggle from '../components/ThemeToggle'
-import { useAnalytics } from '../lib/analytics'
+import { useTheme } from '../../components/ThemeProvider'
+import ThemeToggle from '../../components/ThemeToggle'
+import { useAnalytics } from '../../lib/analytics'
+import { locales, localeFlags, localeNames, type Locale } from '../../i18n'
 
 interface Message {
   role: 'user' | 'assistant';
@@ -38,7 +40,10 @@ interface Message {
 }
 
 export default function VolleyInsight() {
-  const { t, locale, setLocale } = useLanguage()
+  const t = useTranslations()
+  const locale = useLocale() as Locale
+  const router = useRouter()
+  const pathname = usePathname()
   const { theme } = useTheme()
   const { trackBlockClick, trackQuestion, trackPageView } = useAnalytics()
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -60,7 +65,8 @@ export default function VolleyInsight() {
 
   // Handle language change
   const handleLanguageChange = (newLocale: Locale) => {
-    setLocale(newLocale)
+    const currentPathname = pathname.replace(`/${locale}`, '')
+    router.push(`/${newLocale}${currentPathname}`)
     setShowLanguageMenu(false)
   }
 
@@ -383,7 +389,7 @@ export default function VolleyInsight() {
                 🎤 {t('leftPanel.liveCommentary.title')}
               </h3>
               <button 
-                onClick={() => window.location.href = '/live-commentary'}
+                onClick={() => window.location.href = `/${locale}/live-commentary`}
                 className="w-full p-3 text-left text-sm font-semibold text-white bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 rounded-lg transition-all transform hover:scale-105"
               >
                 <div className="flex items-center justify-between">

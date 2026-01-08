@@ -1,0 +1,99 @@
+{
+  "header": {
+    "title": "VolleyInsight",
+    "subtitle": "AIプラットフォーム"
+  },
+  "leftPanel": {
+    "myAccount": {
+      "title": "マイアカウント",
+      "profile": "ユーザープロフィール",
+      "settings": "アカウント設定",
+      "history": "アクティビティ履歴"
+    },
+    "contacts": {
+      "title": "連絡先",
+      "coaches": "コーチングチーム",
+      "support": "技術サポート",
+      "contactUs": "お問い合わせ"
+    },
+    "quickQuestions": {
+      "title": "クイック質問",
+      "q1": "アタック技術を向上させる方法は？",
+      "q2": "バレーボールの基本ルールは何ですか？",
+      "q3": "ブロックを正しく実行する方法は？",
+      "q4": "最も重要なルールは何ですか？"
+    },
+    "liveCommentary": {
+      "title": "ライブ解説",
+      "match": "ザヴィエルチェ vs ルブリン",
+      "details": "第3セット • AI解説 • 8言語"
+    },
+    "help": {
+      "title": "ヘルプ",
+      "faq": "よくある質問",
+      "instructions": "ユーザーガイド",
+      "reportIssue": "問題を報告"
+    }
+  },
+  "chat": {
+    "title": "AIチャット - VolleyInsight",
+    "subtitle": "バレーボール、技術、ゲーム戦略について質問してください",
+    "smartChatLabel": "スマートチャット（専門知識 + 選手統計）",
+    "placeholder": "統計やバレーボール技術について質問してください...",
+    "autoSelectHint": "チャットは質問に基づいてデータソースを自動的に選択します",
+    "emptyState": {
+      "title": "VolleyInsight チャット",
+      "subtitle": "統計やバレーボール技術について質問してください",
+      "statsTag": "統計",
+      "expertTag": "専門知識"
+    },
+    "sources": {
+      "show": "ソースを表示",
+      "stats": "統計",
+      "expert": "専門知識",
+      "score": "スコア"
+    }
+  },
+  "modules": {
+    "title": "トレーニングモジュール",
+    "subtitle": "モジュールをクリックして専用の学習パスを開始",
+    "progress": "進捗",
+    "items": {
+      "block": {
+        "title": "ブロック",
+        "description": "ブロック技術と戦術",
+        "question": "ブロック技術を向上させる方法は？"
+      },
+      "defense": {
+        "title": "ディフェンス",
+        "description": "バレーボールディフェンスの基礎",
+        "question": "ディフェンスの基礎は何ですか？"
+      },
+      "attack": {
+        "title": "アタック",
+        "description": "効果的なアタックとスパイク",
+        "question": "効果的なアタックを実行する方法は？"
+      },
+      "serve": {
+        "title": "サーブ",
+        "description": "サーブの種類と技術",
+        "question": "サーブの種類は何ですか？"
+      },
+      "setting": {
+        "title": "セッティング",
+        "description": "正しいボールセッティング",
+        "question": "ボールを正しくセットする方法は？"
+      },
+      "rules": {
+        "title": "ルール",
+        "description": "ゲームルールと規則",
+        "question": "最も重要なゲームルールは何ですか？"
+      },
+      "dashboard": {
+        "title": "選手ダッシュボード",
+        "description": "統計とチャート PlusLiga & Tauron Liga",
+        "question": "選手統計を表示"
+      }
+    }
+  }
+}

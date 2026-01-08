@@ -43,6 +43,12 @@ interface CommentaryEntry {
   team: string;
   action: string;
   type: string;
+  // NEW FIELDS
+  tags: string[];
+  milestones: string[];
+  icon: string;
+  momentumScore: number;
+  dramaScore: number;
 }
 
 type Language = 'pl' | 'en' | 'it' | 'de' | 'tr' | 'es' | 'pt' | 'jp';
@@ -59,6 +65,19 @@ const languages: { code: Language; flag: string; name: string }[] = [
   { code: 'jp', flag: '🇯🇵', name: '日本語' },
 ];
 
+// Tag color mapping
+const TAG_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  '#koniec_seta': { bg: 'bg-amber-500/20', text: 'text-amber-600', border: 'border-amber-500' },
+  '#momentum': { bg: 'bg-orange-500/20', text: 'text-orange-600', border: 'border-orange-500' },
+  '#seria': { bg: 'bg-red-500/20', text: 'text-red-600', border: 'border-red-500' },
+  '#drama': { bg: 'bg-purple-500/20', text: 'text-purple-600', border: 'border-purple-500' },
+  '#clutch': { bg: 'bg-pink-500/20', text: 'text-pink-600', border: 'border-pink-500' },
+  '#comeback': { bg: 'bg-green-500/20', text: 'text-green-600', border: 'border-green-500' },
+  '#milestone': { bg: 'bg-blue-500/20', text: 'text-blue-600', border: 'border-blue-500' },
+  '#as': { bg: 'bg-red-600/20', text: 'text-red-700', border: 'border-red-600' },
+  '#długa_wymiana': { bg: 'bg-indigo-500/20', text: 'text-indigo-600', border: 'border-indigo-500' },
+};
+
 export default function LiveMatchCommentaryV3() {
   const [matchData, setMatchData] = useState<MatchData | null>(null);
   const [rallies, setRallies] = useState<Rally[]>([]);
@@ -72,7 +91,6 @@ export default function LiveMatchCommentaryV3() {
   const commentaryRef = useRef<HTMLDivElement>(null);
   const [isRetranslating, setIsRetranslating] = useState(false);
   
-  // NEW: Player stats tracking
   const [playerStats, setPlayerStats] = useState<Record<string, {
     blocks: number;
     aces: number;
@@ -92,44 +110,58 @@ export default function LiveMatchCommentaryV3() {
     if (commentaries.length === 0 || isRetranslating) return;
     
     setIsRetranslating(true);
-    const currentLanguage = language; // Capture current language
+    const currentLanguage = language;
     console.log('🌍 Re-translating', commentaries.length, 'commentaries to', currentLanguage);
     
-    // PARALLEL PROCESSING - all at once! 🚀
+    // NEW: Use translation endpoint instead of full regeneration
     const translationPromises = commentaries.map(async (commentary) => {
-      // Find the original rally
-      const rally = rallies.find(r => r.rally_number === commentary.rallyNumber);
-      if (!rally) return null;
-      
-      // Regenerate commentary in new language - EXPLICIT LANGUAGE PARAM
-      const newText = await generateCommentaryInLanguage(rally, currentLanguage);
-      
-      return {
-        ...commentary,
-        text: newText,
-        timestamp: new Date(),
-      };
+      try {
+        const response = await fetch('/api/translate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: commentary.text,
+            fromLanguage: 'pl', // Original language
+            toLanguage: currentLanguage,
+            tags: commentary.tags,
+          }),
+        });
+
+        if (!response.ok) {
+          console.error('Translation failed for rally', commentary.rallyNumber);
+          return commentary; // Keep original on error
+        }
+
+        const data = await response.json();
+
+        return {
+          ...commentary,
+          text: data.translatedText,
+          tags: data.translatedTags || commentary.tags,
+          timestamp: new Date(),
+        };
+      } catch (error) {
+        console.error('Translation error:', error);
+        return commentary; // Keep original on error
+      }
     });
     
-    // Wait for ALL translations to complete
     const results = await Promise.all(translationPromises);
-    const translatedCommentaries = results.filter(r => r !== null) as CommentaryEntry[];
     
-    setCommentaries(translatedCommentaries);
+    setCommentaries(results);
     setIsRetranslating(false);
     console.log('✅ Re-translation complete in parallel!');
   };
   
-  // NEW: Generate with explicit language parameter
-  const generateCommentaryInLanguage = async (rally: Rally, targetLanguage: Language): Promise<string> => {
+  const generateCommentaryInLanguage = async (rally: Rally, targetLanguage: Language) => {
     try {
       console.log('🎤 Generating commentary for rally #', rally.rally_number, 'in', targetLanguage);
       setIsGenerating(true);
       
-      // Calculate player stats up to this rally
       const updatedStats = calculatePlayerStats(rally);
       
-      // Get recent rallies for momentum detection (last 10)
       const rallyIndex = rallies.findIndex(r => r.rally_number === rally.rally_number);
       const recentRallies = rallyIndex >= 0 ? rallies.slice(Math.max(0, rallyIndex - 9), rallyIndex + 1) : [];
 
@@ -140,7 +172,7 @@ export default function LiveMatchCommentaryV3() {
         },
         body: JSON.stringify({ 
           rally, 
-          language: targetLanguage, // Use explicit language
+          language: targetLanguage,
           playerStats: updatedStats,
           recentRallies: recentRallies,
         }),
@@ -150,27 +182,31 @@ export default function LiveMatchCommentaryV3() {
         throw new Error('Commentary API failed');
       }
 
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-      let commentary = '';
-
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
-          commentary += chunk;
-        }
-      }
+      // NEW: Parse JSON response instead of streaming
+      const data = await response.json();
 
       setIsGenerating(false);
-      return commentary;
+      return {
+        commentary: data.commentary || '',
+        tags: data.tags || [],
+        milestones: data.milestones || [],
+        icon: data.icon || '⚡',
+        momentumScore: data.momentumScore || 0,
+        dramaScore: data.dramaScore || 0,
+      };
     } catch (error) {
       console.error('❌ Commentary generation error:', error);
       setIsGenerating(false);
       
       const finalTouch = rally.touches[rally.touches.length - 1];
-      return `${finalTouch.player}: ${finalTouch.action}`;
+      return {
+        commentary: `${finalTouch.player}: ${finalTouch.action}`,
+        tags: [],
+        milestones: [],
+        icon: '⚡',
+        momentumScore: 0,
+        dramaScore: 0,
+      };
     }
   };
 
@@ -202,19 +238,16 @@ export default function LiveMatchCommentaryV3() {
     }
   };
 
-  const generateCommentary = async (rally: Rally): Promise<string> => {
+  const generateCommentary = async (rally: Rally) => {
     try {
       console.log('🎤 Generating commentary for rally #', rally.rally_number);
       setIsGenerating(true);
       
-      // Calculate player stats up to this rally
       const updatedStats = calculatePlayerStats(rally);
       
-      // Get recent rallies for momentum detection (last 10)
       const rallyIndex = rallies.findIndex(r => r.rally_number === rally.rally_number);
       const recentRallies = rallyIndex >= 0 ? rallies.slice(Math.max(0, rallyIndex - 9), rallyIndex + 1) : [];
       
-      // NEW: Analyze touch-by-touch details
       const rallyAnalysis = analyzeRallyChain(rally);
 
       const response = await fetch('/api/commentary', {
@@ -227,7 +260,7 @@ export default function LiveMatchCommentaryV3() {
           language,
           playerStats: updatedStats,
           recentRallies: recentRallies,
-          rallyAnalysis: rallyAnalysis, // NEW
+          rallyAnalysis: rallyAnalysis,
         }),
       });
 
@@ -235,37 +268,40 @@ export default function LiveMatchCommentaryV3() {
         throw new Error('Commentary API failed');
       }
 
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-      let commentary = '';
-
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
-          commentary += chunk;
-        }
-      }
+      // NEW: Parse JSON response
+      const data = await response.json();
 
       setIsGenerating(false);
-      console.log('✅ Commentary generated:', commentary.substring(0, 50) + '...');
-      return commentary;
+      console.log('✅ Commentary generated:', data);
+      
+      return {
+        commentary: data.commentary || '',
+        tags: data.tags || [],
+        milestones: data.milestones || [],
+        icon: data.icon || '⚡',
+        momentumScore: data.momentumScore || 0,
+        dramaScore: data.dramaScore || 0,
+      };
     } catch (error) {
       console.error('❌ Commentary generation error:', error);
       setIsGenerating(false);
       
       const finalTouch = rally.touches[rally.touches.length - 1];
-      return `${finalTouch.player}: ${finalTouch.action}`;
+      return {
+        commentary: `${finalTouch.player}: ${finalTouch.action}`,
+        tags: [],
+        milestones: [],
+        icon: '⚡',
+        momentumScore: 0,
+        dramaScore: 0,
+      };
     }
   };
   
-  // NEW: Analyze rally chain for enhanced commentary
   const analyzeRallyChain = (rally: Rally) => {
     const touches = rally.touches;
     const numTouches = touches.length;
     
-    // Extract pass quality (if exists)
     let passQuality = 'unknown';
     let passPlayer = '';
     if (numTouches >= 2) {
@@ -283,25 +319,23 @@ export default function LiveMatchCommentaryV3() {
       }
     }
     
-    // Extract key players
     const serverPlayer = touches[0]?.player || '';
     const setterPlayer = numTouches >= 3 ? touches[2]?.player : '';
     const attackerPlayer = numTouches >= 4 ? touches[3]?.player : '';
     
-    // Calculate drama score
-    let dramaScore = numTouches / 4.0; // Base: 4 touches = 1.0, 8 = 2.0
+    let dramaScore = numTouches / 4.0;
     
     if (passQuality === 'error') {
-      dramaScore *= 1.5; // Ace is dramatic
+      dramaScore *= 1.5;
     } else if (passQuality === 'negative' && numTouches >= 4) {
-      dramaScore *= 2.0; // Won despite bad pass!
+      dramaScore *= 2.0;
     }
     
     const scoreDiff = Math.abs(rally.score_after.aluron - rally.score_after.bogdanka);
     if (rally.score_after.aluron >= 20 && rally.score_after.bogdanka >= 20) {
-      dramaScore *= 2.0; // Hot situation
+      dramaScore *= 2.0;
     } else if (scoreDiff >= 5) {
-      dramaScore *= 1.3; // Underdog fighting
+      dramaScore *= 1.3;
     }
     
     return {
@@ -317,11 +351,9 @@ export default function LiveMatchCommentaryV3() {
     };
   };
   
-  // NEW: Calculate cumulative player stats up to current rally
   const calculatePlayerStats = (currentRally: Rally) => {
     const stats: Record<string, { blocks: number; aces: number; attacks: number; errors: number; points: number }> = {};
     
-    // Process all rallies up to and including current
     const currentIndex = rallies.findIndex(r => r.rally_number === currentRally.rally_number);
     const ralliesToProcess = currentIndex >= 0 ? rallies.slice(0, currentIndex + 1) : [currentRally];
     
@@ -333,7 +365,6 @@ export default function LiveMatchCommentaryV3() {
         
         const action = touch.action.toLowerCase();
         
-        // Count actions
         if (action.includes('block') && !action.includes('error')) {
           stats[touch.player].blocks++;
         }
@@ -348,7 +379,6 @@ export default function LiveMatchCommentaryV3() {
         }
       });
       
-      // Count points for final action
       const finalTouch = rally.touches[rally.touches.length - 1];
       if (!finalTouch.action.toLowerCase().includes('error')) {
         if (!stats[finalTouch.player]) {
@@ -372,16 +402,22 @@ export default function LiveMatchCommentaryV3() {
     const rally = rallies[currentRallyIndex];
     const finalTouch = rally.touches[rally.touches.length - 1];
 
-    const commentaryText = await generateCommentary(rally);
+    const result = await generateCommentary(rally);
 
     const newCommentary: CommentaryEntry = {
       rallyNumber: rally.rally_number,
-      text: commentaryText,
+      text: result.commentary,
       timestamp: new Date(),
       player: finalTouch.player,
       team: rally.team_scored,
       action: finalTouch.action,
       type: getActionType(finalTouch.action),
+      // NEW FIELDS
+      tags: result.tags,
+      milestones: result.milestones,
+      icon: result.icon,
+      momentumScore: result.momentumScore,
+      dramaScore: result.dramaScore,
     };
 
     setCommentaries((prev) => [newCommentary, ...prev]);
@@ -448,7 +484,7 @@ export default function LiveMatchCommentaryV3() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto">
-        {/* Match Header - Old Design */}
+        {/* Match Header */}
         <div className="p-6 border-b border-border bg-gradient-to-r from-blue-600/20 to-red-600/20">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
@@ -592,7 +628,7 @@ export default function LiveMatchCommentaryV3() {
           </div>
         )}
 
-        {/* Commentary Timeline - Old Design */}
+        {/* Commentary Timeline */}
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-muted-foreground">
@@ -616,7 +652,6 @@ export default function LiveMatchCommentaryV3() {
               </div>
             ) : (
               commentaries.map((commentary, index) => {
-                // Find the rally to get the score
                 const rally = rallies.find(r => r.rally_number === commentary.rallyNumber);
                 const score = rally ? `${rally.score_after.aluron}:${rally.score_after.bogdanka}` : '';
                 
@@ -635,12 +670,9 @@ export default function LiveMatchCommentaryV3() {
                         hover:scale-[1.01] transition-all duration-200 animate-fade-in`}
                     >
                       <div className="flex items-start space-x-3">
+                        {/* NEW: Dynamic Icon */}
                         <div className="text-2xl">
-                          {commentary.type === 'ace' && '🔥'}
-                          {commentary.type === 'block' && '🛡️'}
-                          {commentary.type === 'attack' && '⚡'}
-                          {commentary.type === 'error' && '❌'}
-                          {commentary.type === 'point' && '✅'}
+                          {commentary.icon}
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-1">
@@ -654,6 +686,40 @@ export default function LiveMatchCommentaryV3() {
                           <p className="font-medium text-foreground leading-relaxed mb-2">
                             {commentary.text}
                           </p>
+                          
+                          {/* NEW: Tags Display */}
+                          {commentary.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mb-2">
+                              {commentary.tags.map((tag, idx) => {
+                                const tagStyle = TAG_COLORS[tag] || { 
+                                  bg: 'bg-gray-500/20', 
+                                  text: 'text-gray-600', 
+                                  border: 'border-gray-500' 
+                                };
+                                return (
+                                  <span
+                                    key={idx}
+                                    className={`text-xs font-semibold px-2 py-1 rounded border ${tagStyle.bg} ${tagStyle.text} ${tagStyle.border}`}
+                                  >
+                                    {tag}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          )}
+                          
+                          {/* NEW: Milestones Display */}
+                          {commentary.milestones.length > 0 && (
+                            <div className="mb-2">
+                              {commentary.milestones.map((milestone, idx) => (
+                                <div key={idx} className="flex items-center gap-2 text-xs font-semibold text-blue-600 bg-blue-500/10 px-2 py-1 rounded">
+                                  <span>🎯</span>
+                                  <span>{milestone}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          
                           <div className="flex items-center justify-between">
                             <p className="text-xs text-muted-foreground">
                               {commentary.player} • {commentary.action}

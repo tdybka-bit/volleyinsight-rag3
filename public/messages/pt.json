@@ -1,0 +1,99 @@
+{
+  "header": {
+    "title": "VolleyInsight",
+    "subtitle": "Plataforma IA"
+  },
+  "leftPanel": {
+    "myAccount": {
+      "title": "Minha Conta",
+      "profile": "Perfil do Usuário",
+      "settings": "Configurações da Conta",
+      "history": "Histórico de Atividades"
+    },
+    "contacts": {
+      "title": "Contatos",
+      "coaches": "Equipe de Treinadores",
+      "support": "Suporte Técnico",
+      "contactUs": "Entre em Contato"
+    },
+    "quickQuestions": {
+      "title": "Perguntas Rápidas",
+      "q1": "Como melhorar a técnica de ataque?",
+      "q2": "Quais são as regras básicas do vôlei?",
+      "q3": "Como executar corretamente um bloqueio?",
+      "q4": "Quais são as regras mais importantes?"
+    },
+    "liveCommentary": {
+      "title": "Comentário AO VIVO",
+      "match": "Zawiercie vs Lublin",
+      "details": "Set 3 • Comentário IA • 8 idiomas"
+    },
+    "help": {
+      "title": "Ajuda",
+      "faq": "Perguntas Frequentes",
+      "instructions": "Manual do Usuário",
+      "reportIssue": "Reportar Problema"
+    }
+  },
+  "chat": {
+    "title": "Chat IA - VolleyInsight",
+    "subtitle": "Pergunte sobre vôlei, técnica ou estratégia de jogo",
+    "smartChatLabel": "Chat Inteligente (Conhecimento Especializado + Estatísticas)",
+    "placeholder": "Pergunte sobre estatísticas ou técnica de vôlei...",
+    "autoSelectHint": "O chat seleciona automaticamente a fonte de dados com base na sua pergunta",
+    "emptyState": {
+      "title": "Chat VolleyInsight",
+      "subtitle": "Pergunte sobre estatísticas ou técnica de vôlei",
+      "statsTag": "Estatísticas",
+      "expertTag": "Conhecimento Especializado"
+    },
+    "sources": {
+      "show": "Mostrar fontes",
+      "stats": "Estatísticas",
+      "expert": "Conhecimento Especializado",
+      "score": "Pontuação"
+    }
+  },
+  "modules": {
+    "title": "Módulos de Treinamento",
+    "subtitle": "Clique em um módulo para iniciar um caminho de aprendizado dedicado",
+    "progress": "Progresso",
+    "items": {
+      "block": {
+        "title": "Bloqueio",
+        "description": "Técnica e tática de bloqueio",
+        "question": "Como melhorar a técnica de bloqueio?"
+      },
+      "defense": {
+        "title": "Defesa",
+        "description": "Fundamentos da defesa no vôlei",
+        "question": "Quais são os fundamentos da defesa?"
+      },
+      "attack": {
+        "title": "Ataque",
+        "description": "Ataques eficazes e cortadas",
+        "question": "Como executar um ataque eficaz?"
+      },
+      "serve": {
+        "title": "Saque",
+        "description": "Tipos e técnicas de saques",
+        "question": "Quais são os tipos de saques?"
+      },
+      "setting": {
+        "title": "Levantamento",
+        "description": "Levantamento correto da bola",
+        "question": "Como levantar corretamente a bola?"
+      },
+      "rules": {
+        "title": "Regras",
+        "description": "Regras e regulamento do jogo",
+        "question": "Quais são as regras mais importantes?"
+      },
+      "dashboard": {
+        "title": "Painel de Jogadores",
+        "description": "Estatísticas e gráficos PlusLiga & Tauron Liga",
+        "question": "Ver estatísticas dos jogadores"
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "header": {
+    "title": "VolleyInsight",
+    "subtitle": "Yapay Zeka Platformu"
+  },
+  "leftPanel": {
+    "myAccount": {
+      "title": "Hesabım",
+      "profile": "Kullanıcı Profili",
+      "settings": "Hesap Ayarları",
+      "history": "Aktivite Geçmişi"
+    },
+    "contacts": {
+      "title": "İletişim",
+      "coaches": "Antrenör Ekibi",
+      "support": "Teknik Destek",
+      "contactUs": "Bize Ulaşın"
+    },
+    "quickQuestions": {
+      "title": "Hızlı Sorular",
+      "q1": "Smaç tekniği nasıl geliştirilir?",
+      "q2": "Voleybolin temel kuralları nelerdir?",
+      "q3": "Blok nasıl doğru yapılır?",
+      "q4": "En önemli kurallar nelerdir?"
+    },
+    "liveCommentary": {
+      "title": "CANLI Yorum",
+      "match": "Zawiercie vs Lublin",
+      "details": "Set 3 • Yapay Zeka Yorumu • 8 dil"
+    },
+    "help": {
+      "title": "Yardım",
+      "faq": "Sık Sorulan Sorular",
+      "instructions": "Kullanım Kılavuzu",
+      "reportIssue": "Sorun Bildir"
+    }
+  },
+  "chat": {
+    "title": "Yapay Zeka Sohbet - VolleyInsight",
+    "subtitle": "Voleybol, teknik veya oyun stratejisi hakkında soru sorun",
+    "smartChatLabel": "Akıllı Sohbet (Uzman Bilgisi + Oyuncu İstatistikleri)",
+    "placeholder": "İstatistikler veya voleybol tekniği hakkında soru sorun...",
+    "autoSelectHint": "Sohbet, sorunuza göre veri kaynağını otomatik olarak seçer",
+    "emptyState": {
+      "title": "VolleyInsight Sohbet",
+      "subtitle": "İstatistikler veya voleybol tekniği hakkında soru sorun",
+      "statsTag": "İstatistikler",
+      "expertTag": "Uzman Bilgisi"
+    },
+    "sources": {
+      "show": "Kaynakları göster",
+      "stats": "İstatistikler",
+      "expert": "Uzman Bilgisi",
+      "score": "Puan"
+    }
+  },
+  "modules": {
+    "title": "Antrenman Modülleri",
+    "subtitle": "Özel bir öğrenme yoluna başlamak için bir modüle tıklayın",
+    "progress": "İlerleme",
+    "items": {
+      "block": {
+        "title": "Blok",
+        "description": "Blok tekniği ve taktiği",
+        "question": "Blok tekniği nasıl geliştirilir?"
+      },
+      "defense": {
+        "title": "Savunma",
+        "description": "Voleybol savunma temelleri",
+        "question": "Savunmanın temelleri nelerdir?"
+      },
+      "attack": {
+        "title": "Smaç",
+        "description": "Etkili smaçlar ve vuruşlar",
+        "question": "Etkili bir smaç nasıl yapılır?"
+      },
+      "serve": {
+        "title": "Servis",
+        "description": "Servis türleri ve teknikleri",
+        "question": "Servis türleri nelerdir?"
+      },
+      "setting": {
+        "title": "Pas",
+        "description": "Doğru pas verme",
+        "question": "Top nasıl doğru pas verilir?"
+      },
+      "rules": {
+        "title": "Kurallar",
+        "description": "Oyun kuralları ve yönetmeliği",
+        "question": "En önemli oyun kuralları nelerdir?"
+      },
+      "dashboard": {
+        "title": "Oyuncu Paneli",
+        "description": "İstatistikler ve grafikler PlusLiga & Tauron Liga",
+        "question": "Oyuncu istatistiklerini görüntüle"
+      }
+    }
+  }
+}
