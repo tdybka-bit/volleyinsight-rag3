@@ -39,8 +39,8 @@ const polishNameDeclensions: Record<string, Record<string, string>> = {
   },
   'Bieniek': {
     nominative: 'Bieniek',
-    genitive: 'Bienika',
-    accusative: 'Bienika'
+    genitive: 'Bienka',
+    accusative: 'Bienka'
   },
   'Kwolek': {
     nominative: 'Kwolek',
@@ -473,6 +473,8 @@ export async function POST(request: NextRequest) {
     
     const scoreDiff = Math.abs(finalScore.aluron - finalScore.bogdanka);
     const isBigLead = scoreDiff >= 10;
+    const isFirstPoint = (finalScore.aluron === 1 && finalScore.bogdanka === 0) || 
+                         (finalScore.aluron === 0 && finalScore.bogdanka === 1);
     const leadingTeam = finalScore.aluron > finalScore.bogdanka 
       ? 'Aluron CMC Warta Zawiercie' 
       : 'BOGDANKA LUK Lublin';
@@ -660,11 +662,11 @@ PROWADZI: ${leadingTeamName}${touchContext}${situationContext}${errorContext}
 ${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
 
 INSTRUKCJE:
-- ${setEndInfo.isSetEnd ? `🏁 TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEĆ! Wynik końcowy: ${score}. Zwycięzca: ${setEndInfo.winner}.` : isHotSituation ? 'KOŃCÓWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkreśl momentum!' : milestone ? 'MILESTONE - wspomniej liczbę punktów/bloków/asów!' : isBigLead ? 'Duża przewaga - zauważ sytuację' : isEarlySet ? 'Początek - spokojnie' : 'Środek seta - rzeczowo'}
+- ${setEndInfo.isSetEnd ? `🏁 TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEĆ! Wynik końcowy: ${score}. Zwycięzca: ${setEndInfo.winner}.` : isFirstPoint ? '⭐ PIERWSZY PUNKT! Użyj: "Dobry początek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KOŃCÓWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkreśl momentum!' : milestone ? 'MILESTONE - wspomniej liczbę punktów/bloków/asów!' : isBigLead ? 'Duża przewaga - zauważ sytuację' : isEarlySet ? 'Początek - spokojnie' : 'Środek seta - rzeczowo'}
 - ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwał ATAKUJĄCEGO, nie błąd bloku! Użyj formy: "${attackingPlayer} przebija blok ${declinePolishName(scoringPlayer, 'genitive')}!"` : ''}
 - ${milestone ? `WAŻNE: Wspomniej że to ${milestone}!` : ''}${passInstructions}
 - Wynik ${score} - prowadzi ${leadingTeamName}
-- NIE mów "prowadząc" jeśli drużyna już prowadziła - powiedz "zwiększa/zmniejsza przewagę"
+- ${isFirstPoint ? 'NIE używaj "zwiększa/zmniejsza przewagę" - to PIERWSZY punkt!' : 'NIE mów "prowadząc" jeśli drużyna już prowadziła - powiedz "zwiększa/zmniejsza przewagę"'}
 - Używaj POPRAWNEJ odmiany nazwisk (Leon → Leona w dopełniaczu)
 - 1-2 zdania max, konkretnie i energicznie!
 `;
