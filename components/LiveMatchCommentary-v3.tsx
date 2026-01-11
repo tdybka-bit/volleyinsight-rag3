@@ -217,7 +217,7 @@ export default function LiveMatchCommentaryV3() {
   const loadMatchData = async () => {
     try {
       console.log('📥 Loading match data...');
-      const response = await fetch('/data/matches/rallies/match_1104643_set3_rallies.json');
+      const response = await fetch('/data/matches/rallies/match_1104643_full_game_rallies.json');
       
       if (!response.ok) {
         throw new Error('Failed to load match data');
