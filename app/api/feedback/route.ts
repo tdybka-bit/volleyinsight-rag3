@@ -1,14 +1,12 @@
-import { kv } from '@vercel/kv';
-import { createClient } from '@vercel/kv';
-
-// Fallback to REDIS_URL if KV env vars not available
-const kv = process.env.KV_REDIS_URL 
-  ? createClient({ url: process.env.KV_REDIS_URL })
-  : (await import('@vercel/kv')).kv;
 import { NextResponse } from 'next/server';
+import Redis from 'ioredis';
 
-// Mock KV for local development
-const isLocal = !process.env.KV_REST_API_URL;
+// Initialize Redis client
+const redis = process.env.KV_REDIS_URL 
+  ? new Redis(process.env.KV_REDIS_URL)
+  : null;
+
+// Mock KV for local development (when no Redis URL)
 const mockKV = {
   set: async (key: string, value: any) => {
     console.log('📝 [LOCAL] Saving to KV:', key, value);
@@ -18,8 +16,8 @@ const mockKV = {
     console.log('📖 [LOCAL] Reading from KV:', key);
     return null;
   },
-  lpush: async (key: string, value: any) => {
-    console.log('📝 [LOCAL] Adding to list:', key, value);
+  lpush: async (key: string, ...values: any[]) => {
+    console.log('📝 [LOCAL] Adding to list:', key, values);
     return 1;
   },
   lrange: async (key: string, start: number, end: number) => {
@@ -28,7 +26,22 @@ const mockKV = {
   }
 };
 
-const storage = isLocal ? mockKV : kv;
+// Storage adapter
+const storage = redis ? {
+  set: async (key: string, value: any) => {
+    return await redis.set(key, JSON.stringify(value));
+  },
+  get: async (key: string) => {
+    const data = await redis.get(key);
+    return data ? JSON.parse(data) : null;
+  },
+  lpush: async (key: string, ...values: any[]) => {
+    return await redis.lpush(key, ...values);
+  },
+  lrange: async (key: string, start: number, end: number) => {
+    return await redis.lrange(key, start, end);
+  }
+} : mockKV;
 
 // POST - Submit feedback
 export async function POST(request: Request) {
