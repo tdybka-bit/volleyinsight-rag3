@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import FeedbackWidget from './FeedbackWidget';
+import InlineFeedback from './InlineFeedback';
+import { loadDataVolleyMatch, type MatchData as DVMatchData } from '@/lib/datavolley-parser';
 
 interface Rally {
   rally_number: number;
@@ -216,28 +217,81 @@ export default function LiveMatchCommentaryV3() {
   }, []);
 
   const loadMatchData = async () => {
-    try {
-      console.log('📥 Loading match data...');
-      const response = await fetch('/data/matches/rallies/match_1104643_full_game_rallies.json');
+  try {
+    console.log('📥 Loading match data (DataVolley format)...');
+    
+    // Load DataVolley format
+    const dvData = await loadDataVolleyMatch('/data/matches/rallies/match_1104643_full_game_rallies.json');
+    
+    console.log('✅ Loaded DataVolley match data:', {
+      matchId: dvData.matchInfo?.matchId,
+      homeTeam: dvData.matchInfo?.homeTeam,
+      awayTeam: dvData.matchInfo?.awayTeam,
+      rallies: dvData.rallies.length,
+    });
+
+    // Convert rallies to old format with score_before/score_after
+    const convertedRallies = dvData.rallies.map((rally, index) => {
+      // Get previous rally for score_before
+      const prevRally = index > 0 ? dvData.rallies[index - 1] : null;
       
-      if (!response.ok) {
-        throw new Error('Failed to load match data');
-      }
+      return {
+        rally_number: rally.rallyNumber || rally.id,
+        score_before: {
+          aluron: prevRally ? prevRally.homeScore : 0,
+          bogdanka: prevRally ? prevRally.awayScore : 0
+        },
+        score_after: {
+          aluron: rally.homeScore,
+          bogdanka: rally.awayScore
+        },
+        team_scored: rally.homeScore > (prevRally?.homeScore || 0) ? 'Aluron' : 'Bogdanka',
+        touches: [
+          {
+            action: rally.action,
+            player: rally.player,
+            number: '',
+            team: rally.team === 'home' ? 'aluron' : 'bogdanka'
+          }
+        ],
+        final_action: {
+          type: rally.action.includes('Error') ? 'error' : 
+                rally.action.includes('Ace') ? 'ace' : 
+                rally.action.includes('Block') ? 'block' : 'attack',
+          player: rally.player,
+          number: ''
+        }
+      };
+    });
 
-      const data: MatchData = await response.json();
-      console.log('✅ Loaded match data:', {
-        match_id: data.match_id,
-        set: data.set_number,
-        rallies: data.rallies.length,
-        teams: data.teams,
-      });
+    // Create compatible MatchData
+    const compatibleData: MatchData = {
+      match_id: dvData.matchInfo?.matchId || '1104643',
+      match_url: 'https://www.plusliga.pl/matches/id/1104643.html',
+      set_number: 5, // Full match
+      final_score: {
+        aluron: dvData.matchInfo?.finalScore?.home || dvData.rallies[dvData.rallies.length - 1]?.homeScore || 0,
+        bogdanka: dvData.matchInfo?.finalScore?.away || dvData.rallies[dvData.rallies.length - 1]?.awayScore || 0
+      },
+      teams: {
+        home: dvData.matchInfo?.homeTeam || 'Aluron CMC Warta Zawiercie',
+        away: dvData.matchInfo?.awayTeam || 'BOGDANKA LUK Lublin'
+      },
+      rallies: convertedRallies
+    };
 
-      setMatchData(data);
-      setRallies(data.rallies);
-    } catch (error) {
-      console.error('❌ Error loading match data:', error);
-    }
-  };
+    setMatchData(compatibleData);
+    setRallies(convertedRallies);
+    
+    console.log('🎉 DataVolley format successfully converted!', {
+      rallies: convertedRallies.length,
+      firstRally: convertedRallies[0],
+      lastRally: convertedRallies[convertedRallies.length - 1]
+    });
+  } catch (error) {
+    console.error('❌ Error loading match data:', error);
+  }
+};
 
   const generateCommentary = async (rally: Rally) => {
     try {
@@ -737,7 +791,8 @@ export default function LiveMatchCommentaryV3() {
                       </div>
                       
                       {/* VOICE OF CUSTOMER - FEEDBACK WIDGET */}
-                      <FeedbackWidget
+                      <InlineFeedback
+                        key={`feedback-${commentary.rallyNumber}`}
                         matchId={matchData?.match_id || '1104643'}
                         rallyNumber={commentary.rallyNumber}
                         setNumber={rally?.score_after ? Math.ceil((rally.score_after.aluron + rally.score_after.bogdanka) / 25) : 1}
