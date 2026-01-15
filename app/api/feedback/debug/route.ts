@@ -1,5 +1,9 @@
-import { kv } from '@vercel/kv';
 import { NextResponse } from 'next/server';
+import Redis from 'ioredis';
+
+const redis = process.env.KV_REDIS_URL 
+  ? new Redis(process.env.KV_REDIS_URL)
+  : null;
 
 export async function GET() {
   try {
