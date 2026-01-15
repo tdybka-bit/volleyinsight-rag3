@@ -1,4 +1,10 @@
 import { kv } from '@vercel/kv';
+import { createClient } from '@vercel/kv';
+
+// Fallback to REDIS_URL if KV env vars not available
+const kv = process.env.KV_REDIS_URL 
+  ? createClient({ url: process.env.KV_REDIS_URL })
+  : (await import('@vercel/kv')).kv;
 import { NextResponse } from 'next/server';
 
 // Mock KV for local development
