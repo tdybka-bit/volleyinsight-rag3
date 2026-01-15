@@ -8,15 +8,15 @@ const redis = process.env.KV_REDIS_URL
 export async function GET() {
   try {
     // Get all feedback IDs
-    const allIds = await kv.lrange('feedbacks:all', 0, -1);
+    const allIds = await storage.lrange('feedbacks:all', 0, -1);
     
     // Get all keys starting with feedback:
-    const keys = await kv.keys('feedback:*');
+    const keys = await storage.keys('feedback:*');
     
     // Get first 3 feedbacks as samples
     const samples = await Promise.all(
       allIds.slice(0, 3).map(async (id) => {
-        return await kv.get(id);
+        return await storage.get(id);
       })
     );
 
