@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import FeedbackWidget from './FeedbackWidget';
 
 interface Rally {
   rally_number: number;
@@ -734,6 +735,14 @@ export default function LiveMatchCommentaryV3() {
                           </div>
                         </div>
                       </div>
+                      
+                      {/* VOICE OF CUSTOMER - FEEDBACK WIDGET */}
+                      <FeedbackWidget
+                        matchId={matchData?.match_id || '1104643'}
+                        rallyNumber={commentary.rallyNumber}
+                        setNumber={rally?.score_after ? Math.ceil((rally.score_after.aluron + rally.score_after.bogdanka) / 25) : 1}
+                        commentary={commentary.text}
+                      />
                     </div>
                   </div>
                 );
