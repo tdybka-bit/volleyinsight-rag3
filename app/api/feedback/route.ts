@@ -142,7 +142,7 @@ export async function GET(request: Request) {
       { error: error.message || 'Failed to fetch feedbacks' },
       { status: 500 }
     );
-
+  }
     // PATCH - Update feedback status
     export async function PATCH(request: Request) {
       try {
