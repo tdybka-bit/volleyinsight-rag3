@@ -1,29 +1,45 @@
-import { kv } from '@vercel/kv';
-   
-   // Mock KV for local development
-   const isLocal = !process.env.KV_REST_API_URL;
-   const mockKV = {
-     set: async (key: string, value: any) => {
-       console.log('📝 [LOCAL] Saving to KV:', key, value);
-       return value;
-     },
-     get: async (key: string) => {
-       console.log('📖 [LOCAL] Reading from KV:', key);
-       return null;
-     },
-     lpush: async (key: string, value: any) => {
-       console.log('📝 [LOCAL] Adding to list:', key, value);
-       return 1;
-     },
-     lrange: async (key: string, start: number, end: number) => {
-       console.log('📖 [LOCAL] Reading list:', key);
-       return [];
-     }
-   };
-   
-   const storage = isLocal ? mockKV : kv;
+import { NextResponse } from 'next/server';
+import Redis from 'ioredis';
 
-   import { NextResponse } from 'next/server';
+const redis = process.env.KV_REDIS_URL 
+  ? new Redis(process.env.KV_REDIS_URL)
+  : null;
+
+// Mock KV for local
+const mockKV = {
+  set: async (key: string, value: any) => {
+    console.log('📝 [LOCAL] Saving:', key);
+    return value;
+  },
+  get: async (key: string) => {
+    console.log('📖 [LOCAL] Reading:', key);
+    return null;
+  },
+  lpush: async (key: string, ...values: any[]) => {
+    console.log('📝 [LOCAL] List add:', key);
+    return 1;
+  },
+  lrange: async (key: string, start: number, end: number) => {
+    console.log('📖 [LOCAL] List read:', key);
+    return [];
+  }
+};
+
+const storage = redis ? {
+  set: async (key: string, value: any) => {
+    return await redis.set(key, JSON.stringify(value));
+  },
+  get: async (key: string) => {
+    const data = await redis.get(key);
+    return data ? JSON.parse(data) : null;
+  },
+  lpush: async (key: string, ...values: any[]) => {
+    return await redis.lpush(key, ...values);
+  },
+  lrange: async (key: string, start: number, end: number) => {
+    return await redis.lrange(key, start, end);
+  }
+} : mockKV;
 
 // Gemini API classification
 async function classifyIdeaWithGemini(idea: string, priority: string) {
