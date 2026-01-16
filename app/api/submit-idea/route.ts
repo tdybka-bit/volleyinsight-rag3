@@ -158,6 +158,33 @@ export async function POST(request: Request) {
     //   await addToCommentaryRAG(ideaData);
     // }
 
+    // Auto-import commentary to RAG
+    if (classification.type === 'commentary_training') {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://volleyinsight-rag3-nine.vercel.app'}/api/import-commentary-examples`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify([{
+            category: classification.category || 'general',
+            action_type: classification.category || 'general',
+            situation: ideaData.idea.substring(0, 200), // First 200 chars
+            better_commentary: classification.title || ideaData.idea,
+            context_notes: classification.description || '',
+            priority: priority
+          }])
+        });
+
+        if (response.ok) {
+          console.log('✅ Auto-imported commentary to RAG:', feedbackId);
+        } else {
+          console.error('❌ Failed to auto-import commentary:', await response.text());
+        }
+      } catch (error) {
+        console.error('❌ Auto-import error:', error);
+        // Don't fail the main request if RAG import fails
+      }
+    }
+
     return NextResponse.json({
       success: true,
       id,
