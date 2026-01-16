@@ -94,7 +94,7 @@ USAGE GUIDANCE:
 
         // Generate embedding
         const embedding = await openai.embeddings.create({
-          model: 'text-embedding-3-small',
+          model: 'text-embedding-ada-002',  // ← 768 dims
           input: ragText,
         });
 
