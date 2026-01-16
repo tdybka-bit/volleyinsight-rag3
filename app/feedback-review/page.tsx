@@ -10,6 +10,7 @@ interface Feedback {
   commentary: string;
   rating: number;
   suggestion?: string;
+  status?: string;  // ← DODAJ TO!
   timestamp: string;
 }
 
@@ -18,6 +19,34 @@ export default function FeedbackReviewPage() {
   const [loading, setLoading] = useState(true);
   const [ratingFilter, setRatingFilter] = useState<string>('all');
   const [setFilter, setSetFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');  // ← DODAJ TO!
+
+  const updateStatus = async (feedbackId: string, newStatus: string) => {
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          feedbackId,
+          status: newStatus
+        })
+      });
+
+      if (response.ok) {
+        // Refresh feedbacks
+        fetchFeedbacks();
+        console.log(`✅ Status updated: ${feedbackId} → ${newStatus}`);
+      } else {
+        console.error('❌ Failed to update status');
+      }
+    } catch (error) {
+      console.error('❌ Error updating status:', error);
+    }
+  };  // ← KONIEC FUNKCJI
+
+  useEffect(() => {
+    fetchFeedbacks();
+  }, []);
 
   useEffect(() => {
     fetchFeedbacks();
@@ -48,6 +77,9 @@ export default function FeedbackReviewPage() {
       return false;
     }
     if (setFilter !== 'all' && fb.setNumber.toString() !== setFilter) {
+      return false;
+    }
+    if (statusFilter !== 'all' && fb.status !== statusFilter) {  // ← DODANE!
       return false;
     }
     return true;
@@ -152,6 +184,19 @@ export default function FeedbackReviewPage() {
                 <option value="5">Set 5</option>
               </select>
             </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Status:</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-4 py-2 text-gray-900 bg-white border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+              >
+                <option value="all">Wszystkie</option>
+                <option value="new">🆕 New</option>
+                <option value="reviewed">✅ Reviewed</option>
+                <option value="implemented">🚀 Implemented</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -212,6 +257,63 @@ export default function FeedbackReviewPage() {
                 <div className="mt-3 pt-3 border-t border-gray-100">
                   <span className="text-xs text-gray-400">Match ID: {feedback.matchId}</span>
                 </div>
+                {/* Match ID */}
+                <div className="mt-3 pt-3 border-t border-gray-100">
+                  <span className="text-xs text-gray-400">Match ID: {feedback.matchId}</span>
+                </div>
+
+                {/* Status & Actions */}
+                <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-gray-500">Status:</span>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      feedback.status === 'implemented' ? 'bg-purple-100 text-purple-700' :
+                      feedback.status === 'reviewed' ? 'bg-green-100 text-green-700' :
+                      'bg-blue-100 text-blue-700'
+                    }`}>
+                      {feedback.status === 'implemented' ? '🚀 Implemented' :
+                       feedback.status === 'reviewed' ? '✅ Reviewed' :
+                       '🆕 New'}
+                    </span>
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  {feedback.status === 'new' && (
+                    <button
+                      onClick={() => updateStatus(feedback.id, 'reviewed')}
+                      className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      Mark as Reviewed
+                    </button>
+                  )}
+                  
+                  {feedback.status === 'reviewed' && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => updateStatus(feedback.id, 'implemented')}
+                        className="px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition-colors"
+                      >
+                        Mark as Implemented
+                      </button>
+                      <button
+                        onClick={() => updateStatus(feedback.id, 'new')}
+                        className="px-3 py-2 bg-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-400 transition-colors"
+                      >
+                        ↩️
+                      </button>
+                    </div>
+                  )}
+                  
+                  {feedback.status === 'implemented' && (
+                    <button
+                      onClick={() => updateStatus(feedback.id, 'reviewed')}
+                      className="px-3 py-2 bg-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-400 transition-colors"
+                    >
+                      ↩️ Back to Reviewed
+                    </button>
+                  )}
+                </div>
+           
               </div>
             ))}
           </div>

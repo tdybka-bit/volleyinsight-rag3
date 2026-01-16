@@ -77,6 +77,7 @@ export async function POST(request: Request) {
       commentary,
       rating,
       suggestion: suggestion || '',
+      status: 'new',  // ← DODAJ TO!
       timestamp: timestamp || new Date().toISOString()
     };
 
@@ -141,5 +142,64 @@ export async function GET(request: Request) {
       { error: error.message || 'Failed to fetch feedbacks' },
       { status: 500 }
     );
+
+    // PATCH - Update feedback status
+    export async function PATCH(request: Request) {
+      try {
+        const { feedbackId, status } = await request.json();
+
+        if (!feedbackId || !status) {
+          return NextResponse.json(
+            { error: 'Missing feedbackId or status' },
+            { status: 400 }
+          );
+        }
+
+        // Validate status
+        const validStatuses = ['new', 'reviewed', 'implemented'];
+        if (!validStatuses.includes(status)) {
+          return NextResponse.json(
+            { error: 'Invalid status. Must be: new, reviewed, or implemented' },
+            { status: 400 }
+          );
+        }
+
+        // Get existing feedback
+        const existingFeedback = await storage.get(feedbackId);
+        
+        if (!existingFeedback) {
+          return NextResponse.json(
+            { error: 'Feedback not found' },
+            { status: 404 }
+          );
+        }
+
+        // Update status
+        const updatedFeedback = {
+          ...existingFeedback,
+          status,
+          updatedAt: new Date().toISOString()
+        };
+
+        // Save back
+        await storage.set(feedbackId, updatedFeedback);
+
+        console.log(`✅ Feedback status updated: ${feedbackId} → ${status}`);
+
+        return NextResponse.json({
+          success: true,
+          feedbackId,
+          status,
+          message: 'Status updated successfully'
+        });
+
+      } catch (error: any) {
+        console.error('❌ Error updating feedback status:', error);
+        return NextResponse.json(
+          { error: error.message || 'Failed to update status' },
+          { status: 500 }
+        );
+      }
+    }
   }
 }
