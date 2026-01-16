@@ -543,6 +543,39 @@ export async function POST(request: NextRequest) {
     }
 
     // ========================================================================
+    // STEP 5.5: RAG QUERY - COMMENTARY EXAMPLES
+    // ========================================================================
+
+    let commentaryExamplesContext = '';
+    const commentaryQuery = `${scoringAction} better commentary example ${scoringPlayer}`;
+
+    try {
+      console.log('💬 Commentary examples query:', commentaryQuery);
+      
+      const examplesEmbedding = await openai.embeddings.create({
+        model: 'text-embedding-3-small',
+        input: commentaryQuery,
+      });
+      
+      const examplesResults = await index.namespace('commentary-examples').query({
+        vector: examplesEmbedding.data[0].embedding,
+        topK: 2,
+        includeMetadata: true,
+      });
+      
+      if (examplesResults.matches && examplesResults.matches.length > 0) {
+        commentaryExamplesContext = examplesResults.matches
+          .map((match) => match.metadata?.betterCommentary || '')
+          .filter(Boolean)
+          .join('\n')
+          .substring(0, 300);
+        console.log('✅ Commentary examples found:', commentaryExamplesContext.substring(0, 80) + '...');
+      }
+    } catch (error) {
+      console.error('❌ Commentary examples error:', error);
+    }
+
+    // ========================================================================
     // STEP 6: RAG QUERY - PLAYER INFO
     // ========================================================================
     
@@ -659,7 +692,7 @@ Wynik po akcji: ${score}
 Punkt zdobyła: ${rally.team_scored}
 PROWADZI: ${leadingTeamName}${touchContext}${situationContext}${errorContext}
 
-${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
+${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKŁADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
 
 INSTRUKCJE:
 - ${setEndInfo.isSetEnd ? `🏁 TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEĆ! Wynik końcowy: ${score}. Zwycięzca: ${setEndInfo.winner}.` : isFirstPoint ? '⭐ PIERWSZY PUNKT! Użyj: "Dobry początek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KOŃCÓWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkreśl momentum!' : milestone ? 'MILESTONE - wspomniej liczbę punktów/bloków/asów!' : isBigLead ? 'Duża przewaga - zauważ sytuację' : isEarlySet ? 'Początek - spokojnie' : 'Środek seta - rzeczowo'}
