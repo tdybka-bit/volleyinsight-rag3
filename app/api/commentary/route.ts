@@ -576,6 +576,42 @@ export async function POST(request: NextRequest) {
     }
 
     // ========================================================================
+    // STEP 5.7: RAG QUERY - COMMENTARY HINTS (USER CORRECTIONS) ⭐ NEW!
+    // ========================================================================
+
+    let commentaryHintsContext = '';
+    const hintsQuery = `${scoringPlayer} ${scoringAction} correction hint better name`;
+
+    try {
+      console.log('💡 Commentary hints query:', hintsQuery);
+      
+      const hintsEmbedding = await openai.embeddings.create({
+        model: 'text-embedding-3-small',
+        input: hintsQuery,
+        dimensions: 768,
+      });
+      
+      const hintsResults = await index.namespace('commentary-hints').query({
+        vector: hintsEmbedding.data[0].embedding,
+        topK: 3,
+        includeMetadata: true,
+      });
+      
+      if (hintsResults.matches && hintsResults.matches.length > 0) {
+        commentaryHintsContext = hintsResults.matches
+          .map((match) => match.metadata?.hint || '')
+          .filter(Boolean)
+          .join('\n')
+          .substring(0, 400);
+        console.log('✅ Commentary hints found:', commentaryHintsContext.substring(0, 80) + '...');
+      } else {
+        console.log('ℹ️ No commentary hints found for this query');
+      }
+    } catch (error) {
+      console.error('❌ Commentary hints error:', error);
+    }
+
+    // ========================================================================
     // STEP 6: RAG QUERY - PLAYER INFO
     // ========================================================================
     
@@ -692,12 +728,13 @@ Wynik po akcji: ${score}
 Punkt zdobyła: ${rally.team_scored}
 PROWADZI: ${leadingTeamName}${touchContext}${situationContext}${errorContext}
 
-${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKŁADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
+${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKŁADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `⭐ USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
 
 INSTRUKCJE:
 - ${setEndInfo.isSetEnd ? `🏁 TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEĆ! Wynik końcowy: ${score}. Zwycięzca: ${setEndInfo.winner}.` : isFirstPoint ? '⭐ PIERWSZY PUNKT! Użyj: "Dobry początek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KOŃCÓWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkreśl momentum!' : milestone ? 'MILESTONE - wspomniej liczbę punktów/bloków/asów!' : isBigLead ? 'Duża przewaga - zauważ sytuację' : isEarlySet ? 'Początek - spokojnie' : 'Środek seta - rzeczowo'}
 - ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwał ATAKUJĄCEGO, nie błąd bloku! Użyj formy: "${attackingPlayer} przebija blok ${declinePolishName(scoringPlayer, 'genitive')}!"` : ''}
 - ${milestone ? `WAŻNE: Wspomniej że to ${milestone}!` : ''}${passInstructions}
+- ${commentaryHintsContext ? '⭐ APPLY USER HINTS - they have PRIORITY over other context!' : ''}
 - Wynik ${score} - prowadzi ${leadingTeamName}
 - ${isFirstPoint ? 'NIE używaj "zwiększa/zmniejsza przewagę" - to PIERWSZY punkt!' : 'NIE mów "prowadząc" jeśli drużyna już prowadziła - powiedz "zwiększa/zmniejsza przewagę"'}
 - Używaj POPRAWNEJ odmiany nazwisk (Leon → Leona w dopełniaczu)
