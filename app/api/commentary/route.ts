@@ -553,8 +553,9 @@ export async function POST(request: NextRequest) {
       console.log('💬 Commentary examples query:', commentaryQuery);
       
       const examplesEmbedding = await openai.embeddings.create({
-        model: 'text-embedding-ada-002',  // ← 768 dims (stary model)
+        model: 'text-embedding-3-small',
         input: commentaryQuery,
+        dimensions: 768,
       });
       
       const examplesResults = await index.namespace('commentary-examples').query({
