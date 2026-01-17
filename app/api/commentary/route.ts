@@ -522,6 +522,7 @@ export async function POST(request: NextRequest) {
         const tacticsEmbedding = await openai.embeddings.create({
           model: 'text-embedding-3-small',
           input: tacticsQuery,
+          dimensions: 768,
         });
         
         const tacticsResults = await index.namespace('tactics').query({
@@ -622,6 +623,7 @@ export async function POST(request: NextRequest) {
     const embeddingResponse = await openai.embeddings.create({
       model: 'text-embedding-3-small',
       input: searchQuery,
+      dimensions: 768,
     });
 
     const queryEmbedding = embeddingResponse.data[0].embedding;
