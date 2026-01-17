@@ -73,10 +73,11 @@ ${hint.contextNotes}
 Priority: ${hint.priority}
 `;
 
-        // Generate embedding - USING ADA-002 (768 dims)
+        // Generate embedding - text-embedding-3-small with 768 dims
         const embedding = await openai.embeddings.create({
-          model: 'text-embedding-ada-002',
-          input: ragText,
+        model: 'text-embedding-3-small',
+        input: ragText,
+        dimensions: 768,  // Match Pinecone index!
         });
 
         // Generate unique ID
