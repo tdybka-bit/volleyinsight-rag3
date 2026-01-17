@@ -97,7 +97,7 @@ USAGE GUIDANCE:
 
         // Generate embedding
         const embedding = await openai.embeddings.create({
-          model: 'text-embedding-ada-002',  // ← 768 dims
+          model: 'text-embedding-3-small',  // ← 1536 dims (match Pinecone!)
           input: ragText,
         });
 
@@ -105,7 +105,7 @@ USAGE GUIDANCE:
         const id = `commentary-example-${example.category.toLowerCase()}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
         // Upsert to Pinecone (commentary-examples namespace)
-        await index.namespace('commentary-examples').upsert([
+        await index.namespace('commentary-hints').upsert([
           {
             id,
             values: embedding.data[0].embedding,
