@@ -13,16 +13,16 @@ const pinecone = new Pinecone({
 const index = pinecone.index('ed-volley');
 
 interface CommentaryHint {
-  category: string;
-  actionType: string;
-  scoreSituation: string;
-  player: string;
-  originalCommentary: string;
-  betterCommentary: string;
-  contextNotes: string;
-  priority: string;
-  status: string;
-  usageCount: number;
+  category?: string;
+  actionType?: string;
+  scoreSituation?: string;
+  player?: string;
+  originalCommentary?: string;
+  betterCommentary?: string;
+  contextNotes?: string;
+  priority?: string;
+  status?: string;
+  usageCount?: number;
 }
 
 export async function POST(request: NextRequest) {
@@ -50,38 +50,46 @@ export async function POST(request: NextRequest) {
         if (!hint.betterCommentary || hint.betterCommentary.trim() === '') {
           results.failed++;
           results.details.push({
-            category: hint.category,
+            category: hint.category || 'unknown',
             status: 'failed',
             reason: 'No better commentary provided',
           });
           continue;
         }
 
+        // Default values for optional fields
+        const category = hint.category || 'general';
+        const actionType = hint.actionType || 'general';
+        const player = hint.player || 'Any';
+        const contextNotes = hint.contextNotes || '';
+        const priority = hint.priority || 'normal';
+
         // Build rich context for RAG
         const ragText = `
 COMMENTARY HINT:
-Category: ${hint.category}
-Action Type: ${hint.actionType}
-Player: ${hint.player || 'Any'}
-Context: ${hint.contextNotes}
+Category: ${category}
+Action Type: ${actionType}
+Player: ${player}
+Context: ${contextNotes}
 
 BETTER COMMENTARY:
 "${hint.betterCommentary}"
 
 GUIDANCE:
-${hint.contextNotes}
-Priority: ${hint.priority}
+${contextNotes}
+Priority: ${priority}
 `;
 
         // Generate embedding - text-embedding-3-small with 768 dims
         const embedding = await openai.embeddings.create({
-        model: 'text-embedding-3-small',
-        input: ragText,
-        dimensions: 768,  // Match Pinecone index!
+          model: 'text-embedding-3-small',
+          input: ragText,
+          dimensions: 768,  // Match Pinecone index!
         });
 
-        // Generate unique ID
-        const id = `commentary-hint-${hint.category.toLowerCase()}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        // Generate unique ID (safe now with defaults)
+        const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
+        const id = `commentary-hint-${categorySlug}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
         // Upsert to Pinecone (commentary-hints namespace)
         await index.namespace('commentary-hints').upsert([
@@ -90,12 +98,12 @@ Priority: ${hint.priority}
             values: embedding.data[0].embedding,
             metadata: {
               text: ragText,
-              category: hint.category,
-              actionType: hint.actionType,
-              player: hint.player || '',
+              category: category,
+              actionType: actionType,
+              player: player,
               betterCommentary: hint.betterCommentary,
-              contextNotes: hint.contextNotes,
-              priority: hint.priority,
+              contextNotes: contextNotes,
+              priority: priority,
               addedAt: new Date().toISOString(),
             },
           },
@@ -103,18 +111,18 @@ Priority: ${hint.priority}
 
         results.success++;
         results.details.push({
-          category: hint.category,
-          actionType: hint.actionType,
+          category: category,
+          actionType: actionType,
           status: 'success',
           id,
         });
 
-        console.log(`✅ Added hint: ${hint.category} - ${hint.actionType}`);
+        console.log(`✅ Added hint: ${category} - ${actionType}`);
       } catch (error) {
         console.error(`❌ Failed to add hint:`, error);
         results.failed++;
         results.details.push({
-          category: hint.category,
+          category: hint.category || 'unknown',
           status: 'failed',
           error: String(error),
         });
