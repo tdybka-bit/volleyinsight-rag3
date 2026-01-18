@@ -100,6 +100,33 @@ export default function LiveMatchCommentaryV3() {
     errors: number;
     points: number;
   }>>({});
+  
+  // Load match data on mount
+  useEffect(() => {
+    const loadMatch = async () => {
+      try {
+        console.log('📥 Loading match data (DataVolley format)...');
+        
+        const response = await fetch('/data/matches/rallies/match_1104643_full_game_rallies.json');
+        const data: MatchData = await response.json();
+        
+        console.log('✅ Loaded DataVolley match data:', data);
+        console.log('🎉 DataVolley format successfully converted!', {
+          match_id: data.match_id,
+          set: data.set_number,
+          rallies: data.rallies.length,
+          teams: data.teams
+        });
+        
+        setMatchData(data);
+        setRallies(data.rallies);
+      } catch (error) {
+        console.error('❌ Failed to load match data:', error);
+      }
+    };
+
+    loadMatch();
+  }, []);
 
   // Re-translate all commentaries when language changes
   useEffect(() => {
