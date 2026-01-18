@@ -100,7 +100,8 @@ export default function LiveMatchCommentaryV3() {
     errors: number;
     points: number;
   }>>({});
-  
+
+  // Load match data on mount
   // Load match data on mount
   useEffect(() => {
     const loadMatch = async () => {
@@ -108,18 +109,31 @@ export default function LiveMatchCommentaryV3() {
         console.log('📥 Loading match data (DataVolley format)...');
         
         const response = await fetch('/data/matches/rallies/match_1104643_full_game_rallies.json');
-        const data: MatchData = await response.json();
         
-        console.log('✅ Loaded DataVolley match data:', data);
-        console.log('🎉 DataVolley format successfully converted!', {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        console.log('✅ RAW JSON loaded:', data);
+        console.log('📊 Rallies in JSON:', data.rallies?.length);
+        
+        // Validate data structure
+        if (!data.rallies || !Array.isArray(data.rallies)) {
+          throw new Error('Invalid data: rallies array missing');
+        }
+        
+        console.log('🎉 Match data validated!', {
           match_id: data.match_id,
           set: data.set_number,
-          rallies: data.rallies.length,
-          teams: data.teams
+          rallies_count: data.rallies.length,
+          first_rally: data.rallies[0]
         });
         
         setMatchData(data);
         setRallies(data.rallies);
+        
       } catch (error) {
         console.error('❌ Failed to load match data:', error);
       }
@@ -238,88 +252,7 @@ export default function LiveMatchCommentaryV3() {
       };
     }
   };
-
-  useEffect(() => {
-    loadMatchData();
-  }, []);
-
-  const loadMatchData = async () => {
-  try {
-    console.log('📥 Loading match data (DataVolley format)...');
-    
-    // Load DataVolley format
-    const dvData = await loadDataVolleyMatch('/data/matches/rallies/match_1104643_full_game_rallies.json');
-    
-    console.log('✅ Loaded DataVolley match data:', {
-      matchId: dvData.matchInfo?.matchId,
-      homeTeam: dvData.matchInfo?.homeTeam,
-      awayTeam: dvData.matchInfo?.awayTeam,
-      rallies: dvData.rallies.length,
-    });
-
-    // Convert rallies to old format with score_before/score_after
-    const convertedRallies = dvData.rallies.map((rally, index) => {
-      // Get previous rally for score_before
-      const prevRally = index > 0 ? dvData.rallies[index - 1] : null;
-      
-      return {
-        rally_number: rally.rallyNumber || rally.id,
-        score_before: {
-          aluron: prevRally ? prevRally.homeScore : 0,
-          bogdanka: prevRally ? prevRally.awayScore : 0
-        },
-        score_after: {
-          aluron: rally.homeScore,
-          bogdanka: rally.awayScore
-        },
-        team_scored: rally.homeScore > (prevRally?.homeScore || 0) ? 'Aluron' : 'Bogdanka',
-        touches: [
-          {
-            action: rally.action,
-            player: rally.player,
-            number: '',
-            team: rally.team === 'home' ? 'aluron' : 'bogdanka'
-          }
-        ],
-        final_action: {
-          type: rally.action.includes('Error') ? 'error' : 
-                rally.action.includes('Ace') ? 'ace' : 
-                rally.action.includes('Block') ? 'block' : 'attack',
-          player: rally.player,
-          number: ''
-        }
-      };
-    });
-
-    // Create compatible MatchData
-    const compatibleData: MatchData = {
-      match_id: dvData.matchInfo?.matchId || '1104643',
-      match_url: 'https://www.plusliga.pl/matches/id/1104643.html',
-      set_number: 5, // Full match
-      final_score: {
-        aluron: dvData.matchInfo?.finalScore?.home || dvData.rallies[dvData.rallies.length - 1]?.homeScore || 0,
-        bogdanka: dvData.matchInfo?.finalScore?.away || dvData.rallies[dvData.rallies.length - 1]?.awayScore || 0
-      },
-      teams: {
-        home: dvData.matchInfo?.homeTeam || 'Aluron CMC Warta Zawiercie',
-        away: dvData.matchInfo?.awayTeam || 'BOGDANKA LUK Lublin'
-      },
-      rallies: convertedRallies
-    };
-
-    setMatchData(compatibleData);
-    setRallies(convertedRallies);
-    
-    console.log('🎉 DataVolley format successfully converted!', {
-      rallies: convertedRallies.length,
-      firstRally: convertedRallies[0],
-      lastRally: convertedRallies[convertedRallies.length - 1]
-    });
-  } catch (error) {
-    console.error('❌ Error loading match data:', error);
-  }
-};
-
+ 
   const generateCommentary = async (rally: Rally) => {
     try {
       console.log('🎤 Generating commentary for rally #', rally.rally_number);
