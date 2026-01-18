@@ -16,6 +16,7 @@
     "setup:vector": "npm run chromadb:start"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@pinecone-database/pinecone": "^6.1.3",
     "@vercel/kv": "^3.0.0",
     "axios": "^1.12.2",

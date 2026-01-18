@@ -578,14 +578,27 @@ export async function POST(request: NextRequest) {
     }
 
     // ========================================================================
-    // STEP 5.7: RAG QUERY - COMMENTARY HINTS (USER CORRECTIONS) ⭐ NEW!
+    // STEP 5.7: RAG QUERY - COMMENTARY HINTS (USER CORRECTIONS) ⭐ FIXED!
     // ========================================================================
 
     let commentaryHintsContext = '';
-    const hintsQuery = `${scoringPlayer} ${scoringAction} correction hint better name`;
+
+    // Extract ALL player names from rally (full surnames without initials)
+    const allPlayersInRally = rally.touches
+      .map(t => t.player)
+      .map(name => {
+        // Remove initials: "M.Tavares" → "Tavares", "W.Venero Leon" → "Venero Leon"
+        const parts = name.split('.');
+        return parts.length > 1 ? parts[parts.length - 1].trim() : name.trim();
+      })
+      .filter((name, index, self) => self.indexOf(name) === index); // unique
+
+    // Build hints query with ALL player names + action
+    const hintsQuery = `${allPlayersInRally.join(' ')} ${scoringAction} correction hint better name surname`;
 
     try {
       console.log('💡 Commentary hints query:', hintsQuery);
+      console.log('👥 Players in rally:', allPlayersInRally);
       
       const hintsEmbedding = await openai.embeddings.create({
         model: 'text-embedding-3-small',
@@ -595,7 +608,7 @@ export async function POST(request: NextRequest) {
       
       const hintsResults = await index.namespace('commentary-hints').query({
         vector: hintsEmbedding.data[0].embedding,
-        topK: 3,
+        topK: 5, // Increase to 5 to catch more hints
         includeMetadata: true,
       });
       
@@ -604,8 +617,8 @@ export async function POST(request: NextRequest) {
           .map((match) => match.metadata?.betterCommentary || '')
           .filter(Boolean)
           .join('\n')
-          .substring(0, 400);
-        console.log('✅ Commentary hints found:', commentaryHintsContext.substring(0, 80) + '...');
+          .substring(0, 600); // Increase to 600 chars
+        console.log('✅ Commentary hints found:', commentaryHintsContext.substring(0, 150) + '...');
       } else {
         console.log('ℹ️ No commentary hints found for this query');
       }

@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import OpenAI from 'openai';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { Redis } from '@upstash/redis';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize clients
 const openai = new OpenAI({
@@ -16,10 +17,82 @@ const index = pinecone.index('ed-volley');
 
 const redis = Redis.fromEnv();
 
+// Initialize Gemini
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+
 interface IdeaSubmission {
   idea: string;
   type: 'commentary' | 'feature';
   priority: 'high' | 'medium' | 'low';
+}
+
+interface ProcessedHint {
+  hint: string;
+  category: 'commentary' | 'feature';
+  confidence: number;
+}
+
+/**
+ * 🤖 Process user's descriptive feedback into a concise RAG hint using Gemini
+ */
+async function processWithGemini(userInput: string): Promise<ProcessedHint> {
+  try {
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.0-flash-exp",
+      generationConfig: {
+        temperature: 0.3, // Lower = more consistent
+        maxOutputTokens: 200,
+      }
+    });
+
+    const prompt = `Przekształć poniższą sugestię użytkownika na KRÓTKI hint dla systemu RAG generującego komentarze do meczów siatkówki.
+
+SUGESTIA UŻYTKOWNIKA:
+"${userInput}"
+
+ZASADY:
+1. Hint MAX 1-2 zdania (usuń przykłady i długie opisy)
+2. Jeśli dotyczy nazwy/imienia → "ZAWSZE używaj: [poprawna nazwa] (nie [błędna nazwa]). [Powód jeśli istotny]"
+3. Jeśli dotyczy kontekstu/stylu → "WAŻNE: [konkretna informacja]"
+4. Jeśli dotyczy błędu technicznego → "[Typ akcji]: [poprawka]"
+5. Określ kategorię:
+   - "commentary" = poprawa/korekta komentarza (nazwy, fakty, styl)
+   - "feature" = nowa funkcja, zmiana UI, nowe dane
+
+ODPOWIEDŹ (TYLKO JSON, bez \`\`\`):
+{
+  "hint": "Twój skrócony hint tutaj",
+  "category": "commentary",
+  "confidence": 0.95
+}
+
+confidence: 0-1 jak bardzo jesteś pewien kategorii (0.8+ = pewny, <0.8 = niepewny)`;
+
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
+    
+    console.log('🤖 Gemini raw response:', responseText);
+
+    // Clean up response (remove markdown code blocks if present)
+    const cleanedText = responseText
+      .replace(/```json\n?/g, '')
+      .replace(/```\n?/g, '')
+      .trim();
+
+    const parsed: ProcessedHint = JSON.parse(cleanedText);
+
+    console.log('✅ Gemini processed hint:', parsed);
+
+    return parsed;
+  } catch (error) {
+    console.error('❌ Gemini processing failed:', error);
+    // Fallback: return original input
+    return {
+      hint: userInput,
+      category: 'feature', // Safe default - manual review
+      confidence: 0.5,
+    };
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -33,24 +106,29 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (type !== 'commentary' && type !== 'feature') {
-      return new Response(JSON.stringify({ error: 'Type must be commentary or feature' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+    console.log(`📥 New submission:`, idea.substring(0, 100));
 
-    console.log(`📥 New ${type} submission:`, idea.substring(0, 100));
+    // ========================================================================
+    // 🤖 PROCESS WITH GEMINI AI
+    // ========================================================================
+    const processed = await processWithGemini(idea);
+    
+    // Use AI category if user didn't specify OR if AI is very confident
+    const finalType = type || (processed.confidence >= 0.8 ? processed.category : 'feature');
+    const finalHint = processed.hint;
+
+    console.log(`🎯 Final type: ${finalType} (AI: ${processed.category}, confidence: ${processed.confidence})`);
+    console.log(`💡 Final hint: ${finalHint}`);
 
     // ========================================================================
     // COMMENTARY → Pinecone (RAG learns)
     // ========================================================================
-    if (type === 'commentary') {
+    if (finalType === 'commentary') {
       try {
-        // Generate embedding
+        // Generate embedding for the PROCESSED hint (not original)
         const embedding = await openai.embeddings.create({
           model: 'text-embedding-3-small',
-          input: idea,
+          input: finalHint,
           dimensions: 768,
         });
 
@@ -63,11 +141,14 @@ export async function POST(request: NextRequest) {
             id,
             values: embedding.data[0].embedding,
             metadata: {
-              text: idea,
-              betterCommentary: idea, // This is what RAG reads
+              text: finalHint, // Processed hint
+              betterCommentary: finalHint, // This is what RAG reads
+              originalInput: idea, // Keep original for reference
               category: 'user-submitted',
               priority: priority,
               source: 'idea-submit',
+              aiProcessed: true,
+              aiConfidence: processed.confidence,
               addedAt: new Date().toISOString(),
             },
           },
@@ -80,6 +161,9 @@ export async function POST(request: NextRequest) {
           type: 'commentary',
           id,
           message: 'RAG learned! ✅ Hint added to Pinecone',
+          processedHint: finalHint,
+          originalInput: idea,
+          aiConfidence: processed.confidence,
         }), {
           headers: { 'Content-Type': 'application/json' },
         });
@@ -98,16 +182,20 @@ export async function POST(request: NextRequest) {
     // ========================================================================
     // FEATURE → Redis (VoC for manual review)
     // ========================================================================
-    if (type === 'feature') {
+    if (finalType === 'feature') {
       try {
         const ideaId = `idea-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
         const ideaData = {
           id: ideaId,
           idea: idea,
+          processedHint: finalHint,
           type: 'feature',
           priority: priority,
           status: 'new',
+          aiProcessed: true,
+          aiConfidence: processed.confidence,
+          aiSuggestedCategory: processed.category,
           createdAt: new Date().toISOString(),
           page: '/idea-submit',
         };
@@ -125,6 +213,8 @@ export async function POST(request: NextRequest) {
           type: 'feature',
           id: ideaId,
           message: 'Saved for manual review 📝',
+          processedHint: finalHint,
+          aiConfidence: processed.confidence,
         }), {
           headers: { 'Content-Type': 'application/json' },
         });
