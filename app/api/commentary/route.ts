@@ -601,7 +601,7 @@ export async function POST(request: NextRequest) {
       
       if (hintsResults.matches && hintsResults.matches.length > 0) {
         commentaryHintsContext = hintsResults.matches
-          .map((match) => match.metadata?.hint || '')
+          .map((match) => match.metadata?.betterCommentary || '')
           .filter(Boolean)
           .join('\n')
           .substring(0, 400);
