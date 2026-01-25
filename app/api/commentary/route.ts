@@ -402,33 +402,77 @@ export async function POST(request: NextRequest) {
     const setEndInfo = checkSetEnd(finalScore, setNumber);
 
     // ========================================================================
-    // STEP 3: EXTRACT FINAL ACTION INFO
+    // STEP 3: EXTRACT FINAL ACTION INFO (FIXED!)
     // ========================================================================
+
+    // FIX: Use final_action.player instead of last touch!
+    // Problem: "Błąd serwisowy Tavaresa" when it was McCarthy
+    // Reason: Last touch != player who made the final action
+
+    // FIX: final_action.player is correct, but final_action.type is too short!
+// Use touches[last].action which has full description: "Serve error" not "Error"
+
+// Guard: Skip rallies without touches
+if (!rally.touches || rally.touches.length === 0) {
+  console.warn(`⚠️ Rally #${rally.rally_number} has no touches, returning basic commentary`);
+  return Response.json({
+    commentary: `Rally #${rally.rally_number} played`,
+    tags: [],
+    milestones: [],
+    icon: '⚡',
+    momentumScore: 0,
+    dramaScore: 0
+  });
+}
+
+
+    // Get final action info
     const finalTouch = rally.touches[rally.touches.length - 1];
-    let scoringPlayer = finalTouch.player;
-    let scoringAction = finalTouch.action;
-    let playerTeam = finalTouch.team;
-    
+    let scoringPlayer = finalTouch?.player || '';
+    let scoringAction = finalTouch?.action || '';
+    let playerTeam = finalTouch?.team || '';
+
+    console.log('👤 Final touch:', scoringPlayer, '| Action:', scoringAction, '| Team:', playerTeam, '| Rally won by:', rally.team_scored);
+
+    // Determine who actually scored the point
+    // If action is an error, the OPPOSITE team scored
+    const isError = scoringAction.toLowerCase().includes('error');
+
+    if (isError) {
+      // Error means opposite team scored
+      // Switch to the team that WON the rally
+      const winningTeam = rally.team_scored; // 'home' or 'away'
+      
+      // Player who made error stays the same (for "błąd serwisowy X")
+      // But we note it was an error
+      console.log(`💥 Error detected! ${scoringPlayer} made error, ${winningTeam} team scored`);
+    } else {
+      // Normal point - player who did final action scored
+      console.log(`✅ ${scoringPlayer} scored for ${playerTeam} team`);
+    }
+    // Special case: Block error → praise attacker, not blocker
     let attackingPlayer = '';
     let attackingTeam = '';
-    if (finalTouch.action.toLowerCase().includes('block') && finalTouch.action.toLowerCase().includes('error')) {
+    if (scoringAction.toLowerCase().includes('block') && scoringAction.toLowerCase().includes('error')) {
+      // Find the attacker (from opposite team who did the attack)
       const attackTouch = rally.touches.find(t => 
-        t.team !== finalTouch.team && 
+        t.team !== playerTeam && 
         t.action.toLowerCase().includes('attack')
       );
       if (attackTouch) {
         attackingPlayer = attackTouch.player;
         attackingTeam = attackTouch.team;
+        console.log('🔓 Block error detected! Attacker:', attackingPlayer, 'broke through blocker:', scoringPlayer);
       }
     }
-    
+
     const teamNames: Record<string, string> = {
       'aluron': 'Aluron CMC Warta Zawiercie',
       'bogdanka': 'BOGDANKA LUK Lublin'
     };
-    
-    const playerTeamName = teamNames[playerTeam] || rally.team_scored;
-    const attackingTeamName = attackingTeam ? teamNames[attackingTeam] : '';
+
+    const playerTeamName = teamNames[playerTeam.toLowerCase()] || rally.team_scored;
+    const attackingTeamName = attackingTeam ? teamNames[attackingTeam.toLowerCase()] : '';
 
     // ========================================================================
     // STEP 4: SITUATION ANALYSIS
@@ -578,7 +622,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ========================================================================
-    // STEP 5.7: RAG QUERY - COMMENTARY HINTS (USER CORRECTIONS) ⭐ FIXED!
+    // STEP 5.7: RAG QUERY - COMMENTARY HINTS (IMPROVED!)
     // ========================================================================
 
     let commentaryHintsContext = '';
@@ -593,12 +637,28 @@ export async function POST(request: NextRequest) {
       })
       .filter((name, index, self) => self.indexOf(name) === index); // unique
 
-    // Build hints query with ALL player names + action
-    const hintsQuery = `${allPlayersInRally.join(' ')} ${scoringAction} correction hint better name surname`;
+    // ALSO add individual name parts for better matching
+    const nameVariants: string[] = [];
+    allPlayersInRally.forEach(name => {
+      nameVariants.push(name); // Full name: "Venero Leon"
+      const parts = name.split(' ');
+      parts.forEach(part => {
+        if (part.length >= 3) { // Only meaningful parts
+          nameVariants.push(part); // Individual parts: "Venero", "Leon"
+        }
+      });
+    });
 
+    // Build hints query with ALL name variants + action
+    const uniqueVariants = [...new Set(nameVariants)]; // Remove duplicates
+    const hintsQuery = `${scoringPlayer} ${scoringAction} naming correction hint better`;
+
+    // TEMPORARY: Commentary hints disabled - namespace cleared, will rebuild with VoC
+    /*
     try {
       console.log('💡 Commentary hints query:', hintsQuery);
       console.log('👥 Players in rally:', allPlayersInRally);
+      console.log('🔤 Name variants:', uniqueVariants);
       
       const hintsEmbedding = await openai.embeddings.create({
         model: 'text-embedding-3-small',
@@ -608,22 +668,172 @@ export async function POST(request: NextRequest) {
       
       const hintsResults = await index.namespace('commentary-hints').query({
         vector: hintsEmbedding.data[0].embedding,
-        topK: 5, // Increase to 5 to catch more hints
+        topK: 5,
         includeMetadata: true,
       });
       
       if (hintsResults.matches && hintsResults.matches.length > 0) {
-        commentaryHintsContext = hintsResults.matches
+        // Filter hints with score > 0.3 (better quality)
+        const relevantHints = hintsResults.matches
+          .filter(match => (match.score || 0) > 0.3)
           .map((match) => match.metadata?.betterCommentary || '')
-          .filter(Boolean)
-          .join('\n')
-          .substring(0, 600); // Increase to 600 chars
-        console.log('✅ Commentary hints found:', commentaryHintsContext.substring(0, 150) + '...');
+          .filter(Boolean);
+          
+        if (relevantHints.length > 0) {
+          commentaryHintsContext = relevantHints.join('\n').substring(0, 600);
+          console.log('✅ Commentary hints found:', commentaryHintsContext.substring(0, 150) + '...');
+          console.log('📊 Hints scores:', hintsResults.matches.map(m => m.score?.toFixed(3)));
+        } else {
+          console.log('⚠️ No relevant hints (all scores < 0.3)');
+        }
       } else {
         console.log('ℹ️ No commentary hints found for this query');
       }
     } catch (error) {
       console.error('❌ Commentary hints error:', error);
+    }
+    */ 
+
+    // ========================================================================
+    // NEW NAMESPACES - NAMING RULES, PHRASES, TONE
+    // ========================================================================
+
+    // ========================================================================
+    // NAMING RULES (preferred names, declensions per language)
+    // ========================================================================
+
+    let namingRulesContext = '';
+
+    try {
+      // Query with all player name variants
+      const namingQuery = `${uniqueVariants.join(' ')} preferred name surname grammar declension`;
+      
+      console.log('📝 Naming rules query:', namingQuery);
+      
+      const namingEmbedding = await openai.embeddings.create({
+        model: 'text-embedding-3-small',
+        input: namingQuery,
+        dimensions: 768,
+      });
+      
+      const namingResults = await index.namespace('naming-rules').query({
+        vector: namingEmbedding.data[0].embedding,
+        topK: 10, // More results - we want all relevant names
+        includeMetadata: true,
+      });
+      
+      if (namingResults.matches && namingResults.matches.length > 0) {
+        const relevantRules = namingResults.matches
+          .filter(match => (match.score || 0) > 0.4) // Higher threshold for names
+          .map((match) => match.metadata?.rule || match.metadata?.text || '')
+          .filter(Boolean);
+          
+        if (relevantRules.length > 0) {
+          namingRulesContext = relevantRules.join('\n').substring(0, 500);
+          console.log('✅ Naming rules found:', namingRulesContext.substring(0, 100) + '...');
+        }
+      }
+    } catch (error) {
+      console.log('ℹ️ Naming rules namespace not yet populated');
+    }
+
+    // ========================================================================
+    // COMMENTARY PHRASES (variacje zwrotów)
+    // ========================================================================
+
+    let commentaryPhrasesContext = '';
+
+    try {
+      // Query based on action type
+      const actionType = scoringAction.toLowerCase();
+      let phrasesQuery = '';
+      
+      if (actionType.includes('ace') || actionType.includes('serve')) {
+        phrasesQuery = 'ace serwis zagrywka punktowy asowy doskonały perfekcyjny';
+      } else if (actionType.includes('block') && !actionType.includes('error')) {
+        phrasesQuery = 'blok skuteczny zatrzymuje muruje powstrzymuje obrona';
+      } else if (actionType.includes('attack') || actionType.includes('kill')) {
+        phrasesQuery = 'atak kończy przebija potężny skuteczny spike';
+      } else if (actionType.includes('dig')) {
+        phrasesQuery = 'obrona dig ratuje wyciąga odbija';
+      }
+      
+      if (phrasesQuery) {
+        console.log('💬 Commentary phrases query:', phrasesQuery);
+        
+        const phrasesEmbedding = await openai.embeddings.create({
+          model: 'text-embedding-3-small',
+          input: phrasesQuery,
+          dimensions: 768,
+        });
+        
+        const phrasesResults = await index.namespace('commentary-phrases').query({
+          vector: phrasesEmbedding.data[0].embedding,
+          topK: 5,
+          includeMetadata: true,
+        });
+        
+        if (phrasesResults.matches && phrasesResults.matches.length > 0) {
+          const phrases = phrasesResults.matches
+            .map((match) => match.metadata?.phrase || match.metadata?.text || '')
+            .filter(Boolean);
+            
+          if (phrases.length > 0) {
+            commentaryPhrasesContext = `VARIACJE ZWROTÓW (używaj zamiennie):\n${phrases.join(' / ')}`;
+            console.log('✅ Commentary phrases found:', phrases.length, 'variants');
+          }
+        }
+      }
+    } catch (error) {
+      console.log('ℹ️ Commentary phrases namespace not yet populated');
+    }
+
+    // ========================================================================
+    // TONE RULES (kiedy dramatycznie, kiedy spokojnie)
+    // ========================================================================
+
+    let toneRulesContext = '';
+
+    try {
+      // Build context about current situation
+      const situationContext = [
+        isHotSituation ? 'hot situation 20+ points' : '',
+        isEarlySet ? 'early set 1-10 points' : '',
+        rallyAnalysis?.isLongRally ? `long rally ${rallyAnalysis.numTouches} touches` : '',
+        rallyAnalysis?.isDramatic ? 'dramatic high drama' : '',
+        currentStreak >= 5 ? `streak ${currentStreak} points series` : '',
+        milestone ? 'milestone achievement' : '',
+        isBigLead ? 'big lead difference' : '',
+      ].filter(Boolean).join(' ');
+      
+      const toneQuery = `${situationContext} temperature emotion energy tone`;
+      
+      console.log('🌡️ Tone rules query:', toneQuery);
+      
+      const toneEmbedding = await openai.embeddings.create({
+        model: 'text-embedding-3-small',
+        input: toneQuery,
+        dimensions: 768,
+      });
+      
+      const toneResults = await index.namespace('tone-rules').query({
+        vector: toneEmbedding.data[0].embedding,
+        topK: 3,
+        includeMetadata: true,
+      });
+      
+      if (toneResults.matches && toneResults.matches.length > 0) {
+        const toneRules = toneResults.matches
+          .map((match) => match.metadata?.rule || match.metadata?.text || '')
+          .filter(Boolean);
+          
+        if (toneRules.length > 0) {
+          toneRulesContext = `TONE GUIDANCE:\n${toneRules.join('\n')}`;
+          console.log('✅ Tone rules found:', toneRules.length, 'rules');
+        }
+      }
+    } catch (error) {
+      console.log('ℹ️ Tone rules namespace not yet populated');
     }
 
     // ========================================================================
@@ -744,7 +954,7 @@ Wynik po akcji: ${score}
 Punkt zdobyła: ${rally.team_scored}
 PROWADZI: ${leadingTeamName}${touchContext}${situationContext}${errorContext}
 
-${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKŁADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `⭐ USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
+${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKŁADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `⭐ USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `⭐ NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `💬 VARIACJE ZWROTÓW:\n${commentaryPhrasesContext}\n\n` : ''}${toneRulesContext ? `🌡️ TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
 
 INSTRUKCJE:
 - ${setEndInfo.isSetEnd ? `🏁 TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEĆ! Wynik końcowy: ${score}. Zwycięzca: ${setEndInfo.winner}.` : isFirstPoint ? '⭐ PIERWSZY PUNKT! Użyj: "Dobry początek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KOŃCÓWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkreśl momentum!' : milestone ? 'MILESTONE - wspomniej liczbę punktów/bloków/asów!' : isBigLead ? 'Duża przewaga - zauważ sytuację' : isEarlySet ? 'Początek - spokojnie' : 'Środek seta - rzeczowo'}
