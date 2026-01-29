@@ -1,0 +1,23 @@
+{
+  "commentary-phrases/example-bloki-phrases.txt": {
+    "path": "commentary-phrases/example-bloki-phrases.txt",
+    "last_modified": "2026-01-29T19:41:37.000Z",
+    "hash": "41b820c060e5b65afb675f67790ecace",
+    "synced_at": "2026-01-29T20:30:27.784Z",
+    "namespace": "commentary-phrases"
+  },
+  "player-profiles/example-kwolek-profile.txt": {
+    "path": "player-profiles/example-kwolek-profile.txt",
+    "last_modified": "2026-01-29T19:41:36.000Z",
+    "hash": "2f0b653beafb68eb908d4c0e9345bb81",
+    "synced_at": "2026-01-29T20:30:53.956Z",
+    "namespace": "player-profiles"
+  },
+  "naming-rules/example-leon-venero-naming.txt": {
+    "path": "naming-rules/example-leon-venero-naming.txt",
+    "last_modified": "2026-01-29T19:41:35.000Z",
+    "hash": "fb688cc550f90008ac5a839137836020",
+    "synced_at": "2026-01-29T20:31:04.285Z",
+    "namespace": "naming-rules"
+  }
+}
