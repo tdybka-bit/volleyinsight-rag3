@@ -789,6 +789,53 @@ if (!rally.touches || rally.touches.length === 0) {
     }
 
     // ========================================================================
+    // SET SUMMARIES (wzorce podsumowań setów/meczów)
+    // ========================================================================
+
+    let setSummariesContext = '';
+
+    try {
+      // Only query if this is end of set or important moment
+      if (setEndInfo.isSetEnd || isHotSituation || currentStreak >= 5) {
+        const summaryContext = [
+          setEndInfo.isSetEnd ? `set end final score ${score}` : '',
+          isHotSituation ? 'close game tight finish' : '',
+          currentStreak >= 5 ? `momentum streak ${currentStreak}` : '',
+          isBigLead ? 'dominant lead' : '',
+        ].filter(Boolean).join(' ');
+        
+        const summaryQuery = `${summaryContext} set summary match summary ending`;
+        
+        console.log('📝 Set summaries query:', summaryQuery);
+        
+        const summaryEmbedding = await openai.embeddings.create({
+          model: 'text-embedding-3-small',
+          input: summaryQuery,
+          dimensions: 768,
+        });
+        
+        const summaryResults = await index.namespace('set-summaries').query({
+          vector: summaryEmbedding.data[0].embedding,
+          topK: 2,
+          includeMetadata: true,
+        });
+        
+        if (summaryResults.matches && summaryResults.matches.length > 0) {
+          const summaries = summaryResults.matches
+            .map((match) => match.metadata?.template || match.metadata?.text || '')
+            .filter(Boolean);
+            
+          if (summaries.length > 0) {
+            setSummariesContext = `WZORCE PODSUMOWAŃ:\n${summaries.join('\n')}`;
+            console.log('✅ Set summaries found:', summaries.length, 'templates');
+          }
+        }
+      }
+    } catch (error) {
+      console.log('ℹ️ Set summaries namespace not yet populated');
+    }
+
+    // ========================================================================
     // TONE RULES (kiedy dramatycznie, kiedy spokojnie)
     // ========================================================================
 
@@ -954,7 +1001,7 @@ Wynik po akcji: ${score}
 Punkt zdobyła: ${rally.team_scored}
 PROWADZI: ${leadingTeamName}${touchContext}${situationContext}${errorContext}
 
-${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKŁADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `⭐ USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `⭐ NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `💬 VARIACJE ZWROTÓW:\n${commentaryPhrasesContext}\n\n` : ''}${toneRulesContext ? `🌡️ TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
+${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKŁADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `⭐ USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `⭐ NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `💬 VARIACJE ZWROTÓW:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `📝 WZORCE PODSUMOWAŃ:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `🌡️ TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
 
 INSTRUKCJE:
 - ${setEndInfo.isSetEnd ? `🏁 TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEĆ! Wynik końcowy: ${score}. Zwycięzca: ${setEndInfo.winner}.` : isFirstPoint ? '⭐ PIERWSZY PUNKT! Użyj: "Dobry początek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KOŃCÓWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkreśl momentum!' : milestone ? 'MILESTONE - wspomniej liczbę punktów/bloków/asów!' : isBigLead ? 'Duża przewaga - zauważ sytuację' : isEarlySet ? 'Początek - spokojnie' : 'Środek seta - rzeczowo'}

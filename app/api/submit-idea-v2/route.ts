@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import OpenAI from 'openai';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { Redis } from '@upstash/redis';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize clients
 const openai = new OpenAI({
@@ -15,10 +14,10 @@ const pinecone = new Pinecone({
 
 const index = pinecone.index('ed-volley');
 
-const redis = Redis.fromEnv();
+const redis = process.env.KV_REDIS_URL
+  ? new Redis(process.env.KV_REDIS_URL)
+  : null;
 
-// Initialize Gemini
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 interface IdeaSubmission {
   idea: string;
@@ -33,22 +32,11 @@ interface ProcessedHint {
 }
 
 /**
- * 🤖 Process user's descriptive feedback into a concise RAG hint using Gemini
+ * 🤖 Process user's descriptive feedback into a concise RAG hint using GPT-4o-mini
  */
-async function processWithGemini(userInput: string): Promise<ProcessedHint> {
+async function processWithGPT(userInput: string): Promise<ProcessedHint> {
   try {
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash-exp",
-      generationConfig: {
-        temperature: 0.3, // Lower = more consistent
-        maxOutputTokens: 200,
-      }
-    });
-
-    const prompt = `Przekształć poniższą sugestię użytkownika na KRÓTKI hint dla systemu RAG generującego komentarze do meczów siatkówki.
-
-SUGESTIA UŻYTKOWNIKA:
-"${userInput}"
+    const systemPrompt = `Przekształć sugestię użytkownika na KRÓTKI hint dla systemu RAG generującego komentarze do meczów siatkówki.
 
 ZASADY:
 1. Hint MAX 1-2 zdania (usuń przykłady i długie opisy)
@@ -59,7 +47,7 @@ ZASADY:
    - "commentary" = poprawa/korekta komentarza (nazwy, fakty, styl)
    - "feature" = nowa funkcja, zmiana UI, nowe dane
 
-ODPOWIEDŹ (TYLKO JSON, bez \`\`\`):
+ODPOWIEDŹ (TYLKO JSON):
 {
   "hint": "Twój skrócony hint tutaj",
   "category": "commentary",
@@ -68,24 +56,30 @@ ODPOWIEDŹ (TYLKO JSON, bez \`\`\`):
 
 confidence: 0-1 jak bardzo jesteś pewien kategorii (0.8+ = pewny, <0.8 = niepewny)`;
 
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
-    
-    console.log('🤖 Gemini raw response:', responseText);
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userInput }
+      ],
+      temperature: 0.3,
+      max_tokens: 200,
+    });
 
-    // Clean up response (remove markdown code blocks if present)
+    const responseText = response.choices[0].message.content || '{}';
+    console.log('🤖 GPT raw response:', responseText);
+
+    // Clean up response
     const cleanedText = responseText
       .replace(/```json\n?/g, '')
       .replace(/```\n?/g, '')
       .trim();
 
     const parsed: ProcessedHint = JSON.parse(cleanedText);
-
-    console.log('✅ Gemini processed hint:', parsed);
-
+    console.log('✅ GPT processed hint:', parsed);
     return parsed;
   } catch (error) {
-    console.error('❌ Gemini processing failed:', error);
+    console.error('❌ GPT processing failed:', error);
     // Fallback: return original input
     return {
       hint: userInput,
@@ -111,7 +105,7 @@ export async function POST(request: NextRequest) {
     // ========================================================================
     // 🤖 PROCESS WITH GEMINI AI
     // ========================================================================
-    const processed = await processWithGemini(idea);
+    const processed = await processWithGPT(idea);
     
     // Use AI category if user didn't specify OR if AI is very confident
     const finalType = type || (processed.confidence >= 0.8 ? processed.category : 'feature');
@@ -200,13 +194,12 @@ export async function POST(request: NextRequest) {
           page: '/idea-submit',
         };
 
-        // Save to Redis
-        await redis.set(`idea:${ideaId}`, JSON.stringify(ideaData));
-        
-        // Add to ideas list
-        await redis.lpush('ideas:all', ideaId);
-
-        console.log(`✅ Feature idea saved to Redis: ${ideaId}`);
+        if (redis) {
+          await redis.set(`idea:${ideaId}`, JSON.stringify(ideaData));
+          await redis.lpush('ideas:all', ideaId);
+        } else {
+          console.log('📝 [LOCAL] Would save to Redis:', ideaId);
+        }
 
         return new Response(JSON.stringify({
           success: true,
