@@ -61,10 +61,10 @@ const languages: { code: Language; flag: string; name: string }[] = [
   { code: 'en', name: 'English' },
   { code: 'it', name: 'Italiano' },
   { code: 'de', name: 'Deutsch' },
-  { code: 'tr', name: 'TÃƒÂ¼rkÃƒÂ§e' },
-  { code: 'es', name: 'EspaÃƒÂ±ol' },
-  { code: 'pt', name: 'PortuguÃƒÂªs' },
-  { code: 'jp', name: 'Ã¦â€”Â¥Ã¦Å“Â¬Ã¨ÂªÅ¾' },
+  { code: 'tr', name: 'Türkçe' },
+  { code: 'es', name: 'Español' },
+  { code: 'pt', name: 'Português' },
+  { code: 'jp', name: '日本語' },
 ];
 
 // Tag color mapping
@@ -343,7 +343,7 @@ export default function LiveMatchCommentaryV3() {
         rallies.push(rally);
       }
       
-      console.log('âœ… NEW DataVolley parsed!', {
+      console.log('✅ NEW DataVolley parsed!', {
         rallies: rallies.length,
         withTouches: rallies.filter((r: any) => r.touches.length > 0).length,
         avgTouches: (rallies.reduce((sum: number, r: any) => sum + r.touches.length, 0) / rallies.length).toFixed(1),
@@ -356,7 +356,7 @@ export default function LiveMatchCommentaryV3() {
     }
 
     /**
-     * NAPRAWIONY PARSER - LICZY PUNKTY zamiast czytaÃ„â€¡ Game Score
+     * NAPRAWIONY PARSER - LICZY PUNKTY zamiast czytać Game Score
      */
     function parseDataVolleyFormat(datavolleyData: any): any {
       const instances = datavolleyData.file?.ALL_INSTANCES?.instance;
@@ -365,7 +365,7 @@ export default function LiveMatchCommentaryV3() {
         throw new Error('Invalid DataVolley format: missing instances');
       }
       
-      console.log('Ã°Å¸â€œÅ  Parsing DataVolley format...', {
+      console.log('📊  Parsing DataVolley format...', {
         totalInstances: instances.length
       });
       
@@ -620,7 +620,7 @@ export default function LiveMatchCommentaryV3() {
 
     const loadMatch = async () => {
       try {
-        console.log('Ã°Å¸â€œÂ¥ Loading match data (DataVolley format)...');
+        console.log('📥 Loading match data (DataVolley format)...');
         
         const response = await fetch('/data/matches/rallies/2025-11-12_ZAW-LBN.json');
         
@@ -641,20 +641,20 @@ export default function LiveMatchCommentaryV3() {
           console.log('ðŸ“„ Detected OLD DataVolley format - parsing...');
           data = parseDataVolleyFormat(rawData);
         } else if (rawData.rallies) {
-          console.log('âœ… Detected simple format - using directly');
+          console.log('✅ Detected simple format - using directly');
           data = rawData;
         } else {
           throw new Error('Invalid data format: neither DataVolley nor simple format');
         }
         
-        console.log('Ã°Å¸â€œÅ  Rallies parsed:', data.rallies?.length);
+        console.log('📊  Rallies parsed:', data.rallies?.length);
         
         // Validate data structure
         if (!data.rallies || !Array.isArray(data.rallies)) {
           throw new Error('Invalid data: rallies array missing after parsing');
         }
         
-        console.log('Ã°Å¸Å½â€° Match data validated!', {
+        console.log('🏉 Match data validated!', {
           rallies_count: data.rallies.length,
           first_rally: data.rallies[0],
           has_timeouts: data.rallies.filter((r: any) => r.timeout).length,
@@ -783,7 +783,7 @@ export default function LiveMatchCommentaryV3() {
       console.log('Generating commentary for rally #', rally.rally_number, 'in', targetLanguage);
       setIsGenerating(true);
       
-      // Funkcja liczÄ…ca wyniki setÃ³w do aktualnego rally
+      // Funkcja licząca wyniki setów do aktualnego rally
 
       const updatedStats = calculatePlayerStats(rally);
       
@@ -815,7 +815,7 @@ export default function LiveMatchCommentaryV3() {
         commentary: data.commentary || '',
         tags: data.tags || [],
         milestones: data.milestones || [],
-        icon: data.icon || 'Ã¢Å¡Â¡',
+        icon: data.icon || '🏐',
         momentumScore: data.momentumScore || 0,
         dramaScore: data.dramaScore || 0,
       };
@@ -828,7 +828,7 @@ export default function LiveMatchCommentaryV3() {
         commentary: `${finalTouch.player}: ${finalTouch.action}`,
         tags: [],
         milestones: [],
-        icon: 'Ã¢Å¡Â¡',
+        icon: '🏐',
         momentumScore: 0,
         dramaScore: 0,
       };
@@ -837,7 +837,7 @@ export default function LiveMatchCommentaryV3() {
  
   const generateCommentary = async (rally: Rally) => {
     try {
-      console.log('Ã°Å¸Å½Â¤ Generating commentary for rally #', rally.rally_number);
+      console.log('🏐 Generating commentary for rally #', rally.rally_number);
       setIsGenerating(true);
       
       const updatedStats = calculatePlayerStats(rally);
@@ -875,7 +875,7 @@ export default function LiveMatchCommentaryV3() {
         commentary: data.commentary || '',
         tags: data.tags || [],
         milestones: data.milestones || [],
-        icon: data.icon || 'Ã¢Å¡Â¡',
+        icon: data.icon || '🏐',
         momentumScore: data.momentumScore || 0,
         dramaScore: data.dramaScore || 0,
       };
@@ -889,7 +889,7 @@ export default function LiveMatchCommentaryV3() {
           commentary: 'Rally played',
           tags: [],
           milestones: [],
-          icon: 'Ã¢Å¡Â¡',
+          icon: '🏐',
           momentumScore: 0,
           dramaScore: 0
         };
@@ -898,7 +898,7 @@ export default function LiveMatchCommentaryV3() {
         commentary: `${finalTouch.player}: ${finalTouch.action}`, 
         tags: [],
         milestones: [],
-        icon: 'Ã¢Å¡Â¡',
+        icon: '🏐',
         momentumScore: 0,
         dramaScore: 0,
       };
@@ -1112,7 +1112,7 @@ export default function LiveMatchCommentaryV3() {
         <div className="p-6 border-b border-border bg-gradient-to-r from-blue-600/20 to-red-600/20">
            <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
-              {/* SET INFO - DuÅ¼y i widoczny z wynikami setÃ³w */}
+              {/* SET INFO - Duży i widoczny z wynikami setów */}
               {currentRally && (() => {
                 const setResults = calculateSetResults(currentRallyIndex);
                 const hasCompletedSets = setResults.home > 0 || setResults.away > 0;
@@ -1278,7 +1278,7 @@ export default function LiveMatchCommentaryV3() {
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-muted-foreground">
-              Ã°Å¸Å½Â¤ Przebieg meczu - AI Commentary
+              🏐 Przebieg meczu - AI Commentary
             </h2>
             <div className="text-sm text-muted-foreground">
               {commentaries.length} komentarzy
@@ -1292,7 +1292,7 @@ export default function LiveMatchCommentaryV3() {
           >
             {commentaries.length === 0 ? (
               <div className="text-center text-muted-foreground py-12 bg-muted/30 rounded-lg">
-                <div className="text-4xl mb-3">Ã°Å¸Å½Â¤</div>
+                <div className="text-4xl mb-3">🏐</div>
                 <p className="font-medium">Press Play to start AI commentary...</p>
                 <p className="text-sm mt-2">Rally-by-rally analysis powered by GPT-4o-mini + RAG</p>
               </div>
@@ -1359,7 +1359,7 @@ export default function LiveMatchCommentaryV3() {
                             <div className="mb-2">
                               {commentary.milestones.map((milestone, idx) => (
                                 <div key={idx} className="flex items-center gap-2 text-xs font-semibold text-blue-600 bg-blue-500/10 px-2 py-1 rounded">
-                                  <span>Ã°Å¸Å½Â¯</span>
+                                  <span>🏯</span>
                                   <span>{milestone}</span>
                                 </div>
                               ))}
@@ -1368,7 +1368,7 @@ export default function LiveMatchCommentaryV3() {
                           
                           <div className="flex items-center justify-between">
                             <p className="text-xs text-muted-foreground">
-                              {commentary.player} Ã¢â‚¬Â¢ {commentary.action}
+                              {commentary.player} • {commentary.action}
                             </p>
                             <span className={`text-xs font-semibold px-2 py-1 rounded ${
                               commentary.team === 'Aluron' 
