@@ -14,11 +14,6 @@ const pinecone = new Pinecone({
 
 const index = pinecone.index('ed-volley');
 
-const redis = process.env.KV_REDIS_URL
-  ? new Redis(process.env.KV_REDIS_URL)
-  : null;
-
-
 interface IdeaSubmission {
   idea: string;
   type: 'commentary' | 'feature';
@@ -91,6 +86,11 @@ confidence: 0-1 jak bardzo jesteś pewien kategorii (0.8+ = pewny, <0.8 = niepew
 
 export async function POST(request: NextRequest) {
   try {
+     // Initialize Redis only at runtime
+    const redis = process.env.KV_REDIS_URL
+      ? new Redis(process.env.KV_REDIS_URL)
+      : null;
+      
     const { idea, type, priority }: IdeaSubmission = await request.json();
 
     if (!idea || !idea.trim()) {
