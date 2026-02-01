@@ -4,6 +4,23 @@ import { useState, useEffect, useRef } from 'react';
 import InlineFeedback from './InlineFeedback';
 import { loadDataVolleyMatch, type MatchData as DVMatchData } from '@/lib/datavolley-parser';
 
+const fetchWithUTF8 = async (url: string, options?: RequestInit) => {
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...options?.headers,
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+  });
+  
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  
+  const text = await response.text();
+  return JSON.parse(text);
+};
+
 interface Rally {
   rally_number: number;
   score_before: { aluron: number; bogdanka: number };
@@ -61,10 +78,10 @@ const languages: { code: Language; flag: string; name: string }[] = [
   { code: 'en', name: 'English' },
   { code: 'it', name: 'Italiano' },
   { code: 'de', name: 'Deutsch' },
-  { code: 'tr', name: 'Türkçe' },
-  { code: 'es', name: 'Español' },
-  { code: 'pt', name: 'Português' },
-  { code: 'jp', name: '日本語' },
+  { code: 'tr', name: 'TÃ¼rkÃ§e' },
+  { code: 'es', name: 'EspaÃ±ol' },
+  { code: 'pt', name: 'PortuguÃªs' },
+  { code: 'jp', name: 'æ—¥æœ¬èªž' },
 ];
 
 // Tag color mapping
@@ -77,7 +94,7 @@ const TAG_COLORS: Record<string, { bg: string; text: string; border: string }> =
   '#comeback': { bg: 'bg-green-500/20', text: 'text-green-600', border: 'border-green-500' },
   '#milestone': { bg: 'bg-blue-500/20', text: 'text-blue-600', border: 'border-blue-500' },
   '#as': { bg: 'bg-red-600/20', text: 'text-red-700', border: 'border-red-600' },
-  '#dÃ…â€šuga_wymiana': { bg: 'bg-indigo-500/20', text: 'text-indigo-600', border: 'border-indigo-500' },
+  '#dÃƒâ€¦Ã¢â‚¬Å¡uga_wymiana': { bg: 'bg-indigo-500/20', text: 'text-indigo-600', border: 'border-indigo-500' },
 };
 
 export default function LiveMatchCommentaryV3() {
@@ -92,6 +109,7 @@ export default function LiveMatchCommentaryV3() {
   const [mode, setMode] = useState<Mode>('demo');
   const commentaryRef = useRef<HTMLDivElement>(null);
   const [isRetranslating, setIsRetranslating] = useState(false);
+  const [selectedMatch, setSelectedMatch] = useState('2025-11-12_ZAW-LBN.json');
   
   const [playerStats, setPlayerStats] = useState<Record<string, {
     blocks: number;
@@ -119,10 +137,27 @@ export default function LiveMatchCommentaryV3() {
         throw new Error('Invalid NEW DataVolley format: missing instances array');
       }
       
-      console.log('ðŸ“Š Parsing NEW DataVolley format...', {
+      console.log('📊 Parsing NEW DataVolley format...', {
         totalInstances: instances.length
       });
-      
+
+      // ✅ AUTO-DETECT TEAM CODES (works for any match)
+      const teamCodes = new Set<string>();
+      for (const inst of instances.slice(0, 200)) {
+        const code = inst.code || '';
+        if (code.includes(' ')) {
+          const prefix = code.split(' ')[0];
+          if (prefix.length === 3 && /^[A-Z]{3}$/.test(prefix)) {
+            teamCodes.add(prefix);
+          }
+        }
+      }
+
+      const teamCodesArray = Array.from(teamCodes).sort();
+      const [homeCode, awayCode] = teamCodesArray;
+
+      console.log(`✅ Detected teams: ${homeCode} (home) vs ${awayCode} (away)`);
+
       // Find all Rally instances (they mark rally boundaries)
       const rallyIndices: number[] = [];
       instances.forEach((inst: any, idx: number) => {
@@ -131,7 +166,7 @@ export default function LiveMatchCommentaryV3() {
         }
       });
       
-      console.log('ðŸŽ¯ Found Rally markers:', rallyIndices.length);
+      console.log('Ã°Å¸Å½Â¯ Found Rally markers:', rallyIndices.length);
       
       // Track scores per set
       const setScores: Record<number, { home: number; away: number }> = {};
@@ -176,7 +211,7 @@ export default function LiveMatchCommentaryV3() {
               events.substitutions.push({
                 player_out: playerOut,
                 player_in: playerIn,
-                team: code.startsWith('ZAW') ? 'home' : 'away'
+                team: code.startsWith(homeCode) ? 'home' : 'away'
               });
             }
             continue;
@@ -185,7 +220,7 @@ export default function LiveMatchCommentaryV3() {
           // Timeout
           if (code.includes('Timeout')) {
             events.timeout = {
-              team: code.startsWith('ZAW') ? 'home' : 'away',
+              team: code.startsWith(homeCode) ? 'home' : 'away',
               team_name: labels['Team Name'] || ''
             };
             continue;
@@ -194,7 +229,7 @@ export default function LiveMatchCommentaryV3() {
           // Video Challenge
           if (code.includes('Challenge') || code.includes('Video')) {
             events.challenge = {
-              team: code.startsWith('ZAW') ? 'home' : 'away',
+              team: code.startsWith(homeCode) ? 'home' : 'away',
               team_name: labels['Team Name'] || '',
               type: 'Video Verification'
             };
@@ -202,7 +237,7 @@ export default function LiveMatchCommentaryV3() {
           }
           
           // Regular actions
-          if (code.startsWith('ZAW ') || code.startsWith('LBN ')) {
+          if (code.startsWith(homeCode + ' ') || code.startsWith(awayCode + ' ')) {
             const teamPrefix = code.substring(0, 3);
             const actionType = code.substring(4);
             
@@ -213,261 +248,7 @@ export default function LiveMatchCommentaryV3() {
             
             const playerNameKey = `${teamPrefix} Player Name`;
             const playerName = labels[playerNameKey] || '';
-            const team = teamPrefix === 'ZAW' ? 'home' : 'away';
-            
-            // Map action
-            let action = actionType;
-            const rallyWon = labels['Rally Won'];
-            const grade = labels['Serve Grade'] || labels['Receive Grade'] || 
-                        labels['Attack Grade'] || labels['Block Grade'] || 
-                        labels['Dig Grade'] || '';
-            
-            if (actionType === 'Serve') {
-              if (rallyWon === 'Lost') {
-                action = 'Serve error';
-              } else if (grade === 'Ace') {
-                action = 'Serve Ace';
-              } else {
-                action = 'Serve';
-              }
-            } else if (actionType === 'Receive') {
-              if (grade === 'Negative' || grade === 'Poor') {
-                action = 'Pass negative';
-              } else if (grade === 'Positive') {
-                action = 'Pass positive';
-              } else if (grade === 'Perfect') {
-                action = 'Pass perfect';
-              } else {
-                action = 'Pass';
-              }
-            } else if (actionType === 'Set') {
-              action = 'Setting';
-            } else if (actionType === 'Attack') {
-              if (rallyWon === 'Lost') {
-                action = 'Attack error';
-              } else if (grade === 'Blocked') {
-                action = 'Attack blocked';
-              } else {
-                action = 'Attack';
-              }
-            } else if (actionType === 'Block') {
-              if (rallyWon === 'Lost') {
-                action = 'Block error';
-              } else {
-                action = 'Block';
-              }
-            } else if (actionType === 'Dig') {
-              action = 'Dig';
-            } else if (actionType === 'Freeball') {
-              action = 'Freeball';
-            }
-            
-            if (action && playerName) {
-              // Clean player name: "Leon Venero, Wilfredo" â†’ "Leon Venero"
-              const cleanPlayerName = playerName.includes(',') 
-                ? playerName.split(',')[0].trim() 
-                : playerName;
-              
-              touches.push({
-                action,
-                player: cleanPlayerName,
-                team
-              });
-            }
-          }
-        }
-        
-        // Determine who won the rally
-        let team_scored = 'unknown';
-        
-        // Check for Rally Won = Won in any action
-        for (const inst of group) {
-          if (inst.code === 'Rally') continue;
-          
-          const labels = inst.labels || {};
-          if (labels['Rally Won'] === 'Won') {
-            // Check if it's ZAW or LBN action
-            if (inst.code.startsWith('ZAW')) {
-              team_scored = 'home';
-              break;
-            } else if (inst.code.startsWith('LBN')) {
-              team_scored = 'away';
-              break;
-            }
-          }
-        }
-        
-        // Get score BEFORE this rally
-        const score_before = {
-          home: setScores[setNumber].home,
-          away: setScores[setNumber].away,
-          aluron: setScores[setNumber].home,
-          bogdanka: setScores[setNumber].away
-        };
-        
-        // Update scores based on who won
-        if (team_scored === 'home') {
-          setScores[setNumber].home++;
-        } else if (team_scored === 'away') {
-          setScores[setNumber].away++;
-        }
-        
-        // Get score AFTER this rally
-        const score_after = {
-          home: setScores[setNumber].home,
-          away: setScores[setNumber].away,
-          aluron: setScores[setNumber].home,
-          bogdanka: setScores[setNumber].away
-        };
-        
-        // Determine final_action
-        const final_action = touches.length > 0 && touches[touches.length - 1] ? {
-          type: touches[touches.length - 1].action || '',
-          player: touches[touches.length - 1].player || ''
-        } : { type: '', player: '' };
-        
-        // Build rally object
-        const rally = {
-          rally_number: i + 1,
-          set_number: setNumber,
-          score_before,
-          score_after,
-          team_scored,
-          touches,
-          final_action,
-          timeout: events.timeout,
-          substitutions: events.substitutions.length > 0 ? events.substitutions : null,
-          challenge: events.challenge
-        };
-        
-        rallies.push(rally);
-      }
-      
-      console.log('✅ NEW DataVolley parsed!', {
-        rallies: rallies.length,
-        withTouches: rallies.filter((r: any) => r.touches.length > 0).length,
-        avgTouches: (rallies.reduce((sum: number, r: any) => sum + r.touches.length, 0) / rallies.length).toFixed(1),
-        withTimeouts: rallies.filter((r: any) => r.timeout).length,
-        withSubs: rallies.filter((r: any) => r.substitutions).length,
-        withChallenges: rallies.filter((r: any) => r.challenge).length
-      });
-      
-      return { rallies };
-    }
-
-    /**
-     * NAPRAWIONY PARSER - LICZY PUNKTY zamiast czytać Game Score
-     */
-    function parseDataVolleyFormat(datavolleyData: any): any {
-      const instances = datavolleyData.file?.ALL_INSTANCES?.instance;
-      
-      if (!instances || !Array.isArray(instances)) {
-        throw new Error('Invalid DataVolley format: missing instances');
-      }
-      
-      console.log('📊  Parsing DataVolley format...', {
-        totalInstances: instances.length
-      });
-      
-      // Group instances by rally (same start-end timestamp)
-      const rallyGroups: Record<string, any[]> = {};
-      
-      for (const inst of instances) {
-        const key = `${inst.start}-${inst.end}`;
-        if (!rallyGroups[key]) {
-          rallyGroups[key] = [];
-        }
-        rallyGroups[key].push(inst);
-      }
-      
-      // Sort rally keys chronologically
-      const sortedRallyKeys = Object.keys(rallyGroups).sort((a, b) => {
-        const [startA] = a.split('-').map(Number);
-        const [startB] = b.split('-').map(Number);
-        return startA - startB;
-      });
-      
-      // Track scores per set
-      const setScores: Record<number, { home: number; away: number }> = {};
-      
-      const rallies: any[] = [];
-      let rallyNumber = 1;
-      
-      for (const rallyKey of sortedRallyKeys) {
-        const group = rallyGroups[rallyKey];
-        
-        // Find Rally instance
-        const rallyInst = group.find((i: any) => i.code === 'Rally');
-        if (!rallyInst) continue;
-        
-        const rallyLabels = labelsToObject(rallyInst.label);
-        const setNumber = parseInt(rallyLabels.Set || '1');
-        
-        // Initialize set scores if not exists
-        if (!setScores[setNumber]) {
-          setScores[setNumber] = { home: 0, away: 0 };
-        }
-        
-        // Extract touches (actions)
-        const touches: any[] = [];
-        const events: any = {
-          timeout: null,
-          substitutions: [],
-          challenge: null
-        };
-        
-        for (const inst of group) {
-          const code = inst.code;
-          const labels = labelsToObject(inst.label);
-          
-          if (code === 'Rally') continue;
-          
-          // Substitution
-          if (code === 'ZAW Substitution' || code === 'LBN Substitution') {
-            const playerOut = labels['Player OUT'] || '';
-            const playerIn = labels['Player IN'] || '';
-            if (playerOut && playerIn) {
-              events.substitutions.push({
-                player_out: playerOut,
-                player_in: playerIn,
-                team: code.startsWith('ZAW') ? 'home' : 'away'
-              });
-            }
-            continue;
-          }
-          
-          // Timeout
-          if (code.includes('Timeout')) {
-            events.timeout = {
-              team: code.startsWith('ZAW') ? 'home' : 'away',
-              team_name: labels['Team Name'] || ''
-            };
-            continue;
-          }
-          
-          // Video Challenge
-          if (code.includes('Challenge') || code.includes('Video')) {
-            events.challenge = {
-              team: code.startsWith('ZAW') ? 'home' : 'away',
-              team_name: labels['Team Name'] || '',
-              type: 'Video Verification'
-            };
-            continue;
-          }
-          
-          // Regular actions
-          if (code.startsWith('ZAW ') || code.startsWith('LBN ')) {
-            const teamPrefix = code.substring(0, 3);
-            const actionType = code.substring(4);
-            
-            // Skip meta actions
-            if (!['Serve', 'Attack', 'Set', 'Receive', 'Block', 'Dig', 'Freeball'].includes(actionType)) {
-              continue;
-            }
-            
-            const playerNameKey = `${teamPrefix} Player Name`;
-            const playerName = labels[playerNameKey] || '';
-            const team = teamPrefix === 'ZAW' ? 'home' : 'away';
+            const team = teamPrefix === homeCode ? 'home' : 'away';
             
             // Map action
             let action = actionType;
@@ -538,13 +319,267 @@ export default function LiveMatchCommentaryV3() {
         for (const inst of group) {
           if (inst.code === 'Rally') continue;
           
+          const labels = inst.labels || {};
+          if (labels['Rally Won'] === 'Won') {
+            // Check if it's ZAW or LBN action
+            if (inst.code.startsWith(homeCode)) {
+              team_scored = 'home';
+              break;
+            } else if (inst.code.startsWith(awayCode)) {
+              team_scored = 'away';
+              break;
+            }
+          }
+        }
+        
+        // Get score BEFORE this rally
+        const score_before = {
+          home: setScores[setNumber].home,
+          away: setScores[setNumber].away,
+          aluron: setScores[setNumber].home,
+          bogdanka: setScores[setNumber].away
+        };
+        
+        // Update scores based on who won
+        if (team_scored === 'home') {
+          setScores[setNumber].home++;
+        } else if (team_scored === 'away') {
+          setScores[setNumber].away++;
+        }
+        
+        // Get score AFTER this rally
+        const score_after = {
+          home: setScores[setNumber].home,
+          away: setScores[setNumber].away,
+          aluron: setScores[setNumber].home,
+          bogdanka: setScores[setNumber].away
+        };
+        
+        // Determine final_action
+        const final_action = touches.length > 0 && touches[touches.length - 1] ? {
+          type: touches[touches.length - 1].action || '',
+          player: touches[touches.length - 1].player || ''
+        } : { type: '', player: '' };
+        
+        // Build rally object
+        const rally = {
+          rally_number: i + 1,
+          set_number: setNumber,
+          score_before,
+          score_after,
+          team_scored,
+          touches,
+          final_action,
+          timeout: events.timeout,
+          substitutions: events.substitutions.length > 0 ? events.substitutions : null,
+          challenge: events.challenge
+        };
+        
+        rallies.push(rally);
+      }
+      
+      console.log('âœ… NEW DataVolley parsed!', {
+        rallies: rallies.length,
+        withTouches: rallies.filter((r: any) => r.touches.length > 0).length,
+        avgTouches: (rallies.reduce((sum: number, r: any) => sum + r.touches.length, 0) / rallies.length).toFixed(1),
+        withTimeouts: rallies.filter((r: any) => r.timeout).length,
+        withSubs: rallies.filter((r: any) => r.substitutions).length,
+        withChallenges: rallies.filter((r: any) => r.challenge).length
+      });
+      
+      return { rallies };
+    }
+
+    /**
+     * NAPRAWIONY PARSER - LICZY PUNKTY zamiast czytaÄ‡ Game Score
+     */
+    function parseDataVolleyFormat(datavolleyData: any): any {
+      const instances = datavolleyData.file?.ALL_INSTANCES?.instance;
+      
+      if (!instances || !Array.isArray(instances)) {
+        throw new Error('Invalid DataVolley format: missing instances');
+      }
+      
+      console.log('ðŸ“ŠÂ  Parsing DataVolley format...', {
+        totalInstances: instances.length
+      });
+      
+      // Group instances by rally (same start-end timestamp)
+      const rallyGroups: Record<string, any[]> = {};
+      
+      for (const inst of instances) {
+        const key = `${inst.start}-${inst.end}`;
+        if (!rallyGroups[key]) {
+          rallyGroups[key] = [];
+        }
+        rallyGroups[key].push(inst);
+      }
+      
+      // Sort rally keys chronologically
+      const sortedRallyKeys = Object.keys(rallyGroups).sort((a, b) => {
+        const [startA] = a.split('-').map(Number);
+        const [startB] = b.split('-').map(Number);
+        return startA - startB;
+      });
+      
+      // Track scores per set
+      const setScores: Record<number, { home: number; away: number }> = {};
+      
+      const rallies: any[] = [];
+      let rallyNumber = 1;
+      
+      for (const rallyKey of sortedRallyKeys) {
+        const group = rallyGroups[rallyKey];
+        
+        // Find Rally instance
+        const rallyInst = group.find((i: any) => i.code === 'Rally');
+        if (!rallyInst) continue;
+        
+        const rallyLabels = labelsToObject(rallyInst.label);
+        const setNumber = parseInt(rallyLabels.Set || '1');
+        
+        // Initialize set scores if not exists
+        if (!setScores[setNumber]) {
+          setScores[setNumber] = { home: 0, away: 0 };
+        }
+        
+        // Extract touches (actions)
+        const touches: any[] = [];
+        const events: any = {
+          timeout: null,
+          substitutions: [],
+          challenge: null
+        };
+        
+        for (const inst of group) {
+          const code = inst.code;
+          const labels = labelsToObject(inst.label);
+          
+          if (code === 'Rally') continue;
+          
+          // Substitution
+          if (code === 'ZAW Substitution' || code === 'LBN Substitution') {
+            const playerOut = labels['Player OUT'] || '';
+            const playerIn = labels['Player IN'] || '';
+            if (playerOut && playerIn) {
+              events.substitutions.push({
+                player_out: playerOut,
+                player_in: playerIn,
+                team: code.startsWith(homeCode) ? 'home' : 'away'
+              });
+            }
+            continue;
+          }
+          
+          // Timeout
+          if (code.includes('Timeout')) {
+            events.timeout = {
+              team: code.startsWith(homeCode) ? 'home' : 'away',
+              team_name: labels['Team Name'] || ''
+            };
+            continue;
+          }
+          
+          // Video Challenge
+          if (code.includes('Challenge') || code.includes('Video')) {
+            events.challenge = {
+              team: code.startsWith(homeCode) ? 'home' : 'away',
+              team_name: labels['Team Name'] || '',
+              type: 'Video Verification'
+            };
+            continue;
+          }
+          
+          // Regular actions
+          if (code.startsWith(homeCode + ' ') || code.startsWith(awayCode + ' ')) {
+            const teamPrefix = code.substring(0, 3);
+            const actionType = code.substring(4);
+            
+            // Skip meta actions
+            if (!['Serve', 'Attack', 'Set', 'Receive', 'Block', 'Dig', 'Freeball'].includes(actionType)) {
+              continue;
+            }
+            
+            const playerNameKey = `${teamPrefix} Player Name`;
+            const playerName = labels[playerNameKey] || '';
+            const team = teamPrefix === homeCode ? 'home' : 'away';
+            
+            // Map action
+            let action = actionType;
+            const rallyWon = labels['Rally Won'];
+            const grade = labels['Serve Grade'] || labels['Receive Grade'] || 
+                        labels['Attack Grade'] || labels['Block Grade'] || 
+                        labels['Dig Grade'] || '';
+            
+            if (actionType === 'Serve') {
+              if (rallyWon === 'Lost') {
+                action = 'Serve error';
+              } else if (grade === 'Ace') {
+                action = 'Serve Ace';
+              } else {
+                action = 'Serve';
+              }
+            } else if (actionType === 'Receive') {
+              if (grade === 'Negative' || grade === 'Poor') {
+                action = 'Pass negative';
+              } else if (grade === 'Positive') {
+                action = 'Pass positive';
+              } else if (grade === 'Perfect') {
+                action = 'Pass perfect';
+              } else {
+                action = 'Pass';
+              }
+            } else if (actionType === 'Set') {
+              action = 'Setting';
+            } else if (actionType === 'Attack') {
+              if (rallyWon === 'Lost') {
+                action = 'Attack error';
+              } else if (grade === 'Blocked') {
+                action = 'Attack blocked';
+              } else {
+                action = 'Attack';
+              }
+            } else if (actionType === 'Block') {
+              if (rallyWon === 'Lost') {
+                action = 'Block error';
+              } else {
+                action = 'Block';
+              }
+            } else if (actionType === 'Dig') {
+              action = 'Dig';
+            } else if (actionType === 'Freeball') {
+              action = 'Freeball';
+            }
+            
+            if (action && playerName) {
+              // Clean player name: "Leon Venero, Wilfredo" ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ "Leon Venero"
+              const cleanPlayerName = playerName.includes(',') 
+                ? playerName.split(',')[0].trim() 
+                : playerName;
+              
+              touches.push({
+                action,
+                player: cleanPlayerName,
+                team
+              });
+            }
+          }
+        }
+        
+        // Determine who won the rally
+        let team_scored = 'unknown';
+        
+        // Check for Rally Won = Won in any action
+        for (const inst of group) {
+          if (inst.code === 'Rally') continue;
+          
           const labels = labelsToObject(inst.label);
           if (labels['Rally Won'] === 'Won') {
             // Check if it's ZAW or LBN action
-            if (inst.code.startsWith('ZAW')) {
+            if (inst.code.startsWith(homeCode)) {
               team_scored = 'home';
               break;
-            } else if (inst.code.startsWith('LBN')) {
+            } else if (inst.code.startsWith(awayCode)) {
               team_scored = 'away';
               break;
             }
@@ -597,7 +632,7 @@ export default function LiveMatchCommentaryV3() {
         rallies.push(rally);
       }
       
-      console.log('Ã¢Å“â€¦ DataVolley parsed!', {
+      console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ DataVolley parsed!', {
         rallies: rallies.length,
         withTimeouts: rallies.filter((r: any) => r.timeout).length,
         withSubs: rallies.filter((r: any) => r.substitutions).length,
@@ -620,9 +655,9 @@ export default function LiveMatchCommentaryV3() {
 
     const loadMatch = async () => {
       try {
-        console.log('📥 Loading match data (DataVolley format)...');
+        console.log('ðŸ“¥ Loading match data (DataVolley format)...');
         
-        const response = await fetch('/data/matches/rallies/2025-11-12_ZAW-LBN.json');
+        const response = await fetch(`/data/matches/rallies/${selectedMatch}`);
         
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -630,31 +665,31 @@ export default function LiveMatchCommentaryV3() {
         
         const rawData = await response.json();
         
-        console.log('Ã¢Å“â€¦ RAW JSON loaded:', rawData);
+        console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ RAW JSON loaded:', rawData);
         
         // Check if it's DataVolley format or simple format
         let data;
         if (rawData.instances && Array.isArray(rawData.instances)) {
-          console.log('ðŸ”¥ Detected NEW DataVolley format (instances) - parsing...');
+          console.log('Ã°Å¸â€Â¥ Detected NEW DataVolley format (instances) - parsing...');
           data = parseNewDataVolleyFormat(rawData);
         } else if (rawData.file && rawData.file.ALL_INSTANCES) {
-          console.log('ðŸ“„ Detected OLD DataVolley format - parsing...');
+          console.log('Ã°Å¸â€œâ€ž Detected OLD DataVolley format - parsing...');
           data = parseDataVolleyFormat(rawData);
         } else if (rawData.rallies) {
-          console.log('✅ Detected simple format - using directly');
+          console.log('âœ… Detected simple format - using directly');
           data = rawData;
         } else {
           throw new Error('Invalid data format: neither DataVolley nor simple format');
         }
         
-        console.log('📊  Rallies parsed:', data.rallies?.length);
+        console.log('ðŸ“ŠÂ  Rallies parsed:', data.rallies?.length);
         
         // Validate data structure
         if (!data.rallies || !Array.isArray(data.rallies)) {
           throw new Error('Invalid data: rallies array missing after parsing');
         }
         
-        console.log('🏉 Match data validated!', {
+        console.log('ðŸ‰ Match data validated!', {
           rallies_count: data.rallies.length,
           first_rally: data.rallies[0],
           has_timeouts: data.rallies.filter((r: any) => r.timeout).length,
@@ -666,12 +701,12 @@ export default function LiveMatchCommentaryV3() {
         setRallies(data.rallies);
         
       } catch (error) {
-        console.error('Ã¢ÂÅ’ Failed to load match data:', error);
+        console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Failed to load match data:', error);
       }
     };
 
     loadMatch();
-  }, []);
+  }, [selectedMatch]);
   // Re-translate all commentaries when language changes
   useEffect(() => {
     if (commentaries.length > 0) {
@@ -684,7 +719,7 @@ export default function LiveMatchCommentaryV3() {
     
     setIsRetranslating(true);
     const currentLanguage = language;
-    console.log('Ã°Å¸Å’Â Re-translating', commentaries.length, 'commentaries to', currentLanguage);
+    console.log('ÃƒÂ°Ã…Â¸Ã…â€™Ã‚Â Re-translating', commentaries.length, 'commentaries to', currentLanguage);
     
     // NEW: Use translation endpoint instead of full regeneration
     const translationPromises = commentaries.map(async (commentary) => {
@@ -725,20 +760,20 @@ export default function LiveMatchCommentaryV3() {
     
     setCommentaries(results);
     setIsRetranslating(false);
-    console.log('Ã¢Å“â€¦ Re-translation complete in parallel!');
+    console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Re-translation complete in parallel!');
   };
 
-  // Funkcja licząca wyniki setów do aktualnego rally
+  // Funkcja liczÄ…ca wyniki setÃ³w do aktualnego rally
   const calculateSetResults = (upToRallyIndex: number) => {
     const setWins = { home: 0, away: 0 };
     const setScores: Record<number, { home: number; away: number }> = {};
     
-    // Przejdź przez wszystkie rallies do aktualnego
+    // PrzejdÅº przez wszystkie rallies do aktualnego
     for (let i = 0; i <= upToRallyIndex && i < rallies.length; i++) {
       const rally = rallies[i];
       const setNum = rally.set_number;
       
-      // Inicjalizuj set jeśli nie istnieje
+      // Inicjalizuj set jeÅ›li nie istnieje
       if (!setScores[setNum]) {
         setScores[setNum] = { home: 0, away: 0 };
       }
@@ -751,11 +786,11 @@ export default function LiveMatchCommentaryV3() {
       }
     }
     
-    // Sprawdź które sety są zakończone i kto wygrał
+    // SprawdÅº ktÃ³re sety sÄ… zakoÅ„czone i kto wygraÅ‚
     for (const setNum in setScores) {
       const score = setScores[setNum];
-      // Set zakończony jeśli ktoś ma 25+ i różnica >= 2, albo ktoś ma 30+
-      // LUB jeśli to set 5 i ktoś ma 15+ z różnicą >= 2
+      // Set zakoÅ„czony jeÅ›li ktoÅ› ma 25+ i rÃ³Å¼nica >= 2, albo ktoÅ› ma 30+
+      // LUB jeÅ›li to set 5 i ktoÅ› ma 15+ z rÃ³Å¼nicÄ… >= 2
       const isSet5 = parseInt(setNum) === 5;
       const winThreshold = isSet5 ? 15 : 25;
       const maxThreshold = isSet5 ? 999 : 30;
@@ -783,44 +818,29 @@ export default function LiveMatchCommentaryV3() {
       console.log('Generating commentary for rally #', rally.rally_number, 'in', targetLanguage);
       setIsGenerating(true);
       
-      // Funkcja licząca wyniki setów do aktualnego rally
+      // Funkcja liczÄ…ca wyniki setÃ³w do aktualnego rally
 
       const updatedStats = calculatePlayerStats(rally);
       
       const rallyIndex = rallies.findIndex(r => r.rally_number === rally.rally_number);
       const recentRallies = rallyIndex >= 0 ? rallies.slice(Math.max(0, rallyIndex - 9), rallyIndex + 1) : [];
 
-      const response = await fetch('/api/commentary', {
+      const data = await fetchWithUTF8('/api/commentary', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          rally, 
-          language: targetLanguage,
-          playerStats: updatedStats,
-          recentRallies: recentRallies,
-        }),
+        body: JSON.stringify({ rally, language: targetLanguage, playerStats: updatedStats, recentRallies: recentRallies }),
       });
-
-      if (!response.ok) {
-        throw new Error('Commentary API failed');
-      }
-
-      // NEW: Parse JSON response instead of streaming
-      const data = await response.json();
 
       setIsGenerating(false);
       return {
         commentary: data.commentary || '',
         tags: data.tags || [],
         milestones: data.milestones || [],
-        icon: data.icon || '🏐',
+        icon: data.icon || 'ðŸ',
         momentumScore: data.momentumScore || 0,
         dramaScore: data.dramaScore || 0,
       };
     } catch (error) {
-      console.error('Ã¢ÂÅ’ Commentary generation error:', error);
+      console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Commentary generation error:', error);
       setIsGenerating(false);
       
       const finalTouch = rally.touches[rally.touches.length - 1];
@@ -828,7 +848,7 @@ export default function LiveMatchCommentaryV3() {
         commentary: `${finalTouch.player}: ${finalTouch.action}`,
         tags: [],
         milestones: [],
-        icon: '🏐',
+        icon: 'ðŸ',
         momentumScore: 0,
         dramaScore: 0,
       };
@@ -837,7 +857,7 @@ export default function LiveMatchCommentaryV3() {
  
   const generateCommentary = async (rally: Rally) => {
     try {
-      console.log('🏐 Generating commentary for rally #', rally.rally_number);
+      console.log('ðŸ Generating commentary for rally #', rally.rally_number);
       setIsGenerating(true);
       
       const updatedStats = calculatePlayerStats(rally);
@@ -847,11 +867,8 @@ export default function LiveMatchCommentaryV3() {
       
       const rallyAnalysis = analyzeRallyChain(rally);
 
-      const response = await fetch('/api/commentary', {
+      const data = await fetchWithUTF8('/api/commentary', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({ 
           rally, 
           language,
@@ -861,47 +878,29 @@ export default function LiveMatchCommentaryV3() {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Commentary API failed');
-      }
-
-      // NEW: Parse JSON response
-      const data = await response.json();
-
       setIsGenerating(false);
-      console.log('Ã¢Å“â€¦ Commentary generated:', data);
+      console.log('âœ… Commentary generated:', data);
       
       return {
         commentary: data.commentary || '',
         tags: data.tags || [],
         milestones: data.milestones || [],
-        icon: data.icon || '🏐',
+        icon: data.icon || 'ðŸ',
         momentumScore: data.momentumScore || 0,
         dramaScore: data.dramaScore || 0,
       };
     } catch (error) {
-      console.error('Ã¢ÂÅ’ Commentary generation error:', error);
+      console.error('âŒ Commentary generation error:', error);
       setIsGenerating(false);
+      setIsPlaying(false); // STOP playback on error
       
       const finalTouch = rally.touches[rally.touches.length - 1];
       if (!finalTouch || !finalTouch.player || !finalTouch.action) {
-        return {
-          commentary: 'Rally played',
-          tags: [],
-          milestones: [],
-          icon: '🏐',
-          momentumScore: 0,
-          dramaScore: 0
-        };
+        throw error; // Re-throw to stop execution
       }
-      return {
-        commentary: `${finalTouch.player}: ${finalTouch.action}`, 
-        tags: [],
-        milestones: [],
-        icon: '🏐',
-        momentumScore: 0,
-        dramaScore: 0,
-      };
+      
+      // Return fallback commentary but stop playback
+      throw error;
     }
   };
   
@@ -1016,7 +1015,7 @@ export default function LiveMatchCommentaryV3() {
 
     // Skip rallies without valid touches
     if (!finalTouch || !finalTouch.player || !finalTouch.action) {
-      console.warn(`Ã¢Å¡Â Ã¯Â¸Â Rally #${rally.rally_number} missing valid touches, skipping`);
+      console.warn(`ÃƒÂ¢Ã…Â¡Ã‚Â ÃƒÂ¯Ã‚Â¸Ã‚Â Rally #${rally.rally_number} missing valid touches, skipping`);
       
       // Skip to next rally instead of stopping completely
       if (currentRallyIndex < rallies.length - 1) {
@@ -1112,7 +1111,7 @@ export default function LiveMatchCommentaryV3() {
         <div className="p-6 border-b border-border bg-gradient-to-r from-blue-600/20 to-red-600/20">
            <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
-              {/* SET INFO - Duży i widoczny z wynikami setów */}
+              {/* SET INFO - DuÅ¼y i widoczny z wynikami setÃ³w */}
               {currentRally && (() => {
                 const setResults = calculateSetResults(currentRallyIndex);
                 const hasCompletedSets = setResults.home > 0 || setResults.away > 0;
@@ -1141,7 +1140,7 @@ export default function LiveMatchCommentaryV3() {
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
                 <span className="text-sm font-semibold text-red-500">
-                  {mode === 'live' ? 'NA Å»YWO' : 'DEMO MODE'}
+                  {mode === 'live' ? 'NA Ã…Â»YWO' : 'DEMO MODE'}
                 </span>
               </div>
             </div>
@@ -1268,7 +1267,7 @@ export default function LiveMatchCommentaryV3() {
             {isRetranslating && (
               <div className="flex items-center gap-2 text-blue-500 mt-4">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
-                <span className="font-medium">Ã°Å¸Å’Â Re-translating commentaries...</span>
+                <span className="font-medium">ÃƒÂ°Ã…Â¸Ã…â€™Ã‚Â Re-translating commentaries...</span>
               </div>
             )}
           </div>
@@ -1276,9 +1275,30 @@ export default function LiveMatchCommentaryV3() {
 
         {/* Commentary Timeline */}
         <div className="p-6">
+          {/* Match Selection Dropdown */}
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-muted-foreground mb-2">
+              Wybierz mecz:
+            </label>
+            <select 
+              value={selectedMatch}
+              onChange={(e) => {
+                setSelectedMatch(e.target.value);
+                setCommentaries([]);
+                setCurrentRallyIndex(0);
+                setIsPlaying(false);
+              }}
+              className="w-full p-3 border-2 border-border rounded-lg bg-card text-foreground font-medium hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="2025-11-12_ZAW-LBN.json">ðŸ Zawiercie vs Lublin (12.11.2025)</option>
+              <option value="2025-11-26_PGE-Ind.json">ðŸ PGE Skra vs Indykpol (26.11.2025)</option>
+              <option value="2025-12-06_JSW-Ass.json">ðŸ JastrzÄ™bski vs Asseco (06.12.2025)</option>
+            </select>
+          </div>
+
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-muted-foreground">
-              🏐 Przebieg meczu - AI Commentary
+              ðŸ Przebieg meczu - AI Commentary
             </h2>
             <div className="text-sm text-muted-foreground">
               {commentaries.length} komentarzy
@@ -1292,7 +1312,7 @@ export default function LiveMatchCommentaryV3() {
           >
             {commentaries.length === 0 ? (
               <div className="text-center text-muted-foreground py-12 bg-muted/30 rounded-lg">
-                <div className="text-4xl mb-3">🏐</div>
+                <div className="text-4xl mb-3">ðŸ</div>
                 <p className="font-medium">Press Play to start AI commentary...</p>
                 <p className="text-sm mt-2">Rally-by-rally analysis powered by GPT-4o-mini + RAG</p>
               </div>
@@ -1359,7 +1379,7 @@ export default function LiveMatchCommentaryV3() {
                             <div className="mb-2">
                               {commentary.milestones.map((milestone, idx) => (
                                 <div key={idx} className="flex items-center gap-2 text-xs font-semibold text-blue-600 bg-blue-500/10 px-2 py-1 rounded">
-                                  <span>🏯</span>
+                                  <span>ðŸ¯</span>
                                   <span>{milestone}</span>
                                 </div>
                               ))}
@@ -1368,7 +1388,7 @@ export default function LiveMatchCommentaryV3() {
                           
                           <div className="flex items-center justify-between">
                             <p className="text-xs text-muted-foreground">
-                              {commentary.player} • {commentary.action}
+                              {commentary.player} â€¢ {commentary.action}
                             </p>
                             <span className={`text-xs font-semibold px-2 py-1 rounded ${
                               commentary.team === 'Aluron' 
