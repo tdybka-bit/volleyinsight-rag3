@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  
   eslint: {
     // WARNING: This allows production builds to complete even with ESLint errors
     ignoreDuringBuilds: true,

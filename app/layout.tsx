@@ -18,6 +18,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "VolleyInsight - AI-Powered Volleyball Training",
   description: "Profesjonalna platforma szkoleniowa do siatkówki z zaawansowanym asystentem AI",
+  // UTF-8 metadata - NOWE!
+  charset: 'utf-8',
 };
 
 export default function RootLayout({
@@ -26,7 +28,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pl">
+    <html lang="pl" suppressHydrationWarning>
+      <head>
+        {/* UTF-8 Encoding - CRITICAL for emoji and special chars */}
+        <meta charSet="UTF-8" />
+        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider>
           <AdminAuthProvider>

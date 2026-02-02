@@ -78,11 +78,22 @@ const languages: { code: Language; flag: string; name: string }[] = [
   { code: 'en', name: 'English' },
   { code: 'it', name: 'Italiano' },
   { code: 'de', name: 'Deutsch' },
-  { code: 'tr', name: 'TÃ¼rkÃ§e' },
-  { code: 'es', name: 'EspaÃ±ol' },
-  { code: 'pt', name: 'PortuguÃªs' },
-  { code: 'jp', name: 'æ—¥æœ¬èªž' },
+  { code: 'tr', name: 'Türkçe' },
+  { code: 'es', name: 'Español' },
+  { code: 'pt', name: 'Português' },
+  { code: 'jp', name: '日本語' },
 ];
+
+// ============ DODAJ TO TUTAJ ⬇️ ============
+const EMOJI = {
+  VOLLEYBALL: String.fromCodePoint(0x1F3D0),
+  FIRE: String.fromCodePoint(0x1F525),
+  TARGET: String.fromCodePoint(0x1F3AF),
+  LIGHTNING: String.fromCodePoint(0x26A1),
+  CHART: String.fromCodePoint(0x1F4CA),
+  PARTY: String.fromCodePoint(0x1F389),
+};
+// ============ DO TUTAJ ⬆️ ==================
 
 // Tag color mapping
 const TAG_COLORS: Record<string, { bg: string; text: string; border: string }> = {
@@ -94,7 +105,7 @@ const TAG_COLORS: Record<string, { bg: string; text: string; border: string }> =
   '#comeback': { bg: 'bg-green-500/20', text: 'text-green-600', border: 'border-green-500' },
   '#milestone': { bg: 'bg-blue-500/20', text: 'text-blue-600', border: 'border-blue-500' },
   '#as': { bg: 'bg-red-600/20', text: 'text-red-700', border: 'border-red-600' },
-  '#dÃƒâ€¦Ã¢â‚¬Å¡uga_wymiana': { bg: 'bg-indigo-500/20', text: 'text-indigo-600', border: 'border-indigo-500' },
+  '#długa_wymiana': { bg: 'bg-indigo-500/20', text: 'text-indigo-600', border: 'border-indigo-500' },
 };
 
 export default function LiveMatchCommentaryV3() {
@@ -1290,15 +1301,15 @@ export default function LiveMatchCommentaryV3() {
               }}
               className="w-full p-3 border-2 border-border rounded-lg bg-card text-foreground font-medium hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option value="2025-11-12_ZAW-LBN.json">ðŸ Zawiercie vs Lublin (12.11.2025)</option>
-              <option value="2025-11-26_PGE-Ind.json">ðŸ PGE Skra vs Indykpol (26.11.2025)</option>
-              <option value="2025-12-06_JSW-Ass.json">ðŸ JastrzÄ™bski vs Asseco (06.12.2025)</option>
+              <option value="2025-11-12_ZAW-LBN.json">{String.fromCodePoint(0x1F3D0)} Zawiercie vs Lublin (12.11.2025)</option>
+              <option value="2025-11-26_PGE-Ind.json">{String.fromCodePoint(0x1F3D0)} PGE Skra vs Indykpol (26.11.2025)</option>
+              <option value="2025-12-06_JSW-Ass.json">{String.fromCodePoint(0x1F3D0)} Jastrzębski vs Asseco (06.12.2025)</option>
             </select>
           </div>
 
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-muted-foreground">
-              ðŸ Przebieg meczu - AI Commentary
+             {String.fromCodePoint(0x1F3D0)} Przebieg meczu - AI Commentary
             </h2>
             <div className="text-sm text-muted-foreground">
               {commentaries.length} komentarzy
@@ -1312,7 +1323,7 @@ export default function LiveMatchCommentaryV3() {
           >
             {commentaries.length === 0 ? (
               <div className="text-center text-muted-foreground py-12 bg-muted/30 rounded-lg">
-                <div className="text-4xl mb-3">ðŸ</div>
+                <div className="text-4xl mb-3">{EMOJI.VOLLEYBALL}</div>
                 <p className="font-medium">Press Play to start AI commentary...</p>
                 <p className="text-sm mt-2">Rally-by-rally analysis powered by GPT-4o-mini + RAG</p>
               </div>
