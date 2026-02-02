@@ -956,14 +956,12 @@ ${rallyAnalysis.attackerPlayer ? `- Attack: ${rallyAnalysis.attackerPlayer}` : '
       situationContext += `\nSYTUACJA: Duża przewaga ${scoreDiff} punktów! ${leadingTeamName} prowadzi ${score}.`;
     }
     
-    let errorContext = '';
+   let errorContext = '';
     if (attackingPlayer) {
-      const attackerDeclined = declinePolishName(attackingPlayer, 'nominative');
-      const blockerDeclined = declinePolishName(scoringPlayer, 'genitive');
-      
-      errorContext = `\nBLOK ERROR - WAŻNE: ${attackerDeclined} (${attackingTeamName}) PRZEBIŁ BLOK ${blockerDeclined}!
-Skomentuj ATAK ${attackerDeclined}, nie błąd blokującego!
-Przykład: "${attackerDeclined} przebija blok ${blockerDeclined}! Potężny atak!"`;
+      errorContext = `\nBLOK ERROR - WAŻNE: ${attackingPlayer} (${attackingTeamName}) PRZEBIŁ BLOK ${scoringPlayer}!
+Skomentuj ATAK ${attackingPlayer}, nie błąd blokującego!
+Przykład: "${attackingPlayer} przebija blok ${scoringPlayer}! Potężny atak!"
+UŻYJ ZASAD ODMIANY Z 'NAMING RULES' POWYŻEJ!`;
     } else if (scoringAction.toLowerCase().includes('error')) {
       errorContext = `\nUWAGA: To był BŁĄD zawodnika ${scoringPlayer}. Nie dramatyzuj - po prostu opisz błąd.`;
     }
@@ -996,12 +994,12 @@ ${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${com
 
 INSTRUKCJE:
 - ${setEndInfo.isSetEnd ? `🏁 TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEĆ! Wynik końcowy: ${score}. Zwycięzca: ${setEndInfo.winner}.` : isFirstPoint ? '⭐ PIERWSZY PUNKT! Użyj: "Dobry początek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KOŃCÓWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkreśl momentum!' : milestone ? 'MILESTONE - wspomniej liczbę punktów/bloków/asów!' : isBigLead ? 'Duża przewaga - zauważ sytuację' : isEarlySet ? 'Początek - spokojnie' : 'Środek seta - rzeczowo'}
-- ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwał ATAKUJĄCEGO, nie błąd bloku! Użyj formy: "${attackingPlayer} przebija blok ${declinePolishName(scoringPlayer, 'genitive')}!"` : ''}
+- ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwal ATAKUJĄCEGO, nie błąd bloku! Użyj poprawnej odmiany nazwisk zgodnie z NAMING RULES powyżej!` : ''}
 - ${milestone ? `WAŻNE: Wspomniej że to ${milestone}!` : ''}${passInstructions}
 - ${commentaryHintsContext ? '⭐ APPLY USER HINTS - they have PRIORITY over other context!' : ''}
 - Wynik ${score} - prowadzi ${leadingTeamName}
 - ${isFirstPoint ? 'NIE używaj "zwiększa/zmniejsza przewagę" - to PIERWSZY punkt!' : 'NIE mów "prowadząc" jeśli drużyna już prowadziła - powiedz "zwiększa/zmniejsza przewagę"'}
-- Używaj POPRAWNEJ odmiany nazwisk (Leon → Leona w dopełniaczu)
+- ⭐ KRYTYCZNE: Używaj NAMING RULES z góry! Nazwiska zagraniczne odmieniaj według polskich zasad (np. Tavares Rodrigues → Tavaresa Rodriguesa w dopełniaczu)
 - 1-2 zdania max, konkretnie i energicznie!
 `;
 
