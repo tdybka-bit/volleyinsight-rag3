@@ -13,6 +13,12 @@ const pinecone = new Pinecone({
 
 const index = pinecone.index('ed-volley');
 
+
+// ============================================================================
+// PLAYER NAME CLEANUP
+// ============================================================================
+
+
 // ============================================================================
 // POLISH NAME DECLENSIONS
 // ============================================================================
@@ -70,7 +76,7 @@ const polishNameDeclensions: Record<string, Record<string, string>> = {
   'Komenda': {
     nominative: 'Komenda',
     genitive: 'Komendy',
-    accusative: 'KomendÄ™'
+    accusative: 'Komendę'
   },
   'Prokopczuk': {
     nominative: 'Prokopczuk',
@@ -78,9 +84,9 @@ const polishNameDeclensions: Record<string, Record<string, string>> = {
     accusative: 'Prokopczuka'
   },
   'Zniszczol': {
-    nominative: 'ZniszczoÅ‚',
-    genitive: 'ZniszczoÅ‚a',
-    accusative: 'ZniszczoÅ‚a'
+    nominative: 'Zniszczoł',
+    genitive: 'Zniszczoła',
+    accusative: 'Zniszczoła'
   },
   'Hoss': {
     nominative: 'Hoss',
@@ -131,7 +137,7 @@ function validateAndFixScore(
       fixed.bogdanka += 1;
     }
     
-    console.log(`âœ… Rally #${rallyNumber} Fixed score:`, fixed);
+    console.log(`[OK] Rally #${rallyNumber} Fixed score:`, fixed);
     return { ...fixed, wasFixed: true };
   }
   
@@ -160,7 +166,7 @@ function checkSetEnd(
     const winner = aluron > bogdanka ? 'Aluron CMC Warta Zawiercie' : 'BOGDANKA LUK Lublin';
     const finalScore = `${aluron}:${bogdanka}`;
     
-    console.log(`ðŸ SET END DETECTED! Winner: ${winner}, Score: ${finalScore}`);
+    console.log(` SET END DETECTED! Winner: ${winner}, Score: ${finalScore}`);
     
     return {
       isSetEnd: true,
@@ -184,7 +190,7 @@ function checkSetEnd(
 
 const getLanguagePrompt = (lang: string) => {
   const prompts: Record<string, string> = {
-    pl: 'JesteÅ› doÅ›wiadczonym komentarorem meczÃ³w siatkarskich w Polsce. Komentuj po POLSKU.',
+    pl: 'Jesteś doświadczonym komentarorem meczów siatkarskich w Polsce. Komentuj po POLSKU.',
     en: 'You are an experienced volleyball commentator. Comment in ENGLISH.',
     it: 'Sei un commentatore esperto di pallavolo. Commenta in ITALIANO.',
     de: 'Du bist ein erfahrener Volleyball-Kommentator. Kommentiere auf DEUTSCH.',
@@ -210,32 +216,42 @@ const getCommentarySystemPrompt = (
   const basePrompt = `${langPrompt}
 Your task is to generate professional, factual volleyball match commentary.
 
+CRITICAL NAMING RULES:
+- ALWAYS use SHORT player names: "Tavares" NOT "Tavares Rodrigues"
+- ALWAYS use SHORT player names: "Leon" NOT "Leon Venero" or "Venero Leon"
+- NEVER use full names like "Tavares Rodrigues" or "Leon Venero"
+- PAY CLOSE ATTENTION to naming rules provided below in NAMING RULES section!
+- If rules say "use Leon", then use ONLY "Leon" - not "Leon Venero"!
+- If rules say "use Tavares", then use ONLY "Tavares" - not "Tavares Rodrigues"!
+
+- Examples: Tavares, Leon, McCarthy, Kwolek, Sasak, Henno, Grozdanov
+
 CRITICAL RULES:
 - Be FACTUAL, not dramatic
 - NEVER exaggerate situation importance (3:2 is NOT critical!)
 - NEVER mention "morale" or "pressure" in early set
-- "Block error" NOT "bÅ‚Ä…d blokowy" 
+- "Block error" NOT "błąd blokowy" 
 - Focus on WHAT HAPPENED, not speculation
 - 1-2 sentences MAX
 - Use proper Polish grammar and declensions for names
 
 VOCABULARY IMPROVEMENTS:
-- NEVER say "chaos w przyjÄ™ciu" â†’ use "niedokÅ‚adne przyjÄ™cie", "przyjÄ™cie daleko od siatki", "bardzo trudne przyjÄ™cie"
-- NEVER say "bÅ‚Ä…d blokowy" â†’ use "bÅ‚Ä…d w bloku"
+- NEVER say "chaos w przyjęciu" â†’ use "niedokładne przyjęcie", "przyjęcie daleko od siatki", "bardzo trudne przyjęcie"
+- NEVER say "błąd blokowy" â†’ use "błąd w bloku"
 - For block errors: praise the ATTACKER who broke through, not the blocker's mistake
-  Example: "Leon przebija blok Kwolka! PotÄ™Å¼ny atak!"
+  Example: "Leon przebija blok Kwolka! Potężny atak!"
 
 SCORE ACCURACY:
-- When team ALREADY LEADS, say "zwiÄ™ksza przewagÄ™" NOT "prowadzi"
-- When trailing team scores, say "zmniejsza stratÄ™" or "zmniejsza przewagÄ™ przeciwnika"
+- When team ALREADY LEADS, say "zwiększa przewagę" NOT "prowadzi"
+- When trailing team scores, say "zmniejsza stratę" or "zmniejsza przewagę przeciwnika"
 - Be PRECISE about score changes
 
 AVOID PHRASES:
 - "kluczowy moment" (unless 20+ points or tie-break)
-- "wpÅ‚ynÄ…Ä‡ na morale" (never use)
+- "wpłynąć na morale" (never use)
 - "presja ze strony przeciwnika" (never for serves)
-- "bÅ‚Ä…d blokowy" (say "bÅ‚Ä…d w bloku")
-- "chaos w przyjÄ™ciu" (use better vocabulary)
+- "błąd blokowy" (say "błąd w bloku")
+- "chaos w przyjęciu" (use better vocabulary)
 - Any dramatic language before 15 points`;
 
   if (isSetEnd) {
@@ -250,9 +266,9 @@ MANDATORY ELEMENTS:
 4. Mention if it was close/dramatic ending
 
 EXAMPLES (Polish):
-- "Leon koÅ„czy set potÄ™Å¼nym atakiem! KONIEC SETA 30:28 dla Bogdanki! Dramatyczna koÅ„cÃ³wka z prolongatÄ…!"
+- "Leon koŁ„czy set potężnym atakiem! KONIEC SETA 30:28 dla Bogdanki! Dramatyczna koŁ„cówka z prolongatą!"
 - "As serwisowy McCarthy! KONIEC SETA 25:22! Aluron wygrywa pewnie drugiego seta!"
-- "Blok Grozdanova! SET dla Bogdanki 25:23! ZaciÄ™ta walka, ale gospodarze zdobywajÄ… seta!"
+- "Blok Grozdanova! SET dla Bogdanki 25:23! Zacięta walka, ale gospodarze zdobywają seta!"
 
 ALWAYS mention it's the END OF SET!`;
   }
@@ -262,24 +278,24 @@ ALWAYS mention it's the END OF SET!`;
 - HOT SITUATION (20:20+)! NOW you can add emotion!
 
 EXAMPLES (Polish):
-- "W kluczowym momencie Grozdanov pokazuje klasÄ™! Blok ktÃ³ry moÅ¼e zadecydowaÄ‡ o secie!"
-- "McCarthy as serwisowy w najwaÅ¼niejszym momencie! Nerwy ze stali!"`;
+- "W kluczowym momencie Grozdanov pokazuje klasę! Blok który może zadecydować o secie!"
+- "McCarthy as serwisowy w najważniejszym momencie! Nerwy ze stali!"`;
   } else if (hasStreak) {
     return basePrompt + `
 - SCORING STREAK (5+)! Emphasize the momentum!
 
 EXAMPLES (Polish):
-- "Kolejny punkt w serii! Zawiercie buduje przewagÄ™!"
-- "Seria trwa! JuÅ¼ piÄ…ty punkt pod rzÄ…d!"`;
+- "Kolejny punkt w serii! Zawiercie buduje przewagę!"
+- "Seria trwa! Już piąty punkt pod rząd!"`;
   } else if (hasMilestone) {
     return basePrompt + `
 - PLAYER MILESTONE! Celebrate and MENTION THE NUMBER!
 
 EXAMPLES (Polish):
-- "Po raz PIÄ„TY Grozdanov zatrzymuje rywala blokiem! Dominuje w tym elemencie!"
-- "Trzeci as serwisowy McCarthy w tym secie! RozgrzaÅ‚ rÄ™kÄ™!"
-- "DZIESIÄ„TY punkt Sasaka! Kapitalna dyspozycja atakujÄ…cego!"
-- "Kwolek juÅ¼ 8. udany atak - skutecznoÅ›Ä‡ imponujÄ…ca!"
+- "Po raz PIĄTY Grozdanov zatrzymuje rywala blokiem! Dominuje w tym elemencie!"
+- "Trzeci as serwisowy McCarthy w tym secie! Rozgrzał rękę!"
+- "DZIESIĄTY punkt Sasaka! Kapitalna dyspozycja atakującego!"
+- "Kwolek już 8. udany atak - skuteczność imponująca!"
 
 ALWAYS mention the milestone number!`;
   } else if (isBigLead) {
@@ -287,16 +303,16 @@ ALWAYS mention the milestone number!`;
 - BIG LEAD (10+)! Mention the situation factually!
 
 EXAMPLES (Polish):
-- "Zawiercie prowadzi 15:5. Grozdanov doÅ‚oÅ¼yÅ‚ kolejny punkt."
-- "Punkt dla Bogdanki, ale wciÄ…Å¼ spory dystans - 8:18."`;
+- "Zawiercie prowadzi 15:5. Grozdanov dołożył kolejny punkt."
+- "Punkt dla Bogdanki, ale wciąż spory dystans - 8:18."`;
   } else if (isEarlySet) {
     return basePrompt + `
 - EARLY SET (1-10 points): Keep it calm and factual!
 
 EXAMPLES (Polish):
-- "Grozdanov skuteczny w bloku. Dobry poczÄ…tek."
-- "BÅ‚Ä…d serwisowy McCarthy. Punkt dla przeciwnika."
-- "Sasak koÅ„czy atak. Prowadzenie dla Bogdanki."
+- "Grozdanov skuteczny w bloku. Dobry początek."
+- "Błąd serwisowy McCarthy. Punkt dla przeciwnika."
+- "Sasak koŁ„czy atak. Prowadzenie dla Bogdanki."
 
 NO DRAMA - just describe what happened!`;
   } else {
@@ -304,10 +320,10 @@ NO DRAMA - just describe what happened!`;
 - MID-SET (11-19 points): Factual but with ENERGY!
 
 EXAMPLES (Polish):
-- "Grozdanov skuteczny w bloku! ZatrzymaÅ‚ rywala."
+- "Grozdanov skuteczny w bloku! Zatrzymał rywala."
 - "McCarthy pewny w zagrywce. Punkt dla Zawiercia!"
-- "Sasak koÅ„czy atak! Bogdanka zwiÄ™ksza przewagÄ™."
-- "Kwolek przebija blok! Åšwietne uderzenie!"
+- "Sasak koŁ„czy atak! Bogdanka zwiększa przewagę."
+- "Kwolek przebija blok! Łšwietne uderzenie!"
 
 Factual YES, but keep VOLLEYBALL ENERGY!`;
   }
@@ -387,7 +403,7 @@ export async function POST(request: NextRequest) {
     );
 
     if (validatedScore.wasFixed) {
-      console.log(`âš ï¸ Rally #${rally.rally_number}: Score was corrected!`);
+      console.log(` Rally #${rally.rally_number}: Score was corrected!`);
     }
 
     const finalScore = {
@@ -406,7 +422,7 @@ export async function POST(request: NextRequest) {
     // ========================================================================
 
     // FIX: Use final_action.player instead of last touch!
-    // Problem: "BÅ‚Ä…d serwisowy Tavaresa" when it was McCarthy
+    // Problem: "Błąd serwisowy Tavaresa" when it was McCarthy
     // Reason: Last touch != player who made the final action
 
     // FIX: final_action.player is correct, but final_action.type is too short!
@@ -429,10 +445,11 @@ if (!rally.touches || rally.touches.length === 0) {
     // Get final action info
     const finalTouch = rally.touches[rally.touches.length - 1];
     let scoringPlayer = finalTouch?.player || '';
+    
     let scoringAction = finalTouch?.action || '';
     let playerTeam = finalTouch?.team || '';
 
-    console.log('ðŸ‘¤ Final touch:', scoringPlayer, '| Action:', scoringAction, '| Team:', playerTeam, '| Rally won by:', rally.team_scored);
+    console.log('[PLAYER] Final touch:', scoringPlayer, '| Action:', scoringAction, '| Team:', playerTeam, '| Rally won by:', rally.team_scored);
 
     // Determine who actually scored the point
     // If action is an error, the OPPOSITE team scored
@@ -443,12 +460,12 @@ if (!rally.touches || rally.touches.length === 0) {
       // Switch to the team that WON the rally
       const winningTeam = rally.team_scored; // 'home' or 'away'
       
-      // Player who made error stays the same (for "bÅ‚Ä…d serwisowy X")
+      // Player who made error stays the same (for "błąd serwisowy X")
       // But we note it was an error
-      console.log(`ðŸ’¥ Error detected! ${scoringPlayer} made error, ${winningTeam} team scored`);
+      console.log(` Error detected! ${scoringPlayer} made error, ${winningTeam} team scored`);
     } else {
       // Normal point - player who did final action scored
-      console.log(`âœ… ${scoringPlayer} scored for ${playerTeam} team`);
+      console.log(`[OK] ${scoringPlayer} scored for ${playerTeam} team`);
     }
     // Special case: Block error â†’ praise attacker, not blocker
     let attackingPlayer = '';
@@ -461,8 +478,9 @@ if (!rally.touches || rally.touches.length === 0) {
       );
       if (attackTouch) {
         attackingPlayer = attackTouch.player;
+        
         attackingTeam = attackTouch.team;
-        console.log('ðŸ”“ Block error detected! Attacker:', attackingPlayer, 'broke through blocker:', scoringPlayer);
+        console.log('[BROKEN] Block error detected! Attacker:', attackingPlayer, 'broke through blocker:', scoringPlayer);
       }
     }
 
@@ -526,7 +544,7 @@ if (!rally.touches || rally.touches.length === 0) {
       ? 'Aluron CMC Warta Zawiercie' 
       : 'BOGDANKA LUK Lublin';
 
-    console.log('ðŸŽ¯ Commentary request:', {
+    console.log('[TARGET] Commentary request:', {
       rally_number: rally.rally_number,
       player: scoringPlayer,
       action: scoringAction,
@@ -560,7 +578,7 @@ if (!rally.touches || rally.touches.length === 0) {
 
     let tacticsContext = '';
     if (tacticsQuery) {
-      console.log('ðŸŽ¯ Tactics query:', tacticsQuery);
+      console.log('[SEARCH] Tactics query:', tacticsQuery);
       
       try {
         const tacticsEmbedding = await openai.embeddings.create({
@@ -595,7 +613,7 @@ if (!rally.touches || rally.touches.length === 0) {
     const commentaryQuery = `${scoringAction} better commentary example ${scoringPlayer}`;
 
     try {
-      console.log('ðŸ’¬ Commentary examples query:', commentaryQuery);
+      console.log('[COMMENTARY] examples query:', commentaryQuery);
       
       const examplesEmbedding = await openai.embeddings.create({
         model: 'text-embedding-3-small',
@@ -656,9 +674,9 @@ if (!rally.touches || rally.touches.length === 0) {
     // TEMPORARY: Commentary hints disabled - namespace cleared, will rebuild with VoC
     /*
     try {
-      console.log('ðŸ’¡ Commentary hints query:', hintsQuery);
-      console.log('ðŸ‘¥ Players in rally:', allPlayersInRally);
-      console.log('ðŸ”¤ Name variants:', uniqueVariants);
+      console.log('[COMMENTARY] hints query:', hintsQuery);
+      console.log(' Players in rally:', allPlayersInRally);
+      console.log(' Name variants:', uniqueVariants);
       
       const hintsEmbedding = await openai.embeddings.create({
         model: 'text-embedding-3-small',
@@ -682,12 +700,12 @@ if (!rally.touches || rally.touches.length === 0) {
         if (relevantHints.length > 0) {
           commentaryHintsContext = relevantHints.join('\n').substring(0, 600);
           console.log('[OK] Commentary hints found:', commentaryHintsContext.substring(0, 150) + '...');
-          console.log('ðŸ“Š Hints scores:', hintsResults.matches.map(m => m.score?.toFixed(3)));
+          console.log(' Hints scores:', hintsResults.matches.map(m => m.score?.toFixed(3)));
         } else {
-          console.log('âš ï¸ No relevant hints (all scores < 0.3)');
+          console.log(' No relevant hints (all scores < 0.3)');
         }
       } else {
-        console.log('[INFO]ï¸ No commentary hints found for this query');
+        console.log('[INFO] No commentary hints found for this query');
       }
     } catch (error) {
       console.error('âŒ Commentary hints error:', error);
@@ -708,7 +726,7 @@ if (!rally.touches || rally.touches.length === 0) {
       // Query with all player name variants
       const namingQuery = `${uniqueVariants.join(' ')} preferred name surname grammar declension`;
       
-      console.log('ðŸ“ Naming rules query:', namingQuery);
+      console.log(' Naming rules query:', namingQuery);
       
       const namingEmbedding = await openai.embeddings.create({
         model: 'text-embedding-3-small',
@@ -724,21 +742,22 @@ if (!rally.touches || rally.touches.length === 0) {
       
       if (namingResults.matches && namingResults.matches.length > 0) {
         const relevantRules = namingResults.matches
-          .filter(match => (match.score || 0) > 0.4) // Higher threshold for names
+          .filter(match => (match.score || 0) > 0.25) // Lower threshold - Mordo wants RAG to work! for names
           .map((match) => match.metadata?.rule || match.metadata?.text || '')
           .filter(Boolean);
           
         if (relevantRules.length > 0) {
           namingRulesContext = relevantRules.join('\n').substring(0, 500);
+          console.log('[DEBUG] Naming rules scores:', namingResults.matches.map(m => ({name: m.metadata?.text?.substring(0,30), score: m.score?.toFixed(3)})));
           console.log('[OK] Naming rules found:', namingRulesContext.substring(0, 100) + '...');
         }
       }
     } catch (error) {
-      console.log('[INFO]ï¸ Naming rules namespace not yet populated');
+      console.log('[INFO] Naming rules namespace not yet populated');
     }
 
     // ========================================================================
-    // COMMENTARY PHRASES (variacje zwrotÃ³w)
+    // COMMENTARY PHRASES (variacje zwrotów)
     // ========================================================================
 
     let commentaryPhrasesContext = '';
@@ -749,17 +768,17 @@ if (!rally.touches || rally.touches.length === 0) {
       let phrasesQuery = '';
       
       if (actionType.includes('ace') || actionType.includes('serve')) {
-        phrasesQuery = 'ace serwis zagrywka punktowy asowy doskonaÅ‚y perfekcyjny';
+        phrasesQuery = 'ace serwis zagrywka punktowy asowy doskonały perfekcyjny';
       } else if (actionType.includes('block') && !actionType.includes('error')) {
         phrasesQuery = 'blok skuteczny zatrzymuje muruje powstrzymuje obrona';
       } else if (actionType.includes('attack') || actionType.includes('kill')) {
-        phrasesQuery = 'atak koÅ„czy przebija potÄ™Å¼ny skuteczny spike';
+        phrasesQuery = 'atak koŁ„czy przebija potężny skuteczny spike';
       } else if (actionType.includes('dig')) {
-        phrasesQuery = 'obrona dig ratuje wyciÄ…ga odbija';
+        phrasesQuery = 'obrona dig ratuje wyciąga odbija';
       }
       
       if (phrasesQuery) {
-        console.log('ðŸ’¬ Commentary phrases query:', phrasesQuery);
+        console.log('[COMMENTARY] phrases query:', phrasesQuery);
         
         const phrasesEmbedding = await openai.embeddings.create({
           model: 'text-embedding-3-small',
@@ -779,17 +798,17 @@ if (!rally.touches || rally.touches.length === 0) {
             .filter(Boolean);
             
           if (phrases.length > 0) {
-            commentaryPhrasesContext = `VARIACJE ZWROTÃ“W (uÅ¼ywaj zamiennie):\n${phrases.join(' / ')}`;
+            commentaryPhrasesContext = `VARIACJE ZWROTW (uywaj zamiennie):\n${phrases.join(' / ')}`;
             console.log('[OK] Commentary phrases found:', phrases.length, 'variants');
           }
         }
       }
     } catch (error) {
-      console.log('[INFO]ï¸ Commentary phrases namespace not yet populated');
+      console.log('[INFO] Commentary phrases namespace not yet populated');
     }
 
     // ========================================================================
-    // SET SUMMARIES (wzorce podsumowaÅ„ setÃ³w/meczÃ³w)
+    // SET SUMMARIES (wzorce podsumowaŁ„ setów/meczów)
     // ========================================================================
 
     let setSummariesContext = '';
@@ -798,7 +817,7 @@ if (!rally.touches || rally.touches.length === 0) {
       // Query set-summaries for strategic insights
       const summaryQuery = `set strategy analysis key moments ${scoringPlayer} ${scoringAction}`;
       
-      console.log('ðŸ“ Set summaries query:', summaryQuery);
+      console.log(' Set summaries query:', summaryQuery);
       
       const summaryEmbedding = await openai.embeddings.create({
         model: 'text-embedding-3-small',
@@ -823,7 +842,7 @@ if (!rally.touches || rally.touches.length === 0) {
         }
       }
     } catch (error) {
-      console.log('[INFO]ï¸ Set summaries namespace not yet populated');
+      console.log('[INFO] Set summaries namespace not yet populated');
     }
 
     // ========================================================================
@@ -846,7 +865,7 @@ if (!rally.touches || rally.touches.length === 0) {
       
       const toneQuery = `${situationContext} temperature emotion energy tone`;
       
-      console.log('ðŸŒ¡ï¸ Tone rules query:', toneQuery);
+      console.log(' Tone rules query:', toneQuery);
       
       const toneEmbedding = await openai.embeddings.create({
         model: 'text-embedding-3-small',
@@ -871,7 +890,7 @@ if (!rally.touches || rally.touches.length === 0) {
         }
       }
     } catch (error) {
-      console.log('[INFO]ï¸ Tone rules namespace not yet populated');
+      console.log('[INFO] Tone rules namespace not yet populated');
     }
 
     // ========================================================================
@@ -879,7 +898,7 @@ if (!rally.touches || rally.touches.length === 0) {
     // ========================================================================
     
     const searchQuery = `${scoringPlayer} ${scoringAction} characteristics playing style`;
-    console.log('ðŸ” RAG query:', searchQuery);
+    console.log('[SEARCH] RAG query:', searchQuery);
 
     const embeddingResponse = await openai.embeddings.create({
       model: 'text-embedding-3-small',
@@ -895,7 +914,7 @@ if (!rally.touches || rally.touches.length === 0) {
       includeMetadata: true,
     });
 
-    console.log('ðŸ“Š RAG results:', searchResults.matches.length, 'matches');
+    console.log('[SEARCH] RAG results:', searchResults.matches.length, 'matches');
 
     let playerContext = '';
     if (searchResults.matches.length > 0) {
@@ -937,18 +956,18 @@ if (!rally.touches || rally.touches.length === 0) {
     let touchContext = '';
     if (rallyAnalysis) {
       const passQualityDescriptions: Record<string, string> = {
-        'perfect': 'perfekcyjne przyjÄ™cie âœ…',
-        'good': 'dobre przyjÄ™cie',
-        'average': 'niedokÅ‚adne przyjÄ™cie âš ï¸',
-        'negative': 'przyjÄ™cie daleko od siatki âš ï¸âš ï¸',
-        'error': 'bÅ‚Ä…d w przyjÄ™ciu âŒ ACE!'
+        'perfect': 'perfekcyjne przyjęcie [OK]',
+        'good': 'dobre przyjęcie',
+        'average': 'niedokładne przyjęcie âš ï¸',
+        'negative': 'przyjęcie daleko od siatki âš ï¸âš ï¸',
+        'error': 'błąd w przyjęciu âŒ ACE!'
       };
       
       const passDesc = passQualityDescriptions[rallyAnalysis.passQuality] || rallyAnalysis.passQuality;
       
       touchContext = `
 RALLY COMPLEXITY:
-- Touches: ${rallyAnalysis.numTouches} ${rallyAnalysis.isLongRally ? '(DÅUGA WYMIANA!)' : ''}
+- Touches: ${rallyAnalysis.numTouches} ${rallyAnalysis.isLongRally ? '(DŁUGA WYMIANA!)' : ''}
 - Drama score: ${rallyAnalysis.dramaScore.toFixed(1)}/5.0 ${rallyAnalysis.isDramatic ? 'âš¡ DRAMATIC!' : ''}
 - Pass quality: ${passDesc}
 
@@ -961,16 +980,16 @@ ${rallyAnalysis.attackerPlayer ? `- Attack: ${rallyAnalysis.attackerPlayer}` : '
     
     let situationContext = '';
     if (setEndInfo.isSetEnd) {
-      situationContext += `\nðŸ KONIEC SETA! To byÅ‚ OSTATNI PUNKT! Wynik koÅ„cowy: ${score}. ZwyciÄ™zca: ${setEndInfo.winner}. MUSISZ POWIEDZIEÄ† Å»E SET SIÄ˜ SKOÅƒCZYÅ!`;
+      situationContext += `\nðŸ KONIEC SETA! To był OSTATNI PUNKT! Wynik koŁ„cowy: ${score}. Zwycięzca: ${setEndInfo.winner}. MUSISZ POWIEDZIEÄ† Ł»E SET SIĘ SKOŁƒCZYŁ!`;
     }
     if (currentStreak >= 5) {
-      situationContext += `\nMOMENTUM: ${streakTeam} ma seriÄ™ ${currentStreak} punktÃ³w pod rzÄ…d!`;
+      situationContext += `\nMOMENTUM: ${streakTeam} ma serię ${currentStreak} punktów pod rząd!`;
     }
     if (milestone) {
       situationContext += `\nMILESTONE: To jest ${milestone} dla ${scoringPlayer}! WSPOMNIEJ O TYM!`;
     }
     if (isBigLead && !setEndInfo.isSetEnd) {
-      situationContext += `\nSYTUACJA: DuÅ¼a przewaga ${scoreDiff} punktÃ³w! ${leadingTeamName} prowadzi ${score}.`;
+      situationContext += `\nSYTUACJA: Duża przewaga ${scoreDiff} punktów! ${leadingTeamName} prowadzi ${score}.`;
     }
     
     let errorContext = '';
@@ -978,49 +997,56 @@ ${rallyAnalysis.attackerPlayer ? `- Attack: ${rallyAnalysis.attackerPlayer}` : '
       const attackerDeclined = declinePolishName(attackingPlayer, 'nominative');
       const blockerDeclined = declinePolishName(scoringPlayer, 'genitive');
       
-      errorContext = `\nBLOK ERROR - WAÅ»NE: ${attackerDeclined} (${attackingTeamName}) PRZEBIÅ BLOK ${blockerDeclined}!
-Skomentuj ATAK ${attackerDeclined}, nie bÅ‚Ä…d blokujÄ…cego!
-PrzykÅ‚ad: "${attackerDeclined} przebija blok ${blockerDeclined}! PotÄ™Å¼ny atak!"`;
+      errorContext = `\nBLOK ERROR - WAŁ»NE: ${attackerDeclined} (${attackingTeamName}) PRZEBIŁ BLOK ${blockerDeclined}!
+Skomentuj ATAK ${attackerDeclined}, nie błąd blokującego!
+Przykład: "${attackerDeclined} przebija blok ${blockerDeclined}! Potężny atak!"`;
     } else if (scoringAction.toLowerCase().includes('error')) {
-      errorContext = `\nUWAGA: To byÅ‚ BÅÄ„D zawodnika ${scoringPlayer}. Nie dramatyzuj - po prostu opisz bÅ‚Ä…d.`;
+      errorContext = `\nUWAGA: To był BŁĄD zawodnika ${scoringPlayer}. Nie dramatyzuj - po prostu opisz błąd.`;
     }
     
     let passInstructions = '';
     if (rallyAnalysis) {
       if (rallyAnalysis.passQuality === 'perfect') {
-        passInstructions = '\n- PrzyjÄ™cie byÅ‚o PERFEKCYJNE - wspomniej o Å‚atwoÅ›ci wykonania akcji!';
+        passInstructions = '\n- Przyjęcie było PERFEKCYJNE - wspomniej o łatwości wykonania akcji!';
       } else if (rallyAnalysis.passQuality === 'negative') {
-        passInstructions = '\n- PrzyjÄ™cie DALEKO OD SIATKI lub BARDZO TRUDNE - podkreÅ›l trudnoÅ›Ä‡ i walkÄ™ zespoÅ‚u! NIE mÃ³w "chaos"!';
+        passInstructions = '\n- Przyjęcie DALEKO OD SIATKI lub BARDZO TRUDNE - podkreśl trudność i walkę zespołu! NIE mów "chaos"!';
       } else if (rallyAnalysis.passQuality === 'average') {
-        passInstructions = '\n- PrzyjÄ™cie byÅ‚o NIEDOKÅADNE - trochÄ™ trudnoÅ›ci w akcji!';
+        passInstructions = '\n- Przyjęcie było NIEDOKŁADNE - trochę trudności w akcji!';
       }
       
       if (rallyAnalysis.isLongRally) {
-        passInstructions += `\n- To byÅ‚a DÅUGA wymiana (${rallyAnalysis.numTouches} dotkniÄ™Ä‡) - podkreÅ›l wysiÅ‚ek i dramatyzm!`;
+        passInstructions += `\n- To była DŁUGA wymiana (${rallyAnalysis.numTouches} dotknięć) - podkreśl wysiłek i dramatyzm!`;
       }
     }
     
     const commentaryPrompt = `
 AKCJA MECZOWA:
 Rally #${rally.rally_number}
-Zawodnik ktÃ³ry wykonaÅ‚ ostatniÄ… akcjÄ™: ${scoringPlayer} (${playerTeamName})
+Zawodnik który wykonał ostatnią akcję: ${scoringPlayer} (${playerTeamName})
 Akcja: ${scoringAction}
 Wynik po akcji: ${score}
-Punkt zdobyÅ‚a: ${rally.team_scored}
+Punkt zdobyła: ${rally.team_scored}
 PROWADZI: ${leadingTeamName}${touchContext}${situationContext}${errorContext}
 
-${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKÅADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `â­ USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `â­ NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `ðŸ’¬ VARIACJE ZWROTÃ“W:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `ï¿½ SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `ðŸŒ¡ï¸ TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
+${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? ` USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? ` NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? ` VARIACJE ZWROTW:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? ` SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? ` TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
 
 INSTRUKCJE:
-- ${setEndInfo.isSetEnd ? `ðŸ TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEÄ†! Wynik koÅ„cowy: ${score}. ZwyciÄ™zca: ${setEndInfo.winner}.` : isFirstPoint ? 'â­ PIERWSZY PUNKT! UÅ¼yj: "Dobry poczÄ…tek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KOÅƒCÃ“WKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkreÅ›l momentum!' : milestone ? 'MILESTONE - wspomniej liczbÄ™ punktÃ³w/blokÃ³w/asÃ³w!' : isBigLead ? 'DuÅ¼a przewaga - zauwaÅ¼ sytuacjÄ™' : isEarlySet ? 'PoczÄ…tek - spokojnie' : 'Åšrodek seta - rzeczowo'}
-- ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwaÅ‚ ATAKUJÄ„CEGO, nie bÅ‚Ä…d bloku! UÅ¼yj formy: "${attackingPlayer} przebija blok ${declinePolishName(scoringPlayer, 'genitive')}!"` : ''}
-- ${milestone ? `WAÅ»NE: Wspomniej Å¼e to ${milestone}!` : ''}${passInstructions}
+- ${setEndInfo.isSetEnd ? `ðŸ TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEÄ†! Wynik koŁ„cowy: ${score}. Zwycięzca: ${setEndInfo.winner}.` : isFirstPoint ? 'â­ PIERWSZY PUNKT! Użyj: "Dobry początek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KOŁƒCÃ“WKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkreśl momentum!' : milestone ? 'MILESTONE - wspomniej liczbę punktów/bloków/asów!' : isBigLead ? 'Duża przewaga - zauważ sytuację' : isEarlySet ? 'Początek - spokojnie' : 'Łšrodek seta - rzeczowo'}
+- ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwał ATAKUJĄCEGO, nie błąd bloku! Użyj formy: "${attackingPlayer} przebija blok ${declinePolishName(scoringPlayer, 'genitive')}!"` : ''}
+- ${milestone ? `WAŁ»NE: Wspomniej że to ${milestone}!` : ''}${passInstructions}
 - ${commentaryHintsContext ? 'â­ APPLY USER HINTS - they have PRIORITY over other context!' : ''}
 - Wynik ${score} - prowadzi ${leadingTeamName}
-- ${isFirstPoint ? 'NIE uÅ¼ywaj "zwiÄ™ksza/zmniejsza przewagÄ™" - to PIERWSZY punkt!' : 'NIE mÃ³w "prowadzÄ…c" jeÅ›li druÅ¼yna juÅ¼ prowadziÅ‚a - powiedz "zwiÄ™ksza/zmniejsza przewagÄ™"'}
-- UÅ¼ywaj POPRAWNEJ odmiany nazwisk (Leon â†’ Leona w dopeÅ‚niaczu)
+- ${isFirstPoint ? 'NIE używaj "zwiększa/zmniejsza przewagę" - to PIERWSZY punkt!' : 'NIE mów "prowadząc" jeśli drużyna już prowadziła - powiedz "zwiększa/zmniejsza przewagę"'}
+- Używaj POPRAWNEJ odmiany nazwisk (Leon â†’ Leona w dopełniaczu)
 - 1-2 zdania max, konkretnie i energicznie!
 `;
+
+    // CRITICAL: Check if naming rules were found
+    if (namingRulesContext) {
+      console.log('[SUCCESS] Naming rules will be sent to GPT:', namingRulesContext.substring(0, 150) + '...');
+    } else {
+      console.log('[WARN] No naming rules found - GPT will use default behavior');
+    }
 
     console.log('[COMMENTARY] Generating commentary...');
 
@@ -1054,31 +1080,8 @@ INSTRUKCJE:
     // STEP 9: GENERATE TAGS, MILESTONES, ICONS, SCORES
     // ========================================================================
     
-    // Determine icon based on action
-    let icon = 'ATTACK'; // default
-    const actionTypeLower = scoringAction.toLowerCase();
-
-    if (setEndInfo.isSetEnd) {
-      icon = 'SET_END';
-    } else if (actionTypeLower.includes('ace')) {
-      icon = 'ACE';
-    } else if (actionTypeLower.includes('block') && !actionTypeLower.includes('error')) {
-      icon = 'BLOCK';
-    } else if (actionTypeLower.includes('block') && actionTypeLower.includes('error')) {
-      icon = 'BROKEN_BLOCK';
-    } else if (actionTypeLower.includes('attack') || actionTypeLower.includes('kill')) {
-      icon = 'ATTACK';
-    } else if (actionTypeLower.includes('serve') && actionTypeLower.includes('error')) {
-      icon = 'SERVE_ERROR';
-    } else if (actionTypeLower.includes('dig') && actionTypeLower.includes('error')) {
-      icon = 'DIG_ERROR';
-    } else if (actionTypeLower.includes('pass') && actionTypeLower.includes('error')) {
-      icon = 'PASS_ERROR';
-    } else if (actionTypeLower.includes('error')) {
-      icon = 'ERROR';
-    } else if (rallyAnalysis?.passQuality === 'perfect') {
-      icon = 'PERFECT';
-    }
+    // Icon removed - not needed
+    const icon = '';
 
     // Generate tags
     const tags: string[] = [];
@@ -1097,7 +1100,7 @@ INSTRUKCJE:
       tags.push('#clutch');
     }
     if (rallyAnalysis?.isLongRally) {
-      tags.push('#dÅ‚uga_wymiana');
+      tags.push('#długa_wymiana');
     }
     if (milestone) {
       tags.push('#milestone');
@@ -1119,9 +1122,9 @@ INSTRUKCJE:
     const momentumScore = currentStreak >= 5 ? Math.min(currentStreak * 1.5, 10) : 0;
     const dramaScore = rallyAnalysis?.dramaScore || 0;
 
-    console.log('ðŸ·ï¸ Tags:', tags);
-    console.log('ðŸŽ¯ Milestones:', milestones);
-    console.log('ðŸ“Š Scores:', { momentum: momentumScore, drama: dramaScore });
+    console.log('[TAGS] Tags:', tags);
+    console.log('[TARGET] Milestones:', milestones);
+    console.log('[STATS] Scores:', { momentum: momentumScore, drama: dramaScore });
     console.log('[ICON] Icon:', icon);
 
     // ========================================================================
