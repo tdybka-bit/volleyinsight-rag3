@@ -419,7 +419,7 @@ if (!rally.touches || rally.touches.length === 0) {
     commentary: `Rally #${rally.rally_number} played`,
     tags: [],
     milestones: [],
-    icon: 'âš¡',
+    icon: 'ATTACK',
     momentumScore: 0,
     dramaScore: 0
   });
@@ -569,7 +569,7 @@ if (!rally.touches || rally.touches.length === 0) {
           dimensions: 768,
         });
         
-        const tacticsResults = await index.namespace('tactical-knowledge').query({
+        const tacticsResults = await index.namespace('tactics').query({
           vector: tacticsEmbedding.data[0].embedding,
           topK: 2,
           includeMetadata: true,
@@ -580,7 +580,7 @@ if (!rally.touches || rally.touches.length === 0) {
             .map((match) => match.metadata?.text || '')
             .join('\n\n')
             .substring(0, 400);
-          console.log('âœ… Tactics context:', tacticsContext.substring(0, 80) + '...');
+          console.log('[OK] Tactics context:', tacticsContext.substring(0, 80) + '...');
         }
       } catch (error) {
         console.error('âŒ Tactics error:', error);
@@ -615,7 +615,7 @@ if (!rally.touches || rally.touches.length === 0) {
           .filter(Boolean)
           .join('\n')
           .substring(0, 300);
-        console.log('âœ… Commentary examples found:', commentaryExamplesContext.substring(0, 80) + '...');
+        console.log('[OK] Commentary examples found:', commentaryExamplesContext.substring(0, 80) + '...');
       }
     } catch (error) {
       console.error('âŒ Commentary examples error:', error);
@@ -681,13 +681,13 @@ if (!rally.touches || rally.touches.length === 0) {
           
         if (relevantHints.length > 0) {
           commentaryHintsContext = relevantHints.join('\n').substring(0, 600);
-          console.log('âœ… Commentary hints found:', commentaryHintsContext.substring(0, 150) + '...');
+          console.log('[OK] Commentary hints found:', commentaryHintsContext.substring(0, 150) + '...');
           console.log('ðŸ“Š Hints scores:', hintsResults.matches.map(m => m.score?.toFixed(3)));
         } else {
           console.log('âš ï¸ No relevant hints (all scores < 0.3)');
         }
       } else {
-        console.log('â„¹ï¸ No commentary hints found for this query');
+        console.log('[INFO]ï¸ No commentary hints found for this query');
       }
     } catch (error) {
       console.error('âŒ Commentary hints error:', error);
@@ -730,11 +730,11 @@ if (!rally.touches || rally.touches.length === 0) {
           
         if (relevantRules.length > 0) {
           namingRulesContext = relevantRules.join('\n').substring(0, 500);
-          console.log('âœ… Naming rules found:', namingRulesContext.substring(0, 100) + '...');
+          console.log('[OK] Naming rules found:', namingRulesContext.substring(0, 100) + '...');
         }
       }
     } catch (error) {
-      console.log('â„¹ï¸ Naming rules namespace not yet populated');
+      console.log('[INFO]ï¸ Naming rules namespace not yet populated');
     }
 
     // ========================================================================
@@ -780,12 +780,12 @@ if (!rally.touches || rally.touches.length === 0) {
             
           if (phrases.length > 0) {
             commentaryPhrasesContext = `VARIACJE ZWROTÃ“W (uÅ¼ywaj zamiennie):\n${phrases.join(' / ')}`;
-            console.log('âœ… Commentary phrases found:', phrases.length, 'variants');
+            console.log('[OK] Commentary phrases found:', phrases.length, 'variants');
           }
         }
       }
     } catch (error) {
-      console.log('â„¹ï¸ Commentary phrases namespace not yet populated');
+      console.log('[INFO]ï¸ Commentary phrases namespace not yet populated');
     }
 
     // ========================================================================
@@ -819,11 +819,11 @@ if (!rally.touches || rally.touches.length === 0) {
           .join('\n\n');
           
         if (setSummariesContext) {
-          console.log('âœ… Set summaries found:', setSummariesContext.substring(0, 100) + '...');
+          console.log('[OK] Set summaries found:', setSummariesContext.substring(0, 100) + '...');
         }
       }
     } catch (error) {
-      console.log('â„¹ï¸ Set summaries namespace not yet populated');
+      console.log('[INFO]ï¸ Set summaries namespace not yet populated');
     }
 
     // ========================================================================
@@ -867,11 +867,11 @@ if (!rally.touches || rally.touches.length === 0) {
           
         if (toneRules.length > 0) {
           toneRulesContext = `TONE GUIDANCE:\n${toneRules.join('\n')}`;
-          console.log('âœ… Tone rules found:', toneRules.length, 'rules');
+          console.log('[OK] Tone rules found:', toneRules.length, 'rules');
         }
       }
     } catch (error) {
-      console.log('â„¹ï¸ Tone rules namespace not yet populated');
+      console.log('[INFO]ï¸ Tone rules namespace not yet populated');
     }
 
     // ========================================================================
@@ -889,7 +889,7 @@ if (!rally.touches || rally.touches.length === 0) {
 
     const queryEmbedding = embeddingResponse.data[0].embedding;
 
-    const searchResults = await index.namespace('player-profiles').query({
+    const searchResults = await index.namespace('__default__').query({
       vector: queryEmbedding,
       topK: 3,
       includeMetadata: true,
@@ -902,10 +902,28 @@ if (!rally.touches || rally.touches.length === 0) {
       playerContext = searchResults.matches
         .map((match) => match.metadata?.text || '')
         .join('\n\n');
-      console.log('âœ… Player context found:', playerContext.substring(0, 200) + '...');
+      console.log('[OK] Player context found:', playerContext.substring(0, 200) + '...');
     } else {
-      console.log('âš ï¸ No RAG context found for player');
+    } else {
+      console.log('[WARN] No RAG context in __default__, trying expert-knowledge...');
+      
+      // Fallback to expert-knowledge namespace
+      const expertResults = await index.namespace('expert-knowledge').query({
+        vector: queryEmbedding,
+        topK: 3,
+        includeMetadata: true,
+      });
+      
+      if (expertResults.matches.length > 0) {
+        playerContext = expertResults.matches
+          .map((match) => match.metadata?.text || '')
+          .join('\n\n');
+        console.log('[OK] Expert knowledge found:', playerContext.substring(0, 200) + '...');
+      } else {
+        console.log('[INFO] No context found in expert-knowledge either');
+      }
     }
+
 
     // ========================================================================
     // STEP 7: BUILD COMMENTARY PROMPT
@@ -1005,7 +1023,7 @@ INSTRUKCJE:
 - 1-2 zdania max, konkretnie i energicznie!
 `;
 
-    console.log('ðŸŽ¤ Generating commentary...');
+    console.log('[COMMENTARY] Generating commentary...');
 
     // ========================================================================
     // STEP 8: GENERATE COMMENTARY (NON-STREAMING)
@@ -1038,29 +1056,29 @@ INSTRUKCJE:
     // ========================================================================
     
     // Determine icon based on action
-    let icon = 'âš¡'; // default
+    let icon = 'ATTACK'; // default
     const actionTypeLower = scoringAction.toLowerCase();
 
     if (setEndInfo.isSetEnd) {
-      icon = 'ðŸ';
+      icon = 'SET_END';
     } else if (actionTypeLower.includes('ace')) {
-      icon = 'ðŸŽ¯';
+      icon = 'ACE';
     } else if (actionTypeLower.includes('block') && !actionTypeLower.includes('error')) {
-      icon = 'ðŸ›¡ï¸';
+      icon = 'BLOCK';
     } else if (actionTypeLower.includes('block') && actionTypeLower.includes('error')) {
-      icon = 'ðŸ”“'; // Broken block
+      icon = 'BROKEN_BLOCK';
     } else if (actionTypeLower.includes('attack') || actionTypeLower.includes('kill')) {
-      icon = 'âš¡';
+      icon = 'ATTACK';
     } else if (actionTypeLower.includes('serve') && actionTypeLower.includes('error')) {
-      icon = 'âš ï¸';
+      icon = 'SERVE_ERROR';
     } else if (actionTypeLower.includes('dig') && actionTypeLower.includes('error')) {
-      icon = 'ðŸ”„';
+      icon = 'DIG_ERROR';
     } else if (actionTypeLower.includes('pass') && actionTypeLower.includes('error')) {
-      icon = 'âš ï¸';
+      icon = 'PASS_ERROR';
     } else if (actionTypeLower.includes('error')) {
-      icon = 'âŒ';
+      icon = 'ERROR';
     } else if (rallyAnalysis?.passQuality === 'perfect') {
-      icon = 'ðŸ’ª';
+      icon = 'PERFECT';
     }
 
     // Generate tags
@@ -1105,7 +1123,7 @@ INSTRUKCJE:
     console.log('ðŸ·ï¸ Tags:', tags);
     console.log('ðŸŽ¯ Milestones:', milestones);
     console.log('ðŸ“Š Scores:', { momentum: momentumScore, drama: dramaScore });
-    console.log('ðŸŽ¨ Icon:', icon);
+    console.log('[ICON] Icon:', icon);
 
     // ========================================================================
     // STEP 10: RETURN JSON RESPONSE
@@ -1120,7 +1138,7 @@ INSTRUKCJE:
       dramaScore,
     }), {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
       },
     });
 
@@ -1137,7 +1155,7 @@ INSTRUKCJE:
     }), { 
       status: 500,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
       },
     });
   }
