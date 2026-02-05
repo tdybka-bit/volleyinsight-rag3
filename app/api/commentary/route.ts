@@ -904,7 +904,6 @@ if (!rally.touches || rally.touches.length === 0) {
         .join('\n\n');
       console.log('[OK] Player context found:', playerContext.substring(0, 200) + '...');
     } else {
-    } else {
       console.log('[WARN] No RAG context in __default__, trying expert-knowledge...');
       
       // Fallback to expert-knowledge namespace
