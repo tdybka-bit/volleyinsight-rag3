@@ -95,7 +95,7 @@ const TAG_COLORS: Record<string, { bg: string; text: string; border: string }> =
   '#comeback': { bg: 'bg-green-500/20', text: 'text-green-600', border: 'border-green-500' },
   '#milestone': { bg: 'bg-blue-500/20', text: 'text-blue-600', border: 'border-blue-500' },
   '#as': { bg: 'bg-red-600/20', text: 'text-red-700', border: 'border-red-600' },
-  '#dÃƒâ€¦Ã¢â‚¬Å¡uga_wymiana': { bg: 'bg-indigo-500/20', text: 'text-indigo-600', border: 'border-indigo-500' },
+  '#dluga_wymiana': { bg: 'bg-indigo-500/20', text: 'text-indigo-600', border: 'border-indigo-500' },
 };
 
 export default function LiveMatchCommentaryV3() {
@@ -138,7 +138,7 @@ export default function LiveMatchCommentaryV3() {
         throw new Error('Invalid NEW DataVolley format: missing instances array');
       }
       
-      console.log('Ã°Å¸â€œÅ  Parsing NEW DataVolley format...', {
+      console.log('Parsing NEW DataVolley format...', {
         totalInstances: instances.length
       });
       
@@ -150,7 +150,7 @@ export default function LiveMatchCommentaryV3() {
         }
       });
       
-      console.log('Ã°Å¸Å½Â¯ Found Rally markers:', rallyIndices.length);
+      console.log('Found Rally markers:', rallyIndices.length);
       
       // Track scores per set
       const setScores: Record<number, { home: number; away: number }> = {};
@@ -282,7 +282,6 @@ export default function LiveMatchCommentaryV3() {
             }
             
             if (action && playerName) {
-              // Clean player name: "Leon Venero, Wilfredo" Ã¢â€ â€™ "Leon Venero"
               const cleanPlayerName = playerName.includes(',') 
                 ? playerName.split(',')[0].trim() 
                 : playerName;
@@ -362,7 +361,7 @@ export default function LiveMatchCommentaryV3() {
         rallies.push(rally);
       }
       
-      console.log('âœ… NEW DataVolley parsed!', {
+      console.log('NEW DataVolley parsed!', {
         rallies: rallies.length,
         withTouches: rallies.filter((r: any) => r.touches.length > 0).length,
         avgTouches: (rallies.reduce((sum: number, r: any) => sum + r.touches.length, 0) / rallies.length).toFixed(1),
@@ -375,7 +374,7 @@ export default function LiveMatchCommentaryV3() {
     }
 
     /**
-     * NAPRAWIONY PARSER - LICZY PUNKTY zamiast czytaÄ‡ Game Score
+     * NAPRAWIONY PARSER - LICZY PUNKTY zamiast czytaÃ„â€¡ Game Score
      */
     function parseDataVolleyFormat(datavolleyData: any): any {
       const instances = datavolleyData.file?.ALL_INSTANCES?.instance;
@@ -384,7 +383,7 @@ export default function LiveMatchCommentaryV3() {
         throw new Error('Invalid DataVolley format: missing instances');
       }
       
-      console.log('ðŸ“ŠÂ  Parsing DataVolley format...', {
+      console.log('Parsing DataVolley format...', {
         totalInstances: instances.length
       });
       
@@ -536,7 +535,7 @@ export default function LiveMatchCommentaryV3() {
             }
             
             if (action && playerName) {
-              // Clean player name: "Leon Venero, Wilfredo" ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ "Leon Venero"
+              // Clean player name: "Leon Venero, Wilfredo" ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ "Leon Venero"
               const cleanPlayerName = playerName.includes(',') 
                 ? playerName.split(',')[0].trim() 
                 : playerName;
@@ -616,7 +615,7 @@ export default function LiveMatchCommentaryV3() {
         rallies.push(rally);
       }
       
-      console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ DataVolley parsed!', {
+      console.log('DataVolley parsed!', {
         rallies: rallies.length,
         withTimeouts: rallies.filter((r: any) => r.timeout).length,
         withSubs: rallies.filter((r: any) => r.substitutions).length,
@@ -639,7 +638,7 @@ export default function LiveMatchCommentaryV3() {
 
     const loadMatch = async () => {
       try {
-        console.log('ðŸ“¥ Loading match data (DataVolley format)...');
+        console.log('Loading match data (DataVolley format)...');
         
         const response = await fetch(`/data/matches/rallies/${selectedMatch}`);
         
@@ -649,31 +648,31 @@ export default function LiveMatchCommentaryV3() {
         
         const rawData = await response.json();
         
-        console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ RAW JSON loaded:', rawData);
+        console.log('RAW JSON loaded:', rawData);
         
         // Check if it's DataVolley format or simple format
         let data;
         if (rawData.instances && Array.isArray(rawData.instances)) {
-          console.log('Ã°Å¸â€Â¥ Detected NEW DataVolley format (instances) - parsing...');
+          console.log('Detected NEW DataVolley format (instances) - parsing...');
           data = parseNewDataVolleyFormat(rawData);
         } else if (rawData.file && rawData.file.ALL_INSTANCES) {
-          console.log('Ã°Å¸â€œâ€ž Detected OLD DataVolley format - parsing...');
+          console.log('Detected OLD DataVolley format - parsing...');
           data = parseDataVolleyFormat(rawData);
         } else if (rawData.rallies) {
-          console.log('âœ… Detected simple format - using directly');
+          console.log('Detected simple format - using directly');
           data = rawData;
         } else {
           throw new Error('Invalid data format: neither DataVolley nor simple format');
         }
         
-        console.log('ðŸ“ŠÂ  Rallies parsed:', data.rallies?.length);
+        console.log('Rallies parsed:', data.rallies?.length);
         
         // Validate data structure
         if (!data.rallies || !Array.isArray(data.rallies)) {
           throw new Error('Invalid data: rallies array missing after parsing');
         }
         
-        console.log('ðŸ‰ Match data validated!', {
+        console.log('Match data validated!', {
           rallies_count: data.rallies.length,
           first_rally: data.rallies[0],
           has_timeouts: data.rallies.filter((r: any) => r.timeout).length,
@@ -685,7 +684,7 @@ export default function LiveMatchCommentaryV3() {
         setRallies(data.rallies);
         
       } catch (error) {
-        console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Failed to load match data:', error);
+        console.error('âŒ Failed to load match data:', error);
       }
     };
 
@@ -703,7 +702,7 @@ export default function LiveMatchCommentaryV3() {
     
     setIsRetranslating(true);
     const currentLanguage = language;
-    console.log('ÃƒÂ°Ã…Â¸Ã…â€™Ã‚Â Re-translating', commentaries.length, 'commentaries to', currentLanguage);
+    console.log('Re-translating', commentaries.length, 'commentaries to', currentLanguage);
     
     // NEW: Use translation endpoint instead of full regeneration
     const translationPromises = commentaries.map(async (commentary) => {
@@ -744,20 +743,20 @@ export default function LiveMatchCommentaryV3() {
     
     setCommentaries(results);
     setIsRetranslating(false);
-    console.log('ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ Re-translation complete in parallel!');
+    console.log('Re-translation complete in parallel!');
   };
 
-  // Funkcja liczÄ…ca wyniki setÃ³w do aktualnego rally
+  // Funkcja liczÃ„â€¦ca wyniki setÃƒÂ³w do aktualnego rally
   const calculateSetResults = (upToRallyIndex: number) => {
     const setWins = { home: 0, away: 0 };
     const setScores: Record<number, { home: number; away: number }> = {};
     
-    // PrzejdÅº przez wszystkie rallies do aktualnego
+    // PrzejdÃ…Âº przez wszystkie rallies do aktualnego
     for (let i = 0; i <= upToRallyIndex && i < rallies.length; i++) {
       const rally = rallies[i];
       const setNum = rally.set_number;
       
-      // Inicjalizuj set jeÅ›li nie istnieje
+      // Inicjalizuj set jeÃ…â€ºli nie istnieje
       if (!setScores[setNum]) {
         setScores[setNum] = { home: 0, away: 0 };
       }
@@ -770,11 +769,11 @@ export default function LiveMatchCommentaryV3() {
       }
     }
     
-    // SprawdÅº ktÃ³re sety sÄ… zakoÅ„czone i kto wygraÅ‚
+    // SprawdÃ…Âº ktÃƒÂ³re sety sÃ„â€¦ zakoÃ…â€žczone i kto wygraÃ…â€š
     for (const setNum in setScores) {
       const score = setScores[setNum];
-      // Set zakoÅ„czony jeÅ›li ktoÅ› ma 25+ i rÃ³Å¼nica >= 2, albo ktoÅ› ma 30+
-      // LUB jeÅ›li to set 5 i ktoÅ› ma 15+ z rÃ³Å¼nicÄ… >= 2
+      // Set zakoÃ…â€žczony jeÃ…â€ºli ktoÃ…â€º ma 25+ i rÃƒÂ³Ã…Â¼nica >= 2, albo ktoÃ…â€º ma 30+
+      // LUB jeÃ…â€ºli to set 5 i ktoÃ…â€º ma 15+ z rÃƒÂ³Ã…Â¼nicÃ„â€¦ >= 2
       const isSet5 = parseInt(setNum) === 5;
       const winThreshold = isSet5 ? 15 : 25;
       const maxThreshold = isSet5 ? 999 : 30;
@@ -802,7 +801,7 @@ export default function LiveMatchCommentaryV3() {
       console.log('Generating commentary for rally #', rally.rally_number, 'in', targetLanguage);
       setIsGenerating(true);
       
-      // Funkcja liczÄ…ca wyniki setÃ³w do aktualnego rally
+      // Funkcja liczÃ„â€¦ca wyniki setÃƒÂ³w do aktualnego rally
 
       const updatedStats = calculatePlayerStats(rally);
       
@@ -819,12 +818,11 @@ export default function LiveMatchCommentaryV3() {
         commentary: data.commentary || '',
         tags: data.tags || [],
         milestones: data.milestones || [],
-        icon: data.icon || 'ðŸ',
-        momentumScore: data.momentumScore || 0,
+        icon: data.icon || '', momentumScore: data.momentumScore || 0,
         dramaScore: data.dramaScore || 0,
       };
     } catch (error) {
-      console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Commentary generation error:', error);
+      console.error('Commentary generation error:', error);
       setIsGenerating(false);
       
       const finalTouch = rally.touches[rally.touches.length - 1];
@@ -832,8 +830,7 @@ export default function LiveMatchCommentaryV3() {
         commentary: `${finalTouch.player}: ${finalTouch.action}`,
         tags: [],
         milestones: [],
-        icon: 'ðŸ',
-        momentumScore: 0,
+        icon: 'ðŸ', momentumScore: 0,
         dramaScore: 0,
       };
     }
@@ -841,7 +838,7 @@ export default function LiveMatchCommentaryV3() {
  
   const generateCommentary = async (rally: Rally) => {
     try {
-      console.log('ðŸ Generating commentary for rally #', rally.rally_number);
+      console.log('Generating commentary for rally #', rally.rally_number);
       setIsGenerating(true);
       
       const updatedStats = calculatePlayerStats(rally);
@@ -863,14 +860,13 @@ export default function LiveMatchCommentaryV3() {
       });
 
       setIsGenerating(false);
-      console.log('âœ… Commentary generated:', data);
+      console.log('Commentary generated:', data);
       
       return {
         commentary: data.commentary || '',
         tags: data.tags || [],
         milestones: data.milestones || [],
-        icon: data.icon || 'ðŸ',
-        momentumScore: data.momentumScore || 0,
+        icon: data.icon || '', momentumScore: data.momentumScore || 0,
         dramaScore: data.dramaScore || 0,
       };
     } catch (error) {
@@ -999,8 +995,7 @@ export default function LiveMatchCommentaryV3() {
 
     // Skip rallies without valid touches
     if (!finalTouch || !finalTouch.player || !finalTouch.action) {
-      console.warn(`ÃƒÂ¢Ã…Â¡Ã‚Â ÃƒÂ¯Ã‚Â¸Ã‚Â Rally #${rally.rally_number} missing valid touches, skipping`);
-      
+      console.warn(`Rally #${rally.rally_number} missing valid touches, skipping`);      
       // Skip to next rally instead of stopping completely
       if (currentRallyIndex < rallies.length - 1) {
         setCurrentRallyIndex(currentRallyIndex + 1);
@@ -1095,7 +1090,7 @@ export default function LiveMatchCommentaryV3() {
         <div className="p-6 border-b border-border bg-gradient-to-r from-blue-600/20 to-red-600/20">
            <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-4">
-              {/* SET INFO - DuÅ¼y i widoczny z wynikami setÃ³w */}
+              {/* SET INFO - DuÃ…Â¼y i widoczny z wynikami setÃƒÂ³w */}
               {currentRally && (() => {
                 const setResults = calculateSetResults(currentRallyIndex);
                 const hasCompletedSets = setResults.home > 0 || setResults.away > 0;
@@ -1124,7 +1119,7 @@ export default function LiveMatchCommentaryV3() {
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
                 <span className="text-sm font-semibold text-red-500">
-                  {mode === 'live' ? 'NA Ã…Â»YWO' : 'DEMO MODE'}
+                  {mode === 'live' ? 'NA ZYWO' : 'DEMO MODE'}
                 </span>
               </div>
             </div>
@@ -1251,7 +1246,7 @@ export default function LiveMatchCommentaryV3() {
             {isRetranslating && (
               <div className="flex items-center gap-2 text-blue-500 mt-4">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
-                <span className="font-medium">ÃƒÂ°Ã…Â¸Ã…â€™Ã‚Â Re-translating commentaries...</span>
+                <span className="font-medium">ðŸŒ Re-translating commentaries...</span>
               </div>
             )}
           </div>
@@ -1274,15 +1269,15 @@ export default function LiveMatchCommentaryV3() {
               }}
               className="w-full p-3 border-2 border-border rounded-lg bg-card text-foreground font-medium hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option value="2025-11-12_ZAW-LBN.json">ðŸ Zawiercie vs Lublin (12.11.2025)</option>
-              <option value="2025-11-26 PGE-Ind.json">ðŸ PGE Skra vs Indykpol (26.11.2025)</option>
-              <option value="2025-12-06 JSW-Ass.json">ðŸ JastrzÄ™bski vs Asseco (06.12.2025)</option>
+              <option value="2025-11-12_ZAW-LBN.json">Zawiercie vs Lublin (12.11.2025)</option>
+              <option value="2025-11-26 PGE-Ind.json">PGE Skra vs Indykpol (26.11.2025)</option>
+              <option value="2025-12-06 JSW-Ass.json">Jastrzebski vs Asseco (06.12.2025)</option>
             </select>
           </div>
 
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-muted-foreground">
-              ðŸ Przebieg meczu - AI Commentary
+              Przebieg meczu - AI Commentary
             </h2>
             <div className="text-sm text-muted-foreground">
               {commentaries.length} komentarzy
@@ -1295,11 +1290,11 @@ export default function LiveMatchCommentaryV3() {
             style={{ maxHeight: mode === 'demo' ? '500px' : '700px' }}
           >
             {commentaries.length === 0 ? (
-              <div className="text-center text-muted-foreground py-12 bg-muted/30 rounded-lg">
-                <div className="text-4xl mb-3">ðŸ</div>
+              <>
+                <div className="text-4xl mb-3">🏐</div>
                 <p className="font-medium">Press Play to start AI commentary...</p>
                 <p className="text-sm mt-2">Rally-by-rally analysis powered by GPT-4o-mini + RAG</p>
-              </div>
+              </>
             ) : (
               commentaries.map((commentary, index) => {
                 const rally = rallies.find(r => r.rally_number === commentary.rallyNumber);
@@ -1363,7 +1358,6 @@ export default function LiveMatchCommentaryV3() {
                             <div className="mb-2">
                               {commentary.milestones.map((milestone, idx) => (
                                 <div key={idx} className="flex items-center gap-2 text-xs font-semibold text-blue-600 bg-blue-500/10 px-2 py-1 rounded">
-                                  <span>ðŸ¯</span>
                                   <span>{milestone}</span>
                                 </div>
                               ))}
@@ -1372,7 +1366,7 @@ export default function LiveMatchCommentaryV3() {
                           
                           <div className="flex items-center justify-between">
                             <p className="text-xs text-muted-foreground">
-                              {commentary.player} • {commentary.action}
+                              {commentary.player} â€¢ {commentary.action}
                             </p>
                             <span className={`text-xs font-semibold px-2 py-1 rounded ${
                               commentary.team === 'Aluron' 
