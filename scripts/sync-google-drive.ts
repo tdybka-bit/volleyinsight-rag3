@@ -261,52 +261,67 @@ async function createEmbedding(text: string): Promise<number[]> {
  * Upload chunks to Pinecone
  */
 async function uploadToPinecone(
-  chunks: string[],
+  chunks: Array<{ text: string; index: number }>,
+  fileName: string,
+  fileId: string,
   namespace: string,
-  file: drive_v3.Schema$File
-): Promise<number> {
+  metadata?: Record<string, any>
+): Promise<void> {
   console.log(`   📤 Uploading ${chunks.length} chunks to Pinecone...`);
-  
+
+  const batchSize = 50;
   let uploadedCount = 0;
-  
-  for (let i = 0; i < chunks.length; i++) {
-    const chunk = chunks[i];
-    
+
+  for (let i = 0; i < chunks.length; i += batchSize) {
+    const batch = chunks.slice(i, i + batchSize);
+
+    const vectors = await Promise.all(
+      batch.map(async (chunk) => {
+        const embedding = await openai.embeddings.create({
+          model: 'text-embedding-3-small',
+          input: chunk.text,
+          dimensions: 768,
+        });
+
+        // SANITIZE FILENAME - fix polskie znaki!
+        const sanitizedFileName = fileName
+          .replace(/ą/g, 'a').replace(/ć/g, 'c').replace(/ę/g, 'e')
+          .replace(/ł/g, 'l').replace(/ń/g, 'n').replace(/ó/g, 'o')
+          .replace(/ś/g, 's').replace(/ź/g, 'z').replace(/ż/g, 'z')
+          .replace(/Ą/g, 'A').replace(/Ć/g, 'C').replace(/Ę/g, 'E')
+          .replace(/Ł/g, 'L').replace(/Ń/g, 'N').replace(/Ó/g, 'O')
+          .replace(/Ś/g, 'S').replace(/Ź/g, 'Z').replace(/Ż/g, 'Z')
+          .replace(/[^\x00-\x7F]/g, '')
+          .replace(/[^a-zA-Z0-9._-]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-+|-+$/g, '');
+
+        const vectorId = `${sanitizedFileName}-chunk-${chunk.index}-${Date.now()}`;
+
+        return {
+          id: vectorId,
+          values: embedding.data[0].embedding,
+          metadata: {
+            ...metadata,
+            text: chunk.text,
+            chunk_index: chunk.index,
+            file_id: fileId,
+            source: fileName,
+            created_at: new Date().toISOString(),
+            total_chunks: chunks.length,
+          },
+        };
+      })
+    );
+
     try {
-      // Create embedding
-      const embedding = await createEmbedding(chunk);
-      
-      // Generate ID
-      const vectorId = `${file.name}-chunk-${i}-${Date.now()}`;
-      
-      // Upload to Pinecone
-      await index.namespace(namespace).upsert([{
-        id: vectorId,
-        values: embedding,
-        metadata: {
-          content: chunk,
-          source: file.name || 'unknown',
-          file_id: file.id || '',
-          chunk_index: i,
-          total_chunks: chunks.length,
-          created_at: new Date().toISOString(),
-        }
-      }]);
-      
-      uploadedCount++;
-      
-      // Rate limiting
-      if (i < chunks.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-      
+      await index.namespace(namespace).upsert(vectors);
+      uploadedCount += batch.length;
+      console.log(`   ✅ Uploaded ${uploadedCount}/${chunks.length} chunks`);
     } catch (error) {
       console.error(`   ⚠️  Failed to upload chunk ${i}:`, error);
     }
   }
-  
-  console.log(`   ✅ Uploaded ${uploadedCount}/${chunks.length} chunks`);
-  return uploadedCount;
 }
 
 // ============================================================================

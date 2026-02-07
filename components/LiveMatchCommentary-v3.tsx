@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import InlineFeedback from './InlineFeedback';
+import { getIcon } from './IconMapper';
 import { loadDataVolleyMatch, type MatchData as DVMatchData } from '@/lib/datavolley-parser';
 
 const fetchWithUTF8 = async (url: string, options?: RequestInit) => {
@@ -78,22 +79,11 @@ const languages: { code: Language; flag: string; name: string }[] = [
   { code: 'en', name: 'English' },
   { code: 'it', name: 'Italiano' },
   { code: 'de', name: 'Deutsch' },
-  { code: 'tr', name: 'Türkçe' },
-  { code: 'es', name: 'Español' },
-  { code: 'pt', name: 'Português' },
-  { code: 'jp', name: '日本語' },
+  { code: 'tr', name: 'TÃ¼rkÃ§e' },
+  { code: 'es', name: 'EspaÃ±ol' },
+  { code: 'pt', name: 'PortuguÃªs' },
+  { code: 'jp', name: 'æ—¥æœ¬èªž' },
 ];
-
-// ============ DODAJ TO TUTAJ ⬇️ ============
-const EMOJI = {
-  VOLLEYBALL: String.fromCodePoint(0x1F3D0),
-  FIRE: String.fromCodePoint(0x1F525),
-  TARGET: String.fromCodePoint(0x1F3AF),
-  LIGHTNING: String.fromCodePoint(0x26A1),
-  CHART: String.fromCodePoint(0x1F4CA),
-  PARTY: String.fromCodePoint(0x1F389),
-};
-// ============ DO TUTAJ ⬆️ ==================
 
 // Tag color mapping
 const TAG_COLORS: Record<string, { bg: string; text: string; border: string }> = {
@@ -105,7 +95,7 @@ const TAG_COLORS: Record<string, { bg: string; text: string; border: string }> =
   '#comeback': { bg: 'bg-green-500/20', text: 'text-green-600', border: 'border-green-500' },
   '#milestone': { bg: 'bg-blue-500/20', text: 'text-blue-600', border: 'border-blue-500' },
   '#as': { bg: 'bg-red-600/20', text: 'text-red-700', border: 'border-red-600' },
-  '#długa_wymiana': { bg: 'bg-indigo-500/20', text: 'text-indigo-600', border: 'border-indigo-500' },
+  '#dÃƒâ€¦Ã¢â‚¬Å¡uga_wymiana': { bg: 'bg-indigo-500/20', text: 'text-indigo-600', border: 'border-indigo-500' },
 };
 
 export default function LiveMatchCommentaryV3() {
@@ -148,27 +138,10 @@ export default function LiveMatchCommentaryV3() {
         throw new Error('Invalid NEW DataVolley format: missing instances array');
       }
       
-      console.log('📊 Parsing NEW DataVolley format...', {
+      console.log('Ã°Å¸â€œÅ  Parsing NEW DataVolley format...', {
         totalInstances: instances.length
       });
-
-      // ✅ AUTO-DETECT TEAM CODES (works for any match)
-      const teamCodes = new Set<string>();
-      for (const inst of instances.slice(0, 200)) {
-        const code = inst.code || '';
-        if (code.includes(' ')) {
-          const prefix = code.split(' ')[0];
-          if (prefix.length === 3 && /^[A-Z]{3}$/.test(prefix)) {
-            teamCodes.add(prefix);
-          }
-        }
-      }
-
-      const teamCodesArray = Array.from(teamCodes).sort();
-      const [homeCode, awayCode] = teamCodesArray;
-
-      console.log(`✅ Detected teams: ${homeCode} (home) vs ${awayCode} (away)`);
-
+      
       // Find all Rally instances (they mark rally boundaries)
       const rallyIndices: number[] = [];
       instances.forEach((inst: any, idx: number) => {
@@ -222,7 +195,7 @@ export default function LiveMatchCommentaryV3() {
               events.substitutions.push({
                 player_out: playerOut,
                 player_in: playerIn,
-                team: code.startsWith(homeCode) ? 'home' : 'away'
+                team: code.startsWith('ZAW') ? 'home' : 'away'
               });
             }
             continue;
@@ -231,7 +204,7 @@ export default function LiveMatchCommentaryV3() {
           // Timeout
           if (code.includes('Timeout')) {
             events.timeout = {
-              team: code.startsWith(homeCode) ? 'home' : 'away',
+              team: code.startsWith('ZAW') ? 'home' : 'away',
               team_name: labels['Team Name'] || ''
             };
             continue;
@@ -240,7 +213,7 @@ export default function LiveMatchCommentaryV3() {
           // Video Challenge
           if (code.includes('Challenge') || code.includes('Video')) {
             events.challenge = {
-              team: code.startsWith(homeCode) ? 'home' : 'away',
+              team: code.startsWith('ZAW') ? 'home' : 'away',
               team_name: labels['Team Name'] || '',
               type: 'Video Verification'
             };
@@ -248,7 +221,7 @@ export default function LiveMatchCommentaryV3() {
           }
           
           // Regular actions
-          if (code.startsWith(homeCode + ' ') || code.startsWith(awayCode + ' ')) {
+          if (code.startsWith('ZAW ') || code.startsWith('LBN ')) {
             const teamPrefix = code.substring(0, 3);
             const actionType = code.substring(4);
             
@@ -259,7 +232,7 @@ export default function LiveMatchCommentaryV3() {
             
             const playerNameKey = `${teamPrefix} Player Name`;
             const playerName = labels[playerNameKey] || '';
-            const team = teamPrefix === homeCode ? 'home' : 'away';
+            const team = teamPrefix === 'ZAW' ? 'home' : 'away';
             
             // Map action
             let action = actionType;
@@ -333,10 +306,10 @@ export default function LiveMatchCommentaryV3() {
           const labels = inst.labels || {};
           if (labels['Rally Won'] === 'Won') {
             // Check if it's ZAW or LBN action
-            if (inst.code.startsWith(homeCode)) {
+            if (inst.code.startsWith('ZAW')) {
               team_scored = 'home';
               break;
-            } else if (inst.code.startsWith(awayCode)) {
+            } else if (inst.code.startsWith('LBN')) {
               team_scored = 'away';
               break;
             }
@@ -476,7 +449,7 @@ export default function LiveMatchCommentaryV3() {
               events.substitutions.push({
                 player_out: playerOut,
                 player_in: playerIn,
-                team: code.startsWith(homeCode) ? 'home' : 'away'
+                team: code.startsWith('ZAW') ? 'home' : 'away'
               });
             }
             continue;
@@ -485,7 +458,7 @@ export default function LiveMatchCommentaryV3() {
           // Timeout
           if (code.includes('Timeout')) {
             events.timeout = {
-              team: code.startsWith(homeCode) ? 'home' : 'away',
+              team: code.startsWith('ZAW') ? 'home' : 'away',
               team_name: labels['Team Name'] || ''
             };
             continue;
@@ -494,7 +467,7 @@ export default function LiveMatchCommentaryV3() {
           // Video Challenge
           if (code.includes('Challenge') || code.includes('Video')) {
             events.challenge = {
-              team: code.startsWith(homeCode) ? 'home' : 'away',
+              team: code.startsWith('ZAW') ? 'home' : 'away',
               team_name: labels['Team Name'] || '',
               type: 'Video Verification'
             };
@@ -502,7 +475,7 @@ export default function LiveMatchCommentaryV3() {
           }
           
           // Regular actions
-          if (code.startsWith(homeCode + ' ') || code.startsWith(awayCode + ' ')) {
+          if (code.startsWith('ZAW ') || code.startsWith('LBN ')) {
             const teamPrefix = code.substring(0, 3);
             const actionType = code.substring(4);
             
@@ -513,7 +486,7 @@ export default function LiveMatchCommentaryV3() {
             
             const playerNameKey = `${teamPrefix} Player Name`;
             const playerName = labels[playerNameKey] || '';
-            const team = teamPrefix === homeCode ? 'home' : 'away';
+            const team = teamPrefix === 'ZAW' ? 'home' : 'away';
             
             // Map action
             let action = actionType;
@@ -587,10 +560,10 @@ export default function LiveMatchCommentaryV3() {
           const labels = labelsToObject(inst.label);
           if (labels['Rally Won'] === 'Won') {
             // Check if it's ZAW or LBN action
-            if (inst.code.startsWith(homeCode)) {
+            if (inst.code.startsWith('ZAW')) {
               team_scored = 'home';
               break;
-            } else if (inst.code.startsWith(awayCode)) {
+            } else if (inst.code.startsWith('LBN')) {
               team_scored = 'away';
               break;
             }
@@ -1301,15 +1274,15 @@ export default function LiveMatchCommentaryV3() {
               }}
               className="w-full p-3 border-2 border-border rounded-lg bg-card text-foreground font-medium hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <option value="2025-11-12_ZAW-LBN.json">{String.fromCodePoint(0x1F3D0)} Zawiercie vs Lublin (12.11.2025)</option>
-              <option value="2025-11-26_PGE-Ind.json">{String.fromCodePoint(0x1F3D0)} PGE Skra vs Indykpol (26.11.2025)</option>
-              <option value="2025-12-06_JSW-Ass.json">{String.fromCodePoint(0x1F3D0)} Jastrzębski vs Asseco (06.12.2025)</option>
+              <option value="2025-11-12_ZAW-LBN.json">ðŸ Zawiercie vs Lublin (12.11.2025)</option>
+              <option value="2025-11-26 PGE-Ind.json">ðŸ PGE Skra vs Indykpol (26.11.2025)</option>
+              <option value="2025-12-06 JSW-Ass.json">ðŸ JastrzÄ™bski vs Asseco (06.12.2025)</option>
             </select>
           </div>
 
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-muted-foreground">
-             {String.fromCodePoint(0x1F3D0)} Przebieg meczu - AI Commentary
+              ðŸ Przebieg meczu - AI Commentary
             </h2>
             <div className="text-sm text-muted-foreground">
               {commentaries.length} komentarzy
@@ -1323,7 +1296,7 @@ export default function LiveMatchCommentaryV3() {
           >
             {commentaries.length === 0 ? (
               <div className="text-center text-muted-foreground py-12 bg-muted/30 rounded-lg">
-                <div className="text-4xl mb-3">{EMOJI.VOLLEYBALL}</div>
+                <div className="text-4xl mb-3">ðŸ</div>
                 <p className="font-medium">Press Play to start AI commentary...</p>
                 <p className="text-sm mt-2">Rally-by-rally analysis powered by GPT-4o-mini + RAG</p>
               </div>
@@ -1349,7 +1322,7 @@ export default function LiveMatchCommentaryV3() {
                       <div className="flex items-start space-x-3">
                         {/* NEW: Dynamic Icon */}
                         <div className="text-2xl">
-                          {commentary.icon}
+                          {getIcon(commentary.icon)}
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-1">
@@ -1399,7 +1372,7 @@ export default function LiveMatchCommentaryV3() {
                           
                           <div className="flex items-center justify-between">
                             <p className="text-xs text-muted-foreground">
-                              {commentary.player} â€¢ {commentary.action}
+                              {commentary.player} • {commentary.action}
                             </p>
                             <span className={`text-xs font-semibold px-2 py-1 rounded ${
                               commentary.team === 'Aluron' 
