@@ -5,6 +5,52 @@ import InlineFeedback from './InlineFeedback';
 import { getIcon } from './IconMapper';
 import { loadDataVolleyMatch, type MatchData as DVMatchData } from '@/lib/datavolley-parser';
 
+const TEAM_LOGOS: Record<string, string> = {
+  'Aluron': '/team-logos/aluron-logo.png',
+  'aluron': '/team-logos/aluron-logo.png',
+  'zaw': '/team-logos/aluron-logo.png',
+  'ZAW': '/team-logos/aluron-logo.png',
+  
+  'Bogdanka': '/team-logos/bogdanka-logo.png',
+  'bogdanka': '/team-logos/bogdanka-logo.png',
+  'lbn': '/team-logos/bogdanka-logo.png',
+  'LBN': '/team-logos/bogdanka-logo.png',
+  
+  'PGE': '/team-logos/belchatow-logo.png',
+  'pge': '/team-logos/belchatow-logo.png',
+  'Skra': '/team-logos/belchatow-logo.png',
+  
+  'IND': '/team-logos/olsztyn-logo.png',
+  'ind': '/team-logos/olsztyn-logo.png',
+  'Indykpol': '/team-logos/olsztyn-logo.png',
+  
+  'JSW': '/team-logos/jsw-logo.png',
+  'jsw': '/team-logos/jsw-logo.png',
+  'Jastrzębski': '/team-logos/jsw-logo.png',
+  
+  'ASS': '/team-logos/rzeszow-logo.png',
+  'ass': '/team-logos/rzeszow-logo.png',
+  'Asseco': '/team-logos/rzeszow-logo.png',
+};
+
+function getTeamLogo(teamName: string): string {
+  const lower = teamName?.toLowerCase() || '';
+  
+  // Try exact match (case-insensitive)
+  if (TEAM_LOGOS[lower]) return TEAM_LOGOS[lower];
+  if (TEAM_LOGOS[teamName]) return TEAM_LOGOS[teamName];
+  
+  // Try partial match
+  for (const [key, logo] of Object.entries(TEAM_LOGOS)) {
+    if (lower.includes(key.toLowerCase()) || key.toLowerCase().includes(lower)) {
+      return logo;
+    }
+  }
+  
+  console.warn('[LOGO] No match for:', teamName, 'trying fallback...');
+  return '/team-logos/aluron-logo.png';
+}
+
 const fetchWithUTF8 = async (url: string, options?: RequestInit) => {
   const response = await fetch(url, {
     ...options,
@@ -152,6 +198,24 @@ export default function LiveMatchCommentaryV3() {
       
       console.log('Found Rally markers:', rallyIndices.length);
       
+      // Detect team names from rotation labels
+      let homeTeamName = 'home';
+      let awayTeamName = 'away';
+
+      if (instances.length > 0) {
+        const firstRally = instances.find((inst: any) => inst.code === 'Rally');
+        if (firstRally && firstRally.labels) {
+          const labels = firstRally.labels;
+          const rotationKeys = Object.keys(labels).filter(k => k.includes('Rotation'));
+          if (rotationKeys.length >= 2) {
+            homeTeamName = rotationKeys[0].replace(' Rotation', '').toLowerCase();
+            awayTeamName = rotationKeys[1].replace(' Rotation', '').toLowerCase();
+          }
+        }
+      }
+
+      console.log('Detected teams:', { home: homeTeamName, away: awayTeamName });
+
       // Track scores per set
       const setScores: Record<number, { home: number; away: number }> = {};
       
@@ -221,9 +285,10 @@ export default function LiveMatchCommentaryV3() {
           }
           
           // Regular actions
-          if (code.startsWith('ZAW ') || code.startsWith('LBN ')) {
-            const teamPrefix = code.substring(0, 3);
-            const actionType = code.substring(4);
+          const actionMatch = code.match(/^([A-Z]{2,4})\s+(Serve|Attack|Set|Receive|Block|Dig|Freeball)/);
+          if (actionMatch) {
+            const teamPrefix = actionMatch[1];
+            const actionType = actionMatch[2];
             
             // Skip meta actions
             if (!['Serve', 'Attack', 'Set', 'Receive', 'Block', 'Dig', 'Freeball'].includes(actionType)) {
@@ -232,8 +297,11 @@ export default function LiveMatchCommentaryV3() {
             
             const playerNameKey = `${teamPrefix} Player Name`;
             const playerName = labels[playerNameKey] || '';
-            const team = teamPrefix === 'ZAW' ? 'home' : 'away';
-            
+            const isHome = labels[`${teamPrefix} Rotation`] !== undefined || 
+                          teamPrefix === 'ZAW' || 
+                          teamPrefix === 'PGE' || 
+                          teamPrefix === 'JSW';
+            const team = isHome ? 'home' : 'away';
             // Map action
             let action = actionType;
             const rallyWon = labels['Rally Won'];
@@ -304,12 +372,11 @@ export default function LiveMatchCommentaryV3() {
           
           const labels = inst.labels || {};
           if (labels['Rally Won'] === 'Won') {
-            // Check if it's ZAW or LBN action
-            if (inst.code.startsWith('ZAW')) {
-              team_scored = 'home';
-              break;
-            } else if (inst.code.startsWith('LBN')) {
-              team_scored = 'away';
+            const codeMatch = inst.code.match(/^([A-Z]{2,4})\s/);
+            if (codeMatch) {
+              const prefix = codeMatch[1];
+              const isHome = labels[`${prefix} Rotation`] !== undefined;
+              team_scored = isHome ? 'home' : 'away';
               break;
             }
           }
@@ -319,8 +386,8 @@ export default function LiveMatchCommentaryV3() {
         const score_before = {
           home: setScores[setNumber].home,
           away: setScores[setNumber].away,
-          aluron: setScores[setNumber].home,
-          bogdanka: setScores[setNumber].away
+          [homeTeamName]: setScores[setNumber].home,
+          [awayTeamName]: setScores[setNumber].away
         };
         
         // Update scores based on who won
@@ -334,8 +401,8 @@ export default function LiveMatchCommentaryV3() {
         const score_after = {
           home: setScores[setNumber].home,
           away: setScores[setNumber].away,
-          aluron: setScores[setNumber].home,
-          bogdanka: setScores[setNumber].away
+          [homeTeamName]: setScores[setNumber].home,
+          [awayTeamName]: setScores[setNumber].away
         };
         
         // Determine final_action
@@ -361,6 +428,12 @@ export default function LiveMatchCommentaryV3() {
         rallies.push(rally);
       }
       
+      // DEBUG - sprawdź pierwszy rally
+      if (rallies.length > 0) {
+        console.log('[SCORE-DEBUG] First rally score_after:', rallies[0].score_after);
+        console.log('[SCORE-DEBUG] Team names:', { homeTeamName, awayTeamName });
+      }
+
       console.log('NEW DataVolley parsed!', {
         rallies: rallies.length,
         withTouches: rallies.filter((r: any) => r.touches.length > 0).length,
@@ -370,7 +443,13 @@ export default function LiveMatchCommentaryV3() {
         withChallenges: rallies.filter((r: any) => r.challenge).length
       });
       
-      return { rallies };
+      return { 
+        rallies,
+        teams: {
+          home: homeTeamName,
+          away: awayTeamName
+        }
+      };
     }
 
     /**
@@ -571,11 +650,11 @@ export default function LiveMatchCommentaryV3() {
         
         // Get score BEFORE this rally
         const score_before = {
-          home: setScores[setNumber].home,
-          away: setScores[setNumber].away,
-          aluron: setScores[setNumber].home,
-          bogdanka: setScores[setNumber].away
-        };
+        home: setScores[setNumber].home,
+        away: setScores[setNumber].away,
+        [homeTeamName]: setScores[setNumber].home,
+        [awayTeamName]: setScores[setNumber].away
+      };
         
         // Update scores based on who won
         if (team_scored === 'home') {
@@ -588,8 +667,8 @@ export default function LiveMatchCommentaryV3() {
         const score_after = {
           home: setScores[setNumber].home,
           away: setScores[setNumber].away,
-          aluron: setScores[setNumber].home,
-          bogdanka: setScores[setNumber].away
+          [homeTeamName]: setScores[setNumber].home,
+          [awayTeamName]: setScores[setNumber].away
         };
         
         // Determine final_action
@@ -917,8 +996,8 @@ export default function LiveMatchCommentaryV3() {
       dramaScore *= 2.0;
     }
     
-    const scoreDiff = Math.abs(rally.score_after.aluron - rally.score_after.bogdanka);
-    if (rally.score_after.aluron >= 20 && rally.score_after.bogdanka >= 20) {
+    const scoreDiff = Math.abs(rally.score_after.home - rally.score_after.away);
+    if (rally.score_after.home >= 20 && rally.score_after.away >= 20) {
       dramaScore *= 2.0;
     } else if (scoreDiff >= 5) {
       dramaScore *= 1.3;
@@ -1081,11 +1160,46 @@ export default function LiveMatchCommentaryV3() {
 
   const progress = rallies.length > 0 ? (currentRallyIndex / rallies.length) * 100 : 0;
   const currentRally = rallies[currentRallyIndex];
-  const formatScore = (rally: Rally) => `${rally.score_after.aluron}:${rally.score_after.bogdanka}`;
+  const formatScore = (rally: Rally) => `${rally.score_after.home}:${rally.score_after.away}`;
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto">
+
+        {/* MATCH SELECTOR */}
+        <div className="sticky top-0 z-50 bg-background border-b-2 border-border shadow-md">
+          <div className="p-4 flex items-center gap-4">
+            <label className="text-base font-bold text-foreground whitespace-nowrap">
+              🏐 Wybierz mecz:
+            </label>
+            <select 
+              value={selectedMatch}
+              onChange={(e) => {
+                setSelectedMatch(e.target.value);
+                setCommentaries([]);
+                setCurrentRallyIndex(0);
+                setIsPlaying(false);
+              }}
+              className="flex-1 max-w-2xl px-4 py-3 text-base font-semibold bg-card text-foreground border-2 border-border rounded-lg hover:border-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary transition-all cursor-pointer"
+            >
+              <option value="2025-11-12_ZAW-LBN.json">
+                Aluron Zawiercie vs Bogdanka Lublin (12.11.2025)
+              </option>
+              <option value="2025-11-26_PGE-Ind.json">
+                PGE Skra Bełchatów vs Indykpol Olsztyn (26.11.2025)
+              </option>
+              <option value="2025-12-06_JSW-Ass.json">
+                Jastrzębski Węgiel vs Asseco Rzeszów (06.12.2025)
+              </option>
+            </select>
+            
+            <div className="flex items-center gap-2 px-3 py-2 bg-green-500/10 border border-green-500/20 rounded-lg">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-green-600 dark:text-green-400">Live</span>
+            </div>
+          </div>
+        </div>
+
         {/* Match Header */}
         <div className="p-6 border-b border-border bg-gradient-to-r from-blue-600/20 to-red-600/20">
            <div className="flex items-center justify-between mb-4">
@@ -1149,13 +1263,13 @@ export default function LiveMatchCommentaryV3() {
               <div className="text-center">
                 <div className="mb-2">
                   <img 
-                    src="/team-logos/aluron-logo.png" 
+                    src={getTeamLogo(matchData?.teams?.home || 'Aluron')}
                     alt="Aluron CMC Warta Zawiercie"
                     className="w-16 h-16 mx-auto object-contain"
                   />
                 </div>
                 <div className="text-sm font-medium mb-1">{matchData?.teams?.home}</div>
-                <div className="text-3xl font-bold">{currentRally.score_after.aluron}</div>
+                <div className="text-3xl font-bold">{currentRally.score_after.home}</div>
               </div>
 
               <div className="text-2xl font-bold text-muted-foreground">:</div>
@@ -1163,13 +1277,13 @@ export default function LiveMatchCommentaryV3() {
               <div className="text-center">
                 <div className="mb-2">
                   <img 
-                    src="/team-logos/bogdanka-logo.png" 
+                    src={getTeamLogo(matchData?.teams?.away || 'Bogdanka')}
                     alt="BOGDANKA LUK Lublin"
                     className="w-16 h-16 mx-auto object-contain"
                   />
                 </div>
                 <div className="text-sm font-medium mb-1">{matchData?.teams?.away}</div>
-                <div className="text-3xl font-bold">{currentRally.score_after.bogdanka}</div>
+                <div className="text-3xl font-bold">{currentRally.score_after.away}</div>
               </div>
             </div>
           )}
@@ -1254,28 +1368,7 @@ export default function LiveMatchCommentaryV3() {
 
         {/* Commentary Timeline */}
         <div className="p-6">
-          {/* Match Selection Dropdown */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-muted-foreground mb-2">
-              Wybierz mecz:
-            </label>
-            <select 
-              value={selectedMatch}
-              onChange={(e) => {
-                setSelectedMatch(e.target.value);
-                setCommentaries([]);
-                setCurrentRallyIndex(0);
-                setIsPlaying(false);
-              }}
-              className="w-full p-3 border-2 border-border rounded-lg bg-card text-foreground font-medium hover:border-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="2025-11-12_ZAW-LBN.json">Zawiercie vs Lublin (12.11.2025)</option>
-              <option value="2025-11-26 PGE-Ind.json">PGE Skra vs Indykpol (26.11.2025)</option>
-              <option value="2025-12-06 JSW-Ass.json">Jastrzebski vs Asseco (06.12.2025)</option>
-            </select>
-          </div>
-
-          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-muted-foreground">
               Przebieg meczu - AI Commentary
             </h2>
@@ -1298,7 +1391,7 @@ export default function LiveMatchCommentaryV3() {
             ) : (
               commentaries.map((commentary, index) => {
                 const rally = rallies.find(r => r.rally_number === commentary.rallyNumber);
-                const score = rally ? `${rally.score_after.aluron}:${rally.score_after.bogdanka}` : '';
+                const score = rally ? `${rally.score_after.home}:${rally.score_after.away}` : '';
                 
                 return (
                   <div key={index} className="flex gap-3 items-start">
@@ -1366,7 +1459,7 @@ export default function LiveMatchCommentaryV3() {
                           
                           <div className="flex items-center justify-between">
                             <p className="text-xs text-muted-foreground">
-                              {commentary.player} â€¢ {commentary.action}
+                              {commentary.player} • {commentary.action}
                             </p>
                             <span className={`text-xs font-semibold px-2 py-1 rounded ${
                               commentary.team === 'Aluron' 
@@ -1384,7 +1477,7 @@ export default function LiveMatchCommentaryV3() {
                         key={`feedback-${commentary.rallyNumber}`}
                         matchId={matchData?.match_id || '1104643'}
                         rallyNumber={commentary.rallyNumber}
-                        setNumber={rally?.score_after ? Math.ceil((rally.score_after.aluron + rally.score_after.bogdanka) / 25) : 1}
+                        setNumber={rally?.score_after ? Math.ceil((rally.score_after.home + rally.score_after.away) / 25) : 1}
                         commentary={commentary.text}
                       />
                     </div>

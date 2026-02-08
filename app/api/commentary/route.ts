@@ -106,14 +106,14 @@ function declinePolishName(name: string, caseType: 'nominative' | 'genitive' | '
 // ============================================================================
 
 function validateAndFixScore(
-  scoreBefore: { aluron: number; bogdanka: number },
-  scoreAfter: { aluron: number; bogdanka: number },
+  scoreBefore: { home: number; away: number },
+  scoreAfter: { home: number; away: number },
   teamScored: string,
   rallyNumber: number
-): { aluron: number; bogdanka: number; wasFixed: boolean } {
-  const totalBefore = scoreBefore.aluron + scoreBefore.bogdanka;
-  const totalAfter = scoreAfter.aluron + scoreAfter.bogdanka;
-  
+): { home: number; away: number; wasFixed: boolean } {
+  const totalBefore = scoreBefore.home + scoreBefore.away;
+  const totalAfter = scoreAfter.home + scoreAfter.away;
+
   if (totalAfter !== totalBefore + 1) {
     console.error(`❌ Rally #${rallyNumber} Score inconsistency!`, { 
       scoreBefore, 
@@ -125,10 +125,10 @@ function validateAndFixScore(
     });
     
     const fixed = { ...scoreBefore };
-    if (teamScored.toLowerCase().includes('aluron')) {
-      fixed.aluron += 1;
+    if (teamScored === 'home') {
+      fixed.home += 1;
     } else {
-      fixed.bogdanka += 1;
+      fixed.away += 1;
     }
     
     console.log(`✅ Rally #${rallyNumber} Fixed score:`, fixed);
@@ -400,8 +400,8 @@ export async function POST(request: NextRequest) {
     }
 
     const finalScore = {
-      aluron: validatedScore.aluron,
-      bogdanka: validatedScore.bogdanka
+      home: validatedScore.home || 0,
+      away: validatedScore.away || 0
     };
 
     // ========================================================================
@@ -487,7 +487,7 @@ if (!rally.touches || rally.touches.length === 0) {
     // STEP 4: SITUATION ANALYSIS
     // ========================================================================
     
-    const isHotSituation = finalScore.aluron >= 20 && finalScore.bogdanka >= 20 && !setEndInfo.isSetEnd;
+    const isHotSituation = finalScore.home >= 20 && finalScore.away >= 20 && !setEndInfo.isSetEnd;
     const isEarlySet = rally.rally_number <= 10;
     
     const currentPlayerStats = playerStats[scoringPlayer] || { blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0 };
@@ -524,14 +524,14 @@ if (!rally.touches || rally.touches.length === 0) {
       }
     }
     
-    const scoreDiff = Math.abs(finalScore.aluron - finalScore.bogdanka);
+    const scoreDiff = Math.abs(finalScore.home - finalScore.away);
     const isBigLead = scoreDiff >= 10;
-    const isFirstPoint = (finalScore.aluron === 1 && finalScore.bogdanka === 0) || 
-                         (finalScore.aluron === 0 && finalScore.bogdanka === 1);
-    const leadingTeam = finalScore.aluron > finalScore.bogdanka 
+    const isFirstPoint = (finalScore.home === 1 && finalScore.away === 0) || 
+                         (finalScore.home === 0 && finalScore.away === 1);
+    const leadingTeam = finalScore.home > finalScore.away 
       ? 'Aluron CMC Warta Zawiercie' 
       : 'BOGDANKA LUK Lublin';
-    const trailingTeam = finalScore.aluron < finalScore.bogdanka 
+    const trailingTeam = finalScore.home < finalScore.away 
       ? 'Aluron CMC Warta Zawiercie' 
       : 'BOGDANKA LUK Lublin';
 
@@ -539,7 +539,7 @@ if (!rally.touches || rally.touches.length === 0) {
       rally_number: rally.rally_number,
       player: scoringPlayer,
       action: scoringAction,
-      validated_score: `${finalScore.aluron}:${finalScore.bogdanka}`,
+      validated_score: `${finalScore.home}:${finalScore.away}`,
       is_set_end: setEndInfo.isSetEnd,
       set_winner: setEndInfo.winner,
       is_hot: isHotSituation,
@@ -937,12 +937,12 @@ if (!rally.touches || rally.touches.length === 0) {
     // STEP 7: BUILD COMMENTARY PROMPT
     // ========================================================================
     
-    const score = `${finalScore.aluron}:${finalScore.bogdanka}`;
-    
-    const aluronLeading = finalScore.aluron > finalScore.bogdanka;
-    const bogdankaLeading = finalScore.bogdanka > finalScore.aluron;
-    const leadingTeamName = aluronLeading ? 'Aluron CMC Warta Zawiercie' : bogdankaLeading ? 'BOGDANKA LUK Lublin' : 'remis';
-    
+    const score = `${finalScore.home}:${finalScore.away}`;
+
+    const homeLeading = finalScore.home > finalScore.away;
+    const awayLeading = finalScore.away > finalScore.home;
+    const leadingTeamName = homeLeading ? 'gospodarze' : awayLeading ? 'goście' : 'remis';
+
     let touchContext = '';
     if (rallyAnalysis) {
       const passQualityDescriptions: Record<string, string> = {
