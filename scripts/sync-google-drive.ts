@@ -391,14 +391,23 @@ async function processFile(
     console.log(`   ✅ Parsed: ${content.length} characters`);
     
     // Chunk content
-    const chunks = chunkContent(content);
-    console.log(`   ✂️  Split into ${chunks.length} chunks`);
+    const rawChunks = chunkContent(content);
+    console.log(`   ✂️  Split into ${rawChunks.length} chunks`);
+    
+    // Format chunks with index
+    const chunks = rawChunks.map((text, index) => ({ text, index }));
     
     // Upload to Pinecone
-    const uploaded = await uploadToPinecone(chunks, namespace, file);
+    await uploadToPinecone(
+      chunks,
+      fileName,
+      file.id!,
+      namespace,
+      { source: fileName }
+    );
     
     stats.processed++;
-    stats.totalChunks += uploaded;
+    stats.totalChunks += chunks.length;
     
     console.log(`   ✅ SUCCESS!`);
     
