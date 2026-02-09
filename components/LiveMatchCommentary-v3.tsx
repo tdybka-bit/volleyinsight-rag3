@@ -16,9 +16,9 @@ const TEAM_LOGOS: Record<string, string> = {
   'lbn': '/team-logos/bogdanka-logo.png',
   'LBN': '/team-logos/bogdanka-logo.png',
   
-  'PGE': '/team-logos/belchatow-logo.png',
-  'pge': '/team-logos/belchatow-logo.png',
-  'Skra': '/team-logos/belchatow-logo.png',
+  'PGE': '/team-logos/warszawa-logo.png',
+  'pge': '/team-logos/warszawa-logo.png',
+  'Projekt': '/team-logos/warszawa-logo.png',
   
   'IND': '/team-logos/olsztyn-logo.png',
   'ind': '/team-logos/olsztyn-logo.png',
@@ -214,7 +214,22 @@ export default function LiveMatchCommentaryV3() {
         }
       }
 
-      console.log('Detected teams:', { home: homeTeamName, away: awayTeamName });
+      // Detect home/away PREFIX from Team labels (e.g. PGE=Home, IND=Away)
+      let homePrefix = '';
+      let awayPrefix = '';
+      for (const inst of instances) {
+        const labels = inst.labels || {};
+        if (labels['Team'] === 'Home' && !homePrefix) {
+          const m = inst.code.match(/^([A-Z]{2,4})\s/);
+          if (m) homePrefix = m[1];
+        } else if (labels['Team'] === 'Away' && !awayPrefix) {
+          const m = inst.code.match(/^([A-Z]{2,4})\s/);
+          if (m) awayPrefix = m[1];
+        }
+        if (homePrefix && awayPrefix) break;
+      }
+
+      console.log('Detected teams:', { home: homeTeamName, away: awayTeamName, homePrefix, awayPrefix });
 
       // Track scores per set
       const setScores: Record<number, { home: number; away: number }> = {};
@@ -297,10 +312,8 @@ export default function LiveMatchCommentaryV3() {
             
             const playerNameKey = `${teamPrefix} Player Name`;
             const playerName = labels[playerNameKey] || '';
-            const isHome = labels[`${teamPrefix} Rotation`] !== undefined || 
-                          teamPrefix === 'ZAW' || 
-                          teamPrefix === 'PGE' || 
-                          teamPrefix === 'JSW';
+            const isHome = teamPrefix === homePrefix;
+
             const team = isHome ? 'home' : 'away';
             // Map action
             let action = actionType;
@@ -375,7 +388,7 @@ export default function LiveMatchCommentaryV3() {
             const codeMatch = inst.code.match(/^([A-Z]{2,4})\s/);
             if (codeMatch) {
               const prefix = codeMatch[1];
-              const isHome = labels[`${prefix} Rotation`] !== undefined;
+              const isHome = prefix === homePrefix;
               team_scored = isHome ? 'home' : 'away';
               break;
             }
@@ -1186,7 +1199,8 @@ export default function LiveMatchCommentaryV3() {
                 Aluron Zawiercie vs Bogdanka Lublin (12.11.2025)
               </option>
               <option value="2025-11-26_PGE-Ind.json">
-                PGE Skra Bełchatów vs Indykpol Olsztyn (26.11.2025)
+                PGE Projekt Warszawa vs Indykpol Olsztyn (26.11.2025)
+
               </option>
               <option value="2025-12-06_JSW-Ass.json">
                 Jastrzębski Węgiel vs Asseco Rzeszów (06.12.2025)
