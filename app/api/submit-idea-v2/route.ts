@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import OpenAI from 'openai';
 import { Pinecone } from '@pinecone-database/pinecone';
-import { Redis } from '@upstash/redis';
+import Redis from 'ioredis';
 
 // Initialize clients
 const openai = new OpenAI({
