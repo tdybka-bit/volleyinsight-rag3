@@ -578,11 +578,25 @@ if (!rally.touches || rally.touches.length === 0) {
           dimensions: 768,
         });
         
-        const tacticsResults = await index.namespace('tactics').query({
-          vector: tacticsEmbedding.data[0].embedding,
-          topK: 2,
-          includeMetadata: true,
-        });
+        const [tacticsResults1, tacticsResults2] = await Promise.all([
+          index.namespace('tactics').query({
+            vector: tacticsEmbedding.data[0].embedding,
+            topK: 2,
+            includeMetadata: true,
+          }),
+          index.namespace('tactical-knowledge').query({
+            vector: tacticsEmbedding.data[0].embedding,
+            topK: 2,
+            includeMetadata: true,
+          }),
+        ]);
+
+        const tacticsResults = {
+          matches: [
+            ...(tacticsResults1.matches || []),
+            ...(tacticsResults2.matches || []),
+          ].sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 3),
+        };
         
         if (tacticsResults.matches && tacticsResults.matches.length > 0) {
           tacticsContext = tacticsResults.matches
@@ -1104,24 +1118,17 @@ INSTRUKCJE:
     if (setEndInfo.isSetEnd) {
       tags.push('#koniec_seta');
     }
-    if (currentStreak >= 5) {
-      tags.push('#momentum');
+    if (currentStreak >= 4) {
       tags.push('#seria');
     }
-    if (rallyAnalysis?.isDramatic) {
+    if (rallyAnalysis?.isDramatic || isHotSituation) {
       tags.push('#drama');
     }
-    if (isHotSituation) {
-      tags.push('#clutch');
-    }
     if (rallyAnalysis?.isLongRally) {
-      tags.push('#dÅ‚uga_wymiana');
+      tags.push('#dluga_wymiana');
     }
     if (milestone) {
       tags.push('#milestone');
-    }
-    if (actionTypeLower.includes('ace')) {
-      tags.push('#as');
     }
     if (scoreDiff >= 5 && rally.team_scored === trailingTeam) {
       tags.push('#comeback');
@@ -1134,13 +1141,13 @@ INSTRUKCJE:
     }
 
     // Momentum and drama scores
-    const momentumScore = currentStreak >= 5 ? Math.min(currentStreak * 1.5, 10) : 0;
+    const momentumScore = currentStreak >= 4 ? Math.min(currentStreak * 1.5, 10) : 0;
     const dramaScore = rallyAnalysis?.dramaScore || 0;
 
-    console.log('ðŸ·ï¸ Tags:', tags);
-    console.log('ðŸŽ¯ Milestones:', milestones);
-    console.log('ðŸ“Š Scores:', { momentum: momentumScore, drama: dramaScore });
-    console.log('ðŸŽ¨ Icon:', icon);
+    console.log('Tags:', tags);
+    console.log('Milestones:', milestones);
+    console.log('Scores:', { momentum: momentumScore, drama: dramaScore });
+    console.log('Icon:', icon);
 
     // ========================================================================
     // STEP 10: RETURN JSON RESPONSE

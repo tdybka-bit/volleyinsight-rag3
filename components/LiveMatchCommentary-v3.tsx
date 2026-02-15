@@ -131,17 +131,15 @@ const languages: { code: Language; flag: string; name: string }[] = [
   { code: 'jp', name: 'æ—¥æœ¬èªž' },
 ];
 
-// Tag color mapping
-const TAG_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  '#koniec_seta': { bg: 'bg-amber-500/20', text: 'text-amber-600', border: 'border-amber-500' },
-  '#momentum': { bg: 'bg-orange-500/20', text: 'text-orange-600', border: 'border-orange-500' },
-  '#seria': { bg: 'bg-red-500/20', text: 'text-red-600', border: 'border-red-500' },
-  '#drama': { bg: 'bg-purple-500/20', text: 'text-purple-600', border: 'border-purple-500' },
-  '#clutch': { bg: 'bg-pink-500/20', text: 'text-pink-600', border: 'border-pink-500' },
-  '#comeback': { bg: 'bg-green-500/20', text: 'text-green-600', border: 'border-green-500' },
-  '#milestone': { bg: 'bg-blue-500/20', text: 'text-blue-600', border: 'border-blue-500' },
-  '#as': { bg: 'bg-red-600/20', text: 'text-red-700', border: 'border-red-600' },
-  '#dluga_wymiana': { bg: 'bg-indigo-500/20', text: 'text-indigo-600', border: 'border-indigo-500' },
+// Unified yellow tags — readable on dark backgrounds
+const TAG_LABELS: Record<string, string> = {
+  '#seria': '#seria',
+  '#comeback': '#comeback',
+  '#drama': '#drama',
+  '#dluga_wymiana': '#dluga wymiana',
+  '#milestone': '#milestone',
+  '#debiut': '#debiut',
+  '#zmiana': '#zmiana',
 };
 
 export default function LiveMatchCommentaryV3() {
@@ -157,7 +155,8 @@ export default function LiveMatchCommentaryV3() {
   const commentaryRef = useRef<HTMLDivElement>(null);
   const [isRetranslating, setIsRetranslating] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState('2025-11-12_ZAW-LBN.json');
-  
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
   const [playerStats, setPlayerStats] = useState<Record<string, {
     blocks: number;
     aces: number;
@@ -1386,8 +1385,17 @@ export default function LiveMatchCommentaryV3() {
             <h2 className="text-sm font-semibold text-muted-foreground">
               Przebieg meczu - AI Commentary
             </h2>
-            <div className="text-sm text-muted-foreground">
-              {commentaries.length} komentarzy
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground">
+                {commentaries.length} komentarzy
+              </span>
+              <button
+                onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                className="px-3 py-1 text-xs font-semibold rounded-lg border border-border bg-card text-muted-foreground hover:bg-accent transition-all"
+              >
+                {sortOrder === 'desc' ? 'Chronologicznie' : 'Najnowsze na gorze'}
+
+              </button>
             </div>
           </div>
 
@@ -1403,7 +1411,7 @@ export default function LiveMatchCommentaryV3() {
                 <p className="text-sm mt-2">Rally-by-rally analysis powered by GPT-4o-mini + RAG</p>
               </>
             ) : (
-              commentaries.map((commentary, index) => {
+                (sortOrder === 'desc' ? [...commentaries].reverse() : commentaries).map((commentary, index) => {
                 const rally = rallies.find(r => r.rally_number === commentary.rallyNumber);
                 const score = rally ? `${rally.score_after.home}:${rally.score_after.away}` : '';
                 
@@ -1439,21 +1447,17 @@ export default function LiveMatchCommentaryV3() {
                             {commentary.text}
                           </p>
                           
-                          {/* NEW: Tags Display */}
+                          {/* Tags Display - yellow, readable */}
                           {commentary.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1.5 mb-2">
                               {commentary.tags.map((tag, idx) => {
-                                const tagStyle = TAG_COLORS[tag] || { 
-                                  bg: 'bg-gray-500/20', 
-                                  text: 'text-gray-600', 
-                                  border: 'border-gray-500' 
-                                };
+                                const label = TAG_LABELS[tag] || tag;
                                 return (
                                   <span
                                     key={idx}
-                                    className={`text-xs font-semibold px-2 py-1 rounded border ${tagStyle.bg} ${tagStyle.text} ${tagStyle.border}`}
+                                    className="text-xs font-bold px-2.5 py-1 rounded-md border cursor-pointer bg-yellow-400 text-yellow-950 border-yellow-500 hover:shadow-md hover:scale-105 transition-all"
                                   >
-                                    {tag}
+                                    {label}
                                   </span>
                                 );
                               })}
