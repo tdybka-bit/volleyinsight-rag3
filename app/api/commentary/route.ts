@@ -505,8 +505,8 @@ if (!rally.touches || rally.touches.length === 0) {
     let currentStreak = 0;
     let streakTeam = '';
     
-    if (recentRallies.length >= 5) {
-      const lastFive = recentRallies.slice(-5);
+    if (recentRallies.length >= 4) {
+      const lastFive = recentRallies.slice(-4);
       const lastTeam = lastFive[lastFive.length - 1]?.team_scored;
       
       let streak = 0;
@@ -518,7 +518,7 @@ if (!rally.touches || rally.touches.length === 0) {
         }
       }
       
-      if (streak >= 5) {
+      if (streak >= 4) {
         currentStreak = streak;
         streakTeam = lastTeam;
       }
@@ -1022,7 +1022,18 @@ PrzykÅ‚ad: "${attackerDeclined} przebija blok ${blockerDeclined}! PotÄ™Å�
         passInstructions += `\n- To byÅ‚a DÅUGA wymiana (${rallyAnalysis.numTouches} dotkniÄ™Ä‡) - podkreÅ›l wysiÅ‚ek i dramatyzm!`;
       }
     }
-    
+     // Build substitution context for GPT
+    let substitutionContext = '';
+    if (rally.substitutions && rally.substitutions.length > 0) {
+      const subDescriptions = rally.substitutions.map((sub: any) => {
+        const teamLabel = sub.team_name || (sub.team === 'home' ? 'Gospodarze' : 'Goscie');
+        const situationHint = sub.score_status === 'Up' ? 'prowadzac' : sub.score_status === 'Down' ? 'przegrywajac' : '';
+        const diffHint = sub.score_diff ? ` ${sub.score_diff} pkt` : '';
+        return `${teamLabel}: ${sub.player_out} schodzi, ${sub.player_in} wchodzi${situationHint ? ` (${situationHint}${diffHint})` : ''}`;
+      });
+      substitutionContext = `\nZMIANY W TYM RALLY:\n${subDescriptions.join('\n')}\n`;
+    }
+
     const commentaryPrompt = `
 AKCJA MECZOWA:
 Rally #${rally.rally_number}
@@ -1030,7 +1041,7 @@ Zawodnik ktÃ³ry wykonaÅ‚ ostatniÄ… akcjÄ™: ${scoringPlayer} (${player
 Akcja: ${scoringAction}
 Wynik po akcji: ${score}
 Punkt zdobyÅ‚a: ${rally.team_scored}
-PROWADZI: ${leadingTeamName}${touchContext}${situationContext}${errorContext}
+PROWADZI: ${leadingTeamName}${touchContext}${situationContext}${errorContext}${substitutionContext}
 
 ${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKÅADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `â­ USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `📋 NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `ðŸ’¬ VARIACJE ZWROTÃ“W:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `ï¿½ SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `ðŸŒ¡ï¸ TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
 
@@ -1042,8 +1053,8 @@ INSTRUKCJE:
 - Wynik ${score} - prowadzi ${leadingTeamName}
 - ${isFirstPoint ? 'NIE uÅ¼ywaj "zwiÄ™ksza/zmniejsza przewagÄ™" - to PIERWSZY punkt!' : 'NIE mÃ³w "prowadzÄ…c" jeÅ›li druÅ¼yna juÅ¼ prowadziÅ‚a - powiedz "zwiÄ™ksza/zmniejsza przewagÄ™"'}
 - UÅ¼ywaj POPRAWNEJ odmiany nazwisk (Leon â†’ Leona w dopeÅ‚niaczu)
-- 1-2 zdania max, konkretnie i energicznie!
-`;
+- ${rally.substitutions?.length ? 'ZMIANA! Wplec ja naturalnie w komentarz - kto za kogo wchodzi, co to moze oznaczac (reakcja trenera, swieze sily, zmiana taktyki). To wazna informacja narracyjna!' : ''}
+- 1-3 zdania max, konkretnie i energicznie!`;
 
     
     // DEBUG: Check if naming rules are in prompt
@@ -1077,7 +1088,7 @@ INSTRUKCJE:
         { role: 'user', content: commentaryPrompt },
       ],
       temperature: setEndInfo.isSetEnd ? 0.95 : isHotSituation ? 0.9 : currentStreak >= 5 ? 0.85 : isBigLead ? 0.8 : 0.7,
-      max_tokens: 150,
+      max_tokens: 200,
     });
 
     const commentary = completion.choices[0].message.content || '';
@@ -1112,26 +1123,61 @@ INSTRUKCJE:
       icon = 'MUSCLE';
     }
 
-    // Generate tags
+    // Generate tags + tagData for pop-ups
     const tags: string[] = [];
+    const tagData: Record<string, any> = {};
 
-    if (setEndInfo.isSetEnd) {
-      tags.push('#koniec_seta');
-    }
     if (currentStreak >= 4) {
       tags.push('#seria');
+      tagData['#seria'] = {
+        team: streakTeam,
+        length: currentStreak,
+        score: `${finalScore.home}:${finalScore.away}`,
+      };
     }
     if (rallyAnalysis?.isDramatic || isHotSituation) {
       tags.push('#drama');
+      tagData['#drama'] = {
+        score: `${finalScore.home}:${finalScore.away}`,
+        dramaScore: rallyAnalysis?.dramaScore || 0,
+        isHot: isHotSituation,
+      };
     }
     if (rallyAnalysis?.isLongRally) {
       tags.push('#dluga_wymiana');
+      tagData['#dluga_wymiana'] = {
+        numTouches: rallyAnalysis.numTouches,
+      };
     }
     if (milestone) {
       tags.push('#milestone');
+      tagData['#milestone'] = {
+        player: scoringPlayer,
+        achievement: milestone,
+      };
     }
     if (scoreDiff >= 5 && rally.team_scored === trailingTeam) {
       tags.push('#comeback');
+      tagData['#comeback'] = {
+        team: trailingTeam,
+        scoreDiff: scoreDiff,
+        score: `${finalScore.home}:${finalScore.away}`,
+      };
+    }
+    if (rally.substitutions && rally.substitutions.length > 0) {
+      tags.push('#zmiana');
+    }
+
+    // Substitution tag
+    if (rally.substitutions && rally.substitutions.length > 0) {
+      tags.push('#zmiana');
+      tagData['#zmiana'] = {
+        subs: rally.substitutions.map((s: any) => ({
+          playerOut: s.player_out,
+          playerIn: s.player_in,
+          team: s.team,
+        })),
+      };
     }
 
     // Generate milestone messages
@@ -1145,9 +1191,7 @@ INSTRUKCJE:
     const dramaScore = rallyAnalysis?.dramaScore || 0;
 
     console.log('Tags:', tags);
-    console.log('Milestones:', milestones);
-    console.log('Scores:', { momentum: momentumScore, drama: dramaScore });
-    console.log('Icon:', icon);
+    console.log('TagData:', JSON.stringify(tagData));
 
     // ========================================================================
     // STEP 10: RETURN JSON RESPONSE
@@ -1156,6 +1200,7 @@ INSTRUKCJE:
     return new Response(JSON.stringify({
       commentary,
       tags,
+      tagData,
       milestones,
       icon,
       momentumScore,

@@ -115,6 +115,7 @@ interface CommentaryEntry {
   icon: string;
   momentumScore: number;
   dramaScore: number;
+  tagData: Record<string, any>;
 }
 
 type Language = 'pl' | 'en' | 'it' | 'de' | 'tr' | 'es' | 'pt' | 'jp';
@@ -156,6 +157,9 @@ export default function LiveMatchCommentaryV3() {
   const [isRetranslating, setIsRetranslating] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState('2025-11-12_ZAW-LBN.json');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [openTagPopup, setOpenTagPopup] = useState<string | null>(null);
+  const [favPlayer, setFavPlayer] = useState<string | null>(null);
+  const [openFavPopup, setOpenFavPopup] = useState<number | null>(null);
 
   const [playerStats, setPlayerStats] = useState<Record<string, {
     blocks: number;
@@ -164,6 +168,17 @@ export default function LiveMatchCommentaryV3() {
     errors: number;
     points: number;
   }>>({});
+  
+  // Build unique player list from rallies, grouped by team
+  const playersByTeam = rallies.reduce((acc, rally) => {
+    rally.touches.forEach(t => {
+      if (t.player && t.team) {
+        if (!acc[t.team]) acc[t.team] = new Set<string>();
+        acc[t.team].add(t.player);
+      }
+    });
+    return acc;
+  }, {} as Record<string, Set<string>>);
 
   // Load match data on mount
   // Load match data on mount
@@ -265,15 +280,19 @@ export default function LiveMatchCommentaryV3() {
           
           if (code === 'Rally') continue;
           
-          // Substitution
-          if (code === 'ZAW Substitution' || code === 'LBN Substitution') {
-            const playerOut = labels['Player OUT'] || '';
-            const playerIn = labels['Player IN'] || '';
-            if (playerOut && playerIn) {
+          // Substitution - with context for GPT commentary
+          if (code.includes('Substitution')) {
+            const teamCode = code.split(' ')[0]; // ZAW, LBN, PGE, etc.
+            const playerNames = labels[`${teamCode} Player Name`] || labels['Player Name'] || [];
+            if (Array.isArray(playerNames) && playerNames.length >= 2) {
+              const cleanName = (n: string) => n.split(',').reverse().map(s => s.trim()).join(' ');
               events.substitutions.push({
-                player_out: playerOut,
-                player_in: playerIn,
-                team: code.startsWith('ZAW') ? 'home' : 'away'
+                player_out: cleanName(playerNames[0]),
+                player_in: cleanName(playerNames[1]),
+                team: labels['Team'] === 'Home' ? 'home' : 'away',
+                team_name: labels['Team Name'] || '',
+                score_diff: labels['Score Difference'] || '',
+                score_status: labels['Score Status'] || ''
               });
             }
             continue;
@@ -531,15 +550,19 @@ export default function LiveMatchCommentaryV3() {
           
           if (code === 'Rally') continue;
           
-          // Substitution
-          if (code === 'ZAW Substitution' || code === 'LBN Substitution') {
-            const playerOut = labels['Player OUT'] || '';
-            const playerIn = labels['Player IN'] || '';
-            if (playerOut && playerIn) {
+          // Substitution - with context for GPT commentary
+          if (code.includes('Substitution')) {
+            const teamCode = code.split(' ')[0]; // ZAW, LBN, PGE, etc.
+            const playerNames = labels[`${teamCode} Player Name`] || labels['Player Name'] || [];
+            if (Array.isArray(playerNames) && playerNames.length >= 2) {
+              const cleanName = (n: string) => n.split(',').reverse().map(s => s.trim()).join(' ');
               events.substitutions.push({
-                player_out: playerOut,
-                player_in: playerIn,
-                team: code.startsWith('ZAW') ? 'home' : 'away'
+                player_out: cleanName(playerNames[0]),
+                player_in: cleanName(playerNames[1]),
+                team: labels['Team'] === 'Home' ? 'home' : 'away',
+                team_name: labels['Team Name'] || '',
+                score_diff: labels['Score Difference'] || '',
+                score_status: labels['Score Status'] || ''
               });
             }
             continue;
@@ -908,6 +931,7 @@ export default function LiveMatchCommentaryV3() {
       return {
         commentary: data.commentary || '',
         tags: data.tags || [],
+        tagData: data.tagData || {},
         milestones: data.milestones || [],
         icon: data.icon || '', momentumScore: data.momentumScore || 0,
         dramaScore: data.dramaScore || 0,
@@ -920,6 +944,7 @@ export default function LiveMatchCommentaryV3() {
       return {
         commentary: `${finalTouch.player}: ${finalTouch.action}`,
         tags: [],
+        tagData: {},
         milestones: [],
         icon: 'ðŸ', momentumScore: 0,
         dramaScore: 0,
@@ -956,6 +981,7 @@ export default function LiveMatchCommentaryV3() {
       return {
         commentary: data.commentary || '',
         tags: data.tags || [],
+        tagData: data.tagData || {},
         milestones: data.milestones || [],
         icon: data.icon || '', momentumScore: data.momentumScore || 0,
         dramaScore: data.dramaScore || 0,
@@ -1107,6 +1133,7 @@ export default function LiveMatchCommentaryV3() {
       type: getActionType(finalTouch.action),
       // NEW FIELDS
       tags: result.tags,
+      tagData: result.tagData || {},
       milestones: result.milestones,
       icon: result.icon,
       momentumScore: result.momentumScore,
@@ -1389,6 +1416,20 @@ export default function LiveMatchCommentaryV3() {
               <span className="text-sm text-muted-foreground">
                 {commentaries.length} komentarzy
               </span>
+              <select
+                value={favPlayer || ''}
+                onChange={e => { setFavPlayer(e.target.value || null); setOpenFavPopup(null); }}
+                className="px-2 py-1 text-xs rounded-lg border border-yellow-500 bg-yellow-400 text-yellow-950 font-semibold cursor-pointer"
+              >
+                <option value="">-- Ulubiony zawodnik --</option>
+                {Object.entries(playersByTeam).map(([team, players]) => (
+                  <optgroup key={team} label={team}>
+                    {Array.from(players).sort().map(p => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
               <button
                 onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
                 className="px-3 py-1 text-xs font-semibold rounded-lg border border-border bg-card text-muted-foreground hover:bg-accent transition-all"
@@ -1447,23 +1488,125 @@ export default function LiveMatchCommentaryV3() {
                             {commentary.text}
                           </p>
                           
-                          {/* Tags Display - yellow, readable */}
+                          {/* Tags Display - yellow, clickable with pop-ups */}
                           {commentary.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1.5 mb-2">
                               {commentary.tags.map((tag, idx) => {
                                 const label = TAG_LABELS[tag] || tag;
+                                const data = commentary.tagData?.[tag];
+                                const popupId = `${commentary.rallyNumber}-${tag}`;
+                                const isOpen = openTagPopup === popupId;
                                 return (
-                                  <span
-                                    key={idx}
-                                    className="text-xs font-bold px-2.5 py-1 rounded-md border cursor-pointer bg-yellow-400 text-yellow-950 border-yellow-500 hover:shadow-md hover:scale-105 transition-all"
-                                  >
-                                    {label}
-                                  </span>
+                                  <div key={idx} className="relative">
+                                    <button
+                                      onClick={() => setOpenTagPopup(isOpen ? null : popupId)}
+                                      className="text-xs font-bold px-2.5 py-1 rounded-md border cursor-pointer bg-yellow-400 text-yellow-950 border-yellow-500 hover:shadow-md hover:scale-105 transition-all"
+                                    >
+                                      {label}
+                                    </button>
+                                    {isOpen && data && (
+                                      <div className="absolute bottom-full left-0 mb-2 z-50 bg-slate-800 border border-slate-600 rounded-lg p-3 min-w-[250px] max-w-[350px] shadow-xl">
+                                        <div className="flex justify-between items-center mb-2">
+                                          <span className="text-sm font-bold text-white">{label}</span>
+                                          <button onClick={() => setOpenTagPopup(null)} className="text-slate-400 hover:text-white text-sm">x</button>
+                                        </div>
+                                        <div className="text-xs text-slate-300 space-y-1">
+                                          {tag === '#seria' && (
+                                            <>
+                                              <p>{data.team} - seria {data.length} punktow z rzedu</p>
+                                              <p>Wynik: {data.score}</p>
+                                            </>
+                                          )}
+                                          {tag === '#comeback' && (
+                                            <>
+                                              <p>{data.team} odrabia straty!</p>
+                                              <p>Roznica: {data.scoreDiff} pkt | Wynik: {data.score}</p>
+                                            </>
+                                          )}
+                                          {tag === '#drama' && (
+                                            <>
+                                              <p>Drama score: {data.dramaScore?.toFixed(1)}/5.0</p>
+                                              {data.isHot && <p>Koncowka seta - kazdy punkt na wage zlota!</p>}
+                                            </>
+                                          )}
+                                          {tag === '#dluga_wymiana' && (
+                                            <p>{data.numTouches} dotkniec pilki w tej wymianie!</p>
+                                          )}
+                                          {tag === '#milestone' && (
+                                            <>
+                                              <p>{data.player}</p>
+                                              <p>{data.achievement}</p>
+                                            </>
+                                          )}
+                                          {tag === '#zmiana' && data.subs && (
+                                            <>
+                                              {data.subs.map((s: any, i: number) => (
+                                                <p key={i}>{s.playerIn} wchodzi za {s.playerOut}</p>
+                                              ))}
+                                            </>
+                                          )}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
                                 );
                               })}
                             </div>
                           )}
                           
+                          {/* Favorite player tag */}
+                          {favPlayer && rally && rally.touches.some(t => t.player === favPlayer) && (() => {
+                            const isOpen = openFavPopup === commentary.rallyNumber;
+                            const stats = playerStats[favPlayer] || { blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0 };
+                            const touchesInRally = rally.touches.filter(t => t.player === favPlayer);
+                            return (
+                              <div className="mb-2 relative inline-block">
+                                <button
+                                  onClick={() => setOpenFavPopup(isOpen ? null : commentary.rallyNumber)}
+                                  className="text-xs font-bold px-2.5 py-1 rounded-md border cursor-pointer border-yellow-500 hover:shadow-lg hover:scale-105 transition-all"
+                                  style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#1a1400' }}
+                                >
+                                  * {favPlayer}
+                                </button>
+                                {isOpen && (
+                                  <div className="absolute bottom-full left-0 mb-2 z-50 border border-yellow-700 rounded-lg p-3 min-w-[280px] shadow-xl" style={{ background: 'linear-gradient(135deg, #2a1f00, #1a1400)' }}>
+                                    <div className="flex justify-between items-center mb-2">
+                                      <span className="text-sm font-bold text-yellow-400">* {favPlayer} - Live Stats</span>
+                                      <button onClick={() => setOpenFavPopup(null)} className="text-slate-400 hover:text-white text-sm">x</button>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-2 mb-2">
+                                      <div className="bg-white/5 rounded p-2 text-center">
+                                        <div className="text-lg font-bold text-yellow-400">{stats.points}</div>
+                                        <div className="text-[10px] text-slate-400 uppercase">Punkty</div>
+                                      </div>
+                                      <div className="bg-white/5 rounded p-2 text-center">
+                                        <div className="text-lg font-bold text-blue-400">{stats.attacks}</div>
+                                        <div className="text-[10px] text-slate-400 uppercase">Ataki</div>
+                                      </div>
+                                      <div className="bg-white/5 rounded p-2 text-center">
+                                        <div className="text-lg font-bold text-green-400">{stats.aces}</div>
+                                        <div className="text-[10px] text-slate-400 uppercase">Asy</div>
+                                      </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      <div className="bg-white/5 rounded p-2 text-center">
+                                        <div className="text-sm font-bold text-slate-200">{stats.blocks}</div>
+                                        <div className="text-[10px] text-slate-400 uppercase">Bloki</div>
+                                      </div>
+                                      <div className="bg-white/5 rounded p-2 text-center">
+                                        <div className="text-sm font-bold text-red-400">{stats.errors}</div>
+                                        <div className="text-[10px] text-slate-400 uppercase">Bledy</div>
+                                      </div>
+                                    </div>
+                                    <div className="mt-2 text-[10px] text-slate-500">
+                                      W tym rally: {touchesInRally.map(t => t.action).join(', ')}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })()}
+
                           {/* NEW: Milestones Display */}
                           {commentary.milestones.length > 0 && (
                             <div className="mb-2">
