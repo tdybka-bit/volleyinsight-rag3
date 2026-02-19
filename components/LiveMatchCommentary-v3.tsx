@@ -1630,7 +1630,7 @@ export default function LiveMatchCommentaryV3() {
  
  <div className="flex items-center justify-between">
  <p className="text-xs text-muted-foreground">
- {commentary.player} ac {commentary.action}
+ {commentary.player} {"\u2022"} {commentary.action}
  </p>
  <span className={`text-xs font-semibold px-2 py-1 rounded ${
  commentary.team === 'Aluron' 

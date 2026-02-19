@@ -22,6 +22,16 @@ const polishNameDeclensions: Record<string, Record<string, string>> = {
  genitive: 'Leona',
  accusative: 'Leona'
  },
+ 'Leon Venero': { 
+ nominative: 'Venero Leon',
+ genitive: 'Venero Leona',
+ accusative: 'Venero Leona'
+ },
+ 'Tavares Rodrigues': { 
+ nominative: 'Tavares',
+ genitive: 'Tavaresa',
+ accusative: 'Tavaresa'
+ },
  'Boladz': {
  nominative: 'Boladz',
  genitive: 'Boladzia', 
@@ -115,7 +125,7 @@ function validateAndFixScore(
  const totalAfter = scoreAfter.home + scoreAfter.away;
 
  if (totalAfter !== totalBefore + 1) {
- console.error(`aOE Rally #${rallyNumber} Score inconsistency!`, { 
+ console.error(`Rally #${rallyNumber} Score inconsistency!`, { 
  scoreBefore, 
  scoreAfter, 
  teamScored,
@@ -131,7 +141,7 @@ function validateAndFixScore(
  fixed.away += 1;
  }
  
- console.log(`aoe... Rally #${rallyNumber} Fixed score:`, fixed);
+ console.log(`Rally #${rallyNumber} Fixed score:`, fixed);
  return { ...fixed, wasFixed: true };
  }
  
@@ -454,6 +464,13 @@ if (!rally.touches || rally.touches.length === 0) {
  // Get final action info
  const finalTouch = rally.touches[rally.touches.length - 1];
  let scoringPlayer = finalTouch?.player || '';
+    
+    // Map double surnames to preferred display names
+    const preferredDisplayNames: Record<string, string> = {
+      'Leon Venero': 'Venero Leon',
+      'Tavares Rodrigues': 'Tavares',
+    };
+    const displayScoringPlayer = preferredDisplayNames[scoringPlayer] || scoringPlayer;
  let scoringAction = finalTouch?.action || '';
  let playerTeam = finalTouch?.team || '';
 
@@ -510,11 +527,16 @@ if (!rally.touches || rally.touches.length === 0) {
  let milestone = '';
  
  const actionLower = scoringAction.toLowerCase();
- if (actionLower.includes('block') && currentPlayerStats.blocks >= 5) {
+ // Milestone only at SPECIFIC round numbers to avoid spam
+ const blockMilestones = [3, 5, 7, 10];
+ const aceMilestones = [2, 3, 5];
+ const pointMilestones = [10, 15, 20, 25, 30];
+ 
+ if (actionLower.includes('block') && blockMilestones.includes(currentPlayerStats.blocks)) {
  milestone = `${currentPlayerStats.blocks}. blok w secie`;
- } else if (actionLower.includes('ace') && currentPlayerStats.aces >= 3) {
+ } else if (actionLower.includes('ace') && aceMilestones.includes(currentPlayerStats.aces)) {
  milestone = `${currentPlayerStats.aces}. as serwisowy w secie`;
- } else if (currentPlayerStats.points >= 10) {
+ } else if (pointMilestones.includes(currentPlayerStats.points)) {
  milestone = `${currentPlayerStats.points}. punkt w secie`;
  }
  
@@ -754,6 +776,24 @@ if (!rally.touches || rally.touches.length === 0) {
  // ========================================================================
 
  let namingRulesContext = '';
+    
+    // Generate fallback naming context from hardcoded declensions
+    const getFallbackNamingContext = (player: string): string => {
+      // Preferred display names (parser output -> commentary name)
+      const preferredNames: Record<string, string> = {
+        'Leon Venero': 'Venero Leon',
+        'Tavares Rodrigues': 'Tavares',
+      };
+      
+      const displayName = preferredNames[player] || player;
+      const shortName = player.split(' ')[0]; // Try first part too
+      const declensions = polishNameDeclensions[player] || polishNameDeclensions[displayName] || polishNameDeclensions[shortName];
+      
+      if (declensions) {
+        return `NAMING: ${player} -> uzywaj "${declensions.nominative}" (mianownik), "${declensions.genitive}" (dopelniacz), "${declensions.accusative}" (biernik). ${preferredNames[player] ? `PREFEROWANE: "${preferredNames[player]}" zamiast "${player}"` : ''}`;
+      }
+      return '';
+    };
 
  try {
  // Query with all player name variants
@@ -794,6 +834,15 @@ if (!rally.touches || rally.touches.length === 0) {
  } catch (error) {
  console.log('Naming rules namespace not yet populated');
  }
+
+    // Fallback: if no RAG naming rules found, use hardcoded declensions
+    if (!namingRulesContext && scoringPlayer) {
+      const fallback = getFallbackNamingContext(scoringPlayer);
+      if (fallback) {
+        namingRulesContext = fallback;
+        console.log('[NAMING-FALLBACK] Using hardcoded declensions for', scoringPlayer);
+      }
+    }
 
  // ========================================================================
  // COMMENTARY PHRASES (variacje zwrotow)
@@ -1087,7 +1136,7 @@ Przyklad: "${attackerDeclined} przebija blok ${blockerDeclined}! Potezny atak!"`
  const commentaryPrompt = `
 AKCJA MECZOWA:
 Rally #${rally.rally_number}
-Zawodnik ktory wykonal ostatnia akcje: ${scoringPlayer} (${playerTeamName})
+Zawodnik ktory wykonal ostatnia akcje: ${displayScoringPlayer} (${playerTeamName})
 Akcja: ${scoringAction}
 Wynik po akcji: ${score}
 Punkt zdobyla: ${rally.team_scored}
@@ -1111,10 +1160,10 @@ INSTRUKCJE:
  
  // DEBUG: Check if naming rules are in prompt
  if (namingRulesContext) {
- console.log('[NAMING-IN-PROMPT] aoe... Naming rules WILL BE SENT to GPT:');
+ console.log('[NAMING-IN-PROMPT] Naming rules WILL BE SENT to GPT:');
  console.log('[NAMING-IN-PROMPT] Content:', namingRulesContext.substring(0, 200) + '...');
  } else {
- console.log('[NAMING-IN-PROMPT] aOE NO naming rules in this prompt!');
+ console.log('[NAMING-IN-PROMPT] NO naming rules in this prompt!');
  }
  
  console.log('Adeg,1/2A* Generating commentary...');
