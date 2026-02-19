@@ -512,6 +512,9 @@ if (!rally.touches || rally.touches.length === 0) {
  'aluron': 'Aluron CMC Warta Zawiercie',
  'bogdanka': 'BOGDANKA LUK Lublin'
  };
+ const homeTeamFull = teamNames['aluron'] || 'Gospodarze';
+ const awayTeamFull = teamNames['bogdanka'] || 'Goscie';
+ const teamByRole = (role: string) => role === 'home' ? homeTeamFull : awayTeamFull;
 
  const playerTeamName = teamNames[playerTeam.toLowerCase()] || rally.team_scored;
  const attackingTeamName = attackingTeam ? teamNames[attackingTeam.toLowerCase()] : '';
@@ -1265,12 +1268,67 @@ INSTRUKCJE:
  console.log('Icon:', icon);
 
  // ========================================================================
- // STEP 10: RETURN JSON RESPONSE
+ // STEP 10: BUILD TAG DATA FOR POPUPS
+ // ========================================================================
+
+ const tagData: Record<string, any> = {};
+ 
+ if (tags.includes('#seria')) {
+   tagData['#seria'] = {
+     team: teamByRole(streakTeam),
+     length: currentStreak,
+     score: score,
+   };
+ }
+ if (tags.includes('#comeback')) {
+   tagData['#comeback'] = {
+     team: teamByRole(rally.team_scored),
+     scoreDiff: scoreDiff,
+     score: score,
+   };
+ }
+ if (tags.includes('#drama')) {
+   tagData['#drama'] = {
+     dramaScore: rallyAnalysis?.dramaScore || 0,
+     isHot: isHotSituation,
+     score: score,
+   };
+ }
+ if (tags.includes('#dluga_wymiana')) {
+   tagData['#dluga_wymiana'] = {
+     numTouches: rallyAnalysis?.numTouches || 0,
+   };
+ }
+ if (tags.includes('#milestone')) {
+   tagData['#milestone'] = {
+     player: displayScoringPlayer,
+     achievement: milestone,
+   };
+ }
+ if (tags.includes('#zmiana') && rally.substitutions) {
+   tagData['#zmiana'] = {
+     subs: rally.substitutions.map((sub: any) => ({
+       playerIn: sub.player_in,
+       playerOut: sub.player_out,
+       team: sub.team_name || sub.team,
+     })),
+   };
+ }
+ if (tags.includes('#koniec_seta')) {
+   tagData['#koniec_seta'] = {
+     winner: setEndInfo.winner,
+     score: score,
+   };
+ }
+
+ // ========================================================================
+ // STEP 11: RETURN JSON RESPONSE
  // ========================================================================
 
  return new Response(JSON.stringify({
  commentary,
  tags,
+ tagData,
  milestones,
  icon,
  momentumScore,

@@ -141,6 +141,18 @@ const TAG_LABELS: Record<string, string> = {
  '#milestone': '#milestone',
  '#debiut': '#debiut',
  '#zmiana': '#zmiana',
+ '#koniec_seta': '#koniec seta',
+};
+
+const TEAM_FULL_NAMES: Record<string, string> = {
+ 'zaw': 'Aluron CMC Warta Zawiercie',
+ 'lbn': 'BOGDANKA LUK Lublin',
+ 'pge': 'PGE Projekt Warszawa',
+ 'ind': 'Indykpol AZS Olsztyn',
+ 'jsw': 'Jastrzebski Wegiel',
+ 'ass': 'Asseco Resovia Rzeszow',
+ 'aluron': 'Aluron CMC Warta Zawiercie',
+ 'bogdanka': 'BOGDANKA LUK Lublin',
 };
 
 export default function LiveMatchCommentaryV3() {
@@ -1318,7 +1330,7 @@ export default function LiveMatchCommentaryV3() {
  className="w-16 h-16 mx-auto object-contain"
  />
  </div>
- <div className="text-sm font-medium mb-1">{matchData?.teams?.home}</div>
+ <div className="text-sm font-medium mb-1">{TEAM_FULL_NAMES[matchData?.teams?.home || ""] || matchData?.teams?.home}</div>
  <div className="text-3xl font-bold">{currentRally.score_after.home}</div>
  </div>
 
@@ -1332,7 +1344,7 @@ export default function LiveMatchCommentaryV3() {
  className="w-16 h-16 mx-auto object-contain"
  />
  </div>
- <div className="text-sm font-medium mb-1">{matchData?.teams?.away}</div>
+ <div className="text-sm font-medium mb-1">{TEAM_FULL_NAMES[matchData?.teams?.away || ""] || matchData?.teams?.away}</div>
  <div className="text-3xl font-bold">{currentRally.score_after.away}</div>
  </div>
  </div>
@@ -1553,6 +1565,12 @@ export default function LiveMatchCommentaryV3() {
  {data.subs.map((s: any, i: number) => (
  <p key={i}>{s.playerIn} wchodzi za {s.playerOut}</p>
  ))}
+ </>
+ )}
+ {tag === '#koniec_seta' && (
+ <>
+ <p>Zwyciezca: {data.winner}</p>
+ <p>Wynik koncowy: {data.score}</p>
  </>
  )}
  </div>
