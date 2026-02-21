@@ -422,7 +422,7 @@ export async function POST(request: NextRequest) {
  );
 
  if (validatedScore.wasFixed) {
- console.log(`Ac!A A-A,A Rally #${rally.rally_number}: Score was corrected!`);
+ console.log(`Rally #${rally.rally_number}: Score was corrected!`);
  }
 
  const finalScore = {
@@ -449,7 +449,7 @@ export async function POST(request: NextRequest) {
 
 // Guard: Skip rallies without touches
 if (!rally.touches || rally.touches.length === 0) {
- console.warn(`Ac!A A-A,A Rally #${rally.rally_number} has no touches, returning basic commentary`);
+ console.warn(`Rally #${rally.rally_number} has no touches, returning basic commentary`);
  return Response.json({
  commentary: `Rally #${rally.rally_number} played`,
  tags: [],
@@ -576,7 +576,7 @@ if (!rally.touches || rally.touches.length === 0) {
  ? 'Aluron CMC Warta Zawiercie' 
  : 'BOGDANKA LUK Lublin';
 
- console.log('Adeg,1/2A- Commentary request:', {
+ console.log('[COMMENTARY] Request:', {
  rally_number: rally.rally_number,
  player: scoringPlayer,
  action: scoringAction,
@@ -631,31 +631,19 @@ if (!rally.touches || rally.touches.length === 0) {
  dimensions: 768,
  });
  
- const [tacticsResults1, tacticsResults2] = await Promise.all([
- index.namespace('tactics').query({
+ const tacticsResults = await index.namespace('tactical-knowledge').query({
  vector: tacticsEmbedding.data[0].embedding,
- topK: 2,
+ topK: 4,
  includeMetadata: true,
- }),
- index.namespace('tactical-knowledge').query({
- vector: tacticsEmbedding.data[0].embedding,
- topK: 2,
- includeMetadata: true,
- }),
- ]);
-
- const tacticsResults = {
- matches: [
- ...(tacticsResults1.matches || []),
- ...(tacticsResults2.matches || []),
- ].sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 3),
- };
+ });
  
  if (tacticsResults.matches && tacticsResults.matches.length > 0) {
- tacticsContext = tacticsResults.matches
- .map((match) => match.metadata?.text || '')
+ const relevantTactics = tacticsResults.matches
+ .filter(match => (match.score || 0) > 0.3);
+ tacticsContext = relevantTactics
+ .map((match) => match.metadata?.content || match.metadata?.text || '')
  .join('\n\n')
- .substring(0, 400);
+ .substring(0, 800);
  console.log('Tactics context:', tacticsContext.substring(0, 80) + '...');
  }
  } catch (error) {
@@ -761,7 +749,7 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('Commentary hints found:', commentaryHintsContext.substring(0, 150) + '...');
  console.log('Hints scores:', hintsResults.matches.map(m => m.score?.toFixed(3)));
  } else {
- console.log('Ac!A A-A,A No relevant hints (all scores < 0.3)');
+ console.log('No relevant hints (all scores < 0.3)');
  }
  } else {
  console.log('No commentary hints found for this query');
@@ -933,7 +921,7 @@ if (!rally.touches || rally.touches.length === 0) {
  if (setSummariesResults.matches && setSummariesResults.matches.length > 0) {
  setSummariesContext = setSummariesResults.matches
  .filter(match => match.score && match.score > 0.7)
- .map(match => match.metadata?.text || '')
+ .map(match => match.metadata?.content || match.metadata?.text || '')
  .join('\n\n');
  
  if (setSummariesContext) {
@@ -1007,7 +995,7 @@ if (!rally.touches || rally.touches.length === 0) {
 
  const queryEmbedding = embeddingResponse.data[0].embedding;
 
- const searchResults = await index.namespace('default').query({
+ const searchResults = await index.namespace('player-profiles').query({
  vector: queryEmbedding,
  topK: 3,
  includeMetadata: true,
@@ -1018,11 +1006,11 @@ if (!rally.touches || rally.touches.length === 0) {
  let playerContext = '';
  if (searchResults.matches.length > 0) {
  playerContext = searchResults.matches
- .map((match) => match.metadata?.text || '')
+ .map((match) => match.metadata?.content || match.metadata?.text || '')
  .join('\n\n');
  console.log('Player context found:', playerContext.substring(0, 200) + '...');
  } else {
- console.log('Ac!A A-A,A No RAG context found for player');
+ console.log('No RAG context found for player');
  }
 
  // ========================================================================
@@ -1033,7 +1021,7 @@ if (!rally.touches || rally.touches.length === 0) {
 
  const homeLeading = finalScore.home > finalScore.away;
  const awayLeading = finalScore.away > finalScore.home;
- const leadingTeamName = homeLeading ? 'gospodarze' : awayLeading ? 'go>cie' : 'remis';
+ const leadingTeamName = homeLeading ? 'gospodarze' : awayLeading ? 'goscie' : 'remis';
 
  let touchContext = '';
  
@@ -1065,22 +1053,81 @@ if (!rally.touches || rally.touches.length === 0) {
  
  const passDesc = passQualityDescriptions[rallyAnalysis.passQuality] || rallyAnalysis.passQuality;
  
+ // ================================================================
+ // FULL TOUCH CHAIN (radio-style) - describe every touch
+ // ================================================================
+ const touchChainLines: string[] = [];
+ 
+ if (rally.touches && rally.touches.length > 0) {
+   rally.touches.forEach((touch, idx) => {
+     const action = touch.action || '';
+     const player = touch.player || '?';
+     const actionLower = action.toLowerCase();
+     
+     let desc = `${idx + 1}. ${player}`;
+     
+     if (actionLower.includes('serve')) {
+       const sType = touch.serveType || '';
+       const serveDesc = sType.includes('Float') ? 'zagrywka floatowa' : sType.includes('Spin') ? 'zagrywka z wyskoku' : 'zagrywka';
+       if (actionLower.includes('ace')) {
+         desc += ` - ${serveDesc} - AS SERWISOWY!`;
+       } else if (actionLower.includes('error')) {
+         desc += ` - ${serveDesc} - blad serwisu`;
+       } else {
+         desc += ` - ${serveDesc}`;
+       }
+     } else if (actionLower.includes('pass') || actionLower.includes('przyjecie')) {
+       const grade = action.replace(/^(Pass|Przyjecie)\s*/i, '').trim();
+       if (grade.toLowerCase() === 'perfect') desc += ' - idealne przyjecie';
+       else if (grade.toLowerCase() === 'positive') desc += ' - dobre przyjecie';
+       else if (grade.toLowerCase() === 'negative') desc += ' - przyjecie daleko od siatki';
+       else desc += ` - ${action}`;
+     } else if (actionLower.includes('rozegranie') || actionLower.includes('setting')) {
+       const combo = touch.attackCombination || '';
+       const loc = touch.attackLocation || '';
+       let setDesc = 'rozegranie';
+       if (loc.includes('Left')) setDesc = 'wystawia na lewa strone';
+       else if (loc.includes('Right')) setDesc = 'wystawia na prawa strone';
+       else if (loc.includes('Middle') || combo.includes('K1') || combo.includes('K2') || combo.includes('K7')) setDesc = 'szybka pilka srodkiem';
+       else if (combo.includes('pipe') || combo.toLowerCase().includes('pipe')) setDesc = 'wystawia pipe';
+       desc += ` - ${setDesc}`;
+     } else if (actionLower.includes('atak') || actionLower.includes('attack')) {
+       const loc = touch.attackLocation || '';
+       const style = touch.attackStyle || '';
+       const combo = touch.attackCombination || '';
+       let atkDesc = 'atak';
+       if (loc.includes('Left')) atkDesc = 'atak z lewej strony';
+       else if (loc.includes('Right')) atkDesc = 'atak z prawej strony';
+       else if (loc.includes('Middle')) atkDesc = 'atak pierwszym tempem';
+       else if (combo.toLowerCase().includes('pipe')) atkDesc = 'atak pipe z drugiej linii';
+       
+       if (style === 'Tip') atkDesc += ', kiwka';
+       else if (style === 'Tool') atkDesc += ', od bloku';
+       
+       if (actionLower.includes('error')) desc += ` - ${atkDesc} - blad ataku`;
+       else if (actionLower.includes('block') || actionLower.includes('zablok')) desc += ` - ${atkDesc} - zatrzymany blokiem`;
+       else desc += ` - ${atkDesc} - skuteczny!`;
+     } else if (actionLower.includes('blok') || actionLower.includes('block')) {
+       if (actionLower.includes('error') || actionLower.includes('przebity')) desc += ' - blok przebity';
+       else desc += ' - skuteczny blok!';
+     } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
+       desc += ' - obrona w polu';
+     } else if (actionLower.includes('wolna') || actionLower.includes('free')) {
+       desc += ' - wolna pilka';
+     } else {
+       desc += ` - ${action}`;
+     }
+     
+     touchChainLines.push(desc);
+   });
+ }
+ 
  touchContext = `
-RALLY COMPLEXITY:
-- Touches: ${rallyAnalysis.numTouches} ${rallyAnalysis.isLongRally ? '(DLUGA WYMIANA!)' : ''}
-- Drama score: ${rallyAnalysis.dramaScore.toFixed(1)}/5.0 ${rallyAnalysis.isDramatic ? 'DRAMATIC!' : ''}
-- Pass quality: ${passDesc}
-${serveType ? `- Serve type: ${serveType}` : ''}
-${attackCombo ? `- Attack combination: ${attackCombo}` : ''}
-${attackLocation ? `- Attack location: ${attackLocation}` : ''}
-${attackStyle ? `- Attack style: ${attackStyle}` : ''}
-${attackZone ? `- Zone: ${attackZone}` : ''}
+PRZEBIEG AKCJI (${rallyAnalysis.numTouches} dotkniec${rallyAnalysis.isLongRally ? ' - DLUGA WYMIANA!' : ''}):
+${touchChainLines.join('\n')}
 
-KEY PLAYERS IN CHAIN:
-${rallyAnalysis.serverPlayer ? `- Serve: ${rallyAnalysis.serverPlayer}` : ''}
-${rallyAnalysis.passPlayer ? `- Pass: ${rallyAnalysis.passPlayer} (${passDesc})` : ''}
-${rallyAnalysis.setterPlayer ? `- Set: ${rallyAnalysis.setterPlayer}` : ''}
-${rallyAnalysis.attackerPlayer ? `- Attack: ${rallyAnalysis.attackerPlayer}` : ''}`;
+Drama score: ${rallyAnalysis.dramaScore.toFixed(1)}/5.0 ${rallyAnalysis.isDramatic ? 'DRAMATIC!' : ''}
+STYL: Komentarz radiowy - opisz KAZDE dotkniecie po kolei! Sluchacz nie widzi meczu.`;
  }
  
  let situationContext = '';
@@ -1148,7 +1195,7 @@ PROWADZI: ${leadingTeamName}${touchContext}${situationContext}${errorContext}${s
 ${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKLADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `[!!] USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `VARIACJE ZWROTOW:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
 
 INSTRUKCJE:
-- ${setEndInfo.isSetEnd ? `TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEC! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZY PUNKT! Uzyj: "Dobry poczatek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KONCOWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkresl momentum!' : milestone ? 'MILESTONE - wspomniej liczbe punktow/blokow/asow!' : isBigLead ? 'Duza przewaga - zauwaZ sytuacje' : isEarlySet ? 'Poczatek - spokojnie' : 'Srodek seta - rzeczowo'}
+- ${setEndInfo.isSetEnd ? `TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEC! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZY PUNKT! Uzyj: "Dobry poczatek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KONCOWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkresl momentum!' : milestone ? 'MILESTONE - wspomniej liczbe punktow/blokow/asow!' : isBigLead ? 'Duza przewaga - zauwaz sytuacje' : isEarlySet ? 'Poczatek - spokojnie' : 'Srodek seta - rzeczowo'}
 - ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwal ATAKUJACEGO, nie blad bloku! Uzyj formy: "${attackingPlayer} przebija blok ${declinePolishName(scoringPlayer, 'genitive')}!"` : ''}
 - ${milestone ? `WAZNE: Wspomniej ze to ${milestone}!` : ''}${passInstructions}
 - ${commentaryHintsContext ? 'APPLY USER HINTS - they have PRIORITY over other context!' : ''}
@@ -1169,7 +1216,7 @@ INSTRUKCJE:
  console.log('[NAMING-IN-PROMPT] NO naming rules in this prompt!');
  }
  
- console.log('Adeg,1/2A* Generating commentary...');
+ console.log('[COMMENTARY] Generating...');
 
  // ========================================================================
  // STEP 8: GENERATE COMMENTARY (NON-STREAMING)
@@ -1192,7 +1239,7 @@ INSTRUKCJE:
  { role: 'user', content: commentaryPrompt },
  ],
  temperature: setEndInfo.isSetEnd ? 0.95 : isHotSituation ? 0.9 : currentStreak >= 5 ? 0.85 : isBigLead ? 0.8 : 0.7,
- max_tokens: 200,
+ max_tokens: rally.touches?.length >= 5 ? 300 : rally.touches?.length >= 3 ? 200 : 150,
  });
 
  const commentary = completion.choices[0].message.content || '';
