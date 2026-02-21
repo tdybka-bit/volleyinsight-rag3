@@ -1075,6 +1075,59 @@ export default function LiveMatchCommentaryV3() {
  }
  };
  
+ const analyzeRallyChain = (rally: Rally) => {
+ const touches = rally.touches;
+ const numTouches = touches.length;
+ 
+ let passQuality = 'unknown';
+ let passPlayer = '';
+ if (numTouches >= 2) {
+ const passAction = touches[1].action.toLowerCase();
+ passPlayer = touches[1].player;
+ 
+ if (passAction.includes('perfect')) {
+ passQuality = 'perfect';
+ } else if (passAction.includes('error')) {
+ passQuality = 'error';
+ } else if (passAction.includes('negative')) {
+ passQuality = 'negative';
+ } else if (passAction.includes('pass') || passAction.includes('przyjecie')) {
+ passQuality = 'good';
+ }
+ }
+ 
+ const serverPlayer = touches[0]?.player || '';
+ const setterPlayer = numTouches >= 3 ? touches[2]?.player : '';
+ const attackerPlayer = numTouches >= 4 ? touches[3]?.player : '';
+ 
+ let dramaScore = numTouches / 4.0;
+ 
+ if (passQuality === 'error') {
+ dramaScore *= 1.5;
+ } else if (passQuality === 'negative' && numTouches >= 4) {
+ dramaScore *= 2.0;
+ }
+ 
+ const scoreDiff = Math.abs(rally.score_after.home - rally.score_after.away);
+ if (rally.score_after.home >= 20 && rally.score_after.away >= 20) {
+ dramaScore *= 2.0;
+ } else if (scoreDiff >= 5) {
+ dramaScore *= 1.3;
+ }
+ 
+ return {
+ numTouches,
+ passQuality,
+ passPlayer,
+ serverPlayer,
+ setterPlayer,
+ attackerPlayer,
+ dramaScore: Math.min(dramaScore, 5.0),
+ isLongRally: numTouches >= 8,
+ isDramatic: dramaScore >= 3.0,
+ };
+ };
+
  const generateCommentary = async (rally: Rally) => {
  try {
  console.log('Generating commentary for rally #', rally.rally_number);
@@ -1122,59 +1175,6 @@ export default function LiveMatchCommentaryV3() {
  // Return fallback commentary but stop playback
  throw error;
  }
- };
- 
- const analyzeRallyChain = (rally: Rally) => {
- const touches = rally.touches;
- const numTouches = touches.length;
- 
- let passQuality = 'unknown';
- let passPlayer = '';
- if (numTouches >= 2) {
- const passAction = touches[1].action.toLowerCase();
- passPlayer = touches[1].player;
- 
- if (passAction.includes('perfect')) {
- passQuality = 'perfect';
- } else if (passAction.includes('error')) {
- passQuality = 'error';
- } else if (passAction.includes('negative')) {
- passQuality = 'negative';
- } else if (passAction.includes('pass')) {
- passQuality = 'good';
- }
- }
- 
- const serverPlayer = touches[0]?.player || '';
- const setterPlayer = numTouches >= 3 ? touches[2]?.player : '';
- const attackerPlayer = numTouches >= 4 ? touches[3]?.player : '';
- 
- let dramaScore = numTouches / 4.0;
- 
- if (passQuality === 'error') {
- dramaScore *= 1.5;
- } else if (passQuality === 'negative' && numTouches >= 4) {
- dramaScore *= 2.0;
- }
- 
- const scoreDiff = Math.abs(rally.score_after.home - rally.score_after.away);
- if (rally.score_after.home >= 20 && rally.score_after.away >= 20) {
- dramaScore *= 2.0;
- } else if (scoreDiff >= 5) {
- dramaScore *= 1.3;
- }
- 
- return {
- numTouches,
- passQuality,
- passPlayer,
- serverPlayer,
- setterPlayer,
- attackerPlayer,
- dramaScore: Math.min(dramaScore, 5.0),
- isLongRally: numTouches >= 8,
- isDramatic: dramaScore >= 3.0,
- };
  };
  
  const calculatePlayerStats = (currentRally: Rally) => {
@@ -1272,50 +1272,8 @@ export default function LiveMatchCommentaryV3() {
      }
    }
    
-   // Inject LINEUP CARD for the new set
-   const lineup = matchData?.lineups?.find(l => l.setNumber === rallySetNumber);
-   if (lineup) {
-     const homeFullName = TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Home';
-     const awayFullName = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Away';
-     
-     // Build intro text
-     const homeNames = lineup.home.map(p => p.name).join(', ');
-     const awayNames = lineup.away.map(p => p.name).join(', ');
-     const serverInfo = lineup.firstServer 
-       ? `Zagrywke rozpoczyna ${lineup.firstServer.player} z druzyny ${lineup.firstServer.team === 'home' ? homeFullName : awayFullName}.`
-       : '';
-     const introText = rallySetNumber === 1
-       ? `Zaczynamy! ${homeFullName} w skladzie: ${homeNames}. Po drugiej stronie siatki ${awayFullName}: ${awayNames}. ${serverInfo}`
-       : `Set ${rallySetNumber}! ${homeFullName}: ${homeNames}. ${awayFullName}: ${awayNames}. ${serverInfo}`;
-     
-     // First: lineup card
-     const lineupEntry: CommentaryEntry = {
-       rallyNumber: -rallySetNumber, // negative ID for lineup cards
-       text: `Set ${rallySetNumber} - Sklad`,
-       timestamp: new Date(),
-       player: '', team: '', action: '',
-       type: 'lineup',
-       tags: [], milestones: [], icon: '',
-       momentumScore: 0, dramaScore: 0, tagData: {},
-       lineupData: lineup,
-     };
-     
-     // Then: intro commentary
-     const introEntry: CommentaryEntry = {
-       rallyNumber: -rallySetNumber - 50, // unique negative ID
-       text: introText,
-       timestamp: new Date(),
-       player: '', team: '', action: '',
-       type: 'intro',
-       tags: [], milestones: [], icon: 'WHISTLE',
-       momentumScore: 0, dramaScore: 0, tagData: {},
-     };
-     
-     setCommentaries((prev) => [introEntry, lineupEntry, ...prev]);
-     // Small delay so lineup card appears before first rally
-     await new Promise(resolve => setTimeout(resolve, 1500));
-   }
-   
+   // Inject LINEUP CARD for the new set - REMOVED (lineup now in sticky header)
+   // Just update current set number
    setCurrentSetNumber(rallySetNumber);
  }
 
@@ -1338,14 +1296,65 @@ export default function LiveMatchCommentaryV3() {
  return;
  }
 
+ // Find the SCORING action (not the last touch which is often the losing action)
+ const findScoringAction = (rally: Rally): { player: string; action: string } => {
+   const touches = rally.touches;
+   if (!touches || touches.length === 0) return { player: '?', action: '?' };
+   
+   const finalTouch = touches[touches.length - 1];
+   const finalAction = finalTouch.action.toLowerCase();
+   
+   // If final touch is a LOSING action (przebity blok, obrona), go back to find winner
+   if (finalAction.includes('przebity') || finalAction.includes('fail') || 
+       finalAction.includes('obrona') || finalAction.includes('dig')) {
+     // The touch before is likely the winning attack
+     for (let i = touches.length - 2; i >= 0; i--) {
+       const ta = touches[i].action.toLowerCase();
+       if (ta.includes('atak') && !ta.includes('blad') && !ta.includes('zablok')) {
+         return { player: touches[i].player, action: 'Atak' };
+       }
+     }
+   }
+   
+   // Serve error = point for receiver
+   if (finalAction.includes('blad') && finalAction.includes('serw')) {
+     return { player: finalTouch.player, action: 'Blad serwisu' };
+   }
+   
+   // Attack error
+   if (finalAction.includes('blad') && finalAction.includes('atak')) {
+     return { player: finalTouch.player, action: 'Blad ataku' };
+   }
+   
+   // Successful block
+   if ((finalAction.includes('blok') || finalAction.includes('block')) && 
+       !finalAction.includes('przebity') && !finalAction.includes('fail')) {
+     return { player: finalTouch.player, action: 'Blok' };
+   }
+   
+   // Ace
+   if (finalAction.includes('as ') || finalAction.includes('ace')) {
+     return { player: finalTouch.player, action: 'As serwisowy' };
+   }
+   
+   // Successful attack
+   if (finalAction.includes('atak') && !finalAction.includes('blad') && !finalAction.includes('zablok')) {
+     return { player: finalTouch.player, action: 'Atak' };
+   }
+   
+   return { player: finalTouch.player, action: finalTouch.action };
+ };
+ 
+ const scoringInfo = findScoringAction(rally);
+ 
  const newCommentary: CommentaryEntry = {
  rallyNumber: rally.rally_number,
  text: result.commentary,
  timestamp: new Date(),
- player: finalTouch.player,
+ player: scoringInfo.player,
  team: rally.team_scored,
- action: finalTouch.action,
- type: getActionType(finalTouch.action),
+ action: scoringInfo.action,
+ type: getActionType(scoringInfo.action),
  // NEW FIELDS
  tags: result.tags,
  tagData: result.tagData || {},
@@ -1423,12 +1432,12 @@ export default function LiveMatchCommentaryV3() {
  <div className="min-h-screen bg-background">
  <div className="max-w-7xl mx-auto">
 
- {/* MATCH SELECTOR */}
- <div className="sticky top-0 z-50 bg-background border-b-2 border-border shadow-md">
- <div className="p-4 flex items-center gap-4">
- <label className="text-base font-bold text-foreground whitespace-nowrap">
- Wybierz mecz:
- </label>
+ {/* ===== STICKY SECTION: selector + header + controls ===== */}
+ <div className="sticky top-0 z-50 bg-background shadow-lg">
+
+ {/* Row 1: Match Selector */}
+ <div className="px-4 py-2 flex items-center gap-4 border-b border-border">
+ <label className="text-sm font-bold text-foreground whitespace-nowrap">Wybierz mecz:</label>
  <select 
  value={selectedMatch}
  onChange={(e) => {
@@ -1438,72 +1447,128 @@ export default function LiveMatchCommentaryV3() {
  setCurrentSetNumber(0);
  setIsPlaying(false);
  }}
- className="flex-1 max-w-2xl px-4 py-3 text-base font-semibold bg-card text-foreground border-2 border-border rounded-lg hover:border-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary transition-all cursor-pointer"
+ className="flex-1 max-w-xl px-3 py-2 text-sm font-semibold border border-border rounded-lg hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary transition-all cursor-pointer"
+ style={{ backgroundColor: '#1e293b', color: '#f1f5f9' }}
  >
- <option value="2025-11-12_ZAW-LBN.json">
- Aluron Zawiercie vs Bogdanka Lublin (12.11.2025)
- </option>
- <option value="2025-11-26_PGE-Ind.json">
- PGE Projekt Warszawa vs Indykpol Olsztyn (26.11.2025)
-
- </option>
- <option value="2025-12-06_JSW-Ass.json">
- Jastrzebski Wegiel vs Asseco Rzeszow (06.12.2025)
- </option>
+ <option value="2025-11-12_ZAW-LBN.json" style={{ backgroundColor: '#1e293b', color: '#f1f5f9' }}>Aluron Zawiercie vs Bogdanka Lublin (12.11.2025)</option>
+ <option value="2025-11-26_PGE-Ind.json" style={{ backgroundColor: '#1e293b', color: '#f1f5f9' }}>PGE Projekt Warszawa vs Indykpol Olsztyn (26.11.2025)</option>
+ <option value="2025-12-06_JSW-Ass.json" style={{ backgroundColor: '#1e293b', color: '#f1f5f9' }}>Jastrzebski Wegiel vs Asseco Rzeszow (06.12.2025)</option>
  </select>
- 
- <div className="flex items-center gap-2 px-3 py-2 bg-green-500/10 border border-green-500/20 rounded-lg">
+ <div className="flex items-center gap-1.5 px-2 py-1 bg-green-500/10 border border-green-500/20 rounded-lg">
  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
- <span className="text-sm font-medium text-green-600 dark:text-green-400">Live</span>
- </div>
+ <span className="text-xs font-medium text-green-500">Live</span>
  </div>
  </div>
 
- {/* Match Header */}
- <div className="p-6 border-b border-border bg-gradient-to-r from-blue-600/20 to-red-600/20">
- <div className="flex items-center justify-between mb-4">
- <div className="flex items-center space-x-4">
- {/* SET INFO - Duzy i widoczny z wynikami setow */}
+ {/* Row 2: SET + Lineup | Score | Languages */}
+ <div className="px-4 py-3 border-b border-border bg-gradient-to-r from-blue-600/10 to-red-600/10">
+ <div className="flex items-start justify-between">
+
+ {/* LEFT: SET badge + Lineup */}
+ <div className="flex-1">
+ <div className="flex items-center gap-3 mb-2">
  {currentRally && (() => {
  const setResults = calculateSetResults(currentRallyIndex);
  const hasCompletedSets = setResults.home > 0 || setResults.away > 0;
- 
  return (
- <div className="flex items-center gap-3">
- <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-3 rounded-lg shadow-lg">
- <div className="text-white font-bold text-lg">
- SET {currentRally.set_number}
+ <>
+ <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2 rounded-lg shadow">
+ <span className="text-white font-bold">SET {currentRally.set_number}</span>
  </div>
- </div>
- 
  {hasCompletedSets && (
- <div className="flex items-center gap-2 bg-muted px-4 py-2 rounded-lg">
- <span className="text-sm font-semibold text-muted-foreground">Sets:</span>
- <span className="text-lg font-bold text-foreground">
- {setResults.home}-{setResults.away}
- </span>
+ <div className="flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-lg">
+ <span className="text-xs font-semibold text-muted-foreground">Sets:</span>
+ <span className="text-sm font-bold text-foreground">{setResults.home}-{setResults.away}</span>
  </div>
  )}
+ <div className="flex items-center space-x-1.5">
+ <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+ <span className="text-xs font-semibold text-red-500">{mode === 'live' ? 'LIVE' : 'DEMO'}</span>
  </div>
+ </>
  );
  })()}
- 
- {/* DEMO MODE badge */}
- <div className="flex items-center space-x-2">
- <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
- <span className="text-sm font-semibold text-red-500">
- {mode === 'live' ? 'NA ZYWO' : 'DEMO MODE'}
- </span>
  </div>
+ {/* Lineup display - table */}
+ {(() => {
+   const currentLineup = matchData?.lineups?.find(l => l.setNumber === currentSetNumber) || matchData?.lineups?.[0];
+   if (!currentLineup) return null;
+   const homeFullName = TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || '';
+   const awayFullName = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || '';
+   const maxRows = Math.max(currentLineup.home.length, currentLineup.away.length);
+   return (
+     <table className="mt-2 w-full text-xs border-collapse">
+       <thead>
+         <tr className="border-b border-border/50">
+           <th className="text-left pb-1 pr-2">
+             <div className="flex items-center gap-1.5">
+               <img src={getTeamLogo(matchData?.teams?.home || '')} alt="" className="w-4 h-4 object-contain" />
+               <span className="font-bold text-blue-400">{homeFullName}</span>
+             </div>
+           </th>
+           <th className="text-left pb-1 pl-2">
+             <div className="flex items-center gap-1.5">
+               <img src={getTeamLogo(matchData?.teams?.away || '')} alt="" className="w-4 h-4 object-contain" />
+               <span className="font-bold text-red-400">{awayFullName}</span>
+             </div>
+           </th>
+         </tr>
+       </thead>
+       <tbody>
+         {Array.from({ length: maxRows }).map((_, i) => {
+           const hp = currentLineup.home[i];
+           const ap = currentLineup.away[i];
+           return (
+             <tr key={i}>
+               <td className="py-0.5 pr-2">
+                 {hp && (
+                   <span className={favPlayer === hp.name ? 'text-yellow-400 font-bold' : 'text-muted-foreground'}>
+                     <span className="font-mono text-muted-foreground/60 mr-1">#{hp.jersey}</span>
+                     {hp.name}
+                   </span>
+                 )}
+               </td>
+               <td className="py-0.5 pl-2 border-l border-border/30">
+                 {ap && (
+                   <span className={favPlayer === ap.name ? 'text-yellow-400 font-bold' : 'text-muted-foreground'}>
+                     <span className="font-mono text-muted-foreground/60 mr-1">#{ap.jersey}</span>
+                     {ap.name}
+                   </span>
+                 )}
+               </td>
+             </tr>
+           );
+         })}
+       </tbody>
+     </table>
+   );
+ })()}
  </div>
 
- {/* Language Switcher */}
- <div className="flex items-center gap-2">
+ {/* CENTER: Score Display */}
+ {matchData && currentRally && (
+ <div className="flex items-center gap-6 mx-4">
+ <div className="text-center">
+ <img src={getTeamLogo(matchData?.teams?.home || 'Aluron')} alt="" className="w-12 h-12 mx-auto object-contain mb-1" />
+ <div className="text-xs font-medium text-muted-foreground">{TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home}</div>
+ <div className="text-2xl font-bold">{currentRally.score_after.home}</div>
+ </div>
+ <div className="text-xl font-bold text-muted-foreground">:</div>
+ <div className="text-center">
+ <img src={getTeamLogo(matchData?.teams?.away || 'Bogdanka')} alt="" className="w-12 h-12 mx-auto object-contain mb-1" />
+ <div className="text-xs font-medium text-muted-foreground">{TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away}</div>
+ <div className="text-2xl font-bold">{currentRally.score_after.away}</div>
+ </div>
+ </div>
+ )}
+
+ {/* RIGHT: Languages */}
+ <div className="flex flex-wrap items-center gap-1 justify-end">
  {languages.map((lang) => (
  <button
  key={lang.code}
  onClick={() => setLanguage(lang.code)}
- className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${
+ className={`px-2 py-1 rounded text-xs font-semibold transition-all ${
  language === lang.code
  ? 'bg-blue-500 text-white'
  : 'bg-muted hover:bg-muted/80 text-muted-foreground'
@@ -1515,51 +1580,18 @@ export default function LiveMatchCommentaryV3() {
  ))}
  </div>
  </div>
-
- {/* Score Display */}
- {matchData && currentRally && (
- <div className="flex items-center justify-center space-x-8">
- <div className="text-center">
- <div className="mb-2">
- <img 
- src={getTeamLogo(matchData?.teams?.home || 'Aluron')}
- alt="Aluron CMC Warta Zawiercie"
- className="w-16 h-16 mx-auto object-contain"
- />
- </div>
- <div className="text-sm font-medium mb-1">{TEAM_FULL_NAMES[matchData?.teams?.home || ""] || matchData?.teams?.home}</div>
- <div className="text-3xl font-bold">{currentRally.score_after.home}</div>
  </div>
 
- <div className="text-2xl font-bold text-muted-foreground">:</div>
-
- <div className="text-center">
- <div className="mb-2">
- <img 
- src={getTeamLogo(matchData?.teams?.away || 'Bogdanka')}
- alt="BOGDANKA LUK Lublin"
- className="w-16 h-16 mx-auto object-contain"
- />
- </div>
- <div className="text-sm font-medium mb-1">{TEAM_FULL_NAMES[matchData?.teams?.away || ""] || matchData?.teams?.away}</div>
- <div className="text-3xl font-bold">{currentRally.score_after.away}</div>
- </div>
- </div>
- )}
- </div>
-
- {/* Controls - Only in Demo Mode */}
+ {/* Row 3: Controls */}
  {mode === 'demo' && (
- <div className="bg-card p-6 border-b">
- <div className="flex items-center justify-between mb-4">
- <div className="flex gap-4">
+ <div className="px-4 py-2 border-b border-border bg-card/50">
+ <div className="flex items-center justify-between mb-2">
+ <div className="flex gap-2">
  <button
  onClick={handlePlayPause}
  disabled={isGenerating || !matchData}
- className={`px-6 py-3 rounded-lg font-semibold text-white transition-all ${
- isPlaying
- ? 'bg-yellow-500 hover:bg-yellow-600'
- : 'bg-green-500 hover:bg-green-600'
+ className={`px-4 py-2 rounded-lg font-semibold text-sm text-white transition-all ${
+ isPlaying ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600'
  } disabled:opacity-50 disabled:cursor-not-allowed`}
  >
  {isPlaying ? 'PAUSE' : currentRallyIndex >= rallies.length ? 'REPLAY' : 'PLAY'}
@@ -1567,14 +1599,13 @@ export default function LiveMatchCommentaryV3() {
  <button
  onClick={handleReset}
  disabled={isGenerating || !matchData}
- className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all disabled:opacity-50"
+ className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-semibold text-sm transition-all disabled:opacity-50"
  >
  RESET
  </button>
  </div>
-
- <div className="flex items-center gap-4">
- <span className="text-sm font-semibold">SPEED:</span>
+ <div className="flex items-center gap-2">
+ <span className="text-xs font-semibold">SPEED:</span>
  {[
  { label: 'SLOW', value: 5000 },
  { label: 'NORMAL', value: 3000 },
@@ -1584,10 +1615,8 @@ export default function LiveMatchCommentaryV3() {
  key={option.value}
  onClick={() => setSpeed(option.value)}
  disabled={!matchData}
- className={`px-4 py-2 rounded-lg font-semibold transition-all disabled:opacity-50 ${
- speed === option.value
- ? 'bg-blue-500 text-white'
- : 'bg-muted hover:bg-muted/80'
+ className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all disabled:opacity-50 ${
+ speed === option.value ? 'bg-blue-500 text-white' : 'bg-muted hover:bg-muted/80'
  }`}
  >
  {option.label}
@@ -1595,38 +1624,36 @@ export default function LiveMatchCommentaryV3() {
  ))}
  </div>
  </div>
-
- <div className="mb-2">
- <div className="flex justify-between text-sm text-muted-foreground mb-1">
+ <div className="flex justify-between text-xs text-muted-foreground mb-1">
  <span>Rally {currentRallyIndex + 1} / {rallies.length}</span>
  <span>{Math.round(progress)}%</span>
  </div>
- <div className="w-full bg-muted rounded-full h-3">
- <div
- className="bg-primary h-3 rounded-full transition-all duration-300"
- style={{ width: `${progress}%` }}
- />
+ <div className="w-full bg-muted rounded-full h-2">
+ <div className="bg-primary h-2 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
  </div>
- </div>
-
  {isGenerating && (
- <div className="flex items-center gap-2 text-primary mt-4">
- <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
- <span className="font-medium">Generating AI commentary...</span>
+ <div className="flex items-center gap-2 text-primary mt-2">
+ <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+ <span className="text-xs font-medium">Generating AI commentary...</span>
  </div>
  )}
- 
  {isRetranslating && (
- <div className="flex items-center gap-2 text-blue-500 mt-4">
- <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
- <span className="font-medium">Re-translating commentaries...</span>
+ <div className="flex items-center gap-2 text-blue-500 mt-2">
+ <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+ <span className="text-xs font-medium">Re-translating...</span>
  </div>
  )}
  </div>
  )}
 
- {/* Commentary Timeline */}
- <div className="p-6">
+ </div>
+ {/* ===== END STICKY SECTION ===== */}
+
+ {/* Commentary Timeline + Buddy Panel */}
+ <div className="flex gap-4 p-6">
+ 
+ {/* LEFT: Commentary 2/3 */}
+ <div className="w-2/3">
  <div className="flex items-center justify-between mb-4">
  <h2 className="text-sm font-semibold text-muted-foreground">
  Przebieg meczu - AI Commentary
@@ -1674,52 +1701,6 @@ export default function LiveMatchCommentaryV3() {
  (sortOrder === 'desc' ? [...commentaries].reverse() : commentaries).map((commentary, index) => {
  const rally = rallies.find(r => r.rally_number === commentary.rallyNumber);
  const score = rally ? `${rally.score_after.home}:${rally.score_after.away}` : '';
- 
- // ========== LINEUP CARD ==========
- if (commentary.type === 'lineup' && commentary.lineupData) {
-   const lu = commentary.lineupData;
-   const homeFullName = TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Home';
-   const awayFullName = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Away';
-   return (
-     <div key={index} className="bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900 rounded-xl p-5 text-white shadow-lg border border-indigo-500/30 animate-fade-in">
-       <div className="text-center mb-4">
-         <span className="text-xs font-bold uppercase tracking-widest text-indigo-300">Set {lu.setNumber}</span>
-         <h3 className="text-lg font-bold">Sklad wyjsciowy</h3>
-         {lu.firstServer && (
-           <p className="text-xs text-indigo-300 mt-1">
-             Zagrywka: {lu.firstServer.player} ({lu.firstServer.team === 'home' ? homeFullName : awayFullName})
-           </p>
-         )}
-       </div>
-       <div className="grid grid-cols-2 gap-4">
-         <div>
-           <div className="flex items-center gap-2 mb-2">
-             <img src={getTeamLogo(matchData?.teams?.home || '')} alt="" className="w-6 h-6 object-contain" />
-             <span className="text-sm font-bold text-blue-300">{homeFullName}</span>
-           </div>
-           {lu.home.map((p, i) => (
-             <div key={i} className="flex items-center gap-2 py-0.5">
-               <span className="text-xs font-mono text-indigo-400 w-6 text-right">#{p.jersey}</span>
-               <span className={`text-sm ${favPlayer === p.name ? 'text-yellow-400 font-bold' : 'text-white'}`}>{p.name}</span>
-             </div>
-           ))}
-         </div>
-         <div>
-           <div className="flex items-center gap-2 mb-2">
-             <img src={getTeamLogo(matchData?.teams?.away || '')} alt="" className="w-6 h-6 object-contain" />
-             <span className="text-sm font-bold text-red-300">{awayFullName}</span>
-           </div>
-           {lu.away.map((p, i) => (
-             <div key={i} className="flex items-center gap-2 py-0.5">
-               <span className="text-xs font-mono text-indigo-400 w-6 text-right">#{p.jersey}</span>
-               <span className={`text-sm ${favPlayer === p.name ? 'text-yellow-400 font-bold' : 'text-white'}`}>{p.name}</span>
-             </div>
-           ))}
-         </div>
-       </div>
-     </div>
-   );
- }
  
  // ========== SET SUMMARY CARD ==========
  if (commentary.type === 'set_summary' && commentary.summaryData) {
@@ -1950,6 +1931,89 @@ export default function LiveMatchCommentaryV3() {
  )}
  </div>
  </div>
+ {/* END LEFT 2/3 */}
+ 
+ {/* RIGHT: Buddy Panel 1/3 */}
+ <div className="w-1/3">
+ <div className="sticky top-64 space-y-4">
+ 
+ {/* Buddy Header */}
+ {favPlayer ? (
+ <div className="bg-gradient-to-br from-yellow-900/30 to-amber-900/20 border border-yellow-500/30 rounded-xl p-4">
+ <div className="flex items-center gap-2 mb-3">
+ <span className="text-yellow-400 text-lg">&#9733;</span>
+ <h3 className="text-lg font-bold text-yellow-400">BUDDY</h3>
+ </div>
+ <div className="text-xl font-bold text-foreground mb-1">{favPlayer}</div>
+ {(() => {
+   // Find player team and jersey from lineup data
+   const currentLineup = matchData?.lineups?.find(l => l.setNumber === currentSetNumber) || matchData?.lineups?.[0];
+   const homePlayer = currentLineup?.home.find(p => p.name === favPlayer);
+   const awayPlayer = currentLineup?.away.find(p => p.name === favPlayer);
+   const playerTeam = homePlayer ? (TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home) : awayPlayer ? (TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away) : '';
+   const jersey = homePlayer?.jersey || awayPlayer?.jersey || '';
+   return (
+     <div className="text-sm text-muted-foreground">
+       {jersey && <span className="font-mono mr-2">#{jersey}</span>}
+       {playerTeam}
+     </div>
+   );
+ })()}
+ </div>
+ ) : (
+ <div className="bg-card border border-dashed border-border rounded-xl p-6 text-center">
+ <span className="text-3xl mb-2 block">&#9733;</span>
+ <p className="text-sm text-muted-foreground">Wybierz ulubionego zawodnika aby aktywowac BUDDY panel</p>
+ </div>
+ )}
+ 
+ {/* Live Stats */}
+ {favPlayer && (() => {
+   const stats = playerStats[favPlayer] || { blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0 };
+   return (
+     <div className="bg-card border border-border rounded-xl p-4">
+       <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Statystyki w meczu</h4>
+       <div className="grid grid-cols-2 gap-3">
+         <div className="bg-green-500/10 rounded-lg p-3 text-center">
+           <div className="text-2xl font-bold text-green-500">{stats.points}</div>
+           <div className="text-xs text-muted-foreground">Punkty</div>
+         </div>
+         <div className="bg-yellow-500/10 rounded-lg p-3 text-center">
+           <div className="text-2xl font-bold text-yellow-500">{stats.attacks}</div>
+           <div className="text-xs text-muted-foreground">Ataki</div>
+         </div>
+         <div className="bg-blue-500/10 rounded-lg p-3 text-center">
+           <div className="text-2xl font-bold text-blue-500">{stats.blocks}</div>
+           <div className="text-xs text-muted-foreground">Bloki</div>
+         </div>
+         <div className="bg-red-500/10 rounded-lg p-3 text-center">
+           <div className="text-2xl font-bold text-red-500">{stats.aces}</div>
+           <div className="text-xs text-muted-foreground">Asy</div>
+         </div>
+       </div>
+       {stats.errors > 0 && (
+         <div className="mt-2 text-center text-xs text-muted-foreground">
+           Bledy: {stats.errors}
+         </div>
+       )}
+     </div>
+   );
+ })()}
+ 
+ {/* Expert Knowledge Panel - placeholder for RAG content */}
+ {favPlayer && (
+   <div className="bg-card border border-border rounded-xl p-4">
+     <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Wiedza ekspercka</h4>
+     <p className="text-xs text-muted-foreground italic">Informacje eksperckie o zawodniku z bazy wiedzy RAG pojawia sie tutaj wkrotce...</p>
+   </div>
+ )}
+ 
+ </div>
+ </div>
+ {/* END RIGHT 1/3 */}
+ 
+ </div>
+ {/* END FLEX CONTAINER */}
  </div>
 
  <style jsx>{`

@@ -218,15 +218,21 @@ const getCommentarySystemPrompt = (
  const langPrompt = getLanguagePrompt(language);
  
  const basePrompt = `${langPrompt}
-Your task is to generate professional, factual volleyball match commentary.
+Your task is to generate professional, factual volleyball match commentary in RADIO STYLE.
+
+RADIO STYLE MEANS:
+- You receive a PRZEBIEG AKCJI (touch chain) - describe EXACTLY what happened step by step
+- Follow the EXACT order of touches. Do NOT rearrange, skip, or invent actions.
+- If the data says "zagrywka" (without "BLAD"), the serve was GOOD - do NOT say it was an error!
+- If data says "blok PRZEBITY", the BLOCKER lost - the attacker beat them. Do NOT say the blocker broke through.
+- The LAST touch in the chain determines the point. Do NOT add extra actions after it.
+- Short rallies (2-3 touches) = 1-2 sentences. Longer rallies (5+) = 2-3 sentences.
 
 CRITICAL RULES:
-- Be FACTUAL, not dramatic
+- Be FACTUAL - describe ONLY what is in the touch chain data
 - NEVER exaggerate situation importance (3:2 is NOT critical!)
 - NEVER mention "morale" or "pressure" in early set
-- "Block error" NOT "blad blokowy" 
 - Focus on WHAT HAPPENED, not speculation
-- 1-2 sentences MAX
 - NEVER use quotation marks (" ") around commentary - write directly
 - NEVER invent or add first names - use only surnames provided in data
 - Use proper Polish grammar and declensions for names
@@ -404,6 +410,7 @@ interface CommentaryRequest {
 // ============================================================================
 
 export async function POST(request: NextRequest) {
+ console.log('========= ROUTE.TS v7.1 SERVE-FIX LOADED =========');
  try {
  const { rally, language = 'pl', playerStats = {}, recentRallies = [], rallyAnalysis }: CommentaryRequest = await request.json();
 
@@ -1042,92 +1049,114 @@ if (!rally.touches || rally.touches.length === 0) {
  }
  }
  
- if (rallyAnalysis) {
- const passQualityDescriptions: Record<string, string> = {
- 'perfect': 'perfekcyjne przyjecie',
- 'good': 'dobre przyjecie',
- 'average': 'niedokladne przyjecie',
- 'negative': 'przyjecie daleko od siatki',
- 'error': 'blad w przyjeciu - ACE!'
- };
- 
- const passDesc = passQualityDescriptions[rallyAnalysis.passQuality] || rallyAnalysis.passQuality;
- 
  // ================================================================
- // FULL TOUCH CHAIN (radio-style) - describe every touch
+ // FULL TOUCH CHAIN (radio-style) - ALWAYS build from rally.touches
  // ================================================================
- const touchChainLines: string[] = [];
+ const numTouches = rally.touches?.length || 0;
+ const isLongRally = numTouches >= 8;
  
  if (rally.touches && rally.touches.length > 0) {
-   rally.touches.forEach((touch, idx) => {
-     const action = touch.action || '';
-     const player = touch.player || '?';
-     const actionLower = action.toLowerCase();
+ const touchChainLines: string[] = [];
+ 
+ rally.touches.forEach((touch, idx) => {
+   const action = touch.action || '';
+   const player = touch.player || '?';
+   const actionLower = action.toLowerCase();
+   const teamLabel = touch.team === 'home' ? '[GOSP]' : '[GOSC]';
+   
+   let desc = `${idx + 1}. ${teamLabel} ${player}`;
+   
+   // SERVE
+   if (actionLower.includes('zagrywka') || actionLower.includes('serwis') || actionLower.includes('serve')) {
+     const sType = touch.serveType || '';
+     const serveDesc = sType.includes('Float') ? 'zagrywka floatowa' : sType.includes('Spin') ? 'zagrywka z wyskoku' : 'zagrywka';
+     const isLastTouch = idx === rally.touches!.length - 1;
      
-     let desc = `${idx + 1}. ${player}`;
-     
-     if (actionLower.includes('serve')) {
-       const sType = touch.serveType || '';
-       const serveDesc = sType.includes('Float') ? 'zagrywka floatowa' : sType.includes('Spin') ? 'zagrywka z wyskoku' : 'zagrywka';
-       if (actionLower.includes('ace')) {
-         desc += ` - ${serveDesc} - AS SERWISOWY!`;
-       } else if (actionLower.includes('error')) {
-         desc += ` - ${serveDesc} - blad serwisu`;
-       } else {
-         desc += ` - ${serveDesc}`;
-       }
-     } else if (actionLower.includes('pass') || actionLower.includes('przyjecie')) {
-       const grade = action.replace(/^(Pass|Przyjecie)\s*/i, '').trim();
-       if (grade.toLowerCase() === 'perfect') desc += ' - idealne przyjecie';
-       else if (grade.toLowerCase() === 'positive') desc += ' - dobre przyjecie';
-       else if (grade.toLowerCase() === 'negative') desc += ' - przyjecie daleko od siatki';
-       else desc += ` - ${action}`;
-     } else if (actionLower.includes('rozegranie') || actionLower.includes('setting')) {
-       const combo = touch.attackCombination || '';
-       const loc = touch.attackLocation || '';
-       let setDesc = 'rozegranie';
-       if (loc.includes('Left')) setDesc = 'wystawia na lewa strone';
-       else if (loc.includes('Right')) setDesc = 'wystawia na prawa strone';
-       else if (loc.includes('Middle') || combo.includes('K1') || combo.includes('K2') || combo.includes('K7')) setDesc = 'szybka pilka srodkiem';
-       else if (combo.includes('pipe') || combo.toLowerCase().includes('pipe')) setDesc = 'wystawia pipe';
-       desc += ` - ${setDesc}`;
-     } else if (actionLower.includes('atak') || actionLower.includes('attack')) {
-       const loc = touch.attackLocation || '';
-       const style = touch.attackStyle || '';
-       const combo = touch.attackCombination || '';
-       let atkDesc = 'atak';
-       if (loc.includes('Left')) atkDesc = 'atak z lewej strony';
-       else if (loc.includes('Right')) atkDesc = 'atak z prawej strony';
-       else if (loc.includes('Middle')) atkDesc = 'atak pierwszym tempem';
-       else if (combo.toLowerCase().includes('pipe')) atkDesc = 'atak pipe z drugiej linii';
-       
-       if (style === 'Tip') atkDesc += ', kiwka';
-       else if (style === 'Tool') atkDesc += ', od bloku';
-       
-       if (actionLower.includes('error')) desc += ` - ${atkDesc} - blad ataku`;
-       else if (actionLower.includes('block') || actionLower.includes('zablok')) desc += ` - ${atkDesc} - zatrzymany blokiem`;
-       else desc += ` - ${atkDesc} - skuteczny!`;
-     } else if (actionLower.includes('blok') || actionLower.includes('block')) {
-       if (actionLower.includes('error') || actionLower.includes('przebity')) desc += ' - blok przebity';
-       else desc += ' - skuteczny blok!';
-     } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
-       desc += ' - obrona w polu';
-     } else if (actionLower.includes('wolna') || actionLower.includes('free')) {
-       desc += ' - wolna pilka';
+     if (actionLower.includes('as ') || actionLower.includes('ace')) {
+       desc += ` - ${serveDesc} >>> AS SERWISOWY! Pilka pada na parkiet. KONIEC AKCJI.`;
+     } else if ((actionLower.includes('blad') || actionLower.includes('error')) && isLastTouch) {
+       // REAL serve error - only if this is the LAST touch (rally ended here)
+       desc += ` - ${serveDesc} >>> BLAD SERWISU! Pilka w aut/siatke. KONIEC AKCJI.`;
      } else {
-       desc += ` - ${action}`;
+       // Serve continues play (even if VolleyStation says "Blad" - if there are more touches, it wasn't a terminal error)
+       desc += ` - ${serveDesc} (poprawna, pilka w grze)`;
      }
+   // RECEIVE
+   } else if (actionLower.includes('przyjecie') || actionLower.includes('pass') || actionLower.includes('receive')) {
+     if (actionLower.includes('perfect')) desc += ' - idealne przyjecie';
+     else if (actionLower.includes('positive')) desc += ' - dobre przyjecie';
+     else if (actionLower.includes('negative') || actionLower.includes('poor')) desc += ' - bardzo slabe przyjecie, pilka daleko od siatki';
+     else desc += ' - przyjecie';
+   // SET
+   } else if (actionLower.includes('rozegranie') || actionLower.includes('setting') || actionLower === 'set') {
+     const combo = touch.attackCombination || '';
+     const loc = touch.attackLocation || '';
+     let setDesc = 'rozegranie';
+     if (loc.includes('Left')) setDesc = 'wystawia na lewa strone';
+     else if (loc.includes('Right')) setDesc = 'wystawia na prawa strone';
+     else if (loc.includes('Middle') || combo.includes('K1') || combo.includes('K2') || combo.includes('K7')) setDesc = 'szybka pilka srodkiem';
+     else if (combo.toLowerCase().includes('pipe')) setDesc = 'wystawia pipe';
+     desc += ` - ${setDesc}`;
+   // ATTACK
+   } else if (actionLower.includes('atak') || actionLower.includes('attack')) {
+     const loc = touch.attackLocation || '';
+     const style = touch.attackStyle || '';
+     const combo = touch.attackCombination || '';
+     let atkDesc = 'atak';
+     if (loc.includes('Left')) atkDesc = 'atak z lewej strony';
+     else if (loc.includes('Right')) atkDesc = 'atak z prawej strony';
+     else if (loc.includes('Middle')) atkDesc = 'atak pierwszym tempem';
+     else if (combo.toLowerCase().includes('pipe')) atkDesc = 'atak pipe z drugiej linii';
      
-     touchChainLines.push(desc);
-   });
- }
+     if (style === 'Tip') atkDesc += ', kiwka';
+     else if (style === 'Tool') atkDesc += ', od bloku';
+     
+     if (actionLower.includes('blad') || actionLower.includes('error')) {
+       if (idx === rally.touches!.length - 1) {
+         desc += ` - ${atkDesc} >>> BLAD ATAKU. KONIEC AKCJI.`;
+       } else {
+         desc += ` - ${atkDesc} (nieudany, gra trwa)`;
+       }
+     } else if (actionLower.includes('zablok') || actionLower.includes('block')) {
+       if (idx === rally.touches!.length - 1) {
+         desc += ` - ${atkDesc} >>> ZATRZYMANY BLOKIEM. KONIEC AKCJI.`;
+       } else {
+         desc += ` - ${atkDesc} (zablokowany, gra trwa)`;
+       }
+     } else {
+       desc += ` - ${atkDesc} >>> SKUTECZNY! Punkt!`;
+     }
+   // BLOCK
+   } else if (actionLower.includes('blok') || actionLower.includes('block')) {
+     if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) desc += ' - probowal blokowac, blok PRZEBITY (przegral z atakujacym)';
+     else desc += ' - SKUTECZNY BLOK! Punkt!';
+   // DIG
+   } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
+     desc += ' - obrona w polu';
+   // FREE
+   } else if (actionLower.includes('wolna') || actionLower.includes('free')) {
+     desc += ' - wolna pilka';
+   } else {
+     desc += ` - ${action}`;
+   }
+   
+   touchChainLines.push(desc);
+ });
+ 
+ const winnerTeamLabel = rally.team_scored === 'home' ? 'GOSPODARZE' : 'GOSCIE';
  
  touchContext = `
-PRZEBIEG AKCJI (${rallyAnalysis.numTouches} dotkniec${rallyAnalysis.isLongRally ? ' - DLUGA WYMIANA!' : ''}):
+PRZEBIEG AKCJI (${numTouches} dotkniec${isLongRally ? ' - DLUGA WYMIANA!' : ''}):
 ${touchChainLines.join('\n')}
+=> PUNKT DLA: ${winnerTeamLabel}
 
-Drama score: ${rallyAnalysis.dramaScore.toFixed(1)}/5.0 ${rallyAnalysis.isDramatic ? 'DRAMATIC!' : ''}
-STYL: Komentarz radiowy - opisz KAZDE dotkniecie po kolei! Sluchacz nie widzi meczu.`;
+KRYTYCZNE ZASADY KOMENTARZA - LAMANIE = PORAZKA:
+1. OPISUJ TYLKO TO CO JEST W PRZEBIEGU AKCJI POWYZEJ. Nic wiecej!
+2. Zachowaj DOKLADNA kolejnosc dotkniec - krok po kroku.
+3. ZAGRYWKA: Jesli jest napisane "(poprawna, pilka w grze)" to zagrywka jest DOBRA. ZABRANIA SIE mowic "blad serwisowy"! Blad serwisowy jest TYLKO gdy jest ">>> BLAD SERWISU!".
+4. BLOK PRZEBITY: Ostatnie dotkniecie z "(przegral z atakujacym)" oznacza ze ATAKUJACY zdobyl punkt. NIE opisuj blokujacego jako zdobywce punktu.
+5. Jesli zagrywka jest poprawna, to nastepuje przyjecie - to jest LOGICZNE. Jesli zagrywka jest bledem, to akcja sie KONCZY i nie ma przyjecia.
+6. Jesli sa 2-3 dotkniecia, komentarz = 1 krotkie zdanie. Jesli 5+, opisz pelniej.`;
  }
  
  let situationContext = '';
@@ -1183,18 +1212,15 @@ Przyklad: "${attackerDeclined} przebija blok ${blockerDeclined}! Potezny atak!"`
  substitutionContext = `\nZMIANY W TYM RALLY:\n${subDescriptions.join('\n')}\n`;
  }
 
- const commentaryPrompt = `
-AKCJA MECZOWA:
-Rally #${rally.rally_number}
-Zawodnik ktory wykonal ostatnia akcje: ${displayScoringPlayer} (${playerTeamName})
-Akcja: ${scoringAction}
-Wynik po akcji: ${score}
-Punkt zdobyla: ${rally.team_scored}
-PROWADZI: ${leadingTeamName}${touchContext}${situationContext}${errorContext}${substitutionContext}
+ const commentaryPrompt = `${touchContext}
+
+WYNIK I KONTEKST:
+Rally #${rally.rally_number} | Wynik po akcji: ${score} | Punkt zdobyla: ${rally.team_scored === 'home' ? leadingTeamName : (rally.team_scored === 'away' ? (leadingTeamName === playerTeamName ? 'rywale' : playerTeamName) : rally.team_scored)} | PROWADZI: ${leadingTeamName}${situationContext}${errorContext}${substitutionContext}
 
 ${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKLADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `[!!] USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `VARIACJE ZWROTOW:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
 
 INSTRUKCJE:
+- OPISUJ TYLKO PRZEBIEG AKCJI powyzej. Kazde dotkniecie po kolei. Nic nie dodawaj!
 - ${setEndInfo.isSetEnd ? `TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEC! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZY PUNKT! Uzyj: "Dobry poczatek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KONCOWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkresl momentum!' : milestone ? 'MILESTONE - wspomniej liczbe punktow/blokow/asow!' : isBigLead ? 'Duza przewaga - zauwaz sytuacje' : isEarlySet ? 'Poczatek - spokojnie' : 'Srodek seta - rzeczowo'}
 - ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwal ATAKUJACEGO, nie blad bloku! Uzyj formy: "${attackingPlayer} przebija blok ${declinePolishName(scoringPlayer, 'genitive')}!"` : ''}
 - ${milestone ? `WAZNE: Wspomniej ze to ${milestone}!` : ''}${passInstructions}
@@ -1204,7 +1230,6 @@ INSTRUKCJE:
 - Uzywaj POPRAWNEJ odmiany nazwisk (Leon -> Leona w dopelniaczu)
 - ${attackCombo ? `DANE TAKTYCZNE: Atak typu ${attackCombo}${attackLocation ? `, strefa: ${attackLocation}` : ''}${attackStyle ? `, styl: ${attackStyle}` : ''}. Uzyj tych danych by opisac KONKRETNIE co sie stalo (np. atak po skosie, atak pipe, szybki atak srodkiem) zamiast ogolnikow!` : serveType ? `DANE TAKTYCZNE: Zagrywka typu ${serveType}. Opisz ja konkretnie!` : ''}
 - ${rally.substitutions?.length ? 'ZMIANA! Wplec ja naturalnie w komentarz - kto za kogo wchodzi, co to moze oznaczac (reakcja trenera, swieze sily, zmiana taktyki). To wazna informacja narracyjna!' : ''}
-- 1-3 zdania max, konkretnie i energicznie!
 `;
 
  
@@ -1216,7 +1241,14 @@ INSTRUKCJE:
  console.log('[NAMING-IN-PROMPT] NO naming rules in this prompt!');
  }
  
- console.log('[COMMENTARY] Generating...');
+ console.log('========= ROUTE.TS v7.1 SERVE-FIX LOADED =========');
+ console.log('[RALLY-TOUCHES]', rally.touches?.length || 0, 'touches');
+ if (rally.touches && rally.touches.length > 0) {
+   console.log('[FIRST-3-TOUCHES]', JSON.stringify(rally.touches.slice(0, 3)));
+ } else {
+   console.log('[NO-TOUCHES] rally keys:', Object.keys(rally));
+ }
+ console.log('[TOUCH-CHAIN-RESULT]', touchContext ? 'BUILT OK (' + touchContext.length + ' chars)' : 'EMPTY!!!');
 
  // ========================================================================
  // STEP 8: GENERATE COMMENTARY (NON-STREAMING)
@@ -1231,6 +1263,9 @@ INSTRUKCJE:
  milestone !== '',
  language
  );
+ 
+ console.log('[PRE-GPT] touchContext length:', touchContext.length);
+ console.log('[PRE-GPT] prompt first 400 chars:', commentaryPrompt.substring(0, 400));
  
  const completion = await openai.chat.completions.create({
  model: 'gpt-4o-mini',
