@@ -70,6 +70,7 @@ const fetchWithUTF8 = async (url: string, options?: RequestInit) => {
 
 interface Rally {
  rally_number: number;
+ set_number?: number;
  score_before: { aluron: number; bogdanka: number };
  score_after: { aluron: number; bogdanka: number };
  team_scored: string;
@@ -86,6 +87,19 @@ interface Rally {
  };
 }
 
+interface LineupPlayer {
+ name: string;
+ jersey: string;
+ isServer?: boolean;
+}
+
+interface SetLineup {
+ setNumber: number;
+ home: LineupPlayer[];
+ away: LineupPlayer[];
+ firstServer: { team: string; player: string; jersey: string } | null;
+}
+
 interface MatchData {
  match_id: string;
  match_url: string;
@@ -99,6 +113,7 @@ interface MatchData {
  away: string;
  };
  rallies: Rally[];
+ lineups?: SetLineup[];
 }
 
 interface CommentaryEntry {
@@ -108,7 +123,7 @@ interface CommentaryEntry {
  player: string;
  team: string;
  action: string;
- type: string;
+ type: string; // 'point_home' | 'point_away' | 'error' | 'lineup' | 'set_summary'
  // NEW FIELDS
  tags: string[];
  milestones: string[];
@@ -116,6 +131,16 @@ interface CommentaryEntry {
  momentumScore: number;
  dramaScore: number;
  tagData: Record<string, any>;
+ // LINEUP CARD DATA (only when type === 'lineup')
+ lineupData?: SetLineup;
+ // SET SUMMARY DATA (only when type === 'set_summary')
+ summaryData?: {
+   setNumber: number;
+   finalScore: { home: number; away: number };
+   winner: string;
+   topScorers: Array<{ player: string; points: number }>;
+   totalRallies: number;
+ };
 }
 
 type Language = 'pl' | 'en' | 'it' | 'de' | 'tr' | 'es' | 'pt' | 'jp';
@@ -161,6 +186,7 @@ export default function LiveMatchCommentaryV3() {
  const [commentaries, setCommentaries] = useState<CommentaryEntry[]>([]);
  const [currentRallyIndex, setCurrentRallyIndex] = useState(0);
  const [isPlaying, setIsPlaying] = useState(false);
+ const [currentSetNumber, setCurrentSetNumber] = useState(0);
  const [isGenerating, setIsGenerating] = useState(false);
  const [speed, setSpeed] = useState(3000);
  const [language, setLanguage] = useState<Language>('pl');
@@ -491,17 +517,92 @@ export default function LiveMatchCommentaryV3() {
  withChallenges: rallies.filter((r: any) => r.challenge).length
  });
  
+ // ========================================================================
+ // LINEUP EXTRACTION - Starting 6 per set
+ // ========================================================================
+ const lineups: SetLineup[] = [];
+ const setNumbers = [...new Set(rallies.map((r: any) => r.set_number || 1))];
+ 
+ for (const setNum of setNumbers) {
+   // Get instances for this set
+   const setInstances = instances.filter((inst: any) => {
+     const s = inst.labels?.Set;
+     return s === String(setNum);
+   });
+   
+   // Find starters: players who appear in first ~30 instances of the set
+   const homePlayers: Map<string, string> = new Map(); // name -> jersey
+   const awayPlayers: Map<string, string> = new Map();
+   
+   for (const inst of setInstances.slice(0, 120)) {
+     const labels = inst.labels || {};
+     const code = inst.code || '';
+     if (code === 'Rally') continue;
+     
+     // Try both team prefixes
+     for (const [prefix, map] of [[homePrefix, homePlayers], [awayPrefix, awayPlayers]] as const) {
+       if (!prefix) continue;
+       const nameKey = `${prefix} Player Name`;
+       const jerseyKey = `${prefix} Player Jersey`;
+       let name = labels[nameKey] || '';
+       let jersey = labels[jerseyKey] || '';
+       if (Array.isArray(name)) name = name[0] || '';
+       if (Array.isArray(jersey)) jersey = jersey[0] || '';
+       if (name && !map.has(name) && map.size < 8) {
+         map.set(name, jersey);
+       }
+     }
+     
+     // Stop early if we found enough
+     if (homePlayers.size >= 7 && awayPlayers.size >= 7) break;
+   }
+   
+   // Find first server of the set
+   let firstServer: SetLineup['firstServer'] = null;
+   const firstServe = setInstances.find((inst: any) => inst.code?.includes('Serve'));
+   if (firstServe) {
+     const code = firstServe.code || '';
+     const prefix = code.split(' ')[0];
+     const name = firstServe.labels?.[`${prefix} Player Name`] || '';
+     const jersey = firstServe.labels?.[`${prefix} Player Jersey`] || '';
+     const cleanName = typeof name === 'string' && name.includes(',') ? name.split(',')[0].trim() : name;
+     firstServer = {
+       team: prefix === homePrefix ? 'home' : 'away',
+       player: typeof cleanName === 'string' ? cleanName : String(cleanName),
+       jersey: typeof jersey === 'string' ? jersey : String(jersey),
+     };
+   }
+   
+   // Clean player names
+   const cleanLineup = (map: Map<string, string>): LineupPlayer[] => {
+     return Array.from(map.entries()).slice(0, 7).map(([name, jersey]) => ({
+       name: name.includes(',') ? name.split(',')[0].trim() : name,
+       jersey,
+     }));
+   };
+   
+   lineups.push({
+     setNumber: setNum,
+     home: cleanLineup(homePlayers),
+     away: cleanLineup(awayPlayers),
+     firstServer,
+   });
+   
+   console.log(`[LINEUP] Set ${setNum}: Home ${homePlayers.size} players, Away ${awayPlayers.size} players, Server: ${firstServer?.player || '?'}`);
+ }
+
  return { 
  rallies,
  teams: {
  home: homeTeamName,
  away: awayTeamName
- }
+ },
+ lineups
  };
  }
 
  /**
- * NAPRAWIONY PARSER - LICZY PUNKTY zamiast czytaAfaAca'-A! Game Score
+ * NAPRAWIONY PARSER - LICZY PUNKTY zamiast czyta Game Score
  */
  function parseDataVolleyFormat(datavolleyData: any): any {
  const instances = datavolleyData.file?.ALL_INSTANCES?.instance;
@@ -882,7 +983,7 @@ export default function LiveMatchCommentaryV3() {
  console.log('Re-translation complete in parallel!');
  };
 
- // Funkcja liczAfaAca'-A|ca wyniki setow do aktualnego rally
+ // Funkcja liczaca wyniki setow do aktualnego rally
  const calculateSetResults = (upToRallyIndex: number) => {
  const setWins = { home: 0, away: 0 };
  const setScores: Record<number, { home: number; away: number }> = {};
@@ -909,7 +1010,7 @@ export default function LiveMatchCommentaryV3() {
  for (const setNum in setScores) {
  const score = setScores[setNum];
  // Set zakoAfa|Aca'-3/4czony jeAfa|Aca'-Aoli ktoAfa|Aca'-Ao ma 25+ i roznica >= 2, albo ktoAfa|Aca'-Ao ma 30+
- // LUB jeAfa|Aca'-Aoli to set 5 i ktoAfa|Aca'-Ao ma 15+ z roznicAfaAca'-A| >= 2
+ // LUB jeAfa|Aca'-Aoli to set 5 i ktoAfa|Aca'-Ao ma 15+ z roznica >= 2
  const isSet5 = parseInt(setNum) === 5;
  const winThreshold = isSet5 ? 15 : 25;
  const maxThreshold = isSet5 ? 999 : 30;
@@ -937,7 +1038,7 @@ export default function LiveMatchCommentaryV3() {
  console.log('Generating commentary for rally #', rally.rally_number, 'in', targetLanguage);
  setIsGenerating(true);
  
- // Funkcja liczAfaAca'-A|ca wyniki setow do aktualnego rally
+ // Funkcja liczaca wyniki setow do aktualnego rally
 
  const updatedStats = calculatePlayerStats(rally);
  
@@ -968,7 +1069,7 @@ export default function LiveMatchCommentaryV3() {
  tags: [],
  tagData: {},
  milestones: [],
- icon: 'Adeg,AA', momentumScore: 0,
+ icon: '', momentumScore: 0,
  dramaScore: 0,
  };
  }
@@ -1125,6 +1226,98 @@ export default function LiveMatchCommentaryV3() {
 
  setIsPlaying(true);
  const rally = rallies[currentRallyIndex];
+ const rallySetNumber = (rally as any).set_number || 1;
+ 
+ // ========================================================================
+ // INJECT LINEUP CARD when entering a new set
+ // ========================================================================
+ if (rallySetNumber !== currentSetNumber) {
+   // If we had a previous set, inject SET SUMMARY first
+   if (currentSetNumber > 0) {
+     const prevSetRallies = rallies.filter((r: any) => (r.set_number || 1) === currentSetNumber);
+     const lastRally = prevSetRallies[prevSetRallies.length - 1];
+     if (lastRally) {
+       // Calculate top scorers for the set
+       const setScorers: Record<string, number> = {};
+       prevSetRallies.forEach((r: any) => {
+         const ft = r.touches?.[r.touches.length - 1];
+         if (ft?.player && r.team_scored !== 'unknown' && !ft.action?.toLowerCase().includes('error')) {
+           setScorers[ft.player] = (setScorers[ft.player] || 0) + 1;
+         }
+       });
+       const topScorers = Object.entries(setScorers)
+         .sort(([,a], [,b]) => b - a)
+         .slice(0, 3)
+         .map(([player, points]) => ({ player, points }));
+       
+       const summaryEntry: CommentaryEntry = {
+         rallyNumber: -currentSetNumber - 100, // unique negative ID for summaries
+         text: `Koniec ${currentSetNumber}. seta! ${lastRally.score_after.home}:${lastRally.score_after.away}`,
+         timestamp: new Date(),
+         player: '', team: '', action: '',
+         type: 'set_summary',
+         tags: [], milestones: [], icon: 'SET_END',
+         momentumScore: 0, dramaScore: 0, tagData: {},
+         summaryData: {
+           setNumber: currentSetNumber,
+           finalScore: { home: lastRally.score_after.home, away: lastRally.score_after.away },
+           winner: lastRally.score_after.home > lastRally.score_after.away ? 'home' : 'away',
+           topScorers,
+           totalRallies: prevSetRallies.length,
+         },
+       };
+       setCommentaries((prev) => [summaryEntry, ...prev]);
+       // Small delay so summary appears before lineup
+       await new Promise(resolve => setTimeout(resolve, 500));
+     }
+   }
+   
+   // Inject LINEUP CARD for the new set
+   const lineup = matchData?.lineups?.find(l => l.setNumber === rallySetNumber);
+   if (lineup) {
+     const homeFullName = TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Home';
+     const awayFullName = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Away';
+     
+     // Build intro text
+     const homeNames = lineup.home.map(p => p.name).join(', ');
+     const awayNames = lineup.away.map(p => p.name).join(', ');
+     const serverInfo = lineup.firstServer 
+       ? `Zagrywke rozpoczyna ${lineup.firstServer.player} z druzyny ${lineup.firstServer.team === 'home' ? homeFullName : awayFullName}.`
+       : '';
+     const introText = rallySetNumber === 1
+       ? `Zaczynamy! ${homeFullName} w skladzie: ${homeNames}. Po drugiej stronie siatki ${awayFullName}: ${awayNames}. ${serverInfo}`
+       : `Set ${rallySetNumber}! ${homeFullName}: ${homeNames}. ${awayFullName}: ${awayNames}. ${serverInfo}`;
+     
+     // First: lineup card
+     const lineupEntry: CommentaryEntry = {
+       rallyNumber: -rallySetNumber, // negative ID for lineup cards
+       text: `Set ${rallySetNumber} - Sklad`,
+       timestamp: new Date(),
+       player: '', team: '', action: '',
+       type: 'lineup',
+       tags: [], milestones: [], icon: '',
+       momentumScore: 0, dramaScore: 0, tagData: {},
+       lineupData: lineup,
+     };
+     
+     // Then: intro commentary
+     const introEntry: CommentaryEntry = {
+       rallyNumber: -rallySetNumber - 50, // unique negative ID
+       text: introText,
+       timestamp: new Date(),
+       player: '', team: '', action: '',
+       type: 'intro',
+       tags: [], milestones: [], icon: 'WHISTLE',
+       momentumScore: 0, dramaScore: 0, tagData: {},
+     };
+     
+     setCommentaries((prev) => [introEntry, lineupEntry, ...prev]);
+     // Small delay so lineup card appears before first rally
+     await new Promise(resolve => setTimeout(resolve, 1500));
+   }
+   
+   setCurrentSetNumber(rallySetNumber);
+ }
 
  const result = await generateCommentary(rally);
 
@@ -1187,6 +1380,7 @@ export default function LiveMatchCommentaryV3() {
  if (currentRallyIndex >= rallies.length) {
  setCurrentRallyIndex(0);
  setCommentaries([]);
+ setCurrentSetNumber(0);
  setIsPlaying(true);
  } else {
  setIsPlaying(!isPlaying);
@@ -1197,6 +1391,7 @@ export default function LiveMatchCommentaryV3() {
  setIsPlaying(false);
  setCurrentRallyIndex(0);
  setCommentaries([]);
+ setCurrentSetNumber(0);
  };
 
  const getActionType = (action: string): string => {
@@ -1215,6 +1410,7 @@ export default function LiveMatchCommentaryV3() {
  'attack': 'border-l-yellow-500 bg-yellow-500/10',
  'point': 'border-l-green-500 bg-green-500/10',
  'error': 'border-l-gray-500 bg-gray-500/10',
+ 'intro': 'border-l-indigo-500 bg-indigo-500/10',
  };
  return colors[type as keyof typeof colors] || 'border-l-gray-500 bg-gray-500/10';
  };
@@ -1239,6 +1435,7 @@ export default function LiveMatchCommentaryV3() {
  setSelectedMatch(e.target.value);
  setCommentaries([]);
  setCurrentRallyIndex(0);
+ setCurrentSetNumber(0);
  setIsPlaying(false);
  }}
  className="flex-1 max-w-2xl px-4 py-3 text-base font-semibold bg-card text-foreground border-2 border-border rounded-lg hover:border-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary transition-all cursor-pointer"
@@ -1422,7 +1619,7 @@ export default function LiveMatchCommentaryV3() {
  {isRetranslating && (
  <div className="flex items-center gap-2 text-blue-500 mt-4">
  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
- <span className="font-medium">Adeg,'A Re-translating commentaries...</span>
+ <span className="font-medium">Re-translating commentaries...</span>
  </div>
  )}
  </div>
@@ -1478,6 +1675,83 @@ export default function LiveMatchCommentaryV3() {
  const rally = rallies.find(r => r.rally_number === commentary.rallyNumber);
  const score = rally ? `${rally.score_after.home}:${rally.score_after.away}` : '';
  
+ // ========== LINEUP CARD ==========
+ if (commentary.type === 'lineup' && commentary.lineupData) {
+   const lu = commentary.lineupData;
+   const homeFullName = TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Home';
+   const awayFullName = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Away';
+   return (
+     <div key={index} className="bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900 rounded-xl p-5 text-white shadow-lg border border-indigo-500/30 animate-fade-in">
+       <div className="text-center mb-4">
+         <span className="text-xs font-bold uppercase tracking-widest text-indigo-300">Set {lu.setNumber}</span>
+         <h3 className="text-lg font-bold">Sklad wyjsciowy</h3>
+         {lu.firstServer && (
+           <p className="text-xs text-indigo-300 mt-1">
+             Zagrywka: {lu.firstServer.player} ({lu.firstServer.team === 'home' ? homeFullName : awayFullName})
+           </p>
+         )}
+       </div>
+       <div className="grid grid-cols-2 gap-4">
+         <div>
+           <div className="flex items-center gap-2 mb-2">
+             <img src={getTeamLogo(matchData?.teams?.home || '')} alt="" className="w-6 h-6 object-contain" />
+             <span className="text-sm font-bold text-blue-300">{homeFullName}</span>
+           </div>
+           {lu.home.map((p, i) => (
+             <div key={i} className="flex items-center gap-2 py-0.5">
+               <span className="text-xs font-mono text-indigo-400 w-6 text-right">#{p.jersey}</span>
+               <span className={`text-sm ${favPlayer === p.name ? 'text-yellow-400 font-bold' : 'text-white'}`}>{p.name}</span>
+             </div>
+           ))}
+         </div>
+         <div>
+           <div className="flex items-center gap-2 mb-2">
+             <img src={getTeamLogo(matchData?.teams?.away || '')} alt="" className="w-6 h-6 object-contain" />
+             <span className="text-sm font-bold text-red-300">{awayFullName}</span>
+           </div>
+           {lu.away.map((p, i) => (
+             <div key={i} className="flex items-center gap-2 py-0.5">
+               <span className="text-xs font-mono text-indigo-400 w-6 text-right">#{p.jersey}</span>
+               <span className={`text-sm ${favPlayer === p.name ? 'text-yellow-400 font-bold' : 'text-white'}`}>{p.name}</span>
+             </div>
+           ))}
+         </div>
+       </div>
+     </div>
+   );
+ }
+ 
+ // ========== SET SUMMARY CARD ==========
+ if (commentary.type === 'set_summary' && commentary.summaryData) {
+   const sd = commentary.summaryData;
+   const homeFullName = TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Home';
+   const awayFullName = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Away';
+   const winnerName = sd.winner === 'home' ? homeFullName : awayFullName;
+   return (
+     <div key={index} className="bg-gradient-to-r from-emerald-900 via-green-900 to-teal-900 rounded-xl p-5 text-white shadow-lg border border-emerald-500/30 animate-fade-in">
+       <div className="text-center mb-3">
+         <span className="text-xs font-bold uppercase tracking-widest text-emerald-300">Koniec seta {sd.setNumber}</span>
+         <h3 className="text-2xl font-bold mt-1">{sd.finalScore.home} : {sd.finalScore.away}</h3>
+         <p className="text-sm text-emerald-300">Wygrywa: {winnerName}</p>
+       </div>
+       {sd.topScorers.length > 0 && (
+         <div className="mt-3 border-t border-emerald-700 pt-3">
+           <p className="text-xs font-bold text-emerald-400 mb-1 uppercase">Top punktujacy w secie:</p>
+           {sd.topScorers.map((s, i) => (
+             <div key={i} className="flex justify-between text-sm py-0.5">
+               <span className={favPlayer === s.player ? 'text-yellow-400 font-bold' : ''}>{i+1}. {s.player}</span>
+               <span className="text-emerald-300 font-bold">{s.points} pkt</span>
+             </div>
+           ))}
+         </div>
+       )}
+       <div className="text-center mt-3 text-xs text-emerald-500">
+         {sd.totalRallies} akcji w secie
+       </div>
+     </div>
+   );
+ }
+
  return (
  <div key={index} className="flex gap-3 items-start">
  {/* Score Box - Left Side */}
