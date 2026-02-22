@@ -1079,7 +1079,7 @@ if (!rally.touches || rally.touches.length === 0) {
        desc += ` - ${serveDesc} >>> BLAD SERWISU! Pilka w aut/siatke. KONIEC AKCJI.`;
      } else {
        // Serve continues play (even if VolleyStation says "Blad" - if there are more touches, it wasn't a terminal error)
-       desc += ` - ${serveDesc} (poprawna, pilka w grze)`;
+       desc += ` - ${serveDesc}`;
      }
    // RECEIVE
    } else if (actionLower.includes('przyjecie') || actionLower.includes('pass') || actionLower.includes('receive')) {
@@ -1153,7 +1153,7 @@ ${touchChainLines.join('\n')}
 KRYTYCZNE ZASADY KOMENTARZA - LAMANIE = PORAZKA:
 1. OPISUJ TYLKO TO CO JEST W PRZEBIEGU AKCJI POWYZEJ. Nic wiecej!
 2. Zachowaj DOKLADNA kolejnosc dotkniec - krok po kroku.
-3. ZAGRYWKA: Jesli jest napisane "(poprawna, pilka w grze)" to zagrywka jest DOBRA. ZABRANIA SIE mowic "blad serwisowy"! Blad serwisowy jest TYLKO gdy jest ">>> BLAD SERWISU!".
+3. ZAGRYWKA: Blad serwisowy jest TYLKO gdy jest napisane ">>> BLAD SERWISU!". W kazdym innym przypadku zagrywka jest dobra i gra toczy sie dalej - nie musisz tego podkreslac.
 4. BLOK PRZEBITY: Ostatnie dotkniecie z "(przegral z atakujacym)" oznacza ze ATAKUJACY zdobyl punkt. NIE opisuj blokujacego jako zdobywce punktu.
 5. Jesli zagrywka jest poprawna, to nastepuje przyjecie - to jest LOGICZNE. Jesli zagrywka jest bledem, to akcja sie KONCZY i nie ma przyjecia.
 6. Jesli sa 2-3 dotkniecia, komentarz = 1 krotkie zdanie. Jesli 5+, opisz pelniej.`;
