@@ -2,22 +2,24 @@
  * ============================================================================
  * GOOGLE DRIVE → PINECONE SYNC
  * ============================================================================
- * 
+ *
  * ONE SCRIPT TO RULE THEM ALL!
- * 
+ *
  * Automatically syncs ALL content from Google Drive to Pinecone:
  * - Markdown files (.md)
  * - Word documents (.docx) - both binary and Google Docs native
  * - PDFs (.pdf)
  * - Text files (.txt)
- * 
+ *
  * WORKFLOW:
  * 1. Upload any file to Google Drive folder
  * 2. Run: npx tsx scripts/sync-google-drive.ts
  * 3. DONE! File automatically uploaded to correct Pinecone namespace
- * 
+ *
  * NO MORE MANUAL UPLOADS! NO MORE MULTIPLE SCRIPTS!
- * 
+ *
+ * v2.0 - 2026-02-24: Fixed pagination in getFilesInFolder (was missing 100+ files!)
+ *
  * ============================================================================
  */
 
@@ -42,7 +44,7 @@ const CONFIG = {
   CHUNK_SIZE: 1000,
   CHUNK_OVERLAP: 200,
   SUPPORTED_EXTENSIONS: ['.md', '.docx', '.pdf', '.txt'],
-  
+
   // Namespace mapping based on folder structure
   NAMESPACE_FOLDERS: {
     'tactical-knowledge': 'tactical-knowledge',
@@ -81,12 +83,12 @@ const drive = google.drive({ version: 'v3', auth });
  */
 async function parseMarkdown(fileId: string, fileName: string): Promise<string> {
   console.log('   📝 Parsing as Markdown...');
-  
+
   const response = await drive.files.get({
     fileId,
     alt: 'media',
   }, { responseType: 'text' });
-  
+
   return response.data as string;
 }
 
@@ -95,12 +97,12 @@ async function parseMarkdown(fileId: string, fileName: string): Promise<string> 
  */
 async function parseGoogleDoc(fileId: string): Promise<string> {
   console.log('   📄 Parsing as Google Doc (native)...');
-  
+
   const response = await drive.files.export({
     fileId,
     mimeType: 'text/plain',
   });
-  
+
   return response.data as string;
 }
 
@@ -109,29 +111,29 @@ async function parseGoogleDoc(fileId: string): Promise<string> {
  */
 async function parseBinaryDocx(fileId: string): Promise<string> {
   console.log('   📄 Parsing as binary DOCX...');
-  
+
   // Download file to temp location
   const tempFile = path.join(process.env.TEMP || 'C:\\Windows\\Temp', `temp-${fileId}.docx`);
-  
+
   const dest = fs.createWriteStream(tempFile);
   const response = await drive.files.get(
     { fileId, alt: 'media' },
     { responseType: 'stream' }
   );
-  
+
   await new Promise<void>((resolve, reject) => {
     (response.data as any)
       .pipe(dest)
       .on('finish', resolve)
       .on('error', reject);
   });
-  
+
   // Parse with mammoth
   const result = await mammoth.extractRawText({ path: tempFile });
-  
+
   // Cleanup
   fs.unlinkSync(tempFile);
-  
+
   return result.value;
 }
 
@@ -140,16 +142,16 @@ async function parseBinaryDocx(fileId: string): Promise<string> {
  */
 async function parsePdf(fileId: string): Promise<string> {
   console.log('   📕 Parsing as PDF...');
-  
+
   // Download to buffer
   const response = await drive.files.get(
     { fileId, alt: 'media' },
     { responseType: 'arraybuffer' }
   );
-  
+
   const buffer = Buffer.from(response.data as ArrayBuffer);
   const data = await pdfParse(buffer);
-  
+
   return data.text;
 }
 
@@ -158,12 +160,12 @@ async function parsePdf(fileId: string): Promise<string> {
  */
 async function parseTextFile(fileId: string): Promise<string> {
   console.log('   📃 Parsing as text file...');
-  
+
   const response = await drive.files.get({
     fileId,
     alt: 'media',
   }, { responseType: 'text' });
-  
+
   return response.data as string;
 }
 
@@ -174,37 +176,37 @@ async function parseFile(file: drive_v3.Schema$File): Promise<string> {
   const fileName = file.name || 'unknown';
   const mimeType = file.mimeType || '';
   const fileId = file.id!;
-  
+
   console.log(`   📋 File type: ${mimeType}`);
-  
+
   try {
     // Google Docs native
     if (mimeType === 'application/vnd.google-apps.document') {
       return await parseGoogleDoc(fileId);
     }
-    
+
     // Markdown
     if (fileName.endsWith('.md') || mimeType === 'text/markdown' || mimeType === 'text/plain') {
       return await parseMarkdown(fileId, fileName);
     }
-    
+
     // DOCX binary
     if (fileName.endsWith('.docx') || mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
       return await parseBinaryDocx(fileId);
     }
-    
+
     // PDF
     if (fileName.endsWith('.pdf') || mimeType === 'application/pdf') {
       return await parsePdf(fileId);
     }
-    
+
     // Text file
     if (fileName.endsWith('.txt') || mimeType === 'text/plain') {
       return await parseTextFile(fileId);
     }
-    
+
     throw new Error(`Unsupported file type: ${mimeType} (${fileName})`);
-    
+
   } catch (error) {
     console.error(`   ❌ Parse error:`, error instanceof Error ? error.message : String(error));
     throw error;
@@ -221,9 +223,9 @@ async function parseFile(file: drive_v3.Schema$File): Promise<string> {
 function chunkContent(content: string, chunkSize: number = CONFIG.CHUNK_SIZE): string[] {
   const chunks: string[] = [];
   const sentences = content.split(/[.!?]+\s+/);
-  
+
   let currentChunk = '';
-  
+
   for (const sentence of sentences) {
     if ((currentChunk + sentence).length > chunkSize && currentChunk.length > 0) {
       chunks.push(currentChunk.trim());
@@ -232,11 +234,11 @@ function chunkContent(content: string, chunkSize: number = CONFIG.CHUNK_SIZE): s
       currentChunk += (currentChunk ? ' ' : '') + sentence;
     }
   }
-  
+
   if (currentChunk.trim()) {
     chunks.push(currentChunk.trim());
   }
-  
+
   return chunks.filter(c => c.length > 50); // Filter out too short chunks
 }
 
@@ -247,9 +249,9 @@ async function createEmbedding(text: string): Promise<number[]> {
   const response = await openai.embeddings.create({
     model: 'text-embedding-3-small',
     input: text,
-    dimensions: 768  // ← DODAJ TO!
+    dimensions: 768,
   });
-  
+
   return response.data[0].embedding;
 }
 
@@ -336,20 +338,41 @@ async function getNamespaceFolders(): Promise<drive_v3.Schema$File[]> {
     q: `'${CONFIG.GOOGLE_DRIVE_FOLDER_ID}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
     fields: 'files(id, name)',
   });
-  
+
   return response.data.files || [];
 }
 
 /**
- * Get files in folder
+ * Get ALL files in folder (with pagination — handles 100+ files!)
+ * 
+ * FIX v2.0: Google Drive API returns max ~100 files per page.
+ * Without pagination, folders with 100+ files (like player-profiles with 224)
+ * were silently truncated, causing missing data in Pinecone.
  */
 async function getFilesInFolder(folderId: string): Promise<drive_v3.Schema$File[]> {
-  const response = await drive.files.list({
-    q: `'${folderId}' in parents and trashed=false`,
-    fields: 'files(id, name, mimeType, modifiedTime)',
-  });
-  
-  return response.data.files || [];
+  const allFiles: drive_v3.Schema$File[] = [];
+  let pageToken: string | undefined = undefined;
+  let pageNum = 0;
+
+  do {
+    pageNum++;
+    const response = await drive.files.list({
+      q: `'${folderId}' in parents and trashed=false`,
+      fields: 'nextPageToken, files(id, name, mimeType, modifiedTime)',
+      pageSize: 100,
+      ...(pageToken ? { pageToken } : {}),
+    });
+
+    const files = response.data.files || [];
+    allFiles.push(...files);
+    pageToken = response.data.nextPageToken || undefined;
+
+    if (pageNum > 1) {
+      console.log(`   📄 Page ${pageNum}: +${files.length} files (total: ${allFiles.length})`);
+    }
+  } while (pageToken);
+
+  return allFiles;
 }
 
 // ============================================================================
@@ -373,30 +396,30 @@ async function processFile(
   stats: SyncStats
 ): Promise<void> {
   const fileName = file.name || 'unknown';
-  
+
   console.log(`\n   📄 ${fileName}`);
   console.log('   ' + '-'.repeat(60));
-  
+
   try {
     // Parse file
     const content = await parseFile(file);
-    
+
     // Skip if empty
     if (!content || content.trim().length < 50) {
       console.log('   ⏭️  Skipped: Content too short or empty');
       stats.skipped++;
       return;
     }
-    
+
     console.log(`   ✅ Parsed: ${content.length} characters`);
-    
+
     // Chunk content
     const rawChunks = chunkContent(content);
     console.log(`   ✂️  Split into ${rawChunks.length} chunks`);
-    
+
     // Format chunks with index
     const chunks = rawChunks.map((text, index) => ({ text, index }));
-    
+
     // Upload to Pinecone
     await uploadToPinecone(
       chunks,
@@ -405,12 +428,12 @@ async function processFile(
       namespace,
       { source: fileName }
     );
-    
+
     stats.processed++;
     stats.totalChunks += chunks.length;
-    
+
     console.log(`   ✅ SUCCESS!`);
-    
+
   } catch (error) {
     console.error(`   ❌ Error processing ${fileName}:`, error instanceof Error ? error.message : String(error));
     stats.errors++;
@@ -421,9 +444,9 @@ async function processFile(
  * Main sync function
  */
 async function syncGoogleDriveToPinecone(): Promise<void> {
-  console.log('🚀 Starting Google Drive → Pinecone sync...');
-  console.log('='*60);
-  
+  console.log('🚀 Starting Google Drive → Pinecone sync (v2.0 — with pagination fix)...');
+  console.log('='.repeat(60));
+
   const stats: SyncStats = {
     totalFiles: 0,
     processed: 0,
@@ -431,43 +454,43 @@ async function syncGoogleDriveToPinecone(): Promise<void> {
     errors: 0,
     totalChunks: 0,
   };
-  
+
   try {
     // Get namespace folders
     const folders = await getNamespaceFolders();
     console.log(`📁 Found ${folders.length} namespace folders\n`);
-    
+
     // Process each namespace
     for (const folder of folders) {
       const namespace = folder.name || 'default';
       console.log(`📋 Processing namespace: ${namespace}`);
       console.log('─'.repeat(60));
-      
-      // Get files in folder
+
+      // Get files in folder (NOW WITH PAGINATION!)
       const files = await getFilesInFolder(folder.id!);
       console.log(`   Found ${files.length} files`);
-      
+
       stats.totalFiles += files.length;
-      
+
       // Process each file
       for (const file of files) {
         await processFile(file, namespace, stats);
       }
-      
+
       console.log('');
     }
-    
+
     // Print summary
-    console.log('\n' + '='*60);
+    console.log('\n' + '='.repeat(60));
     console.log('📊 SYNC COMPLETE!');
-    console.log('='*60);
+    console.log('='.repeat(60));
     console.log(`Total files processed: ${stats.totalFiles}`);
     console.log(`✅ Added: ${stats.processed}`);
     console.log(`⏭️  Skipped: ${stats.skipped}`);
     console.log(`❌ Errors: ${stats.errors}`);
     console.log(`📦 Total chunks uploaded: ${stats.totalChunks}`);
-    console.log('='*60);
-    
+    console.log('='.repeat(60));
+
     if (stats.processed > 0) {
       console.log('\n✨ SUCCESS! Your knowledge base has been updated!');
       console.log('\n💡 Files are now available in RAG queries!');
@@ -476,7 +499,7 @@ async function syncGoogleDriveToPinecone(): Promise<void> {
       console.log('   - Commentary phrases: namespace commentary-phrases');
       console.log('   - etc.\n');
     }
-    
+
   } catch (error) {
     console.error('\n❌ FATAL ERROR:', error);
     process.exit(1);

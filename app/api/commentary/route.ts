@@ -14,102 +14,9 @@ const pinecone = new Pinecone({
 const index = pinecone.index('ed-volley');
 
 // ============================================================================
-// POLISH NAME DECLENSIONS
+// POLISH NAME DECLENSIONS — handled by RAG (naming-rules namespace)
+// Hardcoded dict removed (2026-02-24) — GPT uses naming rules from Pinecone
 // ============================================================================
-const polishNameDeclensions: Record<string, Record<string, string>> = {
- 'Leon': { 
- nominative: 'Leon',
- genitive: 'Leona',
- accusative: 'Leona'
- },
- 'Leon Venero': { 
- nominative: 'Venero Leon',
- genitive: 'Venero Leona',
- accusative: 'Venero Leona'
- },
- 'Tavares Rodrigues': { 
- nominative: 'Tavares',
- genitive: 'Tavaresa',
- accusative: 'Tavaresa'
- },
- 'Boladz': {
- nominative: 'Boladz',
- genitive: 'Boladzia', 
- accusative: 'Boladzia'
- },
- 'Grozdanov': {
- nominative: 'Grozdanov',
- genitive: 'Grozdanova',
- accusative: 'Grozdanova'
- },
- 'Russell': {
- nominative: 'Russell',
- genitive: 'Russella',
- accusative: 'Russella'
- },
- 'Bieniek': {
- nominative: 'Bieniek',
- genitive: 'Bienka',
- accusative: 'Bienka'
- },
- 'Kwolek': {
- nominative: 'Kwolek',
- genitive: 'Kwolka',
- accusative: 'Kwolka'
- },
- 'McCarthy': {
- nominative: 'McCarthy',
- genitive: "McCarthy'ego",
- accusative: "McCarthy'ego"
- },
- 'Tavares': {
- nominative: 'Tavares',
- genitive: 'Tavaresa',
- accusative: 'Tavaresa'
- },
- 'Henno': {
- nominative: 'Henno',
- genitive: 'Henno',
- accusative: 'Henno'
- },
- 'Sasak': {
- nominative: 'Sasak',
- genitive: 'Sasaka',
- accusative: 'Sasaka'
- },
- 'Komenda': {
- nominative: 'Komenda',
- genitive: 'Komendy',
- accusative: 'Komende'
- },
- 'Prokopczuk': {
- nominative: 'Prokopczuk',
- genitive: 'Prokopczuka',
- accusative: 'Prokopczuka'
- },
- 'Zniszczol': {
- nominative: 'Zniszczol',
- genitive: 'Zniszczola',
- accusative: 'Zniszczola'
- },
- 'Hoss': {
- nominative: 'Hoss',
- genitive: 'Hossa',
- accusative: 'Hossa'
- },
- 'Popiwczak': {
- nominative: 'Popiwczak',
- genitive: 'Popiwczaka',
- accusative: 'Popiwczaka'
- },
-};
-
-function declinePolishName(name: string, caseType: 'nominative' | 'genitive' | 'accusative'): string {
- if (!polishNameDeclensions[name]) {
- return name;
- }
- return polishNameDeclensions[name][caseType];
-}
 
 // ============================================================================
 // SCORE VALIDATION & SET END DETECTION
@@ -149,26 +56,28 @@ function validateAndFixScore(
 }
 
 function checkSetEnd(
- score: { aluron: number; bogdanka: number },
- setNumber: number = 1
+ score: { home: number; away: number },
+ setNumber: number = 1,
+ homeTeamName: string = 'Gospodarze',
+ awayTeamName: string = 'Goscie'
 ): {
  isSetEnd: boolean;
  winner: string;
  finalScore: string;
  isTieBreak: boolean;
 } {
- const aluron = score.aluron;
- const bogdanka = score.bogdanka;
+ const home = score.home;
+ const away = score.away;
  const isTieBreak = setNumber === 5;
  const targetScore = isTieBreak ? 15 : 25;
  
- const hasTargetScore = aluron >= targetScore || bogdanka >= targetScore;
- const hasTwoPointLead = Math.abs(aluron - bogdanka) >= 2;
+ const hasTargetScore = home >= targetScore || away >= targetScore;
+ const hasTwoPointLead = Math.abs(home - away) >= 2;
  const isSetEnd = hasTargetScore && hasTwoPointLead;
  
  if (isSetEnd) {
- const winner = aluron > bogdanka ? 'Aluron CMC Warta Zawiercie' : 'BOGDANKA LUK Lublin';
- const finalScore = `${aluron}:${bogdanka}`;
+ const winner = home > away ? homeTeamName : awayTeamName;
+ const finalScore = `${home}:${away}`;
  
  console.log(`SET END DETECTED! Winner: ${winner}, Score: ${finalScore}`);
  
@@ -345,8 +254,8 @@ Factual YES, but keep VOLLEYBALL ENERGY!`;
 interface RallyData {
  rally_number: number;
  set_number?: number;
- score_before: { aluron: number; bogdanka: number };
- score_after: { aluron: number; bogdanka: number };
+ score_before: { home: number; away: number; [key: string]: number };
+ score_after: { home: number; away: number; [key: string]: number };
  team_scored: string;
  touches: Array<{
  action: string;
@@ -403,6 +312,8 @@ interface CommentaryRequest {
  playerStats?: Record<string, PlayerStats>;
  recentRallies?: RallyData[];
  rallyAnalysis?: RallyAnalysis;
+ homeTeamFullName?: string;
+ awayTeamFullName?: string;
 }
 
 // ============================================================================
@@ -410,9 +321,9 @@ interface CommentaryRequest {
 // ============================================================================
 
 export async function POST(request: NextRequest) {
- console.log('========= ROUTE.TS v7.1 SERVE-FIX LOADED =========');
+ console.log('========= ROUTE.TS v7.3 DYNAMIC-TEAMS LOADED =========');
  try {
- const { rally, language = 'pl', playerStats = {}, recentRallies = [], rallyAnalysis }: CommentaryRequest = await request.json();
+ const { rally, language = 'pl', playerStats = {}, recentRallies = [], rallyAnalysis, homeTeamFullName, awayTeamFullName }: CommentaryRequest = await request.json();
 
  if (!rally) {
  return new Response('Rally data is required', { status: 400 });
@@ -440,8 +351,12 @@ export async function POST(request: NextRequest) {
  // ========================================================================
  // STEP 2: CHECK IF SET ENDED
  // ========================================================================
+ // Resolve team full names (from frontend or fallback)
+ const homeTeamFull = homeTeamFullName || 'Gospodarze';
+ const awayTeamFull = awayTeamFullName || 'Goscie';
+
  const setNumber = rally.set_number || 1;
- const setEndInfo = checkSetEnd(finalScore, setNumber);
+ const setEndInfo = checkSetEnd(finalScore, setNumber, homeTeamFull, awayTeamFull);
 
  // ========================================================================
  // STEP 3: EXTRACT FINAL ACTION INFO (FIXED!)
@@ -472,12 +387,8 @@ if (!rally.touches || rally.touches.length === 0) {
  const finalTouch = rally.touches[rally.touches.length - 1];
  let scoringPlayer = finalTouch?.player || '';
     
-    // Map double surnames to preferred display names
-    const preferredDisplayNames: Record<string, string> = {
-      'Leon Venero': 'Venero Leon',
-      'Tavares Rodrigues': 'Tavares',
-    };
-    const displayScoringPlayer = preferredDisplayNames[scoringPlayer] || scoringPlayer;
+    // Display name mapping handled by RAG naming-rules (no more hardcoded)
+    const displayScoringPlayer = scoringPlayer;
  let scoringAction = finalTouch?.action || '';
  let playerTeam = finalTouch?.team || '';
 
@@ -515,16 +426,19 @@ if (!rally.touches || rally.touches.length === 0) {
  }
  }
 
- const teamNames: Record<string, string> = {
- 'aluron': 'Aluron CMC Warta Zawiercie',
- 'bogdanka': 'BOGDANKA LUK Lublin'
- };
- const homeTeamFull = teamNames['aluron'] || 'Gospodarze';
- const awayTeamFull = teamNames['bogdanka'] || 'Goscie';
+ // Team name resolution — dynamic from frontend (no more hardcoded!)
  const teamByRole = (role: string) => role === 'home' ? homeTeamFull : awayTeamFull;
 
- const playerTeamName = teamNames[playerTeam.toLowerCase()] || rally.team_scored;
- const attackingTeamName = attackingTeam ? teamNames[attackingTeam.toLowerCase()] : '';
+ // Resolve player's team name from touch.team field
+ // touch.team can be 'home', 'away', or the short team key (e.g. 'aluron', 'pge')
+ const resolveTeamName = (team: string): string => {
+   if (team === 'home') return homeTeamFull;
+   if (team === 'away') return awayTeamFull;
+   return homeTeamFull; // fallback — most scoring players are from known teams
+ };
+
+ const playerTeamName = resolveTeamName(playerTeam);
+ const attackingTeamName = attackingTeam ? resolveTeamName(attackingTeam) : '';
 
  // ========================================================================
  // STEP 4: SITUATION ANALYSIS
@@ -577,11 +491,11 @@ if (!rally.touches || rally.touches.length === 0) {
  const isFirstPoint = (finalScore.home === 1 && finalScore.away === 0) || 
  (finalScore.home === 0 && finalScore.away === 1);
  const leadingTeam = finalScore.home > finalScore.away 
- ? 'Aluron CMC Warta Zawiercie' 
- : 'BOGDANKA LUK Lublin';
+ ? homeTeamFull 
+ : awayTeamFull;
  const trailingTeam = finalScore.home < finalScore.away 
- ? 'Aluron CMC Warta Zawiercie' 
- : 'BOGDANKA LUK Lublin';
+ ? homeTeamFull 
+ : awayTeamFull;
 
  console.log('[COMMENTARY] Request:', {
  rally_number: rally.rally_number,
@@ -774,24 +688,6 @@ if (!rally.touches || rally.touches.length === 0) {
  // ========================================================================
 
  let namingRulesContext = '';
-    
-    // Generate fallback naming context from hardcoded declensions
-    const getFallbackNamingContext = (player: string): string => {
-      // Preferred display names (parser output -> commentary name)
-      const preferredNames: Record<string, string> = {
-        'Leon Venero': 'Venero Leon',
-        'Tavares Rodrigues': 'Tavares',
-      };
-      
-      const displayName = preferredNames[player] || player;
-      const shortName = player.split(' ')[0]; // Try first part too
-      const declensions = polishNameDeclensions[player] || polishNameDeclensions[displayName] || polishNameDeclensions[shortName];
-      
-      if (declensions) {
-        return `NAMING: ${player} -> uzywaj "${declensions.nominative}" (mianownik), "${declensions.genitive}" (dopelniacz), "${declensions.accusative}" (biernik). ${preferredNames[player] ? `PREFEROWANE: "${preferredNames[player]}" zamiast "${player}"` : ''}`;
-      }
-      return '';
-    };
 
  try {
  // Query with all player name variants
@@ -833,13 +729,10 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('Naming rules namespace not yet populated');
  }
 
-    // Fallback: if no RAG naming rules found, use hardcoded declensions
+    // Fallback: if no RAG naming rules found, instruct GPT to use standard Polish grammar
     if (!namingRulesContext && scoringPlayer) {
-      const fallback = getFallbackNamingContext(scoringPlayer);
-      if (fallback) {
-        namingRulesContext = fallback;
-        console.log('[NAMING-FALLBACK] Using hardcoded declensions for', scoringPlayer);
-      }
+      namingRulesContext = `NAMING: Brak specjalnych regul dla "${scoringPlayer}". Stosuj standardowe zasady polskiej gramatyki do odmiany tego nazwiska. Jesli to nazwisko zagraniczne — odmien je wg polskich wzorcow (np. Russell → Russella, McCarthy → McCarthy'ego). Jesli nieodmienne (np. Henno) — nie odmieniaj.`;
+      console.log('[NAMING-FALLBACK] No RAG rules, using GPT grammar fallback for', scoringPlayer);
     }
 
  // ========================================================================
@@ -1028,7 +921,7 @@ if (!rally.touches || rally.touches.length === 0) {
 
  const homeLeading = finalScore.home > finalScore.away;
  const awayLeading = finalScore.away > finalScore.home;
- const leadingTeamName = homeLeading ? 'gospodarze' : awayLeading ? 'goscie' : 'remis';
+ const leadingTeamName = homeLeading ? homeTeamFull : awayLeading ? awayTeamFull : 'remis';
 
  let touchContext = '';
  
@@ -1062,7 +955,7 @@ if (!rally.touches || rally.touches.length === 0) {
    const action = touch.action || '';
    const player = touch.player || '?';
    const actionLower = action.toLowerCase();
-   const teamLabel = touch.team === 'home' ? '[GOSP]' : '[GOSC]';
+   const teamLabel = touch.team === 'home' ? `[${homeTeamFull}]` : `[${awayTeamFull}]`;
    
    let desc = `${idx + 1}. ${teamLabel} ${player}`;
    
@@ -1079,7 +972,7 @@ if (!rally.touches || rally.touches.length === 0) {
        desc += ` - ${serveDesc} >>> BLAD SERWISU! Pilka w aut/siatke. KONIEC AKCJI.`;
      } else {
        // Serve continues play (even if VolleyStation says "Blad" - if there are more touches, it wasn't a terminal error)
-       desc += ` - ${serveDesc}`;
+       desc += ` - ${serveDesc} (poprawna, pilka w grze)`;
      }
    // RECEIVE
    } else if (actionLower.includes('przyjecie') || actionLower.includes('pass') || actionLower.includes('receive')) {
@@ -1143,7 +1036,7 @@ if (!rally.touches || rally.touches.length === 0) {
    touchChainLines.push(desc);
  });
  
- const winnerTeamLabel = rally.team_scored === 'home' ? 'GOSPODARZE' : 'GOSCIE';
+ const winnerTeamLabel = rally.team_scored === 'home' ? homeTeamFull : awayTeamFull;
  
  touchContext = `
 PRZEBIEG AKCJI (${numTouches} dotkniec${isLongRally ? ' - DLUGA WYMIANA!' : ''}):
@@ -1153,7 +1046,7 @@ ${touchChainLines.join('\n')}
 KRYTYCZNE ZASADY KOMENTARZA - LAMANIE = PORAZKA:
 1. OPISUJ TYLKO TO CO JEST W PRZEBIEGU AKCJI POWYZEJ. Nic wiecej!
 2. Zachowaj DOKLADNA kolejnosc dotkniec - krok po kroku.
-3. ZAGRYWKA: Blad serwisowy jest TYLKO gdy jest napisane ">>> BLAD SERWISU!". W kazdym innym przypadku zagrywka jest dobra i gra toczy sie dalej - nie musisz tego podkreslac.
+3. ZAGRYWKA: Jesli jest napisane "(poprawna, pilka w grze)" to zagrywka jest DOBRA. ZABRANIA SIE mowic "blad serwisowy"! Blad serwisowy jest TYLKO gdy jest ">>> BLAD SERWISU!".
 4. BLOK PRZEBITY: Ostatnie dotkniecie z "(przegral z atakujacym)" oznacza ze ATAKUJACY zdobyl punkt. NIE opisuj blokujacego jako zdobywce punktu.
 5. Jesli zagrywka jest poprawna, to nastepuje przyjecie - to jest LOGICZNE. Jesli zagrywka jest bledem, to akcja sie KONCZY i nie ma przyjecia.
 6. Jesli sa 2-3 dotkniecia, komentarz = 1 krotkie zdanie. Jesli 5+, opisz pelniej.`;
@@ -1175,12 +1068,9 @@ KRYTYCZNE ZASADY KOMENTARZA - LAMANIE = PORAZKA:
  
  let errorContext = '';
  if (attackingPlayer) {
- const attackerDeclined = declinePolishName(attackingPlayer, 'nominative');
- const blockerDeclined = declinePolishName(scoringPlayer, 'genitive');
- 
- errorContext = `\nBLOK ERROR - WAZNE: ${attackerDeclined} (${attackingTeamName}) PRZEBIL.A BLOK ${blockerDeclined}!
-Skomentuj ATAK ${attackerDeclined}, nie blad blokujacego!
-Przyklad: "${attackerDeclined} przebija blok ${blockerDeclined}! Potezny atak!"`;
+ errorContext = `\nBLOK ERROR - WAZNE: ${attackingPlayer} (${attackingTeamName}) PRZEBIL BLOK ${scoringPlayer}!
+Skomentuj ATAK ${attackingPlayer}, nie blad blokujacego!
+Uzyj poprawnej odmiany nazwisk wg NAMING RULES (np. "${attackingPlayer} przebija blok [nazwisko w dopelniaczu]!")`;
  } else if (scoringAction.toLowerCase().includes('error')) {
  errorContext = `\nUWAGA: To byl BLAD zawodnika ${scoringPlayer}. Nie dramatyzuj - po prostu opisz blad.`;
  }
@@ -1204,7 +1094,7 @@ Przyklad: "${attackerDeclined} przebija blok ${blockerDeclined}! Potezny atak!"`
  let substitutionContext = '';
  if (rally.substitutions && rally.substitutions.length > 0) {
  const subDescriptions = rally.substitutions.map((sub: any) => {
- const teamLabel = sub.team_name || (sub.team === 'home' ? 'Gospodarze' : 'Goscie');
+ const teamLabel = sub.team_name || (sub.team === 'home' ? homeTeamFull : awayTeamFull);
  const situationHint = sub.score_status === 'Up' ? 'prowadzac' : sub.score_status === 'Down' ? 'przegrywajac' : '';
  const diffHint = sub.score_diff ? ` ${sub.score_diff} pkt` : '';
  return `${teamLabel}: ${sub.player_out} schodzi, ${sub.player_in} wchodzi${situationHint ? ` (${situationHint}${diffHint})` : ''}`;
@@ -1222,7 +1112,7 @@ ${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${com
 INSTRUKCJE:
 - OPISUJ TYLKO PRZEBIEG AKCJI powyzej. Kazde dotkniecie po kolei. Nic nie dodawaj!
 - ${setEndInfo.isSetEnd ? `TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEC! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZY PUNKT! Uzyj: "Dobry poczatek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KONCOWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkresl momentum!' : milestone ? 'MILESTONE - wspomniej liczbe punktow/blokow/asow!' : isBigLead ? 'Duza przewaga - zauwaz sytuacje' : isEarlySet ? 'Poczatek - spokojnie' : 'Srodek seta - rzeczowo'}
-- ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwal ATAKUJACEGO, nie blad bloku! Uzyj formy: "${attackingPlayer} przebija blok ${declinePolishName(scoringPlayer, 'genitive')}!"` : ''}
+- ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwal ATAKUJACEGO, nie blad bloku! Odmien nazwiska poprawnie wg NAMING RULES!` : ''}
 - ${milestone ? `WAZNE: Wspomniej ze to ${milestone}!` : ''}${passInstructions}
 - ${commentaryHintsContext ? 'APPLY USER HINTS - they have PRIORITY over other context!' : ''}
 - Wynik ${score} - prowadzi ${leadingTeamName}
@@ -1241,7 +1131,7 @@ INSTRUKCJE:
  console.log('[NAMING-IN-PROMPT] NO naming rules in this prompt!');
  }
  
- console.log('========= ROUTE.TS v7.1 SERVE-FIX LOADED =========');
+ console.log('========= ROUTE.TS v7.3 DYNAMIC-TEAMS LOADED =========');
  console.log('[RALLY-TOUCHES]', rally.touches?.length || 0, 'touches');
  if (rally.touches && rally.touches.length > 0) {
    console.log('[FIRST-3-TOUCHES]', JSON.stringify(rally.touches.slice(0, 3)));
