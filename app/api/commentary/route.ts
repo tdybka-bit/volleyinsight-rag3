@@ -148,9 +148,19 @@ VOCABULARY IMPROVEMENTS:
  Example: "Leon przebija blok Kwolka! Potezny atak!"
 
 SCORE ACCURACY:
-- When team ALREADY LEADS, say "zwieksza przewage" NOT "prowadzi"
-- When trailing team scores, say "zmniejsza strate" or "zmniejsza przewage przeciwnika"
+- ALWAYS use the SYTUACJA PUNKTOWA from the prompt - it tells you EXACTLY what happened (wyrownanie, objecie prowadzenia, zwiekszenie przewagi etc.)
+- NEVER invent your own interpretation of the score
+- NEVER say "zwieksza przewage" when score is tied (that's WYROWNANIE!)
 - Be PRECISE about score changes
+
+ANTI-REDUNDANCY:
+- NEVER repeat what is obvious from the action itself
+- Serve error = just say "blad serwisowy [player]" — do NOT add "pilka w aut", "koniec akcji", "punkt dla rywali" etc.
+- Attack error = just say "blad w ataku" — do NOT explain what error means
+- Block point = just describe the block — do NOT say "koniec akcji"
+- NIGDY nie podawaj dokladnego wyniku liczbowego (np. "2:1", "15:12") w komentarzu! Wynik jest wyswietlany w interfejsie. JEDYNY WYJATEK: koniec seta — wtedy PODAJ wynik koncowy.
+- NIGDY nie mow "Wynik X:Y" ani "prowadzi X:Y" — zamiast tego uzywaj ogolnych zwrotow jak "prowadza", "wyrownuja", "odskoczyly"
+- ONE sentence per simple rally (serve error, single attack). Max 2-3 for long rallies.
 
 AVOID PHRASES:
 - "kluczowy moment" (unless 20+ points or tie-break)
@@ -179,9 +189,9 @@ MANDATORY ELEMENTS:
 4. Mention if it was close/dramatic ending
 
 EXAMPLES (Polish):
-- "Leon konczy set poteznym atakiem! KONIEC SETA 30:28 dla Bogdanki! Dramatyczna koncowka z prolongata!"
-- "As serwisowy McCarthy! KONIEC SETA 25:22! Aluron wygrywa pewnie drugiego seta!"
-- "Blok Grozdanova! SET dla Bogdanki 25:23! Zacieta walka, ale gospodarze zdobywaja seta!"
+- "Leon konczy set poteznym atakiem! KONIEC SETA 30:28 dla gospodarzy! Dramatyczna koncowka z prolongata!"
+- "As serwisowy McCarthy! KONIEC SETA 25:22! Gospodarze wygrywaja pewnie drugiego seta!"
+- "Blok Grozdanova! SET dla gospodarzy 25:23! Zacieta walka, ale zdobywaja seta!"
 
 ALWAYS mention it's the END OF SET!`;
  }
@@ -198,7 +208,7 @@ EXAMPLES (Polish):
 - SCORING STREAK (5+)! Emphasize the momentum!
 
 EXAMPLES (Polish):
-- "Kolejny punkt w serii! Zawiercie buduje przewage!"
+- "Kolejny punkt w serii! Gospodarze buduja przewage!"
 - "Seria trwa! Juz piaty punkt pod rzad!"`;
  } else if (hasMilestone) {
  return basePrompt + `
@@ -216,8 +226,8 @@ ALWAYS mention the milestone number!`;
 - BIG LEAD (10+)! Mention the situation factually!
 
 EXAMPLES (Polish):
-- "Zawiercie prowadzi 15:5. Grozdanov dolozyl kolejny punkt."
-- "Punkt dla Bogdanki, ale wciaz spory dystans - 8:18."`;
+- "Gospodarze prowadza 15:5. Grozdanov dolozyl kolejny punkt."
+- "Punkt dla gosci, ale wciaz spory dystans - 8:18."`;
  } else if (isEarlySet) {
  return basePrompt + `
 - EARLY SET (1-10 points): Keep it calm and factual!
@@ -225,7 +235,7 @@ EXAMPLES (Polish):
 EXAMPLES (Polish):
 - "Grozdanov skuteczny w bloku. Dobry poczatek."
 - "Blad serwisowy McCarthy. Punkt dla przeciwnika."
-- "Sasak konczy atak. Prowadzenie dla Bogdanki."
+- "Sasak konczy atak. Prowadzenie dla gosci."
 
 NO DRAMA - just describe what happened!`;
  } else {
@@ -234,8 +244,8 @@ NO DRAMA - just describe what happened!`;
 
 EXAMPLES (Polish):
 - "Grozdanov skuteczny w bloku! Zatrzymal rywala."
-- "McCarthy pewny w zagrywce. Punkt dla Zawiercia!"
-- "Sasak konczy atak! Bogdanka zwieksza przewage."
+- "McCarthy pewny w zagrywce. Punkt dla gospodarzy!"
+- "Sasak konczy atak! Goscie zwieksza przewage."
 - "Kwolek przebija blok! Swietne uderzenie!"
 
 Factual YES, but keep VOLLEYBALL ENERGY!`;
@@ -475,12 +485,33 @@ if (!rally.touches || rally.touches.length === 0) {
  const isBigLead = scoreDiff >= 10;
  const isFirstPoint = (finalScore.home === 1 && finalScore.away === 0) || 
  (finalScore.home === 0 && finalScore.away === 1);
+ const isTied = finalScore.home === finalScore.away;
  const leadingTeam = finalScore.home > finalScore.away 
  ? homeTeamFull 
  : awayTeamFull;
  const trailingTeam = finalScore.home < finalScore.away 
  ? homeTeamFull 
  : awayTeamFull;
+ 
+ // Compute EXACT score situation for GPT so it doesn't hallucinate
+ const scoreBefore = rally.score_before || { home: 0, away: 0 };
+ const wasTiedBefore = scoreBefore.home === scoreBefore.away;
+ const scoringTeamName = rally.team_scored === 'home' ? homeTeamFull : awayTeamFull;
+ 
+ let scoreSituation = '';
+ if (isFirstPoint) {
+   scoreSituation = `PIERWSZY PUNKT w secie dla ${scoringTeamName}.`;
+ } else if (isTied) {
+   scoreSituation = `WYROWNANIE! ${scoringTeamName} wyrownuje.`;
+ } else if (wasTiedBefore && !isTied) {
+   scoreSituation = `${scoringTeamName} OBEJMUJE PROWADZENIE.`;
+ } else if (scoreDiff === 1 && !wasTiedBefore) {
+   scoreSituation = `${scoringTeamName} UTRZYMUJE minimalna przewage.`;
+ } else if (scoreDiff >= 2 && rally.team_scored === (finalScore.home > finalScore.away ? 'home' : 'away')) {
+   scoreSituation = `${scoringTeamName} ZWIEKSZA PRZEWAGE do ${scoreDiff} punktow.`;
+ } else {
+   scoreSituation = `${scoringTeamName} ZMNIEJSZA STRATE (${scoreDiff} pkt roznica).`;
+ }
 
  console.log('[COMMENTARY] Request:', {
  rally_number: rally.rally_number,
@@ -943,7 +974,7 @@ if (!rally.touches || rally.touches.length === 0) {
 
  const homeLeading = finalScore.home > finalScore.away;
  const awayLeading = finalScore.away > finalScore.home;
- const leadingTeamName = homeLeading ? 'gospodarze' : awayLeading ? 'goscie' : 'remis';
+ const leadingTeamName = homeLeading ? homeTeamFull : awayLeading ? awayTeamFull : 'remis';
 
  let touchContext = '';
  
@@ -988,10 +1019,10 @@ if (!rally.touches || rally.touches.length === 0) {
      const isLastTouch = idx === rally.touches!.length - 1;
      
      if (actionLower.includes('as ') || actionLower.includes('ace')) {
-       desc += ` - ${serveDesc} >>> AS SERWISOWY! Pilka pada na parkiet. KONIEC AKCJI.`;
+       desc += ` - ${serveDesc} >>> AS SERWISOWY!`;
      } else if ((actionLower.includes('blad') || actionLower.includes('error')) && isLastTouch) {
        // REAL serve error - only if this is the LAST touch (rally ended here)
-       desc += ` - ${serveDesc} >>> BLAD SERWISU! Pilka w aut/siatke. KONIEC AKCJI.`;
+       desc += ` - ${serveDesc} >>> BLAD SERWISU`;
      } else {
        // Serve continues play (even if VolleyStation says "Blad" - if there are more touches, it wasn't a terminal error)
        desc += ` - ${serveDesc}`;
@@ -1028,13 +1059,13 @@ if (!rally.touches || rally.touches.length === 0) {
      
      if (actionLower.includes('blad') || actionLower.includes('error')) {
        if (idx === rally.touches!.length - 1) {
-         desc += ` - ${atkDesc} >>> BLAD ATAKU. KONIEC AKCJI.`;
+         desc += ` - ${atkDesc} >>> BLAD ATAKU`;
        } else {
          desc += ` - ${atkDesc} (nieudany, gra trwa)`;
        }
      } else if (actionLower.includes('zablok') || actionLower.includes('block')) {
        if (idx === rally.touches!.length - 1) {
-         desc += ` - ${atkDesc} >>> ZATRZYMANY BLOKIEM. KONIEC AKCJI.`;
+         desc += ` - ${atkDesc} >>> ZATRZYMANY BLOKIEM`;
        } else {
          desc += ` - ${atkDesc} (zablokowany, gra trwa)`;
        }
@@ -1068,7 +1099,7 @@ ${touchChainLines.join('\n')}
 KRYTYCZNE ZASADY KOMENTARZA - LAMANIE = PORAZKA:
 1. OPISUJ TYLKO TO CO JEST W PRZEBIEGU AKCJI POWYZEJ. Nic wiecej!
 2. Zachowaj DOKLADNA kolejnosc dotkniec - krok po kroku.
-3. ZAGRYWKA: Blad serwisowy jest TYLKO gdy jest napisane ">>> BLAD SERWISU!". W kazdym innym przypadku zagrywka jest dobra i gra toczy sie dalej - nie musisz tego podkreslac.
+3. ZAGRYWKA: Blad serwisowy jest TYLKO gdy jest napisane ">>> BLAD SERWISU". W kazdym innym przypadku zagrywka jest dobra i gra toczy sie dalej - nie musisz tego podkreslac.
 4. BLOK PRZEBITY: Ostatnie dotkniecie z "(przegral z atakujacym)" oznacza ze ATAKUJACY zdobyl punkt. NIE opisuj blokujacego jako zdobywce punktu.
 5. Jesli zagrywka jest poprawna, to nastepuje przyjecie - to jest LOGICZNE. Jesli zagrywka jest bledem, to akcja sie KONCZY i nie ma przyjecia.
 6. Jesli sa 2-3 dotkniecia, komentarz = 1 krotkie zdanie. Jesli 5+, opisz pelniej.`;
@@ -1128,19 +1159,21 @@ Odmien nazwiska poprawnie wg zasad jezyka polskiego!`;
  const commentaryPrompt = `${touchContext}
 
 WYNIK I KONTEKST:
-Rally #${rally.rally_number} | Wynik po akcji: ${score} | Punkt zdobyla: ${rally.team_scored === 'home' ? homeTeamFull : awayTeamFull} | PROWADZI: ${finalScore.home > finalScore.away ? homeTeamFull : finalScore.away > finalScore.home ? awayTeamFull : 'REMIS'}${situationContext}${errorContext}${substitutionContext}
+GOSPODARZE: ${homeTeamFull} | GOSCIE: ${awayTeamFull}
+Rally #${rally.rally_number} | Set ${setNumber} | Wynik: ${score} | Punkt zdobyla: ${rally.team_scored === 'home' ? homeTeamFull + ' (gospodarze)' : awayTeamFull + ' (goscie)'}
+SYTUACJA PUNKTOWA: ${scoreSituation}${situationContext}${errorContext}${substitutionContext}
 
 ${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKLADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `[!!] USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `VARIACJE ZWROTOW:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
 
 INSTRUKCJE:
 - OPISUJ TYLKO PRZEBIEG AKCJI powyzej. Kazde dotkniecie po kolei. Nic nie dodawaj!
-- ${setEndInfo.isSetEnd ? `TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEC! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZY PUNKT! Uzyj: "Dobry poczatek [team]", "Udany start", "Pierwszy punkt na koncie [team]"' : isHotSituation ? 'KONCOWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkresl momentum!' : milestone ? 'MILESTONE - wspomniej liczbe punktow/blokow/asow!' : isBigLead ? 'Duza przewaga - zauwaz sytuacje' : isEarlySet ? 'Poczatek - spokojnie' : 'Srodek seta - rzeczowo'}
+- ${setEndInfo.isSetEnd ? `TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEC! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZY PUNKT - krotko, spokojnie.' : isHotSituation ? 'KONCOWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkresl momentum!' : milestone ? 'MILESTONE - wspomniej liczbe punktow/blokow/asow!' : isBigLead ? 'Duza przewaga - zauwaz sytuacje' : isEarlySet ? 'Poczatek - spokojnie' : 'Srodek seta - rzeczowo'}
 - ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwal ATAKUJACEGO, nie blad bloku! Uzyj formy: "${attackingPlayer} przebija blok (odmien nazwisko!) ${scoringPlayer}!"` : ''}
 - ${milestone ? `WAZNE: Wspomniej ze to ${milestone}!` : ''}${passInstructions}
 - ${commentaryHintsContext ? 'APPLY USER HINTS - they have PRIORITY over other context!' : ''}
-- Wynik ${score} - prowadzi ${finalScore.home > finalScore.away ? homeTeamFull : finalScore.away > finalScore.home ? awayTeamFull : 'REMIS'}
-- ${isFirstPoint ? 'NIE uzywaj "zwieksza/zmniejsza przewage" - to PIERWSZY punkt!' : 'NIE mow "prowadzac" jesli druzyna juz prowadzila - powiedz "zwieksza/zmniejsza przewage"'}
+- ${isFirstPoint ? 'NIE uzywaj "zwieksza/zmniejsza przewage" - to PIERWSZY punkt!' : 'SYTUACJA PUNKTOWA powyzej jest DOKLADNA - uzyj JEJ. Nie wymyslaj wlasnej interpretacji wyniku!'}
 - Uzywaj POPRAWNEJ odmiany nazwisk (Leon -> Leona w dopelniaczu)
+- NIE POWTARZAJ INFORMACJI! Wynik, kto zdobyl punkt, kto prowadzi — wymien MAKSYMALNIE RAZ. Jesli opisales akcje i wspomniales o wyniku, NIE dodawaj kolejnego zdania o tym samym.
 - ${attackCombo ? `DANE TAKTYCZNE: Atak typu ${attackCombo}${attackLocation ? `, strefa: ${attackLocation}` : ''}${attackStyle ? `, styl: ${attackStyle}` : ''}. Uzyj tych danych by opisac KONKRETNIE co sie stalo (np. atak po skosie, atak pipe, szybki atak srodkiem) zamiast ogolnikow!` : serveType ? `DANE TAKTYCZNE: Zagrywka typu ${serveType}. Opisz ja konkretnie!` : ''}
 - ${rally.substitutions?.length ? 'ZMIANA! Wplec ja naturalnie w komentarz - kto za kogo wchodzi, co to moze oznaczac (reakcja trenera, swieze sily, zmiana taktyki). To wazna informacja narracyjna!' : ''}
 `;

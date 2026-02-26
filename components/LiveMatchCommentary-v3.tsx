@@ -130,6 +130,7 @@ interface MatchData {
 interface CommentaryEntry {
  rallyNumber: number;
  text: string;
+ originalText: string; // Always stores Polish original for re-translation
  timestamp: Date;
  player: string;
  team: string;
@@ -137,6 +138,7 @@ interface CommentaryEntry {
  type: string; // 'point_home' | 'point_away' | 'error' | 'lineup' | 'set_summary'
  // NEW FIELDS
  tags: string[];
+ originalTags: string[]; // Always stores Polish original tags
  milestones: string[];
  icon: string;
  momentumScore: number;
@@ -167,6 +169,100 @@ const languages: { code: Language; flag: string; name: string }[] = [
  { code: 'pt', name: 'Portugues' },
  { code: 'jp', name: 'Nihongo' },
 ];
+
+// ============================================================================
+// BUDDY PANEL i18n
+// ============================================================================
+const BUDDY_I18N: Record<Language, Record<string, string>> = {
+ pl: {
+   statsTitle: 'Statystyki w meczu', points: 'Punkty', serve: 'Zagrywka',
+   reception: 'Przyjecie', attack: 'Atak', block: 'Blok', other: 'Inne',
+   expertTitle: 'Wiedza ekspercka', loading: 'Wczytywanie profilu z bazy wiedzy...',
+   noProfile: 'Brak profilu w bazie wiedzy',
+   addProfile: 'Dodaj informacje o {player} do Pinecone (namespace: player-profiles)',
+   profilePending: 'Informacje eksperckie o zawodniku z bazy wiedzy RAG pojawia sie tutaj wkrotce...',
+   selectPlayer: 'Wybierz ulubionego zawodnika aby aktywowac BUDDY panel',
+   sources: 'zrodel w bazie wiedzy', source1: 'zrodlo w bazie wiedzy', sources24: 'zrodla w bazie wiedzy',
+   highRelevance: 'wysoka trafnosc', medRelevance: 'srednia trafnosc',
+ },
+ en: {
+   statsTitle: 'Match Statistics', points: 'Points', serve: 'Serve',
+   reception: 'Reception', attack: 'Attack', block: 'Block', other: 'Other',
+   expertTitle: 'Expert Knowledge', loading: 'Loading player profile...',
+   noProfile: 'No profile in knowledge base',
+   addProfile: 'Add info about {player} to Pinecone (namespace: player-profiles)',
+   profilePending: 'Expert player info from RAG knowledge base coming soon...',
+   selectPlayer: 'Select a favorite player to activate BUDDY panel',
+   sources: 'sources in knowledge base', source1: 'source in knowledge base', sources24: 'sources in knowledge base',
+   highRelevance: 'high relevance', medRelevance: 'medium relevance',
+ },
+ it: {
+   statsTitle: 'Statistiche partita', points: 'Punti', serve: 'Battuta',
+   reception: 'Ricezione', attack: 'Attacco', block: 'Muro', other: 'Altro',
+   expertTitle: 'Conoscenza esperta', loading: 'Caricamento profilo...',
+   noProfile: 'Nessun profilo nella base dati',
+   addProfile: 'Aggiungi info su {player} a Pinecone (namespace: player-profiles)',
+   profilePending: 'Informazioni esperte sul giocatore in arrivo...',
+   selectPlayer: 'Seleziona un giocatore preferito per attivare il pannello BUDDY',
+   sources: 'fonti nella base dati', source1: 'fonte nella base dati', sources24: 'fonti nella base dati',
+   highRelevance: 'alta rilevanza', medRelevance: 'media rilevanza',
+ },
+ de: {
+   statsTitle: 'Spielstatistiken', points: 'Punkte', serve: 'Aufschlag',
+   reception: 'Annahme', attack: 'Angriff', block: 'Block', other: 'Andere',
+   expertTitle: 'Expertenwissen', loading: 'Spielerprofil wird geladen...',
+   noProfile: 'Kein Profil in der Wissensdatenbank',
+   addProfile: 'Info uber {player} zu Pinecone hinzufugen (namespace: player-profiles)',
+   profilePending: 'Experten-Spielerinfos aus RAG kommen bald...',
+   selectPlayer: 'Wahle einen Lieblingsspieler um das BUDDY-Panel zu aktivieren',
+   sources: 'Quellen in der Wissensdatenbank', source1: 'Quelle in der Wissensdatenbank', sources24: 'Quellen in der Wissensdatenbank',
+   highRelevance: 'hohe Relevanz', medRelevance: 'mittlere Relevanz',
+ },
+ tr: {
+   statsTitle: 'Mac Istatistikleri', points: 'Sayilar', serve: 'Servis',
+   reception: 'Kabul', attack: 'Atak', block: 'Blok', other: 'Diger',
+   expertTitle: 'Uzman Bilgisi', loading: 'Oyuncu profili yukleniyor...',
+   noProfile: 'Bilgi tabaninda profil yok',
+   addProfile: '{player} hakkinda bilgi ekleyin',
+   profilePending: 'Uzman oyuncu bilgisi yakinda...',
+   selectPlayer: 'BUDDY panelini etkinlestirmek icin bir oyuncu secin',
+   sources: 'kaynak', source1: 'kaynak', sources24: 'kaynak',
+   highRelevance: 'yuksek uyum', medRelevance: 'orta uyum',
+ },
+ es: {
+   statsTitle: 'Estadisticas del partido', points: 'Puntos', serve: 'Saque',
+   reception: 'Recepcion', attack: 'Ataque', block: 'Bloqueo', other: 'Otros',
+   expertTitle: 'Conocimiento experto', loading: 'Cargando perfil del jugador...',
+   noProfile: 'Sin perfil en la base de conocimiento',
+   addProfile: 'Agregar info sobre {player} a Pinecone (namespace: player-profiles)',
+   profilePending: 'Informacion experta del jugador proximamente...',
+   selectPlayer: 'Selecciona un jugador favorito para activar el panel BUDDY',
+   sources: 'fuentes en la base', source1: 'fuente en la base', sources24: 'fuentes en la base',
+   highRelevance: 'alta relevancia', medRelevance: 'relevancia media',
+ },
+ pt: {
+   statsTitle: 'Estatisticas do jogo', points: 'Pontos', serve: 'Saque',
+   reception: 'Recepcao', attack: 'Ataque', block: 'Bloqueio', other: 'Outros',
+   expertTitle: 'Conhecimento especializado', loading: 'Carregando perfil do jogador...',
+   noProfile: 'Sem perfil na base de conhecimento',
+   addProfile: 'Adicionar info sobre {player} ao Pinecone (namespace: player-profiles)',
+   profilePending: 'Informacoes especializadas do jogador em breve...',
+   selectPlayer: 'Selecione um jogador favorito para ativar o painel BUDDY',
+   sources: 'fontes na base', source1: 'fonte na base', sources24: 'fontes na base',
+   highRelevance: 'alta relevancia', medRelevance: 'relevancia media',
+ },
+ jp: {
+   statsTitle: 'Match Statistics', points: 'Points', serve: 'Serve',
+   reception: 'Reception', attack: 'Attack', block: 'Block', other: 'Other',
+   expertTitle: 'Expert Knowledge', loading: 'Loading player profile...',
+   noProfile: 'No profile in knowledge base',
+   addProfile: 'Add info about {player}',
+   profilePending: 'Expert player info coming soon...',
+   selectPlayer: 'Select a favorite player to activate BUDDY panel',
+   sources: 'sources', source1: 'source', sources24: 'sources',
+   highRelevance: 'high relevance', medRelevance: 'medium relevance',
+ },
+};
 
 // Unified yellow tags a" readable on dark backgrounds
 const TAG_LABELS: Record<string, string> = {
@@ -218,6 +314,7 @@ export default function LiveMatchCommentaryV3() {
    chunks: Array<{ content: string; category: string; score: number }>;
  } | null>(null);
  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+ const [translatedProfileSummary, setTranslatedProfileSummary] = useState<string | null>(null);
 
  const [playerStats, setPlayerStats] = useState<Record<string, {
  // Legacy fields (for route.ts compatibility)
@@ -1005,6 +1102,7 @@ export default function LiveMatchCommentaryV3() {
  useEffect(() => {
    if (!favPlayer) {
      setPlayerProfile(null);
+     setTranslatedProfileSummary(null);
      return;
    }
 
@@ -1021,6 +1119,23 @@ export default function LiveMatchCommentaryV3() {
        
        console.log('[BUDDY] Profile response:', data.found ? 'FOUND' : 'NOT FOUND', data.summary?.substring(0, 80));
        setPlayerProfile(data);
+       
+       // If not in PL, translate the profile summary
+       if (data.found && data.summary && language !== 'pl') {
+         try {
+           const trResp = await fetch('/api/translate', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ text: data.summary, fromLanguage: 'pl', toLanguage: language }),
+           });
+           if (trResp.ok) {
+             const trData = await trResp.json();
+             setTranslatedProfileSummary(trData.translatedText);
+           }
+         } catch (e) { console.error('[BUDDY] Profile translate error:', e); }
+       } else {
+         setTranslatedProfileSummary(null);
+       }
      } catch (error) {
        console.error('[BUDDY] Profile fetch error:', error);
        setPlayerProfile({ found: false, summary: '', profile: null, chunks: [] });
@@ -1035,29 +1150,45 @@ export default function LiveMatchCommentaryV3() {
  const retranslateCommentaries = async () => {
  if (commentaries.length === 0 || isRetranslating) return;
  
- setIsRetranslating(true);
  const currentLanguage = language;
+ 
+ // PL = restore originals instantly (no API call needed!)
+ if (currentLanguage === 'pl') {
+   console.log('Restoring', commentaries.length, 'commentaries to original Polish');
+   setCommentaries(prev => prev.map(c => ({
+     ...c,
+     text: c.originalText || c.text,
+     tags: c.originalTags || c.tags,
+   })));
+   setTranslatedProfileSummary(null); // Reset to show original PL profile
+   return;
+ }
+ 
+ setIsRetranslating(true);
  console.log('Re-translating', commentaries.length, 'commentaries to', currentLanguage);
  
- // NEW: Use translation endpoint instead of full regeneration
+ // Use originalText as source for translation (never the current translated text!)
  const translationPromises = commentaries.map(async (commentary) => {
  try {
+ const sourceText = commentary.originalText || commentary.text;
+ const sourceTags = commentary.originalTags || commentary.tags;
+ 
  const response = await fetch('/api/translate', {
  method: 'POST',
  headers: {
  'Content-Type': 'application/json',
  },
  body: JSON.stringify({
- text: commentary.text,
- fromLanguage: 'pl', // Original language
+ text: sourceText,
+ fromLanguage: 'pl', // Always translate FROM Polish original
  toLanguage: currentLanguage,
- tags: commentary.tags,
+ tags: sourceTags,
  }),
  });
 
  if (!response.ok) {
  console.error('Translation failed for rally', commentary.rallyNumber);
- return commentary; // Keep original on error
+ return commentary; // Keep current on error
  }
 
  const data = await response.json();
@@ -1066,17 +1197,40 @@ export default function LiveMatchCommentaryV3() {
  ...commentary,
  text: data.translatedText,
  tags: data.translatedTags || commentary.tags,
+ // originalText and originalTags stay unchanged!
  timestamp: new Date(),
  };
  } catch (error) {
  console.error('Translation error:', error);
- return commentary; // Keep original on error
+ return commentary;
  }
  });
  
  const results = await Promise.all(translationPromises);
  
  setCommentaries(results);
+ 
+ // Also translate expert knowledge profile summary
+ if (playerProfile?.found && playerProfile.summary) {
+   try {
+     const profileResp = await fetch('/api/translate', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({
+         text: playerProfile.summary,
+         fromLanguage: 'pl',
+         toLanguage: currentLanguage,
+       }),
+     });
+     if (profileResp.ok) {
+       const profileData = await profileResp.json();
+       setTranslatedProfileSummary(profileData.translatedText);
+     }
+   } catch (err) {
+     console.error('Profile translation error:', err);
+   }
+ }
+ 
  setIsRetranslating(false);
  console.log('Re-translation complete in parallel!');
  };
@@ -1415,10 +1569,11 @@ export default function LiveMatchCommentaryV3() {
        const summaryEntry: CommentaryEntry = {
          rallyNumber: -currentSetNumber - 100, // unique negative ID for summaries
          text: `Koniec ${currentSetNumber}. seta! ${lastRally.score_after.home}:${lastRally.score_after.away}`,
+         originalText: `Koniec ${currentSetNumber}. seta! ${lastRally.score_after.home}:${lastRally.score_after.away}`,
          timestamp: new Date(),
          player: '', team: '', action: '',
          type: 'set_summary',
-         tags: [], milestones: [], icon: 'SET_END',
+         tags: [], originalTags: [], milestones: [], icon: 'SET_END',
          momentumScore: 0, dramaScore: 0, tagData: {},
          summaryData: {
            setNumber: currentSetNumber,
@@ -1512,6 +1667,7 @@ export default function LiveMatchCommentaryV3() {
  const newCommentary: CommentaryEntry = {
  rallyNumber: rally.rally_number,
  text: result.commentary,
+ originalText: result.commentary,
  timestamp: new Date(),
  player: scoringInfo.player,
  team: rally.team_scored,
@@ -1519,6 +1675,7 @@ export default function LiveMatchCommentaryV3() {
  type: getActionType(scoringInfo.action),
  // NEW FIELDS
  tags: result.tags,
+ originalTags: result.tags,
  tagData: result.tagData || {},
  milestones: result.milestones,
  icon: result.icon,
@@ -2109,7 +2266,7 @@ export default function LiveMatchCommentaryV3() {
  {favPlayer ? (
  <div className="bg-gradient-to-br from-yellow-900/30 to-amber-900/20 border border-yellow-500/30 rounded-xl p-4">
  <div className="flex items-center gap-2 mb-3">
- <span className="text-yellow-400 text-lg">Γÿà</span>
+ <span className="text-yellow-400 text-lg">★</span>
  <h3 className="text-lg font-bold text-yellow-400">BUDDY</h3>
  </div>
  <div className="text-xl font-bold text-foreground mb-1">{favPlayer}</div>
@@ -2130,8 +2287,8 @@ export default function LiveMatchCommentaryV3() {
  </div>
  ) : (
  <div className="bg-card border border-dashed border-border rounded-xl p-6 text-center">
- <span className="text-3xl mb-2 block">Γÿà</span>
- <p className="text-sm text-muted-foreground">Wybierz ulubionego zawodnika aby aktywowac BUDDY panel</p>
+ <span className="text-3xl mb-2 block">★</span>
+ <p className="text-sm text-muted-foreground">{BUDDY_I18N[language].selectPlayer}</p>
  </div>
  )}
  
@@ -2180,29 +2337,29 @@ export default function LiveMatchCommentaryV3() {
    
    return (
      <div className="bg-card border border-border rounded-xl p-4">
-       <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-3">Statystyki w meczu</h4>
+       <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-3">{BUDDY_I18N[language].statsTitle}</h4>
        <div className="space-y-2.5">
-         <StatSection title="Punkty" color="green">
+         <StatSection title={BUDDY_I18N[language].points} color="green">
            <StatCell label="Sum" value={s.points} highlight />
            <StatCell label="BP" value={s.bp} />
            <StatCell label="Ratio" value={s.points} />
          </StatSection>
          
-         <StatSection title="Zagrywka" color="blue">
+         <StatSection title={BUDDY_I18N[language].serve} color="blue">
            <StatCell label="Sum" value={s.serve.sum} />
            <StatCell label="Err" value={s.serve.error} />
            <StatCell label="Ace" value={s.serve.ace} highlight />
            <StatCell label="Eff%" value={`${serveEff}%`} />
          </StatSection>
          
-         <StatSection title="Przyj─Öcie" color="yellow">
+         <StatSection title={BUDDY_I18N[language].reception} color="yellow">
            <StatCell label="Sum" value={s.reception.sum} />
            <StatCell label="Err" value={s.reception.error} />
            <StatCell label="Pos%" value={`${recPosRate}%`} />
            <StatCell label="Perf%" value={`${recPerfRate}%`} />
          </StatSection>
          
-         <StatSection title="Atak" color="red">
+         <StatSection title={BUDDY_I18N[language].attack} color="red">
            <StatCell label="Sum" value={s.attack.sum} />
            <StatCell label="Err" value={s.attack.error} />
            <StatCell label="Blk" value={s.attack.blocked} />
@@ -2211,12 +2368,12 @@ export default function LiveMatchCommentaryV3() {
            <StatCell label="Eff%" value={`${attackEff}%`} />
          </StatSection>
          
-         <StatSection title="Blok" color="purple">
+         <StatSection title={BUDDY_I18N[language].block} color="purple">
            <StatCell label="Pts" value={s.block.pts} highlight />
            <StatCell label="Touch+" value={s.block.touchPlus} />
          </StatSection>
          
-         <StatSection title="Inne" color="slate">
+         <StatSection title={BUDDY_I18N[language].other} color="slate">
            <StatCell label="Dig" value={s.dig} />
            <StatCell label="Assist" value={s.assist} />
          </StatSection>
@@ -2229,30 +2386,30 @@ export default function LiveMatchCommentaryV3() {
  {favPlayer && (
    <div className="bg-card border border-border rounded-xl p-4">
      <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
-       Wiedza ekspercka
+       {BUDDY_I18N[language].expertTitle}
      </h4>
      
      {isLoadingProfile ? (
        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-         <span className="animate-pulse">ΓùÅ</span>
-         <span>Wczytywanie profilu z bazy wiedzy...</span>
+         <span className="animate-pulse">{"⏳"}</span>
+         <span>{BUDDY_I18N[language].loading}</span>
        </div>
      ) : playerProfile?.found && playerProfile.summary ? (
        <div className="space-y-2">
-         {/* GPT-generated structured summary */}
+         {/* GPT-generated structured summary (translated if non-PL) */}
          <div className="text-sm text-foreground whitespace-pre-line leading-relaxed">
-           {playerProfile.summary}
+           {translatedProfileSummary || playerProfile.summary}
          </div>
          
          {/* RAG confidence indicator */}
          {playerProfile.chunks && playerProfile.chunks.length > 0 && (
            <div className="mt-3 pt-2 border-t border-border">
              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-               <span>≡ƒôÜ</span>
-               <span>{playerProfile.chunks.length} {playerProfile.chunks.length === 1 ? 'zrodlo' : playerProfile.chunks.length < 5 ? 'zrodla' : 'zrodel'} w bazie wiedzy</span>
+               <span>{"📚"}</span>
+               <span>{playerProfile.chunks.length} {playerProfile.chunks.length === 1 ? BUDDY_I18N[language].source1 : playerProfile.chunks.length < 5 ? BUDDY_I18N[language].sources24 : BUDDY_I18N[language].sources}</span>
                <span className="ml-auto text-xs">
-                 {playerProfile.chunks[0]?.score > 0.7 ? 'Γÿà wysoka trafnosc' : 
-                  playerProfile.chunks[0]?.score > 0.5 ? 'Γÿå srednia trafnosc' : ''}
+                 {playerProfile.chunks[0]?.score > 0.7 ? `★ ${BUDDY_I18N[language].highRelevance}` : 
+                  playerProfile.chunks[0]?.score > 0.5 ? `☆ ${BUDDY_I18N[language].medRelevance}` : ''}
                </span>
              </div>
            </div>
@@ -2260,12 +2417,12 @@ export default function LiveMatchCommentaryV3() {
        </div>
      ) : playerProfile?.found === false ? (
        <div className="text-xs text-muted-foreground italic">
-         <span className="block mb-1">≡ƒöì Brak profilu w bazie wiedzy</span>
-         <span>Dodaj informacje o {favPlayer} do Pinecone (namespace: player-profiles)</span>
+         <span className="block mb-1">{"🔌"} {BUDDY_I18N[language].noProfile}</span>
+         <span>{BUDDY_I18N[language].addProfile.replace('{player}', favPlayer)}</span>
        </div>
      ) : (
        <p className="text-xs text-muted-foreground italic">
-         Informacje eksperckie o zawodniku z bazy wiedzy RAG pojawia sie tutaj wkrotce...
+         {BUDDY_I18N[language].profilePending}
        </p>
      )}
    </div>
