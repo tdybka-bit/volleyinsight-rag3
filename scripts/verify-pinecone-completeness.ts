@@ -14,7 +14,6 @@
 import { google, drive_v3 } from 'googleapis';
 import { Pinecone } from '@pinecone-database/pinecone';
 import dotenv from 'dotenv';
-import path from 'path';
 
 dotenv.config({ path: '.env.local' });
 
@@ -32,10 +31,12 @@ const PINECONE_INDEX = 'ed-volley';
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
 const index = pinecone.index(PINECONE_INDEX);
 
-// Google Drive auth
-const credPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || path.join(process.cwd(), 'credentials.json');
+// Google Drive auth (same as sync-google-drive.ts - uses env vars)
 const auth = new google.auth.GoogleAuth({
-  keyFile: credPath,
+  credentials: {
+    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    private_key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+  },
   scopes: ['https://www.googleapis.com/auth/drive.readonly'],
 });
 const drive = google.drive({ version: 'v3', auth });
