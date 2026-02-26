@@ -153,6 +153,7 @@ interface CommentaryEntry {
    winner: string;
    topScorers: Array<{ player: string; points: number }>;
    totalRallies: number;
+   narrative?: string;
  };
 }
 
@@ -1581,9 +1582,47 @@ export default function LiveMatchCommentaryV3() {
            winner: lastRally.score_after.home > lastRally.score_after.away ? 'home' : 'away',
            topScorers,
            totalRallies: prevSetRallies.length,
+           narrative: '...',
          },
        };
        setCommentaries((prev) => [summaryEntry, ...prev]);
+
+       // Fire async API call for GPT narrative
+       const summarySetNum = currentSetNumber;
+       (async () => {
+         try {
+           const homeTeam = TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Gospodarze';
+           const awayTeam = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Goscie';
+           const res = await fetch('/api/set-summary', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({
+               setNumber: summarySetNum,
+               finalScore: { home: lastRally.score_after.home, away: lastRally.score_after.away },
+               homeTeam,
+               awayTeam,
+               rallies: prevSetRallies.map((r: any) => ({
+                 rally_number: r.rally_number,
+                 team_scored: r.team_scored,
+                 score_after: r.score_after,
+                 touches: r.touches,
+                 final_action: r.final_action,
+               })),
+               language,
+             }),
+           });
+           const data = await res.json();
+           if (data.narrative) {
+             setCommentaries((prev) => prev.map(c => 
+               c.rallyNumber === (-summarySetNum - 100) && c.type === 'set_summary'
+                 ? { ...c, summaryData: { ...c.summaryData!, narrative: data.narrative } }
+                 : c
+             ));
+           }
+         } catch (err) {
+           console.error('[SET-SUMMARY] API error:', err);
+         }
+       })();
        // Small delay so summary appears before lineup
        await new Promise(resolve => setTimeout(resolve, 500));
      }
@@ -2040,6 +2079,16 @@ export default function LiveMatchCommentaryV3() {
          <h3 className="text-2xl font-bold mt-1">{sd.finalScore.home} : {sd.finalScore.away}</h3>
          <p className="text-sm text-emerald-300">Wygrywa: {winnerName}</p>
        </div>
+       {sd.narrative && sd.narrative !== '...' && (
+         <div className="mt-3 border-t border-emerald-700 pt-3 mb-3">
+           <p className="text-sm text-emerald-100 leading-relaxed italic">{sd.narrative}</p>
+         </div>
+       )}
+       {sd.narrative === '...' && (
+         <div className="mt-3 border-t border-emerald-700 pt-3 mb-3 text-center">
+           <p className="text-xs text-emerald-400 animate-pulse">Generowanie podsumowania...</p>
+         </div>
+       )}
        {sd.topScorers.length > 0 && (
          <div className="mt-3 border-t border-emerald-700 pt-3">
            <p className="text-xs font-bold text-emerald-400 mb-1 uppercase">Top punktujacy w secie:</p>
