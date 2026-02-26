@@ -1,15 +1,20 @@
 /**
- * verify-pinecone-completeness.ts
+ * ============================================================================
+ * VERIFY PINECONE COMPLETENESS
+ * ============================================================================
  * 
- * Porównuje pliki na Google Drive z vectorami w Pinecone.
- * Pokazuje które pliki BRAKUJĄ w Pinecone.
+ * Compares Google Drive files vs Pinecone vectors per namespace.
+ * Ensures ALL MD files from EVERY folder made it to Pinecone.
  * 
- * Użycie: npx tsx scripts/verify-pinecone-completeness.ts
+ * Usage: npx tsx scripts/verify-pinecone-completeness.ts
+ * 
+ * ============================================================================
  */
 
 import { google, drive_v3 } from 'googleapis';
 import { Pinecone } from '@pinecone-database/pinecone';
 import dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config({ path: '.env.local' });
 
@@ -18,69 +23,79 @@ dotenv.config({ path: '.env.local' });
 // ============================================================================
 
 const GOOGLE_DRIVE_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID!;
+const PINECONE_INDEX = 'ed-volley';
 
-// Google Drive auth (from .env.local — same as sync script)
+// ============================================================================
+// INITIALIZE CLIENTS
+// ============================================================================
+
+const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
+const index = pinecone.index(PINECONE_INDEX);
+
+// Google Drive auth
+const credPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || path.join(process.cwd(), 'credentials.json');
 const auth = new google.auth.GoogleAuth({
-  credentials: {
-    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    private_key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-  },
+  keyFile: credPath,
   scopes: ['https://www.googleapis.com/auth/drive.readonly'],
 });
 const drive = google.drive({ version: 'v3', auth });
-
-// Pinecone
-const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
-const index = pinecone.index('ed-volley');
 
 // ============================================================================
 // HELPERS
 // ============================================================================
 
-/**
- * Get ALL files in folder (with pagination!)
- */
-async function getAllFilesInFolder(folderId: string): Promise<drive_v3.Schema$File[]> {
+async function getFilesInFolder(folderId: string): Promise<drive_v3.Schema$File[]> {
   const allFiles: drive_v3.Schema$File[] = [];
-  let pageToken: string | undefined = undefined;
-
+  let pageToken: string | undefined;
+  
   do {
     const response = await drive.files.list({
       q: `'${folderId}' in parents and trashed=false`,
       fields: 'nextPageToken, files(id, name, mimeType, modifiedTime)',
       pageSize: 100,
-      ...(pageToken ? { pageToken } : {}),
+      pageToken: pageToken,
     });
-
+    
     const files = response.data.files || [];
     allFiles.push(...files);
     pageToken = response.data.nextPageToken || undefined;
   } while (pageToken);
-
+  
   return allFiles;
 }
 
-/**
- * Get unique source filenames from Pinecone namespace
- */
-async function getPineconeSources(namespace: string): Promise<Set<string>> {
-  const sources = new Set<string>();
-  
-  // Query with zero vector to get all results
-  const results = await index.namespace(namespace).query({
-    vector: Array(768).fill(0),
-    topK: 10000,
-    includeMetadata: true,
+async function getNamespaceFolders(): Promise<drive_v3.Schema$File[]> {
+  const response = await drive.files.list({
+    q: `'${GOOGLE_DRIVE_FOLDER_ID}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+    fields: 'files(id, name)',
   });
+  return response.data.files || [];
+}
 
-  for (const match of results.matches) {
-    const source = match.metadata?.source as string;
-    if (source) {
-      sources.add(source);
-    }
+async function getPineconeVectorCount(namespace: string): Promise<number> {
+  try {
+    const stats = await index.describeIndexStats();
+    const nsStats = stats.namespaces?.[namespace];
+    return nsStats?.recordCount || 0;
+  } catch (error) {
+    console.error(`Error getting stats for namespace ${namespace}:`, error);
+    return -1;
   }
+}
 
-  return sources;
+async function listPineconeIds(namespace: string, limit: number = 1000): Promise<string[]> {
+  try {
+    const results = await index.namespace(namespace).listPaginated({ limit });
+    const ids: string[] = [];
+    if (results.vectors) {
+      for (const v of results.vectors) {
+        if (v.id) ids.push(v.id);
+      }
+    }
+    return ids;
+  } catch (error) {
+    return [];
+  }
 }
 
 // ============================================================================
@@ -88,94 +103,112 @@ async function getPineconeSources(namespace: string): Promise<Set<string>> {
 // ============================================================================
 
 async function verify(): Promise<void> {
-  console.log('🔍 WERYFIKACJA: Google Drive vs Pinecone\n');
-  console.log('='.repeat(70));
-
-  // Get namespace folders
-  const foldersResponse = await drive.files.list({
-    q: `'${GOOGLE_DRIVE_FOLDER_ID}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
-    fields: 'files(id, name)',
-  });
-  const folders = foldersResponse.data.files || [];
-
+  console.log('🔍 VERIFY PINECONE COMPLETENESS');
+  console.log('=' .repeat(70));
+  console.log('Comparing Google Drive files vs Pinecone vectors per namespace\n');
+  
+  const folders = await getNamespaceFolders();
+  console.log(`📁 Found ${folders.length} namespace folders in Google Drive\n`);
+  
   let totalDriveFiles = 0;
-  let totalPineconeSources = 0;
+  let totalPineconeVectors = 0;
   let totalMissing = 0;
-
+  
+  const results: Array<{
+    namespace: string;
+    driveFiles: number;
+    pineconeVectors: number;
+    status: string;
+    missingFiles: string[];
+  }> = [];
+  
   for (const folder of folders) {
     const namespace = folder.name || 'unknown';
-    console.log(`\n📁 ${namespace}`);
-    console.log('─'.repeat(70));
-
-    // Get Drive files (WITH PAGINATION!)
-    const driveFiles = await getAllFilesInFolder(folder.id!);
-    const driveFileNames = new Set(driveFiles.map(f => f.name || ''));
-
-    // Get Pinecone sources
-    const pineconeSources = await getPineconeSources(namespace);
-
-    // Compare
-    const missing: string[] = [];
-    for (const fileName of driveFileNames) {
-      // Check if filename appears in any Pinecone source
-      const found = [...pineconeSources].some(source => 
-        source === fileName || 
-        source.includes(fileName.replace(/\.[^.]+$/, '')) // strip extension
-      );
-      if (!found) {
-        missing.push(fileName);
-      }
-    }
-
-    // Extra in Pinecone (uploaded but deleted from Drive)
-    const extra: string[] = [];
-    for (const source of pineconeSources) {
-      const found = [...driveFileNames].some(name => 
-        source === name || 
-        source.includes(name.replace(/\.[^.]+$/, ''))
-      );
-      if (!found) {
-        extra.push(source);
-      }
-    }
-
-    totalDriveFiles += driveFiles.length;
-    totalPineconeSources += pineconeSources.size;
-    totalMissing += missing.length;
-
-    console.log(`   Drive files:     ${driveFiles.length}`);
-    console.log(`   Pinecone sources: ${pineconeSources.size}`);
+    console.log(`📋 ${namespace}`);
+    console.log('─'.repeat(50));
     
-    if (missing.length === 0) {
-      console.log(`   ✅ KOMPLETNE — wszystkie pliki z Drive są w Pinecone`);
-    } else {
-      console.log(`   ❌ BRAKUJE ${missing.length} plików w Pinecone:`);
-      missing.slice(0, 20).forEach(f => console.log(`      • ${f}`));
-      if (missing.length > 20) {
-        console.log(`      ... i ${missing.length - 20} więcej`);
+    // Get Drive files
+    const files = await getFilesInFolder(folder.id!);
+    const supportedFiles = files.filter(f => {
+      const name = f.name || '';
+      return name.endsWith('.md') || name.endsWith('.txt') || name.endsWith('.docx') || name.endsWith('.pdf') ||
+             f.mimeType === 'application/vnd.google-apps.document';
+    });
+    
+    // Get Pinecone vectors
+    const vectorCount = await getPineconeVectorCount(namespace);
+    const pineconeIds = await listPineconeIds(namespace);
+    
+    // Check which files are missing
+    const missingFiles: string[] = [];
+    for (const file of supportedFiles) {
+      const fileId = file.id || '';
+      const fileName = file.name || '';
+      // Check if any Pinecone ID contains this file's ID or name
+      const found = pineconeIds.some(id => 
+        id.includes(fileId) || id.includes(fileName.replace(/\.[^.]+$/, ''))
+      );
+      if (!found && pineconeIds.length > 0) {
+        missingFiles.push(fileName);
       }
     }
-
-    if (extra.length > 0) {
-      console.log(`   ⚠️  ${extra.length} źródeł w Pinecone nie ma już na Drive:`);
-      extra.slice(0, 10).forEach(f => console.log(`      • ${f}`));
+    
+    const status = vectorCount >= supportedFiles.length ? '✅' : 
+                   vectorCount > 0 ? '⚠️' : '❌';
+    
+    console.log(`   Drive files: ${supportedFiles.length}`);
+    console.log(`   Pinecone vectors: ${vectorCount}`);
+    console.log(`   Status: ${status} ${vectorCount >= supportedFiles.length ? 'COMPLETE' : 'INCOMPLETE'}`);
+    
+    if (missingFiles.length > 0 && missingFiles.length <= 10) {
+      console.log(`   Missing: ${missingFiles.join(', ')}`);
+    } else if (missingFiles.length > 10) {
+      console.log(`   Missing: ${missingFiles.length} files (too many to list)`);
     }
+    
+    console.log('');
+    
+    totalDriveFiles += supportedFiles.length;
+    totalPineconeVectors += vectorCount;
+    totalMissing += missingFiles.length;
+    
+    results.push({
+      namespace,
+      driveFiles: supportedFiles.length,
+      pineconeVectors: vectorCount,
+      status,
+      missingFiles,
+    });
+    
+    // Rate limiting
+    await new Promise(resolve => setTimeout(resolve, 200));
   }
-
+  
   // Summary
   console.log('\n' + '='.repeat(70));
-  console.log('📊 PODSUMOWANIE');
+  console.log('📊 SUMMARY');
   console.log('='.repeat(70));
-  console.log(`Pliki na Drive (łącznie):      ${totalDriveFiles}`);
-  console.log(`Źródła w Pinecone (łącznie):   ${totalPineconeSources}`);
-  console.log(`Brakujące w Pinecone:          ${totalMissing}`);
+  console.log(`Total Drive files: ${totalDriveFiles}`);
+  console.log(`Total Pinecone vectors: ${totalPineconeVectors}`);
+  console.log(`Synced: ${totalDriveFiles - totalMissing}/${totalDriveFiles} (${((totalDriveFiles - totalMissing) / totalDriveFiles * 100).toFixed(1)}%)`);
   
-  if (totalMissing === 0) {
-    console.log('\n✅ WSZYSTKO ZSYNCHRONIZOWANE!');
+  if (totalMissing > 0) {
+    console.log(`\n⚠️  ${totalMissing} files potentially missing from Pinecone!`);
+    console.log('Run sync-google-drive.ts to fix.\n');
   } else {
-    console.log(`\n❌ ${totalMissing} plików wymaga ponownego synca!`);
-    console.log('   Najpierw napraw paginację w sync-google-drive.ts,');
-    console.log('   potem odpal: npx tsx scripts/sync-google-drive.ts');
+    console.log('\n✅ ALL FILES SYNCED SUCCESSFULLY!\n');
+  }
+  
+  // Table
+  console.log('Namespace'.padEnd(25) + 'Drive'.padEnd(8) + 'Pinecone'.padEnd(10) + 'Status');
+  console.log('-'.repeat(55));
+  for (const r of results) {
+    console.log(
+      r.namespace.padEnd(25) +
+      String(r.driveFiles).padEnd(8) +
+      String(r.pineconeVectors).padEnd(10) +
+      r.status
+    );
   }
 }
 

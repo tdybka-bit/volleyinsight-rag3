@@ -79,6 +79,17 @@ interface Rally {
  player: string;
  number: string;
  team: string;
+ actionType?: string;  // raw: Serve, Receive, Attack, Block, Dig, Set, Freeball
+ grade?: string;       // Perfect, Positive, Average, Poor, Fail, Incomplete
+ rallyWon?: string;    // Won, Lost
+ attackCombination?: string;
+ attackLocation?: string;
+ attackStyle?: string;
+ serveType?: string;
+ zone?: string;
+ fromZone?: string;
+ toZone?: string;
+ middleRoute?: string;
  }>;
  final_action: {
  type: string;
@@ -192,19 +203,37 @@ export default function LiveMatchCommentaryV3() {
  const [language, setLanguage] = useState<Language>('pl');
  const [mode, setMode] = useState<Mode>('demo');
  const commentaryRef = useRef<HTMLDivElement>(null);
+ const headerRef = useRef<HTMLDivElement>(null);
+ const [headerHeight, setHeaderHeight] = useState(0);
  const [isRetranslating, setIsRetranslating] = useState(false);
  const [selectedMatch, setSelectedMatch] = useState('2025-11-12_ZAW-LBN.json');
  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
  const [openTagPopup, setOpenTagPopup] = useState<string | null>(null);
  const [favPlayer, setFavPlayer] = useState<string | null>(null);
  const [openFavPopup, setOpenFavPopup] = useState<number | null>(null);
+ const [playerProfile, setPlayerProfile] = useState<{
+   found: boolean;
+   summary: string;
+   profile: { name: string; team: string; position: string; nationality: string; content: string } | null;
+   chunks: Array<{ content: string; category: string; score: number }>;
+ } | null>(null);
+ const [isLoadingProfile, setIsLoadingProfile] = useState(false);
 
  const [playerStats, setPlayerStats] = useState<Record<string, {
+ // Legacy fields (for route.ts compatibility)
  blocks: number;
  aces: number;
  attacks: number;
  errors: number;
  points: number;
+ // Detailed stats
+ serve: { sum: number; error: number; ace: number };
+ reception: { sum: number; error: number; positive: number; perfect: number };
+ attack: { sum: number; error: number; blocked: number; kill: number };
+ block: { pts: number; touchPlus: number };
+ dig: number;
+ assist: number;
+ bp: number; // break points (points scored while opponent serving)
  }>>({});
  
  // Build unique player list from rallies, grouped by team
@@ -218,7 +247,24 @@ export default function LiveMatchCommentaryV3() {
  return acc;
  }, {} as Record<string, Set<string>>);
 
- // Load match data on mount
+ // Measure header height for fixed positioning
+ useEffect(() => {
+   const measure = () => {
+     if (headerRef.current) {
+       setHeaderHeight(headerRef.current.offsetHeight);
+     }
+   };
+   measure();
+   window.addEventListener('resize', measure);
+   // Re-measure when mode/match changes (controls row appears/disappears)
+   const observer = new ResizeObserver(measure);
+   if (headerRef.current) observer.observe(headerRef.current);
+   return () => {
+     window.removeEventListener('resize', measure);
+     observer.disconnect();
+   };
+ });
+
  // Load match data on mount
  useEffect(() => {
  /**
@@ -424,6 +470,9 @@ export default function LiveMatchCommentaryV3() {
  action,
  player: cleanPlayerName,
  team,
+ actionType: actionType,
+ grade: grade || '',
+ rallyWon: rallyWon || '',
  attackCombination: labels['Attack Combination'] || '',
  attackLocation: labels['Attack Location'] || '',
  attackStyle: labels['Attack Style'] || '',
@@ -530,31 +579,46 @@ export default function LiveMatchCommentaryV3() {
      return s === String(setNum);
    });
    
-   // Find starters: players who appear in first ~30 instances of the set
+   // Find starters: players who appear in first ~300 instances of the set
+   // (middle blockers like Hoss/Brehme may not touch the ball until instance 180+)
    const homePlayers: Map<string, string> = new Map(); // name -> jersey
    const awayPlayers: Map<string, string> = new Map();
    
-   for (const inst of setInstances.slice(0, 120)) {
+   for (const inst of setInstances.slice(0, 300)) {
      const labels = inst.labels || {};
      const code = inst.code || '';
      if (code === 'Rally') continue;
+     
+     const isSubstitution = code.includes('Substitution');
      
      // Try both team prefixes
      for (const [prefix, map] of [[homePrefix, homePlayers], [awayPrefix, awayPlayers]] as const) {
        if (!prefix) continue;
        const nameKey = `${prefix} Player Name`;
        const jerseyKey = `${prefix} Player Jersey`;
-       let name = labels[nameKey] || '';
-       let jersey = labels[jerseyKey] || '';
-       if (Array.isArray(name)) name = name[0] || '';
-       if (Array.isArray(jersey)) jersey = jersey[0] || '';
-       if (name && !map.has(name) && map.size < 8) {
+       let nameRaw = labels[nameKey] || '';
+       let jerseyRaw = labels[jerseyKey] || '';
+       
+       // Substitution events have [playerOut, playerIn] as arrays ΓÇö add BOTH
+       if (isSubstitution && Array.isArray(nameRaw)) {
+         const jerseys = Array.isArray(jerseyRaw) ? jerseyRaw : [jerseyRaw, ''];
+         nameRaw.forEach((n: string, idx: number) => {
+           if (n && !map.has(n) && map.size < 14) {
+             map.set(n, String(jerseys[idx] || ''));
+           }
+         });
+         continue;
+       }
+       
+       let name = Array.isArray(nameRaw) ? nameRaw[0] || '' : nameRaw;
+       let jersey = Array.isArray(jerseyRaw) ? jerseyRaw[0] || '' : jerseyRaw;
+       if (name && !map.has(name) && map.size < 14) {
          map.set(name, jersey);
        }
      }
      
-     // Stop early if we found enough
-     if (homePlayers.size >= 7 && awayPlayers.size >= 7) break;
+     // Stop early if we found enough starters
+     if (homePlayers.size >= 8 && awayPlayers.size >= 8) break;
    }
    
    // Find first server of the set
@@ -773,6 +837,9 @@ export default function LiveMatchCommentaryV3() {
  action,
  player: cleanPlayerName,
  team,
+ actionType: actionType,
+ grade: grade || '',
+ rallyWon: rallyWon || '',
  attackCombination: labels['Attack Combination'] || '',
  attackLocation: labels['Attack Location'] || '',
  attackStyle: labels['Attack Style'] || '',
@@ -933,6 +1000,37 @@ export default function LiveMatchCommentaryV3() {
  retranslateCommentaries();
  }
  }, [language]);
+
+ // Fetch player profile from RAG when favPlayer changes
+ useEffect(() => {
+   if (!favPlayer) {
+     setPlayerProfile(null);
+     return;
+   }
+
+   const fetchProfile = async () => {
+     setIsLoadingProfile(true);
+     setPlayerProfile(null);
+     
+     try {
+       console.log('[BUDDY] Fetching profile for:', favPlayer);
+       const data = await fetchWithUTF8('/api/player-profile', {
+         method: 'POST',
+         body: JSON.stringify({ playerName: favPlayer }),
+       });
+       
+       console.log('[BUDDY] Profile response:', data.found ? 'FOUND' : 'NOT FOUND', data.summary?.substring(0, 80));
+       setPlayerProfile(data);
+     } catch (error) {
+       console.error('[BUDDY] Profile fetch error:', error);
+       setPlayerProfile({ found: false, summary: '', profile: null, chunks: [] });
+     } finally {
+       setIsLoadingProfile(false);
+     }
+   };
+
+   fetchProfile();
+ }, [favPlayer]);
 
  const retranslateCommentaries = async () => {
  if (commentaries.length === 0 || isRetranslating) return;
@@ -1180,39 +1278,101 @@ export default function LiveMatchCommentaryV3() {
  };
  
  const calculatePlayerStats = (currentRally: Rally) => {
- const stats: Record<string, { blocks: number; aces: number; attacks: number; errors: number; points: number }> = {};
+ const emptyStats = () => ({
+   blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0,
+   serve: { sum: 0, error: 0, ace: 0 },
+   reception: { sum: 0, error: 0, positive: 0, perfect: 0 },
+   attack: { sum: 0, error: 0, blocked: 0, kill: 0 },
+   block: { pts: 0, touchPlus: 0 },
+   dig: 0, assist: 0, bp: 0,
+ });
+ 
+ const stats: Record<string, ReturnType<typeof emptyStats>> = {};
  
  const currentIndex = rallies.findIndex(r => r.rally_number === currentRally.rally_number);
  const ralliesToProcess = currentIndex >= 0 ? rallies.slice(0, currentIndex + 1) : [currentRally];
  
  ralliesToProcess.forEach(rally => {
  rally.touches.forEach(touch => {
- if (!stats[touch.player]) {
- stats[touch.player] = { blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0 };
- }
+ if (!touch.player) return;
+ if (!stats[touch.player]) stats[touch.player] = emptyStats();
+ const s = stats[touch.player];
  
+ const at = (touch.actionType || '').toLowerCase();
+ const grade = (touch.grade || '').toLowerCase();
  const action = touch.action.toLowerCase();
  
- if (action.includes('block') && !action.includes('error')) {
- stats[touch.player].blocks++;
+ // SERVE
+ if (at === 'serve' || action.includes('zagrywka') || action.includes('serwis') || action.includes('ace')) {
+   s.serve.sum++;
+   if (action.includes('blad') || (grade === 'fail' && action.includes('serw'))) {
+     s.serve.error++;
+     s.errors++;
+   }
+   if (action.includes('ace') || grade === 'perfect') {
+     s.serve.ace++;
+     s.aces++;
+   }
  }
- if (action.includes('ace')) {
- stats[touch.player].aces++;
+ // RECEPTION
+ else if (at === 'receive' || action.includes('przyjecie')) {
+   s.reception.sum++;
+   if (grade === 'fail' || action.includes('error')) {
+     s.reception.error++;
+     s.errors++;
+   }
+   if (grade === 'positive' || grade === 'perfect' || action.includes('positive') || action.includes('perfect')) {
+     s.reception.positive++;
+   }
+   if (grade === 'perfect' || action.includes('perfect')) {
+     s.reception.perfect++;
+   }
  }
- if (action.includes('attack') && !action.includes('error')) {
- stats[touch.player].attacks++;
+ // ATTACK
+ else if (at === 'attack' || action.includes('atak')) {
+   s.attack.sum++;
+   s.attacks++;
+   if (action.includes('blad') || grade === 'fail') {
+     s.attack.error++;
+     s.errors++;
+   }
+   if (action.includes('zablokowany') || grade === 'blocked') {
+     s.attack.blocked++;
+   }
+   if (grade === 'perfect' || (touch.rallyWon === 'Won' && !action.includes('blad') && !action.includes('zablokowany'))) {
+     s.attack.kill++;
+   }
  }
- if (action.includes('error')) {
- stats[touch.player].errors++;
+ // BLOCK
+ else if (at === 'block' || action.includes('blok')) {
+   if (!action.includes('przebity') && !action.includes('error') && grade !== 'fail') {
+     if (grade === 'perfect' || touch.rallyWon === 'Won') {
+       s.block.pts++;
+       s.blocks++;
+     } else if (grade === 'positive') {
+       s.block.touchPlus++;
+     }
+   }
+ }
+ // DIG
+ else if (at === 'dig' || action.includes('obrona')) {
+   s.dig++;
+ }
+ // SET (assist)
+ else if (at === 'set' || action.includes('rozegranie')) {
+   // Count as assist if the next touch was a kill
+   // Simplified: count all sets as potential assists
+   s.assist++;
  }
  });
  
+ // POINTS: player who made the winning action (last touch, non-error)
  const finalTouch = rally.touches[rally.touches.length - 1];
- if (finalTouch && finalTouch.action && !finalTouch.action.toLowerCase().includes('error')) {
- if (!stats[finalTouch.player]) {
- stats[finalTouch.player] = { blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0 };
+ if (finalTouch && finalTouch.player) {
+ if (!stats[finalTouch.player]) stats[finalTouch.player] = emptyStats();
+ if (!finalTouch.action.toLowerCase().includes('error') && !finalTouch.action.toLowerCase().includes('blad')) {
+   stats[finalTouch.player].points++;
  }
- stats[finalTouch.player].points++;
  }
  });
  
@@ -1431,14 +1591,14 @@ export default function LiveMatchCommentaryV3() {
  const formatScore = (rally: Rally) => `${rally.score_after.home}:${rally.score_after.away}`;
 
  return (
- <div className="min-h-screen bg-background">
+ <div className="h-screen bg-background flex flex-col overflow-hidden">
+
+ {/* ===== HEADER (flex-shrink: 0, never scrolls) ===== */}
+ <div ref={headerRef} className="flex-shrink-0 bg-background shadow-lg z-10">
  <div className="max-w-7xl mx-auto">
 
- {/* ===== STICKY SECTION: selector + header + controls ===== */}
- <div className="sticky top-0 z-50 bg-background shadow-lg">
-
- {/* Row 1: Match Selector */}
- <div className="px-4 py-2 flex items-center gap-4 border-b border-border">
+ {/* ΓòÉΓòÉΓòÉ SECTION 1: Match Selector ΓòÉΓòÉΓòÉ */}
+ <div className="px-4 py-2.5 flex items-center gap-4 border-b border-border/50">
  <label className="text-sm font-bold text-foreground whitespace-nowrap">Wybierz mecz:</label>
  <select 
  value={selectedMatch}
@@ -1456,26 +1616,23 @@ export default function LiveMatchCommentaryV3() {
  <option value="2025-11-26_PGE-Ind.json" style={{ backgroundColor: '#1e293b', color: '#f1f5f9' }}>PGE Projekt Warszawa vs Indykpol Olsztyn (26.11.2025)</option>
  <option value="2025-12-06_JSW-Ass.json" style={{ backgroundColor: '#1e293b', color: '#f1f5f9' }}>Jastrzebski Wegiel vs Asseco Rzeszow (06.12.2025)</option>
  </select>
- <div className="flex items-center gap-1.5 px-2 py-1 bg-green-500/10 border border-green-500/20 rounded-lg">
+ <div className="flex items-center gap-1.5 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-lg">
  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
  <span className="text-xs font-medium text-green-500">Live</span>
  </div>
  </div>
 
- {/* Row 2: SET + Lineup | Score | Languages */}
- <div className="px-4 py-3 border-b border-border bg-gradient-to-r from-blue-600/10 to-red-600/10">
- <div className="flex items-start justify-between">
-
- {/* LEFT: SET badge + Lineup */}
- <div className="flex-1">
- <div className="flex items-center gap-3 mb-2">
+ {/* ΓòÉΓòÉΓòÉ SECTION 2: Set info + Mode + Languages ΓòÉΓòÉΓòÉ */}
+ <div className="px-4 py-2 border-b border-border/50 bg-background">
+ <div className="flex items-center justify-between">
+ <div className="flex items-center gap-3">
  {currentRally && (() => {
  const setResults = calculateSetResults(currentRallyIndex);
  const hasCompletedSets = setResults.home > 0 || setResults.away > 0;
  return (
  <>
- <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2 rounded-lg shadow">
- <span className="text-white font-bold">SET {currentRally.set_number}</span>
+ <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-1.5 rounded-lg shadow">
+ <span className="text-white font-bold text-sm">SET {currentRally.set_number}</span>
  </div>
  {hasCompletedSets && (
  <div className="flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-lg">
@@ -1483,7 +1640,7 @@ export default function LiveMatchCommentaryV3() {
  <span className="text-sm font-bold text-foreground">{setResults.home}-{setResults.away}</span>
  </div>
  )}
- <div className="flex items-center space-x-1.5">
+ <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-red-500/10 border border-red-500/20 rounded-lg">
  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
  <span className="text-xs font-semibold text-red-500">{mode === 'live' ? 'LIVE' : 'DEMO'}</span>
  </div>
@@ -1491,7 +1648,31 @@ export default function LiveMatchCommentaryV3() {
  );
  })()}
  </div>
- {/* Lineup display - table */}
+ <div className="flex flex-wrap items-center gap-1">
+ {languages.map((lang) => (
+ <button
+ key={lang.code}
+ onClick={() => setLanguage(lang.code)}
+ className={`px-2.5 py-1 rounded text-xs font-semibold transition-all ${
+ language === lang.code
+ ? 'bg-blue-500 text-white'
+ : 'bg-muted hover:bg-muted/80 text-muted-foreground'
+ }`}
+ title={lang.name}
+ >
+ {lang.code.toUpperCase()}
+ </button>
+ ))}
+ </div>
+ </div>
+ </div>
+
+ {/* ΓòÉΓòÉΓòÉ SECTION 3: Lineups + Scoreboard ΓòÉΓòÉΓòÉ */}
+ <div className="px-4 py-3 border-b border-border/50 bg-background">
+ <div className="flex items-stretch gap-4">
+
+ {/* LEFT: Lineup table */}
+ <div className="flex-1 min-w-0">
  {(() => {
    const currentLineup = matchData?.lineups?.find(l => l.setNumber === currentSetNumber) || matchData?.lineups?.[0];
    if (!currentLineup) return null;
@@ -1499,16 +1680,16 @@ export default function LiveMatchCommentaryV3() {
    const awayFullName = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || '';
    const maxRows = Math.max(currentLineup.home.length, currentLineup.away.length);
    return (
-     <table className="mt-2 w-full text-xs border-collapse">
+     <table className="w-full text-xs border-collapse">
        <thead>
-         <tr className="border-b border-border/50">
-           <th className="text-left pb-1 pr-2">
+         <tr className="border-b border-border/40">
+           <th className="text-left pb-1.5 pr-2">
              <div className="flex items-center gap-1.5">
                <img src={getTeamLogo(matchData?.teams?.home || '')} alt="" className="w-4 h-4 object-contain" />
                <span className="font-bold text-blue-400">{homeFullName}</span>
              </div>
            </th>
-           <th className="text-left pb-1 pl-2">
+           <th className="text-left pb-1.5 pl-2">
              <div className="flex items-center gap-1.5">
                <img src={getTeamLogo(matchData?.teams?.away || '')} alt="" className="w-4 h-4 object-contain" />
                <span className="font-bold text-red-400">{awayFullName}</span>
@@ -1547,46 +1728,29 @@ export default function LiveMatchCommentaryV3() {
  })()}
  </div>
 
- {/* CENTER: Score Display */}
+ {/* RIGHT: Scoreboard */}
  {matchData && currentRally && (
- <div className="flex items-center gap-6 mx-4">
- <div className="text-center">
- <img src={getTeamLogo(matchData?.teams?.home || 'Aluron')} alt="" className="w-12 h-12 mx-auto object-contain mb-1" />
- <div className="text-xs font-medium text-muted-foreground">{TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home}</div>
- <div className="text-2xl font-bold">{currentRally.score_after.home}</div>
+ <div className="flex items-center gap-5 pl-4 border-l border-border/30">
+ <div className="text-center min-w-[80px]">
+ <img src={getTeamLogo(matchData?.teams?.home || 'Aluron')} alt="" className="w-14 h-14 mx-auto object-contain mb-1" />
+ <div className="text-xs font-medium text-muted-foreground leading-tight">{TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home}</div>
+ <div className="text-3xl font-bold mt-0.5">{currentRally.score_after.home}</div>
  </div>
- <div className="text-xl font-bold text-muted-foreground">:</div>
- <div className="text-center">
- <img src={getTeamLogo(matchData?.teams?.away || 'Bogdanka')} alt="" className="w-12 h-12 mx-auto object-contain mb-1" />
- <div className="text-xs font-medium text-muted-foreground">{TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away}</div>
- <div className="text-2xl font-bold">{currentRally.score_after.away}</div>
+ <div className="text-2xl font-bold text-muted-foreground/50">:</div>
+ <div className="text-center min-w-[80px]">
+ <img src={getTeamLogo(matchData?.teams?.away || 'Bogdanka')} alt="" className="w-14 h-14 mx-auto object-contain mb-1" />
+ <div className="text-xs font-medium text-muted-foreground leading-tight">{TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away}</div>
+ <div className="text-3xl font-bold mt-0.5">{currentRally.score_after.away}</div>
  </div>
  </div>
  )}
 
- {/* RIGHT: Languages */}
- <div className="flex flex-wrap items-center gap-1 justify-end">
- {languages.map((lang) => (
- <button
- key={lang.code}
- onClick={() => setLanguage(lang.code)}
- className={`px-2 py-1 rounded text-xs font-semibold transition-all ${
- language === lang.code
- ? 'bg-blue-500 text-white'
- : 'bg-muted hover:bg-muted/80 text-muted-foreground'
- }`}
- title={lang.name}
- >
- {lang.code.toUpperCase()}
- </button>
- ))}
- </div>
  </div>
  </div>
 
- {/* Row 3: Controls */}
+ {/* ΓòÉΓòÉΓòÉ SECTION 4: Controls ΓòÉΓòÉΓòÉ */}
  {mode === 'demo' && (
- <div className="px-4 py-2 border-b border-border bg-card/50">
+ <div className="px-4 py-2 border-b border-border/50 bg-background">
  <div className="flex items-center justify-between mb-2">
  <div className="flex gap-2">
  <button
@@ -1649,9 +1813,12 @@ export default function LiveMatchCommentaryV3() {
  )}
 
  </div>
- {/* ===== END STICKY SECTION ===== */}
+ </div>
+ {/* ===== END HEADER ===== */}
 
- {/* Commentary Timeline + Buddy Panel */}
+ {/* ===== SCROLLABLE CONTENT (flex: 1, takes remaining height) ===== */}
+ <div className="flex-1 overflow-y-auto">
+ <div className="max-w-7xl mx-auto">
  <div className="flex gap-4 p-6">
  
  {/* LEFT: Commentary 2/3 */}
@@ -1690,8 +1857,7 @@ export default function LiveMatchCommentaryV3() {
 
  <div
  ref={commentaryRef}
- className="space-y-3 overflow-y-auto"
- style={{ maxHeight: mode === 'demo' ? '500px' : '700px' }}
+ className="space-y-3"
  >
  {commentaries.length === 0 ? (
  <>
@@ -1842,7 +2008,7 @@ export default function LiveMatchCommentaryV3() {
  {/* Favorite player tag */}
  {favPlayer && rally && rally.touches.some(t => t.player === favPlayer) && (() => {
  const isOpen = openFavPopup === commentary.rallyNumber;
- const stats = playerStats[favPlayer] || { blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0 };
+ const stats = playerStats[favPlayer] || { blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0, serve: { sum: 0, error: 0, ace: 0 }, reception: { sum: 0, error: 0, positive: 0, perfect: 0 }, attack: { sum: 0, error: 0, blocked: 0, kill: 0 }, block: { pts: 0, touchPlus: 0 }, dig: 0, assist: 0, bp: 0 };
  const touchesInRally = rally.touches.filter(t => t.player === favPlayer);
  return (
  <div className="mb-2 relative inline-block">
@@ -1937,13 +2103,13 @@ export default function LiveMatchCommentaryV3() {
  
  {/* RIGHT: Buddy Panel 1/3 */}
  <div className="w-1/3">
- <div className="sticky top-64 space-y-4">
+ <div className="sticky top-6 space-y-4 overflow-y-auto" style={{ maxHeight: `calc(100vh - ${headerHeight + 48}px)` }}>
  
  {/* Buddy Header */}
  {favPlayer ? (
  <div className="bg-gradient-to-br from-yellow-900/30 to-amber-900/20 border border-yellow-500/30 rounded-xl p-4">
  <div className="flex items-center gap-2 mb-3">
- <span className="text-yellow-400 text-lg">&#9733;</span>
+ <span className="text-yellow-400 text-lg">Γÿà</span>
  <h3 className="text-lg font-bold text-yellow-400">BUDDY</h3>
  </div>
  <div className="text-xl font-bold text-foreground mb-1">{favPlayer}</div>
@@ -1964,49 +2130,144 @@ export default function LiveMatchCommentaryV3() {
  </div>
  ) : (
  <div className="bg-card border border-dashed border-border rounded-xl p-6 text-center">
- <span className="text-3xl mb-2 block">&#9733;</span>
+ <span className="text-3xl mb-2 block">Γÿà</span>
  <p className="text-sm text-muted-foreground">Wybierz ulubionego zawodnika aby aktywowac BUDDY panel</p>
  </div>
  )}
  
- {/* Live Stats */}
+ {/* Live Stats ΓÇö Variant A: compact sections with colored left borders */}
  {favPlayer && (() => {
-   const stats = playerStats[favPlayer] || { blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0 };
+   const defaultStats = {
+     blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0,
+     serve: { sum: 0, error: 0, ace: 0 },
+     reception: { sum: 0, error: 0, positive: 0, perfect: 0 },
+     attack: { sum: 0, error: 0, blocked: 0, kill: 0 },
+     block: { pts: 0, touchPlus: 0 },
+     dig: 0, assist: 0, bp: 0,
+   };
+   const s = playerStats[favPlayer] || defaultStats;
+   
+   // Calculated percentages
+   const serveEff = s.serve.sum > 0 ? Math.round((s.serve.ace / s.serve.sum) * 100) : 0;
+   const recPosRate = s.reception.sum > 0 ? Math.round((s.reception.positive / s.reception.sum) * 100) : 0;
+   const recPerfRate = s.reception.sum > 0 ? Math.round((s.reception.perfect / s.reception.sum) * 100) : 0;
+   const killRate = s.attack.sum > 0 ? Math.round((s.attack.kill / s.attack.sum) * 100) : 0;
+   const attackEff = s.attack.sum > 0 ? Math.round(((s.attack.kill - s.attack.error - s.attack.blocked) / s.attack.sum) * 100) : 0;
+   
+   const StatSection = ({ title, color, children }: { title: string; color: string; children: React.ReactNode }) => {
+     const borderColors: Record<string, string> = {
+       green: 'border-green-500/40', blue: 'border-blue-500/40', yellow: 'border-yellow-500/40',
+       red: 'border-red-500/40', purple: 'border-purple-500/40', slate: 'border-slate-500/40',
+     };
+     const titleColors: Record<string, string> = {
+       green: 'text-green-400', blue: 'text-blue-400', yellow: 'text-yellow-400',
+       red: 'text-red-400', purple: 'text-purple-400', slate: 'text-slate-400',
+     };
+     return (
+       <div className={`border-l-2 ${borderColors[color]} pl-3 py-1`}>
+         <div className={`text-[10px] font-bold uppercase tracking-wider ${titleColors[color]} mb-1`}>{title}</div>
+         <div className="flex gap-3 flex-wrap">{children}</div>
+       </div>
+     );
+   };
+   
+   const StatCell = ({ label, value, highlight = false }: { label: string; value: string | number; highlight?: boolean }) => (
+     <div className="text-center min-w-[32px]">
+       <div className="text-[9px] text-muted-foreground/60 uppercase">{label}</div>
+       <div className={`text-sm font-bold ${highlight ? 'text-foreground' : 'text-muted-foreground'}`}>{value}</div>
+     </div>
+   );
+   
    return (
      <div className="bg-card border border-border rounded-xl p-4">
-       <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Statystyki w meczu</h4>
-       <div className="grid grid-cols-2 gap-3">
-         <div className="bg-green-500/10 rounded-lg p-3 text-center">
-           <div className="text-2xl font-bold text-green-500">{stats.points}</div>
-           <div className="text-xs text-muted-foreground">Punkty</div>
-         </div>
-         <div className="bg-yellow-500/10 rounded-lg p-3 text-center">
-           <div className="text-2xl font-bold text-yellow-500">{stats.attacks}</div>
-           <div className="text-xs text-muted-foreground">Ataki</div>
-         </div>
-         <div className="bg-blue-500/10 rounded-lg p-3 text-center">
-           <div className="text-2xl font-bold text-blue-500">{stats.blocks}</div>
-           <div className="text-xs text-muted-foreground">Bloki</div>
-         </div>
-         <div className="bg-red-500/10 rounded-lg p-3 text-center">
-           <div className="text-2xl font-bold text-red-500">{stats.aces}</div>
-           <div className="text-xs text-muted-foreground">Asy</div>
-         </div>
+       <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-3">Statystyki w meczu</h4>
+       <div className="space-y-2.5">
+         <StatSection title="Punkty" color="green">
+           <StatCell label="Sum" value={s.points} highlight />
+           <StatCell label="BP" value={s.bp} />
+           <StatCell label="Ratio" value={s.points} />
+         </StatSection>
+         
+         <StatSection title="Zagrywka" color="blue">
+           <StatCell label="Sum" value={s.serve.sum} />
+           <StatCell label="Err" value={s.serve.error} />
+           <StatCell label="Ace" value={s.serve.ace} highlight />
+           <StatCell label="Eff%" value={`${serveEff}%`} />
+         </StatSection>
+         
+         <StatSection title="Przyj─Öcie" color="yellow">
+           <StatCell label="Sum" value={s.reception.sum} />
+           <StatCell label="Err" value={s.reception.error} />
+           <StatCell label="Pos%" value={`${recPosRate}%`} />
+           <StatCell label="Perf%" value={`${recPerfRate}%`} />
+         </StatSection>
+         
+         <StatSection title="Atak" color="red">
+           <StatCell label="Sum" value={s.attack.sum} />
+           <StatCell label="Err" value={s.attack.error} />
+           <StatCell label="Blk" value={s.attack.blocked} />
+           <StatCell label="Kill" value={s.attack.kill} highlight />
+           <StatCell label="K%" value={`${killRate}%`} />
+           <StatCell label="Eff%" value={`${attackEff}%`} />
+         </StatSection>
+         
+         <StatSection title="Blok" color="purple">
+           <StatCell label="Pts" value={s.block.pts} highlight />
+           <StatCell label="Touch+" value={s.block.touchPlus} />
+         </StatSection>
+         
+         <StatSection title="Inne" color="slate">
+           <StatCell label="Dig" value={s.dig} />
+           <StatCell label="Assist" value={s.assist} />
+         </StatSection>
        </div>
-       {stats.errors > 0 && (
-         <div className="mt-2 text-center text-xs text-muted-foreground">
-           Bledy: {stats.errors}
-         </div>
-       )}
      </div>
    );
  })()}
  
- {/* Expert Knowledge Panel - placeholder for RAG content */}
+ {/* Expert Knowledge Panel - RAG player profiles from Pinecone */}
  {favPlayer && (
    <div className="bg-card border border-border rounded-xl p-4">
-     <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Wiedza ekspercka</h4>
-     <p className="text-xs text-muted-foreground italic">Informacje eksperckie o zawodniku z bazy wiedzy RAG pojawia sie tutaj wkrotce...</p>
+     <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
+       Wiedza ekspercka
+     </h4>
+     
+     {isLoadingProfile ? (
+       <div className="flex items-center gap-2 text-xs text-muted-foreground">
+         <span className="animate-pulse">ΓùÅ</span>
+         <span>Wczytywanie profilu z bazy wiedzy...</span>
+       </div>
+     ) : playerProfile?.found && playerProfile.summary ? (
+       <div className="space-y-2">
+         {/* GPT-generated structured summary */}
+         <div className="text-sm text-foreground whitespace-pre-line leading-relaxed">
+           {playerProfile.summary}
+         </div>
+         
+         {/* RAG confidence indicator */}
+         {playerProfile.chunks && playerProfile.chunks.length > 0 && (
+           <div className="mt-3 pt-2 border-t border-border">
+             <div className="flex items-center gap-1 text-xs text-muted-foreground">
+               <span>≡ƒôÜ</span>
+               <span>{playerProfile.chunks.length} {playerProfile.chunks.length === 1 ? 'zrodlo' : playerProfile.chunks.length < 5 ? 'zrodla' : 'zrodel'} w bazie wiedzy</span>
+               <span className="ml-auto text-xs">
+                 {playerProfile.chunks[0]?.score > 0.7 ? 'Γÿà wysoka trafnosc' : 
+                  playerProfile.chunks[0]?.score > 0.5 ? 'Γÿå srednia trafnosc' : ''}
+               </span>
+             </div>
+           </div>
+         )}
+       </div>
+     ) : playerProfile?.found === false ? (
+       <div className="text-xs text-muted-foreground italic">
+         <span className="block mb-1">≡ƒöì Brak profilu w bazie wiedzy</span>
+         <span>Dodaj informacje o {favPlayer} do Pinecone (namespace: player-profiles)</span>
+       </div>
+     ) : (
+       <p className="text-xs text-muted-foreground italic">
+         Informacje eksperckie o zawodniku z bazy wiedzy RAG pojawia sie tutaj wkrotce...
+       </p>
+     )}
    </div>
  )}
  
@@ -2017,6 +2278,9 @@ export default function LiveMatchCommentaryV3() {
  </div>
  {/* END FLEX CONTAINER */}
  </div>
+ {/* END max-w-7xl */}
+ </div>
+ {/* END SCROLLABLE CONTENT */}
 
  <style jsx>{`
  @keyframes fade-in {
