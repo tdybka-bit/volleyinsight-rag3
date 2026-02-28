@@ -516,22 +516,34 @@ export default function LiveMatchCommentaryV3() {
  // Map action
  let action = actionType;
  const rallyWon = labels['Rally Won'];
- const grade = labels['Serve Grade'] || labels['Receive Grade'] || 
+ // Use ACTION-SPECIFIC grade (not generic first-non-empty!)
+ const gradeMap: Record<string, string> = {
+   'Serve': labels['Serve Grade'] || '',
+   'Receive': labels['Receive Grade'] || '',
+   'Attack': labels['Attack Grade'] || '',
+   'Block': labels['Block Grade'] || '',
+   'Dig': labels['Dig Grade'] || '',
+   'Set': '',
+   'Freeball': '',
+ };
+ const grade = gradeMap[actionType] || labels['Serve Grade'] || labels['Receive Grade'] || 
  labels['Attack Grade'] || labels['Block Grade'] || 
  labels['Dig Grade'] || '';
  
  if (actionType === 'Serve') {
- if (rallyWon === 'Lost') {
+ if (grade === 'Fail') {
  action = 'Blad serwisu';
- } else if (grade === 'Ace') {
+ } else if (grade === 'Perfect' || grade === 'Ace') {
  action = 'As serwisowy';
  } else {
  action = 'Zagrywka';
  }
  } else if (actionType === 'Receive') {
- if (grade === 'Negative' || grade === 'Poor') {
+ if (grade === 'Fail') {
+ action = 'Przyjecie error';
+ } else if (grade === 'Negative' || grade === 'Poor') {
  action = 'Przyjecie negative';
- } else if (grade === 'Positive') {
+ } else if (grade === 'Positive' || grade === 'Average') {
  action = 'Przyjecie positive';
  } else if (grade === 'Perfect') {
  action = 'Przyjecie perfect';
@@ -541,16 +553,20 @@ export default function LiveMatchCommentaryV3() {
  } else if (actionType === 'Set') {
  action = 'Rozegranie';
  } else if (actionType === 'Attack') {
- if (rallyWon === 'Lost') {
+ if (grade === 'Fail') {
  action = 'Blad ataku';
- } else if (grade === 'Blocked') {
+ } else if (grade === 'Incomplete' || grade === 'Blocked') {
  action = 'Atak zablokowany';
+ } else if (grade === 'Perfect') {
+ action = 'Atak skuteczny';
  } else {
  action = 'Atak';
  }
  } else if (actionType === 'Block') {
- if (rallyWon === 'Lost') {
+ if (grade === 'Fail') {
  action = 'Przebity blok';
+ } else if (grade === 'Perfect') {
+ action = 'Blok punkt';
  } else {
  action = 'Blok';
  }
@@ -882,22 +898,34 @@ export default function LiveMatchCommentaryV3() {
  // Map action
  let action = actionType;
  const rallyWon = labels['Rally Won'];
- const grade = labels['Serve Grade'] || labels['Receive Grade'] || 
+ // Use ACTION-SPECIFIC grade (not generic first-non-empty!)
+ const gradeMap2: Record<string, string> = {
+   'Serve': labels['Serve Grade'] || '',
+   'Receive': labels['Receive Grade'] || '',
+   'Attack': labels['Attack Grade'] || '',
+   'Block': labels['Block Grade'] || '',
+   'Dig': labels['Dig Grade'] || '',
+   'Set': '',
+   'Freeball': '',
+ };
+ const grade = gradeMap2[actionType] || labels['Serve Grade'] || labels['Receive Grade'] || 
  labels['Attack Grade'] || labels['Block Grade'] || 
  labels['Dig Grade'] || '';
  
  if (actionType === 'Serve') {
- if (rallyWon === 'Lost') {
+ if (grade === 'Fail') {
  action = 'Blad serwisu';
- } else if (grade === 'Ace') {
+ } else if (grade === 'Perfect' || grade === 'Ace') {
  action = 'As serwisowy';
  } else {
  action = 'Zagrywka';
  }
  } else if (actionType === 'Receive') {
- if (grade === 'Negative' || grade === 'Poor') {
+ if (grade === 'Fail') {
+ action = 'Przyjecie error';
+ } else if (grade === 'Negative' || grade === 'Poor') {
  action = 'Przyjecie negative';
- } else if (grade === 'Positive') {
+ } else if (grade === 'Positive' || grade === 'Average') {
  action = 'Przyjecie positive';
  } else if (grade === 'Perfect') {
  action = 'Przyjecie perfect';
@@ -907,16 +935,20 @@ export default function LiveMatchCommentaryV3() {
  } else if (actionType === 'Set') {
  action = 'Rozegranie';
  } else if (actionType === 'Attack') {
- if (rallyWon === 'Lost') {
+ if (grade === 'Fail') {
  action = 'Blad ataku';
- } else if (grade === 'Blocked') {
+ } else if (grade === 'Incomplete' || grade === 'Blocked') {
  action = 'Atak zablokowany';
+ } else if (grade === 'Perfect') {
+ action = 'Atak skuteczny';
  } else {
  action = 'Atak';
  }
  } else if (actionType === 'Block') {
- if (rallyWon === 'Lost') {
+ if (grade === 'Fail') {
  action = 'Przebity blok';
+ } else if (grade === 'Perfect') {
+ action = 'Blok punkt';
  } else {
  action = 'Blok';
  }
@@ -1477,6 +1509,10 @@ export default function LiveMatchCommentaryV3() {
  const ralliesToProcess = currentIndex >= 0 ? rallies.slice(0, currentIndex + 1) : [currentRally];
  
  ralliesToProcess.forEach(rally => {
+ // Determine serving team (first serve touch in rally)
+ const serveTouch = rally.touches.find(t => (t.actionType || '').toLowerCase() === 'serve');
+ const servingTeam = serveTouch?.team || '';
+ 
  rally.touches.forEach(touch => {
  if (!touch.player) return;
  if (!stats[touch.player]) stats[touch.player] = emptyStats();
@@ -1484,82 +1520,107 @@ export default function LiveMatchCommentaryV3() {
  
  const at = (touch.actionType || '').toLowerCase();
  const grade = (touch.grade || '').toLowerCase();
- const action = touch.action.toLowerCase();
  
- // SERVE
- if (at === 'serve' || action.includes('zagrywka') || action.includes('serwis') || action.includes('ace')) {
+ // ============================================================
+ // SERVE — Grade: Fail=error, Perfect/Ace=ace
+ // ============================================================
+ if (at === 'serve') {
    s.serve.sum++;
-   if (action.includes('blad') || (grade === 'fail' && action.includes('serw'))) {
+   if (grade === 'fail') {
      s.serve.error++;
      s.errors++;
    }
-   if (action.includes('ace') || grade === 'perfect') {
+   if (grade === 'perfect' || grade === 'ace') {
      s.serve.ace++;
      s.aces++;
    }
  }
- // RECEPTION
- else if (at === 'receive' || action.includes('przyjecie')) {
+ // ============================================================
+ // RECEPTION — Grade: Fail=error, Perfect+Positive=pos%, Perfect=perf%
+ // ============================================================
+ else if (at === 'receive') {
    s.reception.sum++;
-   if (grade === 'fail' || action.includes('error')) {
+   if (grade === 'fail') {
      s.reception.error++;
      s.errors++;
    }
-   if (grade === 'positive' || grade === 'perfect' || action.includes('positive') || action.includes('perfect')) {
+   if (grade === 'positive' || grade === 'perfect') {
      s.reception.positive++;
    }
-   if (grade === 'perfect' || action.includes('perfect')) {
+   if (grade === 'perfect') {
      s.reception.perfect++;
    }
  }
- // ATTACK
- else if (at === 'attack' || action.includes('atak')) {
+ // ============================================================
+ // ATTACK — Grade: Fail=error, Incomplete/Blocked=blocked, Perfect=kill
+ // ============================================================
+ else if (at === 'attack') {
    s.attack.sum++;
    s.attacks++;
-   if (action.includes('blad') || grade === 'fail') {
+   if (grade === 'fail') {
      s.attack.error++;
      s.errors++;
    }
-   if (action.includes('zablokowany') || grade === 'blocked') {
+   if (grade === 'incomplete' || grade === 'blocked') {
      s.attack.blocked++;
    }
-   if (grade === 'perfect' || (touch.rallyWon === 'Won' && !action.includes('blad') && !action.includes('zablokowany'))) {
+   if (grade === 'perfect') {
      s.attack.kill++;
-   }
- }
- // BLOCK
- else if (at === 'block' || action.includes('blok')) {
-   if (!action.includes('przebity') && !action.includes('error') && grade !== 'fail') {
-     if (grade === 'perfect' || touch.rallyWon === 'Won') {
-       s.block.pts++;
-       s.blocks++;
-     } else if (grade === 'positive') {
-       s.block.touchPlus++;
+     // BP: kill scored while opponent was serving
+     if (touch.team !== servingTeam && servingTeam) {
+       s.bp++;
      }
    }
  }
+ // ============================================================
+ // BLOCK — Grade: Perfect=point, Positive=touch+, Fail=error
+ // ============================================================
+ else if (at === 'block') {
+   if (grade === 'perfect') {
+     s.block.pts++;
+     s.blocks++;
+     // BP: block point scored while opponent was serving
+     if (touch.team !== servingTeam && servingTeam) {
+       s.bp++;
+     }
+   } else if (grade === 'positive') {
+     s.block.touchPlus++;
+   }
+ }
+ // ============================================================
  // DIG
- else if (at === 'dig' || action.includes('obrona')) {
+ // ============================================================
+ else if (at === 'dig') {
    s.dig++;
  }
- // SET (assist)
- else if (at === 'set' || action.includes('rozegranie')) {
-   // Count as assist if the next touch was a kill
-   // Simplified: count all sets as potential assists
-   s.assist++;
+ // ============================================================
+ // SET (assist counted below)
+ // ============================================================
+ else if (at === 'set') {
+   // Assist counted separately — only when next attack is a kill
  }
  });
  
- // POINTS: player who made the winning action (must be on winning team!)
- const finalTouch = rally.touches[rally.touches.length - 1];
- if (finalTouch && finalTouch.player && rally.team_scored) {
- if (!stats[finalTouch.player]) stats[finalTouch.player] = emptyStats();
- const isWinningTeam = finalTouch.team === rally.team_scored;
- const act = finalTouch.action.toLowerCase();
- if (isWinningTeam && !act.includes('error') && !act.includes('blad') && !act.includes('zablokowany')) {
-   stats[finalTouch.player].points++;
+ // ============================================================
+ // ASSISTS: count sets that led to a kill (attack grade=perfect)
+ // ============================================================
+ for (let i = 0; i < rally.touches.length - 1; i++) {
+   const touch = rally.touches[i];
+   const nextTouch = rally.touches[i + 1];
+   if ((touch.actionType || '').toLowerCase() === 'set' && touch.player
+     && (nextTouch.actionType || '').toLowerCase() === 'attack'
+     && (nextTouch.grade || '').toLowerCase() === 'perfect') {
+     if (!stats[touch.player]) stats[touch.player] = emptyStats();
+     stats[touch.player].assist++;
+   }
  }
- }
+ });
+ 
+ // ============================================================
+ // DERIVED: Points = kill + block.pts + ace (always consistent!)
+ // ============================================================
+ Object.values(stats).forEach(s => {
+   s.points = s.attack.kill + s.block.pts + s.serve.ace;
  });
  
  setPlayerStats(stats);
@@ -1585,17 +1646,31 @@ export default function LiveMatchCommentaryV3() {
      const prevSetRallies = rallies.filter((r: any) => (r.set_number || 1) === currentSetNumber);
      const lastRally = prevSetRallies[prevSetRallies.length - 1];
      if (lastRally) {
-       // Calculate top scorers for the set — only count player on WINNING team
+       // Calculate top scorers for the set — count kills, blocks, aces per player
        const setScorers: Record<string, number> = {};
        prevSetRallies.forEach((r: any) => {
-         const ft = r.touches?.[r.touches.length - 1];
-         const isWinningTeam = ft?.team === r.team_scored;
-         if (ft?.player && isWinningTeam && r.team_scored !== 'unknown'
-           && !ft.action?.toLowerCase().includes('error')
-           && !ft.action?.toLowerCase().includes('blad')
-           && !ft.action?.toLowerCase().includes('zablokowany')) {
-           setScorers[ft.player] = (setScorers[ft.player] || 0) + 1;
-         }
+         r.touches?.forEach((touch: any) => {
+           if (!touch.player) return;
+           const action = (touch.action || '').toLowerCase();
+           const grade = (touch.grade || '').toLowerCase();
+           const at = (touch.actionType || '').toLowerCase();
+           
+           // ACE (serve grade perfect)
+           if ((at === 'serve' || action.includes('zagrywka') || action.includes('serwis')) 
+             && (action.includes('ace') || grade === 'perfect')) {
+             setScorers[touch.player] = (setScorers[touch.player] || 0) + 1;
+           }
+           // ATTACK KILL (only grade perfect = direct point)
+           else if ((at === 'attack' || action.includes('atak'))
+             && grade === 'perfect') {
+             setScorers[touch.player] = (setScorers[touch.player] || 0) + 1;
+           }
+           // BLOCK KILL (only grade perfect = direct point)
+           else if ((at === 'block' || action.includes('blok'))
+             && grade === 'perfect') {
+             setScorers[touch.player] = (setScorers[touch.player] || 0) + 1;
+           }
+         });
        });
        const topScorers = Object.entries(setScorers)
          .sort(([,a], [,b]) => b - a)
@@ -2388,12 +2463,13 @@ export default function LiveMatchCommentaryV3() {
    };
    const s = playerStats[favPlayer] || defaultStats;
    
-   // Calculated percentages
-   const serveEff = s.serve.sum > 0 ? Math.round((s.serve.ace / s.serve.sum) * 100) : 0;
+   // Calculated percentages (VolleyStation formulas)
+   const serveEff = s.serve.sum > 0 ? Math.round(((s.serve.ace - s.serve.error) / s.serve.sum) * 100) : 0;
    const recPosRate = s.reception.sum > 0 ? Math.round((s.reception.positive / s.reception.sum) * 100) : 0;
    const recPerfRate = s.reception.sum > 0 ? Math.round((s.reception.perfect / s.reception.sum) * 100) : 0;
    const killRate = s.attack.sum > 0 ? Math.round((s.attack.kill / s.attack.sum) * 100) : 0;
    const attackEff = s.attack.sum > 0 ? Math.round(((s.attack.kill - s.attack.error - s.attack.blocked) / s.attack.sum) * 100) : 0;
+   const ratio = s.points - (s.serve.error + s.attack.error);
    
    const StatSection = ({ title, color, children }: { title: string; color: string; children: React.ReactNode }) => {
      const borderColors: Record<string, string> = {
@@ -2426,7 +2502,7 @@ export default function LiveMatchCommentaryV3() {
          <StatSection title={BUDDY_I18N[language].points} color="green">
            <StatCell label="Sum" value={s.points} highlight />
            <StatCell label="BP" value={s.bp} />
-           <StatCell label="Ratio" value={s.points} />
+           <StatCell label="Ratio" value={ratio} />
          </StatSection>
          
          <StatSection title={BUDDY_I18N[language].serve} color="blue">
