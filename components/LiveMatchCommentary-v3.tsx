@@ -154,6 +154,7 @@ interface CommentaryEntry {
    topScorers: Array<{ player: string; points: number }>;
    totalRallies: number;
    narrative?: string;
+   originalNarrative?: string;
  };
 }
 
@@ -1160,6 +1161,9 @@ export default function LiveMatchCommentaryV3() {
      ...c,
      text: c.originalText || c.text,
      tags: c.originalTags || c.tags,
+     ...(c.type === 'set_summary' && c.summaryData?.originalNarrative ? {
+       summaryData: { ...c.summaryData, narrative: c.summaryData.originalNarrative }
+     } : {}),
    })));
    setTranslatedProfileSummary(null); // Reset to show original PL profile
    return;
@@ -1194,11 +1198,36 @@ export default function LiveMatchCommentaryV3() {
 
  const data = await response.json();
 
+ // Translate narrative for set summaries (separate call)
+ let translatedNarrative = commentary.summaryData?.narrative;
+ if (commentary.type === 'set_summary' && commentary.summaryData?.originalNarrative) {
+   try {
+     const narRes = await fetch('/api/translate', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({
+         text: commentary.summaryData.originalNarrative,
+         fromLanguage: 'pl',
+         toLanguage: currentLanguage,
+         tags: [],
+       }),
+     });
+     if (narRes.ok) {
+       const narData = await narRes.json();
+       translatedNarrative = narData.translatedText;
+     }
+   } catch (e) { /* keep original narrative on error */ }
+ }
+
  return {
  ...commentary,
  text: data.translatedText,
  tags: data.translatedTags || commentary.tags,
  // originalText and originalTags stay unchanged!
+ // Translate narrative for set summaries
+ ...(translatedNarrative && commentary.summaryData ? {
+   summaryData: { ...commentary.summaryData, narrative: translatedNarrative }
+ } : {}),
  timestamp: new Date(),
  };
  } catch (error) {
@@ -1521,11 +1550,13 @@ export default function LiveMatchCommentaryV3() {
  }
  });
  
- // POINTS: player who made the winning action (last touch, non-error)
+ // POINTS: player who made the winning action (must be on winning team!)
  const finalTouch = rally.touches[rally.touches.length - 1];
- if (finalTouch && finalTouch.player) {
+ if (finalTouch && finalTouch.player && rally.team_scored) {
  if (!stats[finalTouch.player]) stats[finalTouch.player] = emptyStats();
- if (!finalTouch.action.toLowerCase().includes('error') && !finalTouch.action.toLowerCase().includes('blad')) {
+ const isWinningTeam = finalTouch.team === rally.team_scored;
+ const act = finalTouch.action.toLowerCase();
+ if (isWinningTeam && !act.includes('error') && !act.includes('blad') && !act.includes('zablokowany')) {
    stats[finalTouch.player].points++;
  }
  }
@@ -1554,11 +1585,15 @@ export default function LiveMatchCommentaryV3() {
      const prevSetRallies = rallies.filter((r: any) => (r.set_number || 1) === currentSetNumber);
      const lastRally = prevSetRallies[prevSetRallies.length - 1];
      if (lastRally) {
-       // Calculate top scorers for the set
+       // Calculate top scorers for the set — only count player on WINNING team
        const setScorers: Record<string, number> = {};
        prevSetRallies.forEach((r: any) => {
          const ft = r.touches?.[r.touches.length - 1];
-         if (ft?.player && r.team_scored !== 'unknown' && !ft.action?.toLowerCase().includes('error')) {
+         const isWinningTeam = ft?.team === r.team_scored;
+         if (ft?.player && isWinningTeam && r.team_scored !== 'unknown'
+           && !ft.action?.toLowerCase().includes('error')
+           && !ft.action?.toLowerCase().includes('blad')
+           && !ft.action?.toLowerCase().includes('zablokowany')) {
            setScorers[ft.player] = (setScorers[ft.player] || 0) + 1;
          }
        });
@@ -1615,7 +1650,7 @@ export default function LiveMatchCommentaryV3() {
            if (data.narrative) {
              setCommentaries((prev) => prev.map(c => 
                c.rallyNumber === (-summarySetNum - 100) && c.type === 'set_summary'
-                 ? { ...c, summaryData: { ...c.summaryData!, narrative: data.narrative } }
+                 ? { ...c, summaryData: { ...c.summaryData!, narrative: data.narrative, originalNarrative: data.narrative } }
                  : c
              ));
            }

@@ -151,11 +151,13 @@ function calculateSetStats(rallies: any[], homeTeam: string, awayTeam: string) {
   const playerBlocks: Record<string, number> = {};
 
   for (const rally of rallies) {
-    // Count points from last touch
+    // Count points from last touch — only if player is on WINNING team
     const lastTouch = rally.touches?.[rally.touches.length - 1];
     if (lastTouch && rally.team_scored) {
       const player = lastTouch.player;
-      if (player) {
+      const isWinningTeam = lastTouch.team === rally.team_scored;
+      const act = (lastTouch.action || '').toLowerCase();
+      if (player && isWinningTeam && !act.includes('error') && !act.includes('blad') && !act.includes('zablokowany')) {
         if (!playerPoints[player]) playerPoints[player] = { points: 0, team: lastTouch.team };
         playerPoints[player].points++;
 
