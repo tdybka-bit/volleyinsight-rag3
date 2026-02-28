@@ -1215,6 +1215,30 @@ INSTRUKCJE:
  console.log('[PRE-GPT] touchContext length:', touchContext.length);
  console.log('[PRE-GPT] prompt first 400 chars:', commentaryPrompt.substring(0, 400));
  
+ // B1: Dynamic token limits based on rally complexity
+ const isServeError = numTouches <= 2 && scoringAction.toLowerCase().includes('blad serw');
+ const isAcePoint = numTouches <= 2 && (scoringAction.toLowerCase().includes('ace') || scoringAction.toLowerCase().includes('as serw'));
+ const hasSubstitution = rally.substitutions?.length > 0;
+ 
+ let dynamicMaxTokens = 150; // default: normal rally
+ if (setEndInfo.isSetEnd) {
+   dynamicMaxTokens = 300; // set end: celebratory
+ } else if (isServeError || isAcePoint) {
+   dynamicMaxTokens = 80; // 1-2 touch: quick & punchy
+ } else if (numTouches <= 3) {
+   dynamicMaxTokens = 120; // short rally
+ } else if (numTouches >= 8) {
+   dynamicMaxTokens = 250; // long rally: needs space for drama
+ } else if (numTouches >= 5) {
+   dynamicMaxTokens = 200; // medium-long rally
+ }
+ // Modifiers
+ if (hasSubstitution) dynamicMaxTokens += 40;
+ if (isHotSituation) dynamicMaxTokens += 30;
+ if (milestone) dynamicMaxTokens += 30;
+ 
+ console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
+
  const completion = await openai.chat.completions.create({
  model: 'gpt-4o-mini',
  messages: [
@@ -1222,7 +1246,7 @@ INSTRUKCJE:
  { role: 'user', content: commentaryPrompt },
  ],
  temperature: setEndInfo.isSetEnd ? 0.95 : isHotSituation ? 0.9 : currentStreak >= 5 ? 0.85 : isBigLead ? 0.8 : 0.7,
- max_tokens: rally.touches?.length >= 5 ? 300 : rally.touches?.length >= 3 ? 200 : 150,
+ max_tokens: dynamicMaxTokens,
  });
 
  const commentary = completion.choices[0].message.content || '';
