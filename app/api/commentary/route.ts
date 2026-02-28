@@ -1161,6 +1161,7 @@ Odmien nazwiska poprawnie wg zasad jezyka polskiego!`;
 WYNIK I KONTEKST:
 GOSPODARZE: ${homeTeamFull} | GOSCIE: ${awayTeamFull}
 Rally #${rally.rally_number} | Set ${setNumber} | Wynik: ${score} | Punkt zdobyla: ${rally.team_scored === 'home' ? homeTeamFull + ' (gospodarze)' : awayTeamFull + ' (goscie)'}
+${rally.phase ? `FAZA GRY: ${rally.phase === 'First Ball' ? 'ATAK PO PRZYJECIU (First Ball / Side-out) - pierwsza szansa na atak po przyjeciu zagrywki. Kluczowa jest jakosc przyjecia i wybor kombinacji ataku.' : rally.phase === 'Transition' ? 'KONTRA (Transition) - atak po obronie w polu. Czesto bardziej chaotyczny, wymaga improwizacji. Rozgrywajacy ma mniej opcji, atakujacy musza reagowac szybko.' : rally.phase}` : ''}
 SYTUACJA PUNKTOWA: ${scoreSituation}${situationContext}${errorContext}${substitutionContext}
 
 ${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKLADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `[!!] USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `VARIACJE ZWROTOW:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
@@ -1176,6 +1177,7 @@ INSTRUKCJE:
 - NIE POWTARZAJ INFORMACJI! Wynik, kto zdobyl punkt, kto prowadzi — wymien MAKSYMALNIE RAZ. Jesli opisales akcje i wspomniales o wyniku, NIE dodawaj kolejnego zdania o tym samym.
 - ${attackCombo ? `DANE TAKTYCZNE: Atak typu ${attackCombo}${attackLocation ? `, strefa: ${attackLocation}` : ''}${attackStyle ? `, styl: ${attackStyle}` : ''}. Uzyj tych danych by opisac KONKRETNIE co sie stalo (np. atak po skosie, atak pipe, szybki atak srodkiem) zamiast ogolnikow!` : serveType ? `DANE TAKTYCZNE: Zagrywka typu ${serveType}. Opisz ja konkretnie!` : ''}
 - ${rally.substitutions?.length ? 'ZMIANA! Wplec ja naturalnie w komentarz - kto za kogo wchodzi, co to moze oznaczac (reakcja trenera, swieze sily, zmiana taktyki). To wazna informacja narracyjna!' : ''}
+- ${rally.phase === 'Transition' ? 'KONTRA! Podkresl dynamike kontry - szybka reakcja po obronie, improwizacja atakujacego, mniej czasu na rozegranie.' : rally.phase === 'First Ball' ? 'Atak po przyjeciu - mozesz wspomniec jakosc przyjecia jesli wplywa na atak (np. idealne przyjecie = pelna kombinacja, slabe = pilka wymuszona).' : ''}
 `;
 
  

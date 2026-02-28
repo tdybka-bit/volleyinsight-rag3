@@ -588,6 +588,7 @@ export default function LiveMatchCommentaryV3() {
  actionType: actionType,
  grade: grade || '',
  rallyWon: rallyWon || '',
+ phase: labels['Phase'] || '',
  attackCombination: labels['Attack Combination'] || '',
  attackLocation: labels['Attack Location'] || '',
  attackStyle: labels['Attack Style'] || '',
@@ -649,6 +650,10 @@ export default function LiveMatchCommentaryV3() {
  player: touches[touches.length - 1].player || ''
  } : { type: '', player: '' };
  
+ // Determine rally phase from attack touches
+ const attackTouch = touches.find((t: any) => t.actionType === 'Attack');
+ const rallyPhase = attackTouch?.phase || touches.find((t: any) => t.phase)?.phase || '';
+ 
  // Build rally object
  const rally = {
  rally_number: i + 1,
@@ -658,6 +663,7 @@ export default function LiveMatchCommentaryV3() {
  team_scored,
  touches,
  final_action,
+ phase: rallyPhase,
  timeout: events.timeout,
  substitutions: events.substitutions.length > 0 ? events.substitutions : null,
  challenge: events.challenge
@@ -971,6 +977,7 @@ export default function LiveMatchCommentaryV3() {
  actionType: actionType,
  grade: grade || '',
  rallyWon: rallyWon || '',
+ phase: labels['Phase'] || '',
  attackCombination: labels['Attack Combination'] || '',
  attackLocation: labels['Attack Location'] || '',
  attackStyle: labels['Attack Style'] || '',
@@ -1033,6 +1040,10 @@ export default function LiveMatchCommentaryV3() {
  player: touches[touches.length - 1].player || ''
  } : { type: '', player: '' };
  
+ // Determine rally phase from attack touches
+ const attackTouch2 = touches.find((t: any) => t.actionType === 'Attack');
+ const rallyPhase2 = attackTouch2?.phase || touches.find((t: any) => t.phase)?.phase || '';
+ 
  // Build rally object
  const rally = {
  rally_number: rallyNumber++,
@@ -1042,6 +1053,7 @@ export default function LiveMatchCommentaryV3() {
  team_scored,
  touches,
  final_action,
+ phase: rallyPhase2,
  timeout: events.timeout,
  substitutions: events.substitutions.length > 0 ? events.substitutions : null,
  challenge: events.challenge
