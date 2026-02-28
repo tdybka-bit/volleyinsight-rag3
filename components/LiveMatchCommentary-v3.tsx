@@ -270,6 +270,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
 const TAG_LABELS: Record<string, string> = {
  '#seria': '#seria',
  '#comeback': '#comeback',
+ '#przelamanie': '#przelamanie',
  '#drama': '#drama',
  '#dluga_wymiana': '#dluga wymiana',
  '#milestone': '#milestone',
@@ -1650,6 +1651,68 @@ export default function LiveMatchCommentaryV3() {
  const rallySetNumber = (rally as any).set_number || 1;
  
  // ========================================================================
+ // INJECT INTRO CARD before the very first rally
+ // ========================================================================
+ if (currentRallyIndex === 0 && commentaries.length === 0) {
+   const homeTeam = TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Gospodarze';
+   const awayTeam = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Goscie';
+   
+   // Insert placeholder intro card immediately
+   const introEntry: CommentaryEntry = {
+     rallyNumber: -999,
+     text: '...',
+     originalText: '...',
+     timestamp: new Date(),
+     player: '', team: '', action: '',
+     type: 'intro',
+     tags: [], originalTags: [], milestones: [], icon: 'MIC',
+     momentumScore: 0, dramaScore: 0, tagData: {},
+   };
+   setCommentaries([introEntry]);
+   
+   // Fire async GPT call for intro
+   (async () => {
+     try {
+       const res = await fetch('/api/intro-commentary', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({ homeTeam, awayTeam, language: 'pl' }),
+       });
+       const data = await res.json();
+       if (data.intro) {
+         let displayText = data.intro;
+         // Auto-translate if not PL
+         if (language !== 'pl') {
+           try {
+             const trRes = await fetch('/api/translate', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify({ text: data.intro, fromLanguage: 'pl', toLanguage: language, tags: [] }),
+             });
+             if (trRes.ok) {
+               const trData = await trRes.json();
+               displayText = trData.translatedText || data.intro;
+             }
+           } catch (e) { /* keep PL on error */ }
+         }
+         setCommentaries(prev => prev.map(c =>
+           c.rallyNumber === -999 && c.type === 'intro'
+             ? { ...c, text: displayText, originalText: data.intro }
+             : c
+         ));
+       }
+     } catch (err) {
+       console.error('[INTRO] API error:', err);
+       // Remove placeholder on error
+       setCommentaries(prev => prev.filter(c => c.rallyNumber !== -999));
+     }
+   })();
+   
+   // Small delay so intro appears before first commentary
+   await new Promise(resolve => setTimeout(resolve, 800));
+ }
+ 
+ // ========================================================================
  // INJECT LINEUP CARD when entering a new set
  // ========================================================================
  if (rallySetNumber !== currentSetNumber) {
@@ -2188,6 +2251,22 @@ export default function LiveMatchCommentaryV3() {
  const rally = rallies.find(r => r.rally_number === commentary.rallyNumber);
  const score = rally ? `${rally.score_after.home}:${rally.score_after.away}` : '';
  
+ // ========== INTRO CARD ==========
+ if (commentary.type === 'intro') {
+   return (
+     <div key={index} className="bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-900 rounded-xl p-5 text-white shadow-lg border border-indigo-500/30 animate-fade-in">
+       <div className="text-center mb-2">
+         <span className="text-xs font-bold uppercase tracking-widest text-indigo-300">🎙️ Transmisja na żywo</span>
+       </div>
+       {commentary.text === '...' ? (
+         <p className="text-sm text-indigo-300 text-center animate-pulse">Przygotowanie transmisji...</p>
+       ) : (
+         <p className="text-sm text-indigo-100 leading-relaxed italic text-center">{commentary.text}</p>
+       )}
+     </div>
+   );
+ }
+
  // ========== SET SUMMARY CARD ==========
  if (commentary.type === 'set_summary' && commentary.summaryData) {
    const sd = commentary.summaryData;
@@ -2294,6 +2373,12 @@ export default function LiveMatchCommentaryV3() {
  <>
  <p>{data.team} odrabia straty!</p>
  <p>Roznica: {data.scoreDiff} pkt | Wynik: {data.score}</p>
+ </>
+ )}
+ {tag === '#przelamanie' && (
+ <>
+ <p>Koniec serii {data.length} pkt {data.brokenTeam}!</p>
+ <p>{data.breakingTeam} przerywa passmo | Wynik: {data.score}</p>
  </>
  )}
  {tag === '#drama' && (

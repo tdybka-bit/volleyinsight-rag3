@@ -461,23 +461,54 @@ if (!rally.touches || rally.touches.length === 0) {
  
  let currentStreak = 0;
  let streakTeam = '';
+ let brokenStreak = 0;
+ let brokenStreakTeam = '';
+ let momentumContext = '';
  
- if (recentRallies.length >= 5) {
- const lastFive = recentRallies.slice(-5);
- const lastTeam = lastFive[lastFive.length - 1]?.team_scored;
- 
+ if (recentRallies.length >= 2) {
+ // Count current streak from end
+ const lastTeam = recentRallies[recentRallies.length - 1]?.team_scored;
  let streak = 0;
- for (let i = lastFive.length - 1; i >= 0; i--) {
- if (lastFive[i].team_scored === lastTeam) {
- streak++;
- } else {
- break;
- }
+ for (let i = recentRallies.length - 1; i >= 0; i--) {
+   if (recentRallies[i].team_scored === lastTeam) {
+     streak++;
+   } else {
+     break;
+   }
  }
  
- if (streak >= 5) {
- currentStreak = streak;
- streakTeam = lastTeam;
+ if (streak >= 3) {
+   currentStreak = streak;
+   streakTeam = lastTeam;
+ }
+ 
+ // Detect BROKEN streak (opponent had 3+ but this point broke it)
+ if (streak === 1 && recentRallies.length >= 4) {
+   const prevTeam = recentRallies[recentRallies.length - 2]?.team_scored;
+   let prevStreak = 0;
+   for (let i = recentRallies.length - 2; i >= 0; i--) {
+     if (recentRallies[i].team_scored === prevTeam) {
+       prevStreak++;
+     } else {
+       break;
+     }
+   }
+   if (prevStreak >= 3) {
+     brokenStreak = prevStreak;
+     brokenStreakTeam = prevTeam;
+   }
+ }
+ 
+ // Scoring pattern last 6 rallies (e.g. "4-2 run for home")
+ if (recentRallies.length >= 6) {
+   const last6 = recentRallies.slice(-6);
+   const homePoints = last6.filter(r => r.team_scored === 'home').length;
+   const awayPoints = last6.filter(r => r.team_scored === 'away').length;
+   if (homePoints >= 5) {
+     momentumContext = `MOMENTUM: Gospodarze dominuja - ${homePoints}:${awayPoints} w ostatnich 6 akcjach!`;
+   } else if (awayPoints >= 5) {
+     momentumContext = `MOMENTUM: Goscie dominuja - ${awayPoints}:${homePoints} w ostatnich 6 akcjach!`;
+   }
  }
  }
  
@@ -875,7 +906,7 @@ if (!rally.touches || rally.touches.length === 0) {
  isEarlySet ? 'early set 1-10 points' : '',
  rallyAnalysis?.isLongRally ? `long rally ${rallyAnalysis.numTouches} touches` : '',
  rallyAnalysis?.isDramatic ? 'dramatic high drama' : '',
- currentStreak >= 5 ? `streak ${currentStreak} points series` : '',
+ currentStreak >= 3 ? `streak ${currentStreak} points series` : '',
  milestone ? 'milestone achievement' : '',
  isBigLead ? 'big lead difference' : '',
  ].filter(Boolean).join(' ');
@@ -1110,7 +1141,15 @@ KRYTYCZNE ZASADY KOMENTARZA - LAMANIE = PORAZKA:
  situationContext += `\nKONIEC SETA! To byl OSTATNI PUNKT! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}. MUSISZ POWIEDZIEC ZE SET SIE SKONCZYL!`;
  }
  if (currentStreak >= 5) {
- situationContext += `\nMOMENTUM: ${streakTeam} ma serie ${currentStreak} punktow pod rzad!`;
+ situationContext += `\nMOMENTUM: ${streakTeam === 'home' ? homeTeamFull : awayTeamFull} ma POTEZNA serie ${currentStreak} punktow pod rzad! To moze byc przelomowy moment!`;
+ } else if (currentStreak >= 3) {
+ situationContext += `\nSERIA: ${streakTeam === 'home' ? homeTeamFull : awayTeamFull} zdobywa ${currentStreak}. punkt z rzedu. Rosnie presja na rywala.`;
+ }
+ if (brokenStreak >= 3) {
+ situationContext += `\nPRZELAMANIE! Koniec serii ${brokenStreak} punktow ${brokenStreakTeam === 'home' ? homeTeamFull : awayTeamFull}. Wazny punkt przerywajacy passmo!`;
+ }
+ if (momentumContext) {
+ situationContext += `\n${momentumContext}`;
  }
  if (milestone) {
  situationContext += `\nMILESTONE: To jest ${milestone} dla ${scoringPlayer}! WSPOMNIEJ O TYM!`;
@@ -1168,7 +1207,7 @@ ${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${com
 
 INSTRUKCJE:
 - OPISUJ TYLKO PRZEBIEG AKCJI powyzej. Kazde dotkniecie po kolei. Nic nie dodawaj!
-- ${setEndInfo.isSetEnd ? `TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEC! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZY PUNKT - krotko, spokojnie.' : isHotSituation ? 'KONCOWKA SETA - emocje!' : currentStreak >= 5 ? 'SERIA - podkresl momentum!' : milestone ? 'MILESTONE - wspomniej liczbe punktow/blokow/asow!' : isBigLead ? 'Duza przewaga - zauwaz sytuacje' : isEarlySet ? 'Poczatek - spokojnie' : 'Srodek seta - rzeczowo'}
+- ${setEndInfo.isSetEnd ? `TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEC! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZY PUNKT - krotko, spokojnie.' : isHotSituation ? 'KONCOWKA SETA - emocje!' : currentStreak >= 3 ? 'SERIA - podkresl momentum!' : milestone ? 'MILESTONE - wspomniej liczbe punktow/blokow/asow!' : isBigLead ? 'Duza przewaga - zauwaz sytuacje' : isEarlySet ? 'Poczatek - spokojnie' : 'Srodek seta - rzeczowo'}
 - ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwal ATAKUJACEGO, nie blad bloku! Uzyj formy: "${attackingPlayer} przebija blok (odmien nazwisko!) ${scoringPlayer}!"` : ''}
 - ${milestone ? `WAZNE: Wspomniej ze to ${milestone}!` : ''}${passInstructions}
 - ${commentaryHintsContext ? 'APPLY USER HINTS - they have PRIORITY over other context!' : ''}
@@ -1207,7 +1246,7 @@ INSTRUKCJE:
  isHotSituation, 
  isEarlySet, 
  isBigLead, 
- currentStreak >= 5,
+ currentStreak >= 3,
  milestone !== '',
  language
  );
@@ -1245,7 +1284,7 @@ INSTRUKCJE:
  { role: 'system', content: systemPrompt },
  { role: 'user', content: commentaryPrompt },
  ],
- temperature: setEndInfo.isSetEnd ? 0.95 : isHotSituation ? 0.9 : currentStreak >= 5 ? 0.85 : isBigLead ? 0.8 : 0.7,
+ temperature: setEndInfo.isSetEnd ? 0.95 : isHotSituation ? 0.9 : currentStreak >= 3 ? 0.85 : isBigLead ? 0.8 : 0.7,
  max_tokens: dynamicMaxTokens,
  });
 
@@ -1287,8 +1326,11 @@ INSTRUKCJE:
  if (setEndInfo.isSetEnd) {
  tags.push('#koniec_seta');
  }
- if (currentStreak >= 4) {
+ if (currentStreak >= 3) {
  tags.push('#seria');
+ }
+ if (brokenStreak >= 3) {
+ tags.push('#przelamanie');
  }
  if (rallyAnalysis?.isDramatic || isHotSituation) {
  tags.push('#drama');
@@ -1313,7 +1355,7 @@ INSTRUKCJE:
  }
 
  // Momentum and drama scores
- const momentumScore = currentStreak >= 4 ? Math.min(currentStreak * 1.5, 10) : 0;
+ const momentumScore = currentStreak >= 3 ? Math.min(currentStreak * 1.5, 10) : brokenStreak >= 3 ? 5 : 0;
  const dramaScore = rallyAnalysis?.dramaScore || 0;
 
  console.log('Tags:', tags);
@@ -1331,6 +1373,14 @@ INSTRUKCJE:
    tagData['#seria'] = {
      team: teamByRole(streakTeam),
      length: currentStreak,
+     score: score,
+   };
+ }
+ if (tags.includes('#przelamanie')) {
+   tagData['#przelamanie'] = {
+     brokenTeam: teamByRole(brokenStreakTeam),
+     breakingTeam: teamByRole(rally.team_scored),
+     length: brokenStreak,
      score: score,
    };
  }
