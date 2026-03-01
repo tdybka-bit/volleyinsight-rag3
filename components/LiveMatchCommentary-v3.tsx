@@ -125,6 +125,7 @@ interface MatchData {
  };
  rallies: Rally[];
  lineups?: SetLineup[];
+ playerPositions?: Record<string, string>;
 }
 
 interface CommentaryEntry {
@@ -783,13 +784,79 @@ export default function LiveMatchCommentaryV3() {
    console.log(`[LINEUP] Set ${setNum}: Home ${homePlayers.size} players, Away ${awayPlayers.size} players, Server: ${firstServer?.player || '?'}`);
  }
 
+ // ========================================================================
+ // PLAYER POSITION INFERENCE from action patterns
+ // ========================================================================
+ const playerPositions: Record<string, string> = {};
+ 
+ // Step 1: Find setters from Assist counts
+ const assistCounts: Record<string, number> = {};
+ for (const inst of instances) {
+   const assist = inst.labels?.Assist || inst.labels?.['Assist'] || '';
+   if (assist) {
+     const name = typeof assist === 'string' ? assist.split(',')[0].trim() : '';
+     if (name) assistCounts[name] = (assistCounts[name] || 0) + 1;
+   }
+ }
+ 
+ // Step 2: Track player action profiles
+ const pData: Record<string, { srv: number; rcv: number; atk_L: number; atk_R: number; atk_M: number; atk_B: number; atk_P: number }> = {};
+ for (const rally of rallies) {
+   for (const touch of (rally.touches || [])) {
+     const name = touch.player;
+     if (!name) continue;
+     if (!pData[name]) pData[name] = { srv: 0, rcv: 0, atk_L: 0, atk_R: 0, atk_M: 0, atk_B: 0, atk_P: 0 };
+     
+     const at = (touch.actionType || '').toLowerCase();
+     const loc = touch.attackLocation || '';
+     
+     if (at === 'serve') pData[name].srv++;
+     else if (at === 'receive') pData[name].rcv++;
+     else if (at === 'attack') {
+       if (loc === 'Middle') pData[name].atk_M++;
+       else if (loc === 'Left Side') pData[name].atk_L++;
+       else if (loc === 'Right Side') pData[name].atk_R++;
+       else if (loc.includes('Back')) pData[name].atk_B++;
+       else if (loc === 'Pipe' || loc.toLowerCase().includes('pipe')) pData[name].atk_P++;
+     }
+   }
+ }
+ 
+ // Step 3: Assign positions
+ const setterNames = new Set(Object.entries(assistCounts).filter(([, c]) => c >= 50).map(([n]) => n));
+ 
+ for (const [name, d] of Object.entries(pData)) {
+   const totalAtk = d.atk_L + d.atk_R + d.atk_M + d.atk_B + d.atk_P;
+   const cleanName = name.split(',')[0].trim();
+   
+   // Check if player name matches a setter (partial match for cleaned names)
+   const isSetter = [...setterNames].some(s => cleanName.includes(s.split(',')[0].trim()) || s.split(',')[0].trim().includes(cleanName));
+   
+   if (isSetter) {
+     playerPositions[name] = 'rozgrywający';
+   } else if (d.atk_M >= 5 && d.atk_M > (d.atk_L + d.atk_R + d.atk_B + d.atk_P)) {
+     playerPositions[name] = 'środkowy';
+   } else if (d.rcv > 0 && d.srv === 0 && totalAtk <= 3) {
+     playerPositions[name] = 'libero';
+   } else if ((d.atk_R + d.atk_B) > (d.atk_L + d.atk_P) && (d.atk_R + d.atk_B) >= 5) {
+     playerPositions[name] = 'atakujący';
+   } else if (d.rcv >= 3 && (d.atk_L >= 3 || d.atk_P >= 2)) {
+     playerPositions[name] = 'przyjmujący';
+   } else if (d.rcv > 0 && d.srv === 0) {
+     playerPositions[name] = 'libero';
+   }
+ }
+ 
+ console.log('[POSITIONS]', playerPositions);
+
  return { 
  rallies,
  teams: {
  home: homeTeamName,
  away: awayTeamName
  },
- lineups
+ lineups,
+ playerPositions
  };
  }
 
@@ -1082,7 +1149,44 @@ export default function LiveMatchCommentaryV3() {
  withChallenges: rallies.filter((r: any) => r.challenge).length
  });
  
- return { rallies };
+ // Position inference (simplified for old format - no Assist labels available)
+ const playerPositions: Record<string, string> = {};
+ const pData2: Record<string, { srv: number; rcv: number; atk_L: number; atk_R: number; atk_M: number; atk_B: number; atk_P: number }> = {};
+ for (const rally of rallies) {
+   for (const touch of (rally.touches || [])) {
+     const name = touch.player;
+     if (!name) continue;
+     if (!pData2[name]) pData2[name] = { srv: 0, rcv: 0, atk_L: 0, atk_R: 0, atk_M: 0, atk_B: 0, atk_P: 0 };
+     const at = (touch.actionType || '').toLowerCase();
+     const loc = touch.attackLocation || '';
+     if (at === 'serve') pData2[name].srv++;
+     else if (at === 'receive') pData2[name].rcv++;
+     else if (at === 'attack') {
+       if (loc === 'Middle') pData2[name].atk_M++;
+       else if (loc === 'Left Side') pData2[name].atk_L++;
+       else if (loc === 'Right Side') pData2[name].atk_R++;
+       else if (loc.includes('Back')) pData2[name].atk_B++;
+       else if (loc === 'Pipe' || loc.toLowerCase().includes('pipe')) pData2[name].atk_P++;
+     }
+   }
+ }
+ for (const [name, d] of Object.entries(pData2)) {
+   const totalAtk = d.atk_L + d.atk_R + d.atk_M + d.atk_B + d.atk_P;
+   if (d.atk_M >= 5 && d.atk_M > (d.atk_L + d.atk_R + d.atk_B + d.atk_P)) {
+     playerPositions[name] = 'środkowy';
+   } else if (d.rcv > 0 && d.srv === 0 && totalAtk <= 3) {
+     playerPositions[name] = 'libero';
+   } else if ((d.atk_R + d.atk_B) > (d.atk_L + d.atk_P) && (d.atk_R + d.atk_B) >= 5) {
+     playerPositions[name] = 'atakujący';
+   } else if (d.rcv >= 3 && (d.atk_L >= 3 || d.atk_P >= 2)) {
+     playerPositions[name] = 'przyjmujący';
+   } else if (d.rcv > 0 && d.srv === 0) {
+     playerPositions[name] = 'libero';
+   }
+ }
+ console.log('[POSITIONS-OLD]', playerPositions);
+ 
+ return { rallies, playerPositions };
  }
 
  /**
@@ -1386,7 +1490,7 @@ export default function LiveMatchCommentaryV3() {
 
  const data = await fetchWithUTF8('/api/commentary', {
  method: 'POST',
- body: JSON.stringify({ rally, language: targetLanguage, playerStats: updatedStats, recentRallies: recentRallies, homeTeamFullName: TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Gospodarze', awayTeamFullName: TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Goscie' }),
+ body: JSON.stringify({ rally, language: targetLanguage, playerStats: updatedStats, recentRallies: recentRallies, homeTeamFullName: TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Gospodarze', awayTeamFullName: TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Goscie', playerPositions: matchData?.playerPositions || {} }),
  });
 
  setIsGenerating(false);
@@ -1489,6 +1593,7 @@ export default function LiveMatchCommentaryV3() {
  rallyAnalysis: rallyAnalysis,
  homeTeamFullName: TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Gospodarze',
  awayTeamFullName: TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Goscie',
+ playerPositions: matchData?.playerPositions || {},
  }),
  });
 

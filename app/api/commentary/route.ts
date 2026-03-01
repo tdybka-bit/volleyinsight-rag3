@@ -322,6 +322,7 @@ interface CommentaryRequest {
  rallyAnalysis?: RallyAnalysis;
  homeTeamFullName?: string;
  awayTeamFullName?: string;
+ playerPositions?: Record<string, string>;
 }
 
 // ============================================================================
@@ -329,9 +330,8 @@ interface CommentaryRequest {
 // ============================================================================
 
 export async function POST(request: NextRequest) {
- console.log('========= ROUTE.TS v7.4 RAG-UNLEASHED LOADED =========');
  try {
- const { rally, language = 'pl', playerStats = {}, recentRallies = [], rallyAnalysis, homeTeamFullName = 'Gospodarze', awayTeamFullName = 'Goscie' }: CommentaryRequest = await request.json();
+ const { rally, language = 'pl', playerStats = {}, recentRallies = [], rallyAnalysis, homeTeamFullName = 'Gospodarze', awayTeamFullName = 'Goscie', playerPositions = {} }: CommentaryRequest = await request.json();
 
  if (!rally) {
  return new Response('Rally data is required', { status: 400 });
@@ -1083,16 +1083,15 @@ if (!rally.touches || rally.touches.length === 0) {
      const style = touch.attackStyle || '';
      const combo = touch.attackCombination || '';
      
-     // C1: Determine front row (1. linia) vs back row (2. linia)
+     // C1: Only mention line for back row attacks (2. linia is noteworthy, 1. linia is default)
      const isBackRow = loc.includes('Back') || loc.toLowerCase().includes('pipe') || combo.toLowerCase().includes('pipe');
-     const lineLabel = isBackRow ? ' z 2. linii' : (loc || combo ? ' z 1. linii' : '');
      
      let atkDesc = 'atak';
      if (loc.toLowerCase() === 'pipe') atkDesc = 'atak pipe z 2. linii';
-     else if (loc.includes('Left') && !loc.includes('Back')) atkDesc = 'atak z lewej strony' + lineLabel;
      else if (loc.includes('Left') && loc.includes('Back')) atkDesc = 'atak z lewej strony z 2. linii';
-     else if (loc.includes('Right') && !loc.includes('Back')) atkDesc = 'atak z prawej strony' + lineLabel;
+     else if (loc.includes('Left')) atkDesc = 'atak z lewej strony';
      else if (loc.includes('Right') && loc.includes('Back')) atkDesc = 'atak z prawej strony z 2. linii';
+     else if (loc.includes('Right')) atkDesc = 'atak z prawej strony';
      else if (loc.includes('Middle')) atkDesc = 'atak pierwszym tempem';
      else if (combo.toLowerCase().includes('pipe')) atkDesc = 'atak pipe z 2. linii';
      else if (isBackRow) atkDesc = 'atak z 2. linii';
@@ -1238,6 +1237,9 @@ Odmien nazwiska poprawnie wg zasad jezyka polskiego!`;
 
  const commentaryPrompt = `${touchContext}
 
+${Object.keys(playerPositions).length > 0 ? `POZYCJE ZAWODNIKOW (uzyj naturalnie, nie powtarzaj za kazdym razem):
+${Object.entries(playerPositions).map(([name, pos]) => `${name} = ${pos}`).join(', ')}
+` : ''}
 WYNIK I KONTEKST:
 GOSPODARZE: ${homeTeamFull} | GOSCIE: ${awayTeamFull}
 Rally #${rally.rally_number} | Set ${setNumber} | Wynik: ${score} | Punkt zdobyla: ${rally.team_scored === 'home' ? homeTeamFull + ' (gospodarze)' : awayTeamFull + ' (goscie)'}
@@ -1273,6 +1275,7 @@ INSTRUKCJE:
  
  console.log('========= ROUTE.TS v7.5 SMART-CONTEXT LOADED =========');
  console.log('[ROTATION]', rally.homeRotation ? `Home R${rally.homeRotation}, Away R${rally.awayRotation}` : 'No rotation data');
+ console.log('[POSITIONS]', Object.keys(playerPositions).length, 'players mapped');
  console.log('[RALLY-TOUCHES]', rally.touches?.length || 0, 'touches');
  if (rally.touches && rally.touches.length > 0) {
    console.log('[FIRST-3-TOUCHES]', JSON.stringify(rally.touches.slice(0, 3)));
