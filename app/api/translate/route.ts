@@ -21,55 +21,110 @@ const LANGUAGE_NAMES: Record<string, string> = {
 };
 
 // ============================================================================
-// TRANSLATION SYSTEM PROMPT
+// E4: CULTURAL COMMENTARY STYLES PER LANGUAGE
+// ============================================================================
+
+const CULTURAL_STYLES: Record<string, string> = {
+  pl: `STYL: Polski komentarz sportowy.
+- Emocjonalny ale rzeczowy, jak Tomasz Swędrowski czy Wojciech Drzyzga
+- Używaj polskich zwrotów siatkarskich: "piłka setowa", "kontra", "kiwka", "as serwisowy"
+- Dramatyzuj końcówki setów, ale nie przesadzaj w początkach
+- Naturalny polski - nie tłumacz dosłownie z obcych języków`,
+
+  en: `STYLE: English-language volleyball commentary, BBC/NBC broadcast tone.
+- Smooth, flowing narrative — think of a radio commentator painting a picture
+- Use English volleyball idioms: "kills it", "stuff block", "service ace", "digs it out"
+- Understated excitement — build tension through word choice, not exclamation marks
+- Concise and punchy for quick rallies, more descriptive for long ones
+- Example tone: "Leon finds the gap on the left side — and that's a clean kill!"`,
+
+  it: `STILE: Commento sportivo italiano — passione e teatro!
+- EMOZIONE è tutto! Come Gianfranco De Laurentiis o Andrea Zorzi
+- Esclamazioni naturali: "Che punto!", "Mamma mia!", "Incredibile!", "Che muro!"
+- Terminologia italiana: "schiacciata" (atak), "muro" (blok), "battuta" (zagrywka), "palleggio" (rozegranie), "ricezione" (przyjęcie), "punto diretto" (as)
+- Ritmo: frasi brevi per momenti veloci, descrizioni poetiche per grandi giocate
+- L'Italia vive la pallavolo — il commento deve riflettere questa passione!
+- Esempio: "SCHIACCIATA DI LEON! Che potenza, non c'è stato nulla da fare per il muro!"`,
+
+  de: `STIL: Deutscher Volleyball-Kommentar — präzise und analytisch.
+- Sachlich und taktisch orientiert, wie bei Sport1 oder ZDF
+- Taktische Einsichten betonen: Blockformation, Angriffswinkel, Aufstellungsvorteil
+- Fachbegriffe: "Aufschlag" (zagrywka), "Annahme" (przyjęcie), "Zuspiel" (rozegranie), "Angriff" (atak), "Block", "Abwehr" (obrona)
+- Emotionen kontrolliert — Begeisterung zeigen durch Wortwahl, nicht durch Ausrufezeichen
+- Bei entscheidenden Momenten darf mehr Emotion kommen
+- Beispiel: "Starker Angriff über die Mitte — Bieniek nutzt die Lücke im Block geschickt aus."`,
+
+  tr: `STİL: Türk voleybol yorumu — tutkulu ve enerjik!
+- Yüksek enerji, taraftarla konuşur gibi — TRT Spor veya BeIN Sports tarzı
+- Heyecanlı anlar: "Harika!", "İnanılmaz!", "Ne sayı!", "Muhteşem!"
+- Voleybol terimleri: "servis" (zagrywka), "atak" (atak), "blok", "sayı" (punkt), "set", "ralli"
+- Duygusal bağ kur — oyuncuların mücadelesini hisset
+- Örnek: "LEON ATIYOR VE SAYIII! Rakip blok çaresiz kaldı, muhteşem bir atak!"`,
+
+  es: `ESTILO: Comentario de voleibol en español — narrativo y apasionado.
+- Ritmo latinoamericano/español — como un relato deportivo de radio
+- Frases con flow natural: construir tensión, soltar emoción en el punto
+- Terminología: "remate" (atak), "bloqueo" (blok), "saque" (zagrywka), "recepción" (przyjęcie), "armado" (rozegranie), "ace"
+- Exclamaciones naturales: "¡Golazo!", "¡Qué punto!", "¡Tremendo remate!", "¡Se fue!"
+- Narrar como si la audiencia no pudiera ver — describir acción y emoción
+- Ejemplo: "¡REMATE DE LEON POR LA DIAGONAL! ¡No hay muro que lo detenga, señores!"`,
+
+  pt: `ESTILO: Comentário de vôlei brasileiro — emoção e energia!
+- Brasil é potência no vôlei — o comentário reflete orgulho e conhecimento
+- Tom de Globo/SporTV: Nalaldo ou Maurício Noriega
+- Terminologia: "ataque" (atak), "bloqueio" (blok), "saque" (zagrywka), "recepção" (przyjęcie), "levantamento" (rozegranie), "ace", "ponto"
+- Expressões naturais: "Que jogada!", "Ponto espetacular!", "Mandou bem!", "Que defesa!"
+- Ritmo brasileiro — frases curtas para pontos rápidos, narração envolvente para rallies longos
+- Exemplo: "ATACOU LEON! Que pancada na bola, o bloqueio nem viu passar!"`,
+
+  jp: `スタイル：日本語バレーボール実況 — 正確で敬意を持った解説。
+- NHKやフジテレビの実況スタイル
+- 丁寧で正確、しかし興奮する場面では感情を表現
+- バレーボール用語：「サーブ」「レシーブ」「トス」「アタック/スパイク」「ブロック」「ディグ」「エース」
+- 自然な日本語の感嘆表現：「素晴らしい！」「見事！」「決まった！」
+- 選手名はカタカナ表記が理想だが、原文のままでも可
+- 例：「レオンの強烈なスパイク！ブロックを打ち抜きました！素晴らしいアタックです！」`,
+};
+
+// ============================================================================
+// TRANSLATION SYSTEM PROMPT - WITH CULTURAL STYLE
 // ============================================================================
 
 const getTranslationSystemPrompt = (targetLanguage: string) => {
   const langName = LANGUAGE_NAMES[targetLanguage] || targetLanguage;
+  const culturalStyle = CULTURAL_STYLES[targetLanguage] || '';
   
-  return `You are a professional volleyball commentary translator.
+  return `You are a professional volleyball commentary translator who adapts commentary to sound like a NATIVE ${langName} sports commentator — not a word-for-word translator.
 
 YOUR TASK:
-Translate volleyball match commentary from one language to ${langName}.
+Transform volleyball match commentary into ${langName}, capturing the voice, rhythm, and culture of ${langName}-speaking volleyball commentary.
+
+${culturalStyle}
 
 CRITICAL RULES:
-1. PRESERVE volleyball terminology accuracy
-2. PRESERVE energy and tone of original
-3. PRESERVE all player names (NO translation!)
+1. This is STYLISTIC ADAPTATION, not word-for-word translation
+2. Sound like a NATIVE ${langName} commentator would describe this moment
+3. PRESERVE all player names exactly (NO translation of names!)
 4. PRESERVE team names exactly as written
 5. PRESERVE score format (e.g., "30:28")
-6. NATURAL ${langName} - sound like native commentator
-7. Keep same LENGTH (1-2 sentences)
-8. Keep same EMOTION level
+6. Match the ENERGY level of the original — if it's calm, stay calm; if excited, be excited
+7. Keep similar LENGTH (don't make it significantly longer or shorter)
+8. Use ${langName} volleyball terminology, not translated Polish terms
+9. Sentence structure should follow ${langName} natural patterns, NOT Polish word order
 
 VOLLEYBALL TERMS - Common translations:
-- Ace = As (PL), Ace (EN/ES/IT)
-- Block = Blok (PL), Block (EN), Blocco (IT), Bloqueo (ES)
-- Attack = Atak (PL), Attack (EN), Attacco (IT), Ataque (ES)
-- Set = Set/Seta (all languages)
-- Rally = Wymiana (PL), Rally (EN), Scambio (IT), Jugada (ES)
-- Error = Błąd (PL), Error (EN/ES), Errore (IT)
-
-EXAMPLES:
-
-Polish → English:
-"Boladz przebija blok McCarthy'ego! Potężny atak, który kończy długą wymianę!"
-→ "Boladz breaks through McCarthy's block! Powerful attack that ends the long rally!"
-
-Polish → Spanish:
-"Grozdanov skuteczny w bloku! Zatrzymał rywala."
-→ "¡Grozdanov efectivo en el bloqueo! Detuvo al rival."
-
-Polish → Italian:
-"As serwisowy McCarthy! KONIEC SETA 25:22!"
-→ "Ace al servizio di McCarthy! FINE DEL SET 25:22!"
+- Ace = As (PL), Ace (EN/ES/IT), Ass (DE), エース (JP)
+- Block = Blok (PL), Block (EN/DE), Blocco/Muro (IT), Bloqueo (ES), ブロック (JP)
+- Attack = Atak (PL), Attack (EN), Attacco/Schiacciata (IT), Ataque/Remate (ES), Angriff (DE), アタック (JP)
+- Set = Set/Seta, Zuspiel (DE), セット (JP)
+- Rally = Wymiana (PL), Rally (EN), Scambio (IT), Jugada (ES), Ballwechsel (DE), ラリー (JP)
 
 NEVER:
 - Translate player names (Leon stays Leon, not León)
 - Change team names
-- Add extra information
-- Remove emotion/energy
-- Make it longer or shorter significantly`;
+- Add information not in the original
+- Remove key facts (who scored, what action)
+- Use generic translation — make it sound NATIVE`;
 };
 
 // ============================================================================
@@ -125,19 +180,20 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`🌍 Translating from ${fromLanguage} to ${toLanguage}`);
-    console.log(`📝 Original text: "${text.substring(0, 60)}..."`);
+    console.log(`📝 Original text: "${text.substring(0, 80)}..."`);
 
     // ========================================================================
-    // STEP 1: TRANSLATE COMMENTARY TEXT
+    // STEP 1: TRANSLATE COMMENTARY TEXT (STYLISTIC ADAPTATION)
     // ========================================================================
 
     const systemPrompt = getTranslationSystemPrompt(toLanguage);
+    const langName = LANGUAGE_NAMES[toLanguage] || toLanguage;
     
-    const translationPrompt = `Translate this volleyball commentary to ${LANGUAGE_NAMES[toLanguage]}:
+    const translationPrompt = `Adapt this volleyball commentary into ${langName}. Sound like a native ${langName} sports commentator:
 
 "${text}"
 
-Translated commentary:`;
+${langName} commentary:`;
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -145,13 +201,16 @@ Translated commentary:`;
         { role: 'system', content: systemPrompt },
         { role: 'user', content: translationPrompt },
       ],
-      temperature: 0.3, // Lower for more consistent translations
-      max_tokens: 200,
+      temperature: 0.5,
+      max_tokens: 250,
     });
 
-    const translatedText = completion.choices[0].message.content || text;
+    let translatedText = completion.choices[0].message.content || text;
+    
+    // Clean up: remove wrapping quotes if GPT added them
+    translatedText = translatedText.replace(/^[""]|[""]$/g, '').trim();
 
-    console.log(`✅ Translated: "${translatedText.substring(0, 60)}..."`);
+    console.log(`✅ Adapted: "${translatedText.substring(0, 80)}..."`);
 
     // ========================================================================
     // STEP 2: TRANSLATE TAGS (if any)
@@ -251,6 +310,26 @@ Translated commentary:`;
           pt: '#rally_longo',
           jp: '#長いラリー',
         },
+        '#zmiana': {
+          pl: '#zmiana',
+          en: '#substitution',
+          es: '#cambio',
+          it: '#cambio',
+          de: '#wechsel',
+          tr: '#değişiklik',
+          pt: '#substituição',
+          jp: '#交代',
+        },
+        '#debiut': {
+          pl: '#debiut',
+          en: '#debut',
+          es: '#debut',
+          it: '#debutto',
+          de: '#debüt',
+          tr: '#ilk_maç',
+          pt: '#estreia',
+          jp: '#デビュー',
+        },
       };
 
       translatedTags = tags.map(tag => {
@@ -279,12 +358,18 @@ Translated commentary:`;
     console.error('❌ Translation API error:', error);
     
     // Fallback: return original text on error
-    const body = await request.json().catch(() => ({ text: '', tags: [] }));
+    let fallbackText = '';
+    let fallbackTags: string[] = [];
+    try {
+      const body = await request.clone().json();
+      fallbackText = body.text || '';
+      fallbackTags = body.tags || [];
+    } catch {}
     
     return new Response(JSON.stringify({ 
       error: 'Translation failed',
-      translatedText: body.text || '',
-      translatedTags: body.tags || [],
+      translatedText: fallbackText,
+      translatedTags: fallbackTags,
     }), { 
       status: 500,
       headers: { 'Content-Type': 'application/json' }

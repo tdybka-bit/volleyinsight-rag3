@@ -8,7 +8,14 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 export async function POST(request: NextRequest) {
   try {
-    const { homeTeam, awayTeam, language = 'pl' } = await request.json();
+    const { 
+      homeTeam, 
+      awayTeam, 
+      language = 'pl',
+      homePlayers = [],
+      awayPlayers = [],
+      playerPositions = {},
+    } = await request.json();
 
     if (!homeTeam || !awayTeam) {
       return new Response(JSON.stringify({ intro: '' }), {
@@ -18,13 +25,36 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`[INTRO] Generating intro for ${homeTeam} vs ${awayTeam} (${language})`);
+    console.log(`[INTRO] Players: home=${homePlayers.length}, away=${awayPlayers.length}, positions=${Object.keys(playerPositions).length}`);
 
-    // Query Pinecone for team/player context
-    let teamContext = '';
+    // ========================================================================
+    // STEP 1: Build player context from REAL lineup data (no hallucination!)
+    // ========================================================================
+    let playerContext = '';
+    
+    if (homePlayers.length > 0 || awayPlayers.length > 0) {
+      const formatPlayer = (name: string) => {
+        const pos = playerPositions[name];
+        return pos ? `${name} (${pos})` : name;
+      };
+      
+      if (homePlayers.length > 0) {
+        playerContext += `\n${homeTeam}: ${homePlayers.map(formatPlayer).join(', ')}`;
+      }
+      if (awayPlayers.length > 0) {
+        playerContext += `\n${awayTeam}: ${awayPlayers.map(formatPlayer).join(', ')}`;
+      }
+    }
+
+    // ========================================================================
+    // STEP 2: Query Pinecone for additional context (player profiles, tactics)
+    // ========================================================================
+    let ragContext = '';
     try {
       const embedding = await openai.embeddings.create({
         model: 'text-embedding-3-small',
         input: `${homeTeam} vs ${awayTeam} mecz siatkowka druzyna`,
+        dimensions: 768, // Match Pinecone index dimensions!
       });
       const vector = embedding.data[0].embedding;
 
@@ -44,40 +74,35 @@ export async function POST(request: NextRequest) {
         .filter(Boolean);
 
       if (profileSnippets.length > 0) {
-        teamContext += `\nZNANI ZAWODNICY:\n${profileSnippets.join('\n').substring(0, 800)}`;
+        ragContext += `\nPROFILE ZAWODNIKOW Z BAZY:\n${profileSnippets.join('\n').substring(0, 800)}`;
       }
       if (tacticsSnippets.length > 0) {
-        teamContext += `\nKONTEKST TAKTYCZNY:\n${tacticsSnippets.join('\n').substring(0, 400)}`;
+        ragContext += `\nKONTEKST TAKTYCZNY:\n${tacticsSnippets.join('\n').substring(0, 400)}`;
       }
+      
+      console.log(`[INTRO] RAG: ${profileSnippets.length} profiles, ${tacticsSnippets.length} tactics`);
     } catch (err) {
       console.error('[INTRO] RAG error:', err);
+      // Continue without RAG - we still have real player data from frontend
     }
 
-    // Language-specific system prompts
-    const langInstructions: Record<string, string> = {
-      pl: 'Pisz po polsku. Styl: polski komentator radiowy, cieply, budujacy napieie.',
-      en: 'Write in English. Style: warm British sports commentator building anticipation.',
-      de: 'Schreibe auf Deutsch. Stil: sachlicher, aber enthusiastischer Sportkommentator.',
-      it: 'Scrivi in italiano. Stile: commentatore appassionato, emotivo, teatrale.',
-      es: 'Escribe en español. Estilo: comentarista apasionado, dramático.',
-      tr: 'Türkçe yaz. Stil: heyecanlı ve tutkulu spor yorumcusu.',
-      pt: 'Escreva em português. Estilo: comentarista caloroso e entusiasmado.',
-      jp: '日本語で書いてください。スタイル：熱血スポーツアナウンサー。',
-    };
-
+    // ========================================================================
+    // STEP 3: Generate intro (always in Polish)
+    // ========================================================================
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
           content: `Jestes komentatorem radiowym meczu siatkowki. Generujesz INTRO przed meczem - 2-3 zdania budujace nastroj i napiecie.
-${langInstructions[language] || langInstructions.pl}
 
 ZASADY:
 - KROTKO: 2-3 zdania, max 60 slow
 - Wymien OBE druzyny z pelna nazwa
 - Zbuduj napiecie i atmosfere (hala, kibice, stawka)
-- Jesli masz info o zawodnikach - wspomniej 1-2 kluczowych graczy
+- Jesli masz info o zawodnikach - wspomniej 1-2 kluczowych graczy PO NAZWISKU
+- NIGDY NIE WYMYSLAJ graczy! Uzywaj TYLKO nazwisk z listy SKLAD DRUZYN ponizej!
+- Jesli nie znasz graczy — NIE wspominaj zadnych nazwisk, mow ogolnie o druzynie
 - NIE wymyslaj konkretnych wynikow ani statystyk
 - NIE uzywaj emoji
 - Styl: jakbys wlasnie wlaczyl transmisje radiowa`,
@@ -85,13 +110,14 @@ ZASADY:
         {
           role: 'user',
           content: `MECZ: ${homeTeam} vs ${awayTeam}
-${teamContext}
+${playerContext ? `\nSKLAD DRUZYN (TYLKO TE NAZWISKA SA PRAWDZIWE!):${playerContext}` : ''}
+${ragContext}
 
-Wygeneruj intro do meczu.`,
+Wygeneruj intro do meczu po polsku.`,
         },
       ],
       temperature: 0.9,
-      max_tokens: 120,
+      max_tokens: 150,
     });
 
     const intro = completion.choices[0].message.content || '';

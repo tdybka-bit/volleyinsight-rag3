@@ -1573,7 +1573,7 @@ export default function LiveMatchCommentaryV3() {
 
  const generateCommentary = async (rally: Rally) => {
  try {
- console.log('Generating commentary for rally #', rally.rally_number);
+ console.log('Generating commentary for rally #', rally.rally_number, '(always PL first, then translate to', language, ')');
  setIsGenerating(true);
  
  const updatedStats = calculatePlayerStats(rally);
@@ -1583,11 +1583,12 @@ export default function LiveMatchCommentaryV3() {
  
  const rallyAnalysis = analyzeRallyChain(rally);
 
+ // ALWAYS generate in Polish first (best quality - all context is PL)
  const data = await fetchWithUTF8('/api/commentary', {
  method: 'POST',
  body: JSON.stringify({ 
  rally, 
- language,
+ language: 'pl', // Always Polish for generation
  playerStats: updatedStats,
  recentRallies: recentRallies,
  rallyAnalysis: rallyAnalysis,
@@ -1597,12 +1598,41 @@ export default function LiveMatchCommentaryV3() {
  }),
  });
 
+ let finalCommentary = data.commentary || '';
+ let finalTags = data.tags || [];
+ const polishOriginal = finalCommentary;
+
+ // If not Polish, translate via /api/translate (stylistic adaptation)
+ if (language !== 'pl' && finalCommentary) {
+   try {
+     console.log(`🌍 Translating rally #${rally.rally_number} to ${language}...`);
+     const trRes = await fetchWithUTF8('/api/translate', {
+       method: 'POST',
+       body: JSON.stringify({ 
+         text: finalCommentary, 
+         fromLanguage: 'pl', 
+         toLanguage: language, 
+         tags: finalTags 
+       }),
+     });
+     if (trRes.translatedText) {
+       finalCommentary = trRes.translatedText;
+       finalTags = trRes.translatedTags || finalTags;
+       console.log(`✅ Rally #${rally.rally_number} translated to ${language}`);
+     }
+   } catch (trErr) {
+     console.warn(`⚠️ Translation failed for rally #${rally.rally_number}, keeping Polish:`, trErr);
+   }
+ }
+
  setIsGenerating(false);
- console.log('Commentary generated:', data);
+ console.log('Commentary generated:', { polish: polishOriginal.substring(0, 50), final: finalCommentary.substring(0, 50) });
  
  return {
- commentary: data.commentary || '',
- tags: data.tags || [],
+ commentary: finalCommentary,
+ polishOriginal: polishOriginal,
+ tags: finalTags,
+ originalTags: data.tags || [],
  tagData: data.tagData || {},
  milestones: data.milestones || [],
  icon: data.icon || '', momentumScore: data.momentumScore || 0,
@@ -1790,10 +1820,23 @@ export default function LiveMatchCommentaryV3() {
    // Fire async GPT call for intro
    (async () => {
      try {
+       // Gather real player data to prevent hallucination
+       const currentLineup = matchData?.lineups?.find(l => l.setNumber === 1) || matchData?.lineups?.[0];
+       const homePlayers = currentLineup?.home?.map(p => p.name) || [];
+       const awayPlayers = currentLineup?.away?.map(p => p.name) || [];
+       const positions = matchData?.playerPositions || {};
+       
        const res = await fetch('/api/intro-commentary', {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({ homeTeam, awayTeam, language: 'pl' }),
+         body: JSON.stringify({ 
+           homeTeam, 
+           awayTeam, 
+           language: 'pl',
+           homePlayers,
+           awayPlayers,
+           playerPositions: positions,
+         }),
        });
        const data = await res.json();
        if (data.intro) {
@@ -1910,14 +1953,30 @@ export default function LiveMatchCommentaryV3() {
                  touches: r.touches,
                  final_action: r.final_action,
                })),
-               language,
+               language: 'pl', // Always generate in PL (best quality), translate after
              }),
            });
            const data = await res.json();
            if (data.narrative) {
+             let displayNarrative = data.narrative;
+             const polishNarrative = data.narrative;
+             
+             // Translate if not Polish
+             if (language !== 'pl') {
+               try {
+                 const trRes = await fetchWithUTF8('/api/translate', {
+                   method: 'POST',
+                   body: JSON.stringify({ text: data.narrative, fromLanguage: 'pl', toLanguage: language, tags: [] }),
+                 });
+                 if (trRes.translatedText) {
+                   displayNarrative = trRes.translatedText;
+                 }
+               } catch (e) { /* keep PL on error */ }
+             }
+             
              setCommentaries((prev) => prev.map(c => 
                c.rallyNumber === (-summarySetNum - 100) && c.type === 'set_summary'
-                 ? { ...c, summaryData: { ...c.summaryData!, narrative: data.narrative, originalNarrative: data.narrative } }
+                 ? { ...c, summaryData: { ...c.summaryData!, narrative: displayNarrative, originalNarrative: polishNarrative } }
                  : c
              ));
            }
@@ -2008,7 +2067,7 @@ export default function LiveMatchCommentaryV3() {
  const newCommentary: CommentaryEntry = {
  rallyNumber: rally.rally_number,
  text: result.commentary,
- originalText: result.commentary,
+ originalText: result.polishOriginal || result.commentary,
  timestamp: new Date(),
  player: scoringInfo.player,
  team: rally.team_scored,
@@ -2016,7 +2075,7 @@ export default function LiveMatchCommentaryV3() {
  type: getActionType(scoringInfo.action),
  // NEW FIELDS
  tags: result.tags,
- originalTags: result.tags,
+ originalTags: result.originalTags || result.tags,
  tagData: result.tagData || {},
  milestones: result.milestones,
  icon: result.icon,
