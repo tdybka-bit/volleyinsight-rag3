@@ -293,6 +293,26 @@ const TEAM_FULL_NAMES: Record<string, string> = {
  'bogdanka': 'BOGDANKA LUK Lublin',
 };
 
+// ============================================================================
+// PLAYER DISPLAY NAMES — applied at parser level so correct everywhere
+// Maps raw VolleyStation names → proper display names
+// Add new mappings here when needed — affects touches, lineup, buddy, intro, TTS
+// ============================================================================
+const PLAYER_DISPLAY_NAMES: Record<string, string> = {
+  'Leon Venero': 'Leon',
+  'Venero Leon': 'Leon',
+  'Tavares Rodrigues': 'Tavares',
+  'Rodrigues Tavares': 'Tavares',
+};
+
+/** Clean + normalize player name from VolleyStation JSON */
+function normalizePlayerName(rawName: string): string {
+  // Step 1: Remove extra info after comma ("Leon Venero, Wilfredo" → "Leon Venero")
+  const cleaned = rawName.includes(',') ? rawName.split(',')[0].trim() : rawName.trim();
+  // Step 2: Apply display name mapping
+  return PLAYER_DISPLAY_NAMES[cleaned] || cleaned;
+}
+
 export default function LiveMatchCommentaryV3() {
  const [matchData, setMatchData] = useState<MatchData | null>(null);
  const [rallies, setRallies] = useState<Rally[]>([]);
@@ -313,6 +333,10 @@ export default function LiveMatchCommentaryV3() {
  const [openTagPopup, setOpenTagPopup] = useState<string | null>(null);
  const [favPlayer, setFavPlayer] = useState<string | null>(null);
  const [openFavPopup, setOpenFavPopup] = useState<number | null>(null);
+ // TTS State
+ const [ttsAutoPlay, setTtsAutoPlay] = useState(false);
+ const [ttsPlaying, setTtsPlaying] = useState<number | null>(null); // rallyNumber currently playing
+ const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
  const [playerProfile, setPlayerProfile] = useState<{
    found: boolean;
    summary: string;
@@ -493,10 +517,10 @@ export default function LiveMatchCommentaryV3() {
  const teamCode = code.split(' ')[0]; // ZAW, LBN, PGE, etc.
  const playerNames = labels[`${teamCode} Player Name`] || labels['Player Name'] || [];
  if (Array.isArray(playerNames) && playerNames.length >= 2) {
- const cleanName = (n: string) => n.split(',').reverse().map(s => s.trim()).join(' ');
+ const cleanSubName = (n: string) => normalizePlayerName(n.split(',').reverse().map(s => s.trim()).join(' '));
  events.substitutions.push({
- player_out: cleanName(playerNames[0]),
- player_in: cleanName(playerNames[1]),
+ player_out: cleanSubName(playerNames[0]),
+ player_in: cleanSubName(playerNames[1]),
  team: labels['Team'] === 'Home' ? 'home' : 'away'
  });
  }
@@ -602,9 +626,7 @@ export default function LiveMatchCommentaryV3() {
  }
  
  if (action && playerName) {
- const cleanPlayerName = playerName.includes(',') 
- ? playerName.split(',')[0].trim() 
- : playerName;
+ const cleanPlayerName = normalizePlayerName(playerName);
  
  touches.push({
  action,
@@ -777,10 +799,10 @@ export default function LiveMatchCommentaryV3() {
      const prefix = code.split(' ')[0];
      const name = firstServe.labels?.[`${prefix} Player Name`] || '';
      const jersey = firstServe.labels?.[`${prefix} Player Jersey`] || '';
-     const cleanName = typeof name === 'string' && name.includes(',') ? name.split(',')[0].trim() : name;
+     const cleanName = normalizePlayerName(typeof name === 'string' ? name : String(name));
      firstServer = {
        team: prefix === homePrefix ? 'home' : 'away',
-       player: typeof cleanName === 'string' ? cleanName : String(cleanName),
+       player: cleanName,
        jersey: typeof jersey === 'string' ? jersey : String(jersey),
      };
    }
@@ -788,7 +810,7 @@ export default function LiveMatchCommentaryV3() {
    // Clean player names
    const cleanLineup = (map: Map<string, string>): LineupPlayer[] => {
      return Array.from(map.entries()).slice(0, 7).map(([name, jersey]) => ({
-       name: name.includes(',') ? name.split(',')[0].trim() : name,
+       name: normalizePlayerName(name),
        jersey,
      }));
    };
@@ -813,7 +835,7 @@ export default function LiveMatchCommentaryV3() {
  for (const inst of instances) {
    const assist = inst.labels?.Assist || inst.labels?.['Assist'] || '';
    if (assist) {
-     const name = typeof assist === 'string' ? assist.split(',')[0].trim() : '';
+     const name = normalizePlayerName(typeof assist === 'string' ? assist : String(assist));
      if (name) assistCounts[name] = (assistCounts[name] || 0) + 1;
    }
  }
@@ -822,7 +844,7 @@ export default function LiveMatchCommentaryV3() {
  const pData: Record<string, { srv: number; rcv: number; atk_L: number; atk_R: number; atk_M: number; atk_B: number; atk_P: number }> = {};
  for (const rally of rallies) {
    for (const touch of (rally.touches || [])) {
-     const name = touch.player;
+     const name = touch.player; // Already normalized by parser
      if (!name) continue;
      if (!pData[name]) pData[name] = { srv: 0, rcv: 0, atk_L: 0, atk_R: 0, atk_M: 0, atk_B: 0, atk_P: 0 };
      
@@ -846,10 +868,9 @@ export default function LiveMatchCommentaryV3() {
  
  for (const [name, d] of Object.entries(pData)) {
    const totalAtk = d.atk_L + d.atk_R + d.atk_M + d.atk_B + d.atk_P;
-   const cleanName = name.split(',')[0].trim();
    
-   // Check if player name matches a setter (partial match for cleaned names)
-   const isSetter = [...setterNames].some(s => cleanName.includes(s.split(',')[0].trim()) || s.split(',')[0].trim().includes(cleanName));
+   // Check if player is a setter (names already normalized)
+   const isSetter = setterNames.has(name);
    
    if (isSetter) {
      playerPositions[name] = 'rozgrywający';
@@ -957,10 +978,10 @@ export default function LiveMatchCommentaryV3() {
  const teamCode = code.split(' ')[0]; // ZAW, LBN, PGE, etc.
  const playerNames = labels[`${teamCode} Player Name`] || labels['Player Name'] || [];
  if (Array.isArray(playerNames) && playerNames.length >= 2) {
- const cleanName = (n: string) => n.split(',').reverse().map(s => s.trim()).join(' ');
+ const cleanSubName = (n: string) => normalizePlayerName(n.split(',').reverse().map(s => s.trim()).join(' '));
  events.substitutions.push({
- player_out: cleanName(playerNames[0]),
- player_in: cleanName(playerNames[1]),
+ player_out: cleanSubName(playerNames[0]),
+ player_in: cleanSubName(playerNames[1]),
  team: labels['Team'] === 'Home' ? 'home' : 'away'
  });
  }
@@ -1064,10 +1085,8 @@ export default function LiveMatchCommentaryV3() {
  }
  
  if (action && playerName) {
-          // Clean player name: "Leon Venero, Wilfredo" -> "Leon Venero"
- const cleanPlayerName = playerName.includes(',') 
- ? playerName.split(',')[0].trim() 
- : playerName;
+          // Clean + normalize player name
+ const cleanPlayerName = normalizePlayerName(playerName);
  
  touches.push({
  action,
@@ -1550,6 +1569,85 @@ export default function LiveMatchCommentaryV3() {
  isLongRally: numTouches >= 8,
  isDramatic: dramaScore >= 3.0,
  };
+ };
+
+ // ========================================================================
+ // E1: TEXT-TO-SPEECH
+ // ========================================================================
+ 
+ // Returns a Promise that resolves when audio finishes (for sync with rally advancement)
+ const playTTS = async (text: string, rallyNumber: number, waitForEnd = false): Promise<void> => {
+   // Stop current audio if playing
+   if (ttsAudioRef.current) {
+     ttsAudioRef.current.pause();
+     ttsAudioRef.current = null;
+   }
+   
+   // Toggle off if same rally (manual click only)
+   if (!waitForEnd && ttsPlaying === rallyNumber) {
+     setTtsPlaying(null);
+     return;
+   }
+   
+   setTtsPlaying(rallyNumber);
+   
+   try {
+     const res = await fetch('/api/tts', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({ text, language }),
+     });
+     
+     if (!res.ok) {
+       console.error('[TTS] API error:', res.status);
+       setTtsPlaying(null);
+       return;
+     }
+     
+     const data = await res.json();
+     if (!data.audioBase64) {
+       setTtsPlaying(null);
+       return;
+     }
+     
+     // Convert base64 to audio blob and play
+     const audioBytes = atob(data.audioBase64);
+     const audioArray = new Uint8Array(audioBytes.length);
+     for (let i = 0; i < audioBytes.length; i++) {
+       audioArray[i] = audioBytes.charCodeAt(i);
+     }
+     const audioBlob = new Blob([audioArray], { type: 'audio/mp3' });
+     const audioUrl = URL.createObjectURL(audioBlob);
+     
+     const audio = new Audio(audioUrl);
+     ttsAudioRef.current = audio;
+     
+     // Return promise that resolves when audio finishes
+     return new Promise<void>((resolve) => {
+       audio.onended = () => {
+         setTtsPlaying(null);
+         URL.revokeObjectURL(audioUrl);
+         ttsAudioRef.current = null;
+         resolve();
+       };
+       
+       audio.onerror = () => {
+         console.error('[TTS] Playback error');
+         setTtsPlaying(null);
+         URL.revokeObjectURL(audioUrl);
+         ttsAudioRef.current = null;
+         resolve(); // Resolve anyway so rally advancement continues
+       };
+       
+       audio.play().catch(() => {
+         setTtsPlaying(null);
+         resolve();
+       });
+     });
+   } catch (err) {
+     console.error('[TTS] Error:', err);
+     setTtsPlaying(null);
+   }
  };
 
  const generateCommentary = async (rally: Rally) => {
@@ -2076,9 +2174,18 @@ export default function LiveMatchCommentaryV3() {
  }
  }, 100);
 
- setTimeout(() => {
- setCurrentRallyIndex((prev) => prev + 1);
- }, speed);
+ // RADIO MODE: wait for audio to finish, then advance
+ if (ttsAutoPlay && newCommentary.text && newCommentary.type !== 'set_summary') {
+   await playTTS(newCommentary.text, newCommentary.rallyNumber, true);
+   // Small pause between rallies for breathing room
+   await new Promise(resolve => setTimeout(resolve, 800));
+   setCurrentRallyIndex((prev) => prev + 1);
+ } else {
+   // NORMAL MODE: advance on timer
+   setTimeout(() => {
+     setCurrentRallyIndex((prev) => prev + 1);
+   }, speed);
+ }
  };
 
  useEffect(() => {
@@ -2331,6 +2438,23 @@ export default function LiveMatchCommentaryV3() {
  </button>
  ))}
  </div>
+ {/* TTS Auto-play toggle */}
+ <button
+   onClick={() => {
+     setTtsAutoPlay(!ttsAutoPlay);
+     if (ttsAutoPlay && ttsAudioRef.current) {
+       ttsAudioRef.current.pause();
+       ttsAudioRef.current = null;
+       setTtsPlaying(null);
+     }
+   }}
+   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 ${
+     ttsAutoPlay ? 'bg-green-600 text-white' : 'bg-muted hover:bg-muted/80'
+   }`}
+   title="Auto-read commentary aloud"
+ >
+   {ttsAutoPlay ? '🔊' : '🔇'} RADIO
+ </button>
  </div>
  <div className="flex justify-between text-xs text-muted-foreground mb-1">
  <span>Rally {currentRallyIndex + 1} / {rallies.length}</span>
@@ -2480,7 +2604,7 @@ export default function LiveMatchCommentaryV3() {
  
  {/* Commentary Card - Right Side */}
  <div
- className={`flex-1 p-4 rounded-lg border-l-4 ${getEventColor(commentary.type)}
+ className={`flex-1 p-4 rounded-lg border-l-4 relative ${getEventColor(commentary.type)}
  hover:scale-[1.01] transition-all duration-200 animate-fade-in`}
  >
  <div className="flex items-start space-x-3">
@@ -2500,6 +2624,19 @@ export default function LiveMatchCommentaryV3() {
  <p className="font-medium text-foreground leading-relaxed mb-2">
  {commentary.text}
  </p>
+ 
+ {/* TTS play button */}
+ <button
+   onClick={() => playTTS(commentary.text, commentary.rallyNumber)}
+   className={`absolute top-3 right-3 p-1.5 rounded-md transition-all text-xs ${
+     ttsPlaying === commentary.rallyNumber 
+       ? 'bg-green-600 text-white animate-pulse' 
+       : 'bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground'
+   }`}
+   title={ttsPlaying === commentary.rallyNumber ? 'Stop' : 'Read aloud'}
+ >
+   {ttsPlaying === commentary.rallyNumber ? '🔊' : '🔈'}
+ </button>
  
  {/* Tags Display - yellow, clickable with pop-ups */}
  {commentary.tags.length > 0 && (

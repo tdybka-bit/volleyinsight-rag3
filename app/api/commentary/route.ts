@@ -740,16 +740,9 @@ if (!rally.touches || rally.touches.length === 0) {
  let namingRulesContext = '';
     
     // GPT fallback for name declensions when RAG has no rules
+    // NOTE: Parser now normalizes names (Leon Venero → Leon, Tavares Rodrigues → Tavares)
+    // These fallbacks catch edge cases where RAG naming-rules namespace has no match
     const getGPTNamingFallback = (player: string): string => {
-      // Preferred display names (parser output -> commentary name)
-      const preferredNames: Record<string, string> = {
-        'Leon Venero': 'Venero Leon',
-        'Tavares Rodrigues': 'Tavares',
-      };
-      const displayName = preferredNames[player] || player;
-      if (preferredNames[player]) {
-        return `NAMING: ${player} -> uzywaj "${displayName}" zamiast "${player}". Odmien nazwisko wg zasad jezyka polskiego.`;
-      }
       return `NAMING: Odmien nazwisko "${player}" wg zasad jezyka polskiego (mianownik, dopelniacz, biernik).`;
     };
 
