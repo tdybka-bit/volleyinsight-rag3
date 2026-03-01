@@ -445,6 +445,10 @@ export default function LiveMatchCommentaryV3() {
  const rallyLabels = rallyInst.labels || {};
  const setNumber = parseInt(rallyLabels.Set || '1');
  
+ // C1+C3: Extract rotation numbers for this rally
+ const homeRotation = parseInt(rallyLabels[`${homeTeamName.toUpperCase()} Rotation`] || rallyLabels[`${homePrefix} Rotation`] || '0');
+ const awayRotation = parseInt(rallyLabels[`${awayTeamName.toUpperCase()} Rotation`] || rallyLabels[`${awayPrefix} Rotation`] || '0');
+ 
  // Initialize set scores if not exists
  if (!setScores[setNumber]) {
  setScores[setNumber] = { home: 0, away: 0 };
@@ -665,6 +669,8 @@ export default function LiveMatchCommentaryV3() {
  touches,
  final_action,
  phase: rallyPhase,
+ homeRotation,
+ awayRotation,
  timeout: events.timeout,
  substitutions: events.substitutions.length > 0 ? events.substitutions : null,
  challenge: events.challenge
@@ -834,6 +840,10 @@ export default function LiveMatchCommentaryV3() {
  
  const rallyLabels = labelsToObject(rallyInst.label);
  const setNumber = parseInt(rallyLabels.Set || '1');
+ 
+ // C1+C3: Extract rotation numbers for this rally
+ const homeRotation = parseInt(rallyLabels[`${homeTeamName.toUpperCase()} Rotation`] || rallyLabels[`${homePrefix} Rotation`] || '0');
+ const awayRotation = parseInt(rallyLabels[`${awayTeamName.toUpperCase()} Rotation`] || rallyLabels[`${awayPrefix} Rotation`] || '0');
  
  // Initialize set scores if not exists
  if (!setScores[setNumber]) {
@@ -1055,6 +1065,8 @@ export default function LiveMatchCommentaryV3() {
  touches,
  final_action,
  phase: rallyPhase2,
+ homeRotation,
+ awayRotation,
  timeout: events.timeout,
  substitutions: events.substitutions.length > 0 ? events.substitutions : null,
  challenge: events.challenge

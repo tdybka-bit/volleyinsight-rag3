@@ -289,6 +289,9 @@ interface RallyData {
  score_diff?: string;
  score_status?: string;
  }>;
+ phase?: string;
+ homeRotation?: number;
+ awayRotation?: number;
 }
 
 interface PlayerStats {
@@ -1079,34 +1082,54 @@ if (!rally.touches || rally.touches.length === 0) {
      const loc = touch.attackLocation || '';
      const style = touch.attackStyle || '';
      const combo = touch.attackCombination || '';
+     
+     // C1: Determine front row (1. linia) vs back row (2. linia)
+     const isBackRow = loc.includes('Back') || loc.toLowerCase().includes('pipe') || combo.toLowerCase().includes('pipe');
+     const lineLabel = isBackRow ? ' z 2. linii' : (loc || combo ? ' z 1. linii' : '');
+     
      let atkDesc = 'atak';
-     if (loc.includes('Left')) atkDesc = 'atak z lewej strony';
-     else if (loc.includes('Right')) atkDesc = 'atak z prawej strony';
+     if (loc.toLowerCase() === 'pipe') atkDesc = 'atak pipe z 2. linii';
+     else if (loc.includes('Left') && !loc.includes('Back')) atkDesc = 'atak z lewej strony' + lineLabel;
+     else if (loc.includes('Left') && loc.includes('Back')) atkDesc = 'atak z lewej strony z 2. linii';
+     else if (loc.includes('Right') && !loc.includes('Back')) atkDesc = 'atak z prawej strony' + lineLabel;
+     else if (loc.includes('Right') && loc.includes('Back')) atkDesc = 'atak z prawej strony z 2. linii';
      else if (loc.includes('Middle')) atkDesc = 'atak pierwszym tempem';
-     else if (combo.toLowerCase().includes('pipe')) atkDesc = 'atak pipe z drugiej linii';
+     else if (combo.toLowerCase().includes('pipe')) atkDesc = 'atak pipe z 2. linii';
+     else if (isBackRow) atkDesc = 'atak z 2. linii';
+     else atkDesc = 'atak';
      
      if (style === 'Tip') atkDesc += ', kiwka';
      else if (style === 'Tool') atkDesc += ', od bloku';
      
+     const isLastTouch = idx === rally.touches!.length - 1;
+     
      if (actionLower.includes('blad') || actionLower.includes('error')) {
-       if (idx === rally.touches!.length - 1) {
+       if (isLastTouch) {
          desc += ` - ${atkDesc} >>> BLAD ATAKU`;
        } else {
          desc += ` - ${atkDesc} (nieudany, gra trwa)`;
        }
      } else if (actionLower.includes('zablok') || actionLower.includes('block')) {
-       if (idx === rally.touches!.length - 1) {
+       if (isLastTouch) {
          desc += ` - ${atkDesc} >>> ZATRZYMANY BLOKIEM`;
        } else {
          desc += ` - ${atkDesc} (zablokowany, gra trwa)`;
        }
-     } else {
+     } else if (isLastTouch) {
        desc += ` - ${atkDesc} >>> SKUTECZNY! Punkt!`;
+     } else {
+       desc += ` - ${atkDesc} (obroniony, gra trwa)`;
      }
    // BLOCK
    } else if (actionLower.includes('blok') || actionLower.includes('block')) {
-     if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) desc += ' - probowal blokowac, blok PRZEBITY (przegral z atakujacym)';
-     else desc += ' - SKUTECZNY BLOK! Punkt!';
+     const isLastTouch = idx === rally.touches!.length - 1;
+     if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) {
+       desc += ' - probowal blokowac, blok PRZEBITY (przegral z atakujacym)';
+     } else if (isLastTouch) {
+       desc += ' - SKUTECZNY BLOK! Punkt!';
+     } else {
+       desc += ' - blok (pilka w grze)';
+     }
    // DIG
    } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
      desc += ' - obrona w polu';
@@ -1183,14 +1206,32 @@ Odmien nazwiska poprawnie wg zasad jezyka polskiego!`;
  }
  }
  
- // Build substitution context for GPT
+ // Build substitution context for GPT - C2: Smart substitution analysis
  let substitutionContext = '';
  if (rally.substitutions && rally.substitutions.length > 0) {
  const subDescriptions = rally.substitutions.map((sub: any) => {
- const teamLabel = sub.team_name || (sub.team === 'home' ? 'Gospodarze' : 'Goscie');
+ const teamLabel = sub.team_name || (sub.team === 'home' ? homeTeamFull : awayTeamFull);
  const situationHint = sub.score_status === 'Up' ? 'prowadzac' : sub.score_status === 'Down' ? 'przegrywajac' : '';
  const diffHint = sub.score_diff ? ` ${sub.score_diff} pkt` : '';
- return `${teamLabel}: ${sub.player_out} schodzi, ${sub.player_in} wchodzi${situationHint ? ` (${situationHint}${diffHint})` : ''}`;
+ 
+ // C2: Tactical reasoning for substitution
+ let tacticalHint = '';
+ const scoreDiffNum = parseInt(sub.score_diff || '0');
+ const totalPoints = (rally.score_before?.home || 0) + (rally.score_before?.away || 0);
+ 
+ if (totalPoints >= 40 && Math.abs(scoreDiffNum) <= 2) {
+   tacticalHint = ' | KONCOWKA SETA - zmiana pod presja, trener szuka rozwiazania!';
+ } else if (sub.score_status === 'Down' && scoreDiffNum >= 4) {
+   tacticalHint = ' | Duza strata - trener reaguje, proba odwrocenia losow meczu!';
+ } else if (sub.score_status === 'Down' && scoreDiffNum >= 2) {
+   tacticalHint = ' | Przegrana seria - trener szuka impulsu, swieze sily na parkiecie.';
+ } else if (sub.score_status === 'Up' && scoreDiffNum >= 5) {
+   tacticalHint = ' | Bezpieczna przewaga - mozliwe danie szansy rezerwowemu.';
+ } else if (totalPoints <= 10) {
+   tacticalHint = ' | Wczesna zmiana - prawdopodobnie planowana rotacja lub reakcja na slaba gre.';
+ }
+ 
+ return `${teamLabel}: ${sub.player_out} schodzi, ${sub.player_in} wchodzi${situationHint ? ` (${situationHint}${diffHint})` : ''}${tacticalHint}`;
  });
  substitutionContext = `\nZMIANY W TYM RALLY:\n${subDescriptions.join('\n')}\n`;
  }
@@ -1201,6 +1242,7 @@ WYNIK I KONTEKST:
 GOSPODARZE: ${homeTeamFull} | GOSCIE: ${awayTeamFull}
 Rally #${rally.rally_number} | Set ${setNumber} | Wynik: ${score} | Punkt zdobyla: ${rally.team_scored === 'home' ? homeTeamFull + ' (gospodarze)' : awayTeamFull + ' (goscie)'}
 ${rally.phase ? `FAZA GRY: ${rally.phase === 'First Ball' ? 'ATAK PO PRZYJECIU (First Ball / Side-out) - pierwsza szansa na atak po przyjeciu zagrywki. Kluczowa jest jakosc przyjecia i wybor kombinacji ataku.' : rally.phase === 'Transition' ? 'KONTRA (Transition) - atak po obronie w polu. Czesto bardziej chaotyczny, wymaga improwizacji. Rozgrywajacy ma mniej opcji, atakujacy musza reagowac szybko.' : rally.phase}` : ''}
+${rally.homeRotation || rally.awayRotation ? `ROTACJA: ${homeTeamFull} R${rally.homeRotation || '?'} | ${awayTeamFull} R${rally.awayRotation || '?'}${rally.homeRotation === 1 || rally.awayRotation === 1 ? ' (R1 = rozgrywajacy przy siatce, pelne opcje ataku)' : ''}${rally.homeRotation === 4 || rally.awayRotation === 4 ? ' (R4 = rozgrywajacy z tylu, ograniczone opcje)' : ''}` : ''}
 SYTUACJA PUNKTOWA: ${scoreSituation}${situationContext}${errorContext}${substitutionContext}
 
 ${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKLADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `[!!] USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `VARIACJE ZWROTOW:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
@@ -1215,8 +1257,9 @@ INSTRUKCJE:
 - Uzywaj POPRAWNEJ odmiany nazwisk (Leon -> Leona w dopelniaczu)
 - NIE POWTARZAJ INFORMACJI! Wynik, kto zdobyl punkt, kto prowadzi — wymien MAKSYMALNIE RAZ. Jesli opisales akcje i wspomniales o wyniku, NIE dodawaj kolejnego zdania o tym samym.
 - ${attackCombo ? `DANE TAKTYCZNE: Atak typu ${attackCombo}${attackLocation ? `, strefa: ${attackLocation}` : ''}${attackStyle ? `, styl: ${attackStyle}` : ''}. Uzyj tych danych by opisac KONKRETNIE co sie stalo (np. atak po skosie, atak pipe, szybki atak srodkiem) zamiast ogolnikow!` : serveType ? `DANE TAKTYCZNE: Zagrywka typu ${serveType}. Opisz ja konkretnie!` : ''}
-- ${rally.substitutions?.length ? 'ZMIANA! Wplec ja naturalnie w komentarz - kto za kogo wchodzi, co to moze oznaczac (reakcja trenera, swieze sily, zmiana taktyki). To wazna informacja narracyjna!' : ''}
+- ${rally.substitutions?.length ? 'ZMIANA! Wplec ja naturalnie w komentarz. Uzywaj wskazowek taktycznych z danych zmiany (koncowka seta, strata, swieze sily). Przyklad: "Trener reaguje na slabe przyjecie i wprowadza swieze sily!" lub "W koncowce seta trener szuka rozwiazania - na parkiet wchodzi [gracz]!"' : ''}
 - ${rally.phase === 'Transition' ? 'KONTRA! Podkresl dynamike kontry - szybka reakcja po obronie, improwizacja atakujacego, mniej czasu na rozegranie.' : rally.phase === 'First Ball' ? 'Atak po przyjeciu - mozesz wspomniec jakosc przyjecia jesli wplywa na atak (np. idealne przyjecie = pelna kombinacja, slabe = pilka wymuszona).' : ''}
+- ${(rally.homeRotation || rally.awayRotation) ? 'ROTACJA: Wspomnij o rotacji TYLKO gdy to jest istotne taktycznie (np. rozgrywajacy z tylu = mniej opcji, atak z 2. linii w rotacji obronnej). NIE wspominaj numeru rotacji w kazdym komentarzu!' : ''}
 `;
 
  
@@ -1228,7 +1271,8 @@ INSTRUKCJE:
  console.log('[NAMING-IN-PROMPT] NO naming rules in this prompt!');
  }
  
- console.log('========= ROUTE.TS v7.4 RAG-UNLEASHED LOADED =========');
+ console.log('========= ROUTE.TS v7.5 SMART-CONTEXT LOADED =========');
+ console.log('[ROTATION]', rally.homeRotation ? `Home R${rally.homeRotation}, Away R${rally.awayRotation}` : 'No rotation data');
  console.log('[RALLY-TOUCHES]', rally.touches?.length || 0, 'touches');
  if (rally.touches && rally.touches.length > 0) {
    console.log('[FIRST-3-TOUCHES]', JSON.stringify(rally.touches.slice(0, 3)));
