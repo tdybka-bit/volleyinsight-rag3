@@ -122,6 +122,8 @@ interface MatchData {
  teams: {
  home: string;
  away: string;
+ homeFullName?: string;
+ awayFullName?: string;
  };
  rallies: Rally[];
  lineups?: SetLineup[];
@@ -337,6 +339,10 @@ export default function LiveMatchCommentaryV3() {
  bp: number; // break points (points scored while opponent serving)
  }>>({});
  
+ // Dynamic team name helpers — prefer JSON full names, fallback to TEAM_FULL_NAMES map
+ const getHomeTeamFull = () => matchData?.teams?.homeFullName || TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Gospodarze';
+ const getAwayTeamFull = () => matchData?.teams?.awayFullName || TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Goscie';
+ 
  // Build unique player list from rallies, grouped by team
  const playersByTeam = rallies.reduce((acc, rally) => {
  rally.touches.forEach(t => {
@@ -429,6 +435,19 @@ export default function LiveMatchCommentaryV3() {
  }
 
  console.log('Detected teams:', { home: homeTeamName, away: awayTeamName, homePrefix, awayPrefix });
+
+ // Extract FULL team names from Team Name labels (e.g. "Aluron CMC Warta Zawiercie")
+ let homeTeamFullName = '';
+ let awayTeamFullName = '';
+ for (const inst of instances) {
+   const labels = inst.labels || {};
+   const teamName = labels['Team Name'];
+   if (!teamName || teamName === 'All') continue;
+   if (labels['Team'] === 'Home' && !homeTeamFullName) homeTeamFullName = teamName;
+   else if (labels['Team'] === 'Away' && !awayTeamFullName) awayTeamFullName = teamName;
+   if (homeTeamFullName && awayTeamFullName) break;
+ }
+ console.log('Full team names:', { home: homeTeamFullName || 'NOT FOUND', away: awayTeamFullName || 'NOT FOUND' });
 
  // Track scores per set
  const setScores: Record<number, { home: number; away: number }> = {};
@@ -853,7 +872,9 @@ export default function LiveMatchCommentaryV3() {
  rallies,
  teams: {
  home: homeTeamName,
- away: awayTeamName
+ away: awayTeamName,
+ homeFullName: homeTeamFullName || undefined,
+ awayFullName: awayTeamFullName || undefined,
  },
  lineups,
  playerPositions
@@ -1476,47 +1497,7 @@ export default function LiveMatchCommentaryV3() {
  };
 
  
- const generateCommentaryInLanguage = async (rally: Rally, targetLanguage: Language) => {
- try {
- console.log('Generating commentary for rally #', rally.rally_number, 'in', targetLanguage);
- setIsGenerating(true);
- 
- // Funkcja liczaca wyniki setow do aktualnego rally
-
- const updatedStats = calculatePlayerStats(rally);
- 
- const rallyIndex = rallies.findIndex(r => r.rally_number === rally.rally_number);
- const recentRallies = rallyIndex >= 0 ? rallies.slice(Math.max(0, rallyIndex - 9), rallyIndex + 1) : [];
-
- const data = await fetchWithUTF8('/api/commentary', {
- method: 'POST',
- body: JSON.stringify({ rally, language: targetLanguage, playerStats: updatedStats, recentRallies: recentRallies, homeTeamFullName: TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Gospodarze', awayTeamFullName: TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Goscie', playerPositions: matchData?.playerPositions || {} }),
- });
-
- setIsGenerating(false);
- return {
- commentary: data.commentary || '',
- tags: data.tags || [],
- tagData: data.tagData || {},
- milestones: data.milestones || [],
- icon: data.icon || '', momentumScore: data.momentumScore || 0,
- dramaScore: data.dramaScore || 0,
- };
- } catch (error) {
- console.error('Commentary generation error:', error);
- setIsGenerating(false);
- 
- const finalTouch = rally.touches[rally.touches.length - 1];
- return {
- commentary: `${finalTouch.player}: ${finalTouch.action}`,
- tags: [],
- tagData: {},
- milestones: [],
- icon: '', momentumScore: 0,
- dramaScore: 0,
- };
- }
- };
+ // [REMOVED] generateCommentaryInLanguage - dead code, replaced by PL-first pattern in generateCommentary
  
  const analyzeRallyChain = (rally: Rally) => {
  const touches = rally.touches;
@@ -1592,8 +1573,8 @@ export default function LiveMatchCommentaryV3() {
  playerStats: updatedStats,
  recentRallies: recentRallies,
  rallyAnalysis: rallyAnalysis,
- homeTeamFullName: TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Gospodarze',
- awayTeamFullName: TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Goscie',
+ homeTeamFullName: getHomeTeamFull(),
+ awayTeamFullName: getAwayTeamFull(),
  playerPositions: matchData?.playerPositions || {},
  }),
  });
@@ -1801,8 +1782,8 @@ export default function LiveMatchCommentaryV3() {
  // INJECT INTRO CARD before the very first rally
  // ========================================================================
  if (currentRallyIndex === 0 && commentaries.length === 0) {
-   const homeTeam = TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Gospodarze';
-   const awayTeam = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Goscie';
+   const homeTeam = getHomeTeamFull();
+   const awayTeam = getAwayTeamFull();
    
    // Insert placeholder intro card immediately
    const introEntry: CommentaryEntry = {
@@ -1936,8 +1917,8 @@ export default function LiveMatchCommentaryV3() {
        const summarySetNum = currentSetNumber;
        (async () => {
          try {
-           const homeTeam = TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Gospodarze';
-           const awayTeam = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Goscie';
+           const homeTeam = getHomeTeamFull();
+           const awayTeam = getAwayTeamFull();
            const res = await fetch('/api/set-summary', {
              method: 'POST',
              headers: { 'Content-Type': 'application/json' },
@@ -1994,24 +1975,28 @@ export default function LiveMatchCommentaryV3() {
    setCurrentSetNumber(rallySetNumber);
  }
 
+ // PRE-CHECK: Skip rallies without valid touches BEFORE wasting API call
+ const preCheckTouch = rally.touches && rally.touches.length > 0 
+   ? rally.touches[rally.touches.length - 1] 
+   : null;
+ 
+ if (!preCheckTouch || !preCheckTouch.player || !preCheckTouch.action) {
+   console.warn(`[SKIP] Rally #${rally.rally_number} missing valid touches!`, {
+     touchCount: rally.touches?.length || 0,
+     lastTouch: preCheckTouch ? { player: preCheckTouch.player, action: preCheckTouch.action } : 'null',
+     score: `${rally.score_after?.home}:${rally.score_after?.away}`,
+   });
+   // Skip to next rally instead of stopping
+   if (currentRallyIndex < rallies.length - 1) {
+     setCurrentRallyIndex(currentRallyIndex + 1);
+     setTimeout(() => playMatch(), speed);
+   } else {
+     setIsPlaying(false);
+   }
+   return;
+ }
+
  const result = await generateCommentary(rally);
-
- const finalTouch = rally.touches && rally.touches.length > 0 
- ? rally.touches[rally.touches.length - 1] 
- : null;
-
- // Skip rallies without valid touches
- if (!finalTouch || !finalTouch.player || !finalTouch.action) {
- console.warn(`Rally #${rally.rally_number} missing valid touches, skipping`); 
- // Skip to next rally instead of stopping completely
- if (currentRallyIndex < rallies.length - 1) {
- setCurrentRallyIndex(currentRallyIndex + 1);
- setTimeout(() => playMatch(), speed);
- } else {
- setIsPlaying(false);
- }
- return;
- }
 
  // Find the SCORING action (not the last touch which is often the losing action)
  const findScoringAction = (rally: Rally): { player: string; action: string } => {
@@ -2233,8 +2218,8 @@ export default function LiveMatchCommentaryV3() {
  {(() => {
    const currentLineup = matchData?.lineups?.find(l => l.setNumber === currentSetNumber) || matchData?.lineups?.[0];
    if (!currentLineup) return null;
-   const homeFullName = TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || '';
-   const awayFullName = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || '';
+   const homeFullName = getHomeTeamFull();
+   const awayFullName = getAwayTeamFull();
    const maxRows = Math.max(currentLineup.home.length, currentLineup.away.length);
    return (
      <table className="w-full text-xs border-collapse">
@@ -2290,13 +2275,13 @@ export default function LiveMatchCommentaryV3() {
  <div className="flex items-center gap-5 pl-4 border-l border-border/30">
  <div className="text-center min-w-[80px]">
  <img src={getTeamLogo(matchData?.teams?.home || 'Aluron')} alt="" className="w-14 h-14 mx-auto object-contain mb-1" />
- <div className="text-xs font-medium text-muted-foreground leading-tight">{TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home}</div>
+ <div className="text-xs font-medium text-muted-foreground leading-tight">{getHomeTeamFull()}</div>
  <div className="text-3xl font-bold mt-0.5">{currentRally.score_after.home}</div>
  </div>
  <div className="text-2xl font-bold text-muted-foreground/50">:</div>
  <div className="text-center min-w-[80px]">
  <img src={getTeamLogo(matchData?.teams?.away || 'Bogdanka')} alt="" className="w-14 h-14 mx-auto object-contain mb-1" />
- <div className="text-xs font-medium text-muted-foreground leading-tight">{TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away}</div>
+ <div className="text-xs font-medium text-muted-foreground leading-tight">{getAwayTeamFull()}</div>
  <div className="text-3xl font-bold mt-0.5">{currentRally.score_after.away}</div>
  </div>
  </div>
@@ -2446,8 +2431,8 @@ export default function LiveMatchCommentaryV3() {
  // ========== SET SUMMARY CARD ==========
  if (commentary.type === 'set_summary' && commentary.summaryData) {
    const sd = commentary.summaryData;
-   const homeFullName = TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Home';
-   const awayFullName = TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Away';
+   const homeFullName = getHomeTeamFull();
+   const awayFullName = getAwayTeamFull();
    const winnerName = sd.winner === 'home' ? homeFullName : awayFullName;
    return (
      <div key={index} className="bg-gradient-to-r from-emerald-900 via-green-900 to-teal-900 rounded-xl p-5 text-white shadow-lg border border-emerald-500/30 animate-fade-in">
@@ -2707,7 +2692,7 @@ export default function LiveMatchCommentaryV3() {
    const currentLineup = matchData?.lineups?.find(l => l.setNumber === currentSetNumber) || matchData?.lineups?.[0];
    const homePlayer = currentLineup?.home.find(p => p.name === favPlayer);
    const awayPlayer = currentLineup?.away.find(p => p.name === favPlayer);
-   const playerTeam = homePlayer ? (TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home) : awayPlayer ? (TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away) : '';
+   const playerTeam = homePlayer ? (getHomeTeamFull()) : awayPlayer ? (getAwayTeamFull()) : '';
    const jersey = homePlayer?.jersey || awayPlayer?.jersey || '';
    return (
      <div className="text-sm text-muted-foreground">

@@ -1273,7 +1273,7 @@ INSTRUKCJE:
  console.log('[NAMING-IN-PROMPT] NO naming rules in this prompt!');
  }
  
- console.log('========= ROUTE.TS v7.5 SMART-CONTEXT LOADED =========');
+ console.log('========= ROUTE.TS v7.6 BUGFIX LOADED =========');
  console.log('[ROTATION]', rally.homeRotation ? `Home R${rally.homeRotation}, Away R${rally.awayRotation}` : 'No rotation data');
  console.log('[POSITIONS]', Object.keys(playerPositions).length, 'players mapped');
  console.log('[RALLY-TOUCHES]', rally.touches?.length || 0, 'touches');
