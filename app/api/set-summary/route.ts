@@ -23,13 +23,14 @@ interface SetSummaryRequest {
     final_action?: { type: string; player: string };
   }>;
   language?: string;
+  topScorers?: Array<{ player: string; points: number }>;
 }
 
 export async function POST(request: NextRequest) {
   console.log('[SET-SUMMARY] Generating set summary...');
   
   try {
-    const { setNumber, finalScore, homeTeam, awayTeam, rallies, language = 'pl' }: SetSummaryRequest = await request.json();
+    const { setNumber, finalScore, homeTeam, awayTeam, rallies, language = 'pl', topScorers: frontendTopScorers }: SetSummaryRequest = await request.json();
 
     // ====================================================================
     // STEP 1: Calculate set statistics from rallies
@@ -82,7 +83,8 @@ ZWYCIEZCA: ${winner}
 STATYSTYKI:
 - Liczba akcji: ${stats.totalRallies}
 - Najdluzsza wymiana: ${stats.longestRally} dotknieci
-- MVP seta: ${stats.mvp.name} (${stats.mvp.points} pkt)
+- TOP SCORERS (PRAWDZIWE DANE - uzyj ICH!): ${(frontendTopScorers && frontendTopScorers.length > 0 ? frontendTopScorers : stats.topScorers).map((s: any, i: number) => `${i+1}. ${s.player} (${s.points} pkt)`).join(', ')}
+- MVP seta: ${frontendTopScorers?.[0]?.player || stats.mvp.name} (${frontendTopScorers?.[0]?.points || stats.mvp.points} pkt)
 - Asy serwisowe: ${stats.aces.map(a => `${a.player} (${a.count})`).join(', ') || 'brak'}
 - Bloki: ${stats.blocks.map(b => `${b.player} (${b.count})`).join(', ') || 'brak'}
 

@@ -337,6 +337,9 @@ export default function LiveMatchCommentaryV3() {
  const [ttsAutoPlay, setTtsAutoPlay] = useState(false);
  const [ttsPlaying, setTtsPlaying] = useState<number | null>(null); // rallyNumber currently playing
  const ttsAudioRef = useRef<HTMLAudioElement | null>(null);
+ // Audit State
+ const [auditResult, setAuditResult] = useState<any>(null);
+ const [isAuditing, setIsAuditing] = useState(false);
  const [playerProfile, setPlayerProfile] = useState<{
    found: boolean;
    summary: string;
@@ -1650,6 +1653,60 @@ export default function LiveMatchCommentaryV3() {
    }
  };
 
+ // ========================================================================
+ // GEMINI AUDIT — "Fresh pair of eyes" for commentary quality
+ // ========================================================================
+ const runAudit = async (setNumber: number) => {
+   setIsAuditing(true);
+   setAuditResult(null);
+   
+   // Collect commentaries from this set
+   const setCommentaries = commentaries
+     .filter(c => c.type !== 'intro' && c.type !== 'set_summary')
+     .filter(c => {
+       // Find which set this rally belongs to
+       const rally = rallies.find(r => r.rally_number === c.rallyNumber);
+       return rally?.set_number === setNumber;
+     })
+     .map(c => ({
+       rallyNumber: c.rallyNumber,
+       text: c.text,
+       score: rallies.find(r => r.rally_number === c.rallyNumber)?.score_after
+         ? `${rallies.find(r => r.rally_number === c.rallyNumber)!.score_after.home}:${rallies.find(r => r.rally_number === c.rallyNumber)!.score_after.away}`
+         : '',
+       teamScored: rallies.find(r => r.rally_number === c.rallyNumber)?.team_scored || '',
+       tags: c.tags,
+     }));
+   
+   if (setCommentaries.length === 0) {
+     setIsAuditing(false);
+     return;
+   }
+   
+   try {
+     const res = await fetch('/api/audit', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({
+         commentaries: setCommentaries,
+         homeTeam: getHomeTeamFull(),
+         awayTeam: getAwayTeamFull(),
+         language,
+       }),
+     });
+     
+     if (res.ok) {
+       const data = await res.json();
+       setAuditResult({ setNumber, ...data });
+     } else {
+       console.error('[AUDIT] Error:', res.status);
+     }
+   } catch (err) {
+     console.error('[AUDIT] Error:', err);
+   }
+   setIsAuditing(false);
+ };
+
  const generateCommentary = async (rally: Rally) => {
  try {
  console.log('Generating commentary for rally #', rally.rally_number, '(always PL first, then translate to', language, ')');
@@ -2025,6 +2082,7 @@ export default function LiveMatchCommentaryV3() {
                finalScore: { home: lastRally.score_after.home, away: lastRally.score_after.away },
                homeTeam,
                awayTeam,
+               topScorers,
                rallies: prevSetRallies.map((r: any) => ({
                  rally_number: r.rally_number,
                  team_scored: r.team_scored,
@@ -2140,6 +2198,37 @@ export default function LiveMatchCommentaryV3() {
    // Successful attack
    if (finalAction.includes('atak') && !finalAction.includes('blad') && !finalAction.includes('zablok')) {
      return { player: finalTouch.player, action: 'Atak' };
+   }
+   
+   // Reception error (Przyjecie with Fail grade or error in action)
+   if ((finalAction.includes('przyjeci') || finalAction.includes('receive')) && 
+       (finalAction.includes('error') || finalAction.includes('fail') || 
+        (finalTouch.grade || '').toLowerCase() === 'fail')) {
+     return { player: finalTouch.player, action: 'Przyjecie error' };
+   }
+   
+   // Setting error (Rozegranie with Fail grade — e.g. Toniutti botched the set)
+   if ((finalAction.includes('rozegran') || finalAction.includes('set') || finalAction.includes('wystaw')) &&
+       (finalTouch.grade || '').toLowerCase() === 'fail') {
+     return { player: finalTouch.player, action: 'Blad rozegrania' };
+   }
+   
+   // Generic fail on any action = error by that player
+   if ((finalTouch.grade || '').toLowerCase() === 'fail') {
+     return { player: finalTouch.player, action: 'Blad w grze' };
+   }
+   
+   // Non-scoring action as last touch (Set, Dig, etc.) — look backwards for real action
+   if (finalAction.includes('rozegran') || finalAction.includes('wolna') || finalAction.includes('freeball')) {
+     for (let i = touches.length - 2; i >= 0; i--) {
+       const ta = touches[i].action.toLowerCase();
+       if (ta.includes('atak') && !ta.includes('blad') && !ta.includes('zablok')) {
+         return { player: touches[i].player, action: 'Atak' };
+       }
+       if (ta.includes('blok') && !ta.includes('przebity') && !ta.includes('fail')) {
+         return { player: touches[i].player, action: 'Blok' };
+       }
+     }
    }
    
    return { player: finalTouch.player, action: finalTouch.action };
@@ -2589,6 +2678,65 @@ export default function LiveMatchCommentaryV3() {
        <div className="text-center mt-3 text-xs text-emerald-500">
          {sd.totalRallies} akcji w secie
        </div>
+       {/* Gemini Audit Button */}
+       <div className="text-center mt-3">
+         <button
+           onClick={() => runAudit(sd.setNumber)}
+           disabled={isAuditing}
+           className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-semibold transition-all disabled:opacity-50"
+         >
+           {isAuditing ? '🔍 Audytuję...' : '🔍 Audyt Gemini'}
+         </button>
+       </div>
+       {/* Audit Results */}
+       {auditResult && auditResult.setNumber === sd.setNumber && (
+         <div className="mt-4 bg-slate-800 rounded-lg p-4 text-white text-sm">
+           <div className="text-center mb-3">
+             <span className="text-lg font-bold">🔍 Audyt Set {sd.setNumber}</span>
+             <span className="ml-2 text-2xl font-bold text-yellow-400">{auditResult.overallScore}/10</span>
+           </div>
+           <div className="grid grid-cols-5 gap-2 mb-3">
+             {Object.entries(auditResult.categories || {}).map(([key, val]: [string, any]) => (
+               <div key={key} className="text-center">
+                 <div className="text-xs text-slate-400 capitalize">{key}</div>
+                 <div className={`text-lg font-bold ${val.score >= 7 ? 'text-green-400' : val.score >= 5 ? 'text-yellow-400' : 'text-red-400'}`}>{val.score}</div>
+               </div>
+             ))}
+           </div>
+           {auditResult.topIssues?.length > 0 && (
+             <div className="mb-2">
+               <div className="text-xs font-bold text-red-400 mb-1">❌ Problemy:</div>
+               {auditResult.topIssues.map((issue: string, i: number) => (
+                 <div key={i} className="text-xs text-slate-300 ml-2">• {issue}</div>
+               ))}
+             </div>
+           )}
+           {auditResult.bestMoments?.length > 0 && (
+             <div className="mb-2">
+               <div className="text-xs font-bold text-green-400 mb-1">✅ Najlepsze momenty:</div>
+               {auditResult.bestMoments.map((m: string, i: number) => (
+                 <div key={i} className="text-xs text-slate-300 ml-2">• {m}</div>
+               ))}
+             </div>
+           )}
+           {auditResult.repeatedPhrases?.length > 0 && (
+             <div className="mb-2">
+               <div className="text-xs font-bold text-yellow-400 mb-1">🔄 Powtórzenia:</div>
+               {auditResult.repeatedPhrases.map((p: string, i: number) => (
+                 <div key={i} className="text-xs text-slate-300 ml-2">• {p}</div>
+               ))}
+             </div>
+           )}
+           {auditResult.suggestions?.length > 0 && (
+             <div>
+               <div className="text-xs font-bold text-blue-400 mb-1">💡 Sugestie:</div>
+               {auditResult.suggestions.map((s: string, i: number) => (
+                 <div key={i} className="text-xs text-slate-300 ml-2">• {s}</div>
+               ))}
+             </div>
+           )}
+         </div>
+       )}
      </div>
    );
  }
