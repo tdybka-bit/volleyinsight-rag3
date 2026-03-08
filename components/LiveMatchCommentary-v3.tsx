@@ -287,11 +287,36 @@ const TEAM_FULL_NAMES: Record<string, string> = {
  'lbn': 'BOGDANKA LUK Lublin',
  'pge': 'PGE Projekt Warszawa',
  'ind': 'Indykpol AZS Olsztyn',
- 'jsw': 'Jastrzebski Wegiel',
- 'ass': 'Asseco Resovia Rzeszow',
+ 'jsw': 'JSW Jastrzębski Węgiel',
+ 'ass': 'Asseco Resovia Rzeszów',
  'aluron': 'Aluron CMC Warta Zawiercie',
  'bogdanka': 'BOGDANKA LUK Lublin',
 };
+
+// Normalize team names from VolleyStation JSON (may have encoding issues or missing diacritics)
+const TEAM_NAME_FIXES: Record<string, string> = {
+ 'Jastrzebski Wegiel': 'JSW Jastrzębski Węgiel',
+ 'JSW Jastrzebski Wegiel': 'JSW Jastrzębski Węgiel',
+ 'JSW Jastrzebski Węgiel': 'JSW Jastrzębski Węgiel',
+ 'Asseco Resovia Rzeszow': 'Asseco Resovia Rzeszów',
+ 'Asseco Resovia Rzeszów': 'Asseco Resovia Rzeszów',
+};
+
+function normalizeTeamName(raw: string): string {
+ if (!raw) return raw;
+ // Fix common UTF-8 encoding artifacts (Ã³ → ó, Ä™ → ę, etc.)
+ let fixed = raw
+   .replace(/Ã³/g, 'ó').replace(/Ã\u00b3/g, 'ó')
+   .replace(/Ä™/g, 'ę').replace(/Ä\u0099/g, 'ę')
+   .replace(/Å„/g, 'ń').replace(/Å\u0084/g, 'ń')
+   .replace(/Å›/g, 'ś').replace(/Å\u009b/g, 'ś')
+   .replace(/Å¼/g, 'ż').replace(/Å\u00bc/g, 'ż')
+   .replace(/Å‚/g, 'ł').replace(/Å\u0082/g, 'ł')
+   .replace(/Ä‡/g, 'ć').replace(/Ä\u0087/g, 'ć')
+   .replace(/Äa/g, 'ą').replace(/Ä\u0085/g, 'ą');
+ // Apply known fixes
+ return TEAM_NAME_FIXES[fixed] || fixed;
+}
 
 // ============================================================================
 // PLAYER DISPLAY NAMES — applied at parser level so correct everywhere
@@ -474,6 +499,9 @@ export default function LiveMatchCommentaryV3() {
    else if (labels['Team'] === 'Away' && !awayTeamFullName) awayTeamFullName = teamName;
    if (homeTeamFullName && awayTeamFullName) break;
  }
+ // Normalize team names (fix encoding issues & missing diacritics from VolleyStation)
+ homeTeamFullName = normalizeTeamName(homeTeamFullName);
+ awayTeamFullName = normalizeTeamName(awayTeamFullName);
  console.log('Full team names:', { home: homeTeamFullName || 'NOT FOUND', away: awayTeamFullName || 'NOT FOUND' });
 
  // Track scores per set
