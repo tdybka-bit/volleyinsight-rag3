@@ -31,20 +31,56 @@ const CULTURAL_STYLES: Record<string, string> = {
 - Dramatyzuj końcówki setów, ale nie przesadzaj w początkach
 - Naturalny polski - nie tłumacz dosłownie z obcych języków`,
 
+  it: `STILE: Commento pallavolistico italiano — come Rai Sport / Andrea Zorzi.
+
+FILOSOFIA: Il commentatore italiano NON traduce, VIVE la partita! Ogni punto è teatro, emozione, spettacolo. L'Italia è potenza nella pallavolo — il commento deve riflettere questa passione.
+
+TERMINOLOGIA OBBLIGATORIA (MAI tradurre dal polacco!):
+- Atak = "schiacciata" (potente) o "attacco" (generico)
+- Kiwka = "pallonetto" (MAI "finta")
+- Blok = "muro" (MURO! come esclamazione)
+- Zagrywka = "battuta" o "servizio", float = "battuta float", z wyskoku = "battuta in salto"
+- As serwisowy = "ace" o "punto diretto in battuta"
+- Przyjęcie = "ricezione", słabe = "ricezione staccata da rete"
+- Rozgrywający = "regista" (reżyser!) lub "palleggiatore"
+- Rozegranie = "palleggio" o "alzata"
+- Atak pipe = "attacco in pipe", pierwszym tempem = "primo tempo" o "veloce"
+- Obrona = "difesa", świetna = "grande difesa!" o "recupero incredibile!"
+- Gra trwa = "la palla è ancora in gioco!" o "si continua!" (MAI "il gioco continua")
+
+ESCLAMAZIONI PER SITUAZIONE:
+- Punto dopo attacco: "CHE SCHIACCIATA!", "Colpo incredibile!", "Non c'è nulla da fare per il muro!"
+- Ace: "ACE! Battuta imprendibile!", "Punto diretto!"
+- Muro: "MURO! Che muro di [Nome]!", "Il muro chiude tutto!"
+- Scambio lungo: "Che scambio infinito!", "La palla non vuole cadere!", "Difesa su difesa!"
+- Serie punti: "[Squadra] è incontenibile!", "Un parziale devastante!"
+- Errore: "Peccato! Errore di [Nome]." (tono dolce, non drammatico)
+- Parità: "Parità! Siamo punto a punto!"
+
+STRUTTURA FRASE — DIFFERENZA CHIAVE:
+- Polacco: "[Chi] [cosa fa] [come]" → "Szerszeń atakuje skutecznie"
+- Italiano: "[Emozione] [cosa è successo] [chi]" → "CHE ATTACCO! Schiacciata vincente di Szerszeń!"
+- Azioni rapide (ace, errore): BREVI. "Ace di Bieniek! Punto!" (4 parole)
+- Scambi lunghi: CRESCENDO. Inizia calmo, costruisci tensione, esplodi sul punto.
+- Usa gerundio per fluidità: "Attaccando dalla seconda linea..."
+
+ESEMPI DI TRASFORMAZIONE:
+- PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → IT: "Battuta in salto di Szalpuk... fuori! Punto per JSW."
+- PL: "Butryn przebija się przez blok!" → IT: "SCHIACCIATA DI BUTRYN! Supera il muro! Che potenza!"
+- PL: "Zaleszczyk atakuje pierwszym tempem po długiej wymianie!" → IT: "Che scambio infinito! Alla fine è Zaleszczyk con il primo tempo a chiudere! Spettacolo puro!"
+
+MAI FARE:
+- Tradurre "gra trwa" come "il gioco continua" (innaturale)
+- Usare "esegue" (troppo formale) — usa verbi diretti: "schiaccia", "batte", "mura"
+- Dimenticare i punti esclamativi — senza "!" non è commento italiano!
+- Costruzioni passive — l'italiano preferisce la forma attiva`,
+
   en: `STYLE: English-language volleyball commentary, BBC/NBC broadcast tone.
 - Smooth, flowing narrative — think of a radio commentator painting a picture
 - Use English volleyball idioms: "kills it", "stuff block", "service ace", "digs it out"
 - Understated excitement — build tension through word choice, not exclamation marks
 - Concise and punchy for quick rallies, more descriptive for long ones
 - Example tone: "Leon finds the gap on the left side — and that's a clean kill!"`,
-
-  it: `STILE: Commento sportivo italiano — passione e teatro!
-- EMOZIONE è tutto! Come Gianfranco De Laurentiis o Andrea Zorzi
-- Esclamazioni naturali: "Che punto!", "Mamma mia!", "Incredibile!", "Che muro!"
-- Terminologia italiana: "schiacciata" (atak), "muro" (blok), "battuta" (zagrywka), "palleggio" (rozegranie), "ricezione" (przyjęcie), "punto diretto" (as)
-- Ritmo: frasi brevi per momenti veloci, descrizioni poetiche per grandi giocate
-- L'Italia vive la pallavolo — il commento deve riflettere questa passione!
-- Esempio: "SCHIACCIATA DI LEON! Che potenza, non c'è stato nulla da fare per il muro!"`,
 
   de: `STIL: Deutscher Volleyball-Kommentar — präzise und analytisch.
 - Sachlich und taktisch orientiert, wie bei Sport1 oder ZDF
@@ -93,7 +129,7 @@ const CULTURAL_STYLES: Record<string, string> = {
 const getTranslationSystemPrompt = (targetLanguage: string) => {
   const langName = LANGUAGE_NAMES[targetLanguage] || targetLanguage;
   const culturalStyle = CULTURAL_STYLES[targetLanguage] || '';
-  
+
   return `You are a professional volleyball commentary translator who adapts commentary to sound like a NATIVE ${langName} sports commentator — not a word-for-word translator.
 
 YOUR TASK:
@@ -147,22 +183,22 @@ export async function POST(request: NextRequest) {
     const { text, fromLanguage = 'pl', toLanguage, tags = [] }: TranslationRequest = await request.json();
 
     if (!text) {
-      return new Response(JSON.stringify({ 
+      return new Response(JSON.stringify({
         error: 'Text is required',
         translatedText: text,
         translatedTags: tags,
-      }), { 
+      }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
     if (!toLanguage) {
-      return new Response(JSON.stringify({ 
+      return new Response(JSON.stringify({
         error: 'Target language is required',
         translatedText: text,
         translatedTags: tags,
-      }), { 
+      }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -170,7 +206,7 @@ export async function POST(request: NextRequest) {
 
     // Skip translation if already in target language
     if (fromLanguage === toLanguage) {
-      console.log('⏭️ Skip translation - same language:', toLanguage);
+      console.log('⭕ Skip translation - same language:', toLanguage);
       return new Response(JSON.stringify({
         translatedText: text,
         translatedTags: tags,
@@ -188,7 +224,7 @@ export async function POST(request: NextRequest) {
 
     const systemPrompt = getTranslationSystemPrompt(toLanguage);
     const langName = LANGUAGE_NAMES[toLanguage] || toLanguage;
-    
+
     const translationPrompt = `Adapt this volleyball commentary into ${langName}. Sound like a native ${langName} sports commentator:
 
 "${text}"
@@ -206,7 +242,7 @@ ${langName} commentary:`;
     });
 
     let translatedText = completion.choices[0].message.content || text;
-    
+
     // Clean up: remove wrapping quotes if GPT added them
     translatedText = translatedText.replace(/^[""]|[""]$/g, '').trim();
 
@@ -221,114 +257,52 @@ ${langName} commentary:`;
     if (tags.length > 0) {
       const TAG_TRANSLATIONS: Record<string, Record<string, string>> = {
         '#koniec_seta': {
-          pl: '#koniec_seta',
-          en: '#set_end',
-          es: '#fin_del_set',
-          it: '#fine_set',
-          de: '#satzende',
-          tr: '#set_sonu',
-          pt: '#fim_do_set',
-          jp: '#セット終了',
+          pl: '#koniec_seta', en: '#set_end', es: '#fin_del_set', it: '#fine_set',
+          de: '#satzende', tr: '#set_sonu', pt: '#fim_do_set', jp: '#セット終了',
         },
         '#momentum': {
-          pl: '#momentum',
-          en: '#momentum',
-          es: '#impulso',
-          it: '#slancio',
-          de: '#schwung',
-          tr: '#momentum',
-          pt: '#momento',
-          jp: '#勢い',
+          pl: '#momentum', en: '#momentum', es: '#impulso', it: '#slancio',
+          de: '#schwung', tr: '#momentum', pt: '#momento', jp: '#勢い',
         },
         '#seria': {
-          pl: '#seria',
-          en: '#streak',
-          es: '#racha',
-          it: '#serie',
-          de: '#serie',
-          tr: '#seri',
-          pt: '#sequência',
-          jp: '#連続',
+          pl: '#seria', en: '#streak', es: '#racha', it: '#serie',
+          de: '#serie', tr: '#seri', pt: '#sequência', jp: '#連続',
         },
         '#drama': {
-          pl: '#drama',
-          en: '#drama',
-          es: '#drama',
-          it: '#dramma',
-          de: '#drama',
-          tr: '#drama',
-          pt: '#drama',
-          jp: '#ドラマ',
+          pl: '#drama', en: '#drama', es: '#drama', it: '#dramma',
+          de: '#drama', tr: '#drama', pt: '#drama', jp: '#ドラマ',
         },
         '#clutch': {
-          pl: '#clutch',
-          en: '#clutch',
-          es: '#decisivo',
-          it: '#cruciale',
-          de: '#entscheidend',
-          tr: '#kritik',
-          pt: '#decisivo',
-          jp: '#重要',
+          pl: '#clutch', en: '#clutch', es: '#decisivo', it: '#cruciale',
+          de: '#entscheidend', tr: '#kritik', pt: '#decisivo', jp: '#重要',
         },
         '#comeback': {
-          pl: '#comeback',
-          en: '#comeback',
-          es: '#remontada',
-          it: '#rimonta',
-          de: '#comeback',
-          tr: '#geri_dönüş',
-          pt: '#recuperação',
-          jp: '#逆転',
+          pl: '#comeback', en: '#comeback', es: '#remontada', it: '#rimonta',
+          de: '#comeback', tr: '#geri_dönüş', pt: '#recuperação', jp: '#逆転',
         },
         '#milestone': {
-          pl: '#milestone',
-          en: '#milestone',
-          es: '#hito',
-          it: '#traguardo',
-          de: '#meilenstein',
-          tr: '#dönüm_noktası',
-          pt: '#marco',
-          jp: '#節目',
+          pl: '#milestone', en: '#milestone', es: '#hito', it: '#traguardo',
+          de: '#meilenstein', tr: '#dönüm_noktası', pt: '#marco', jp: '#節目',
         },
         '#as': {
-          pl: '#as',
-          en: '#ace',
-          es: '#ace',
-          it: '#ace',
-          de: '#ass',
-          tr: '#as',
-          pt: '#ace',
-          jp: '#エース',
+          pl: '#as', en: '#ace', es: '#ace', it: '#ace',
+          de: '#ass', tr: '#as', pt: '#ace', jp: '#エース',
         },
-        '#długa_wymiana': {
-          pl: '#długa_wymiana',
-          en: '#long_rally',
-          es: '#jugada_larga',
-          it: '#scambio_lungo',
-          de: '#langer_ballwechsel',
-          tr: '#uzun_ralli',
-          pt: '#rally_longo',
-          jp: '#長いラリー',
+        '#dluga_wymiana': {
+          pl: '#dluga_wymiana', en: '#long_rally', es: '#jugada_larga', it: '#scambio_lungo',
+          de: '#langer_ballwechsel', tr: '#uzun_ralli', pt: '#rally_longo', jp: '#長いラリー',
         },
         '#zmiana': {
-          pl: '#zmiana',
-          en: '#substitution',
-          es: '#cambio',
-          it: '#cambio',
-          de: '#wechsel',
-          tr: '#değişiklik',
-          pt: '#substituição',
-          jp: '#交代',
+          pl: '#zmiana', en: '#substitution', es: '#cambio', it: '#cambio',
+          de: '#wechsel', tr: '#değişiklik', pt: '#substituição', jp: '#交代',
         },
         '#debiut': {
-          pl: '#debiut',
-          en: '#debut',
-          es: '#debut',
-          it: '#debutto',
-          de: '#debüt',
-          tr: '#ilk_maç',
-          pt: '#estreia',
-          jp: '#デビュー',
+          pl: '#debiut', en: '#debut', es: '#debut', it: '#debutto',
+          de: '#debüt', tr: '#ilk_maç', pt: '#estreia', jp: '#デビュー',
+        },
+        '#przelamanie': {
+          pl: '#przelamanie', en: '#break', es: '#quiebre', it: '#break',
+          de: '#durchbruch', tr: '#kırılma', pt: '#quebra', jp: '#ブレイク',
         },
       };
 
@@ -337,7 +311,7 @@ ${langName} commentary:`;
         if (translations && translations[toLanguage]) {
           return translations[toLanguage];
         }
-        return tag; // Fallback: keep original if no translation
+        return tag;
       });
 
       console.log('🏷️ Translated tags:', translatedTags);
@@ -356,8 +330,7 @@ ${langName} commentary:`;
 
   } catch (error) {
     console.error('❌ Translation API error:', error);
-    
-    // Fallback: return original text on error
+
     let fallbackText = '';
     let fallbackTags: string[] = [];
     try {
@@ -365,12 +338,12 @@ ${langName} commentary:`;
       fallbackText = body.text || '';
       fallbackTags = body.tags || [];
     } catch {}
-    
-    return new Response(JSON.stringify({ 
+
+    return new Response(JSON.stringify({
       error: 'Translation failed',
       translatedText: fallbackText,
       translatedTags: fallbackTags,
-    }), { 
+    }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });
