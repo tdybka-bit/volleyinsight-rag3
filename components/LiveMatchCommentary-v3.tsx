@@ -3131,6 +3131,112 @@ export default function LiveMatchCommentaryV3() {
    </div>
  )}
  
+ {/* ====== LIVE LEADERBOARD — Top 3 per category ====== */}
+ {Object.keys(playerStats).length > 0 && (() => {
+   // Determine player teams
+   const playerTeamMap: Record<string, string> = {};
+   rallies.forEach(r => {
+     r.touches.forEach(t => {
+       if (t.player && t.team) playerTeamMap[t.player] = t.team;
+     });
+   });
+   
+   const entries = Object.entries(playerStats).map(([name, s]) => ({
+     name,
+     team: playerTeamMap[name] || '',
+     ...s,
+   }));
+   
+   // Build rankings
+   const topScorers = entries
+     .filter(e => e.points > 0)
+     .sort((a, b) => b.points - a.points)
+     .slice(0, 3);
+   
+   const topAttack = entries
+     .filter(e => e.attack.sum >= 3)
+     .map(e => ({ ...e, killPct: e.attack.sum > 0 ? Math.round((e.attack.kill / e.attack.sum) * 100) : 0 }))
+     .sort((a, b) => b.killPct - a.killPct)
+     .slice(0, 3);
+   
+   const topAces = entries
+     .filter(e => e.serve.ace > 0)
+     .sort((a, b) => b.serve.ace - a.serve.ace)
+     .slice(0, 3);
+   
+   const topBlocks = entries
+     .filter(e => e.block.pts > 0)
+     .sort((a, b) => b.block.pts - a.block.pts)
+     .slice(0, 3);
+   
+   const topReception = entries
+     .filter(e => e.reception.sum >= 3)
+     .map(e => ({ ...e, perfPct: e.reception.sum > 0 ? Math.round((e.reception.perfect / e.reception.sum) * 100) : 0 }))
+     .sort((a, b) => b.perfPct - a.perfPct)
+     .slice(0, 3);
+   
+   const topDigs = entries
+     .filter(e => e.dig > 0)
+     .sort((a, b) => b.dig - a.dig)
+     .slice(0, 3);
+   
+   type RankEntry = { name: string; team: string; value: number };
+   
+   const MiniRanking = ({ title, icon, data, unit, barColor }: {
+     title: string; icon: string; data: RankEntry[]; unit: string; barColor: string;
+   }) => {
+     if (data.length === 0) return null;
+     const maxVal = Math.max(...data.map(d => d.value), 1);
+     return (
+       <div className="mb-3">
+         <div className="flex items-center gap-1.5 mb-1.5">
+           <span className="text-xs">{icon}</span>
+           <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{title}</span>
+         </div>
+         <div className="space-y-1">
+           {data.map((d, i) => (
+             <div key={d.name} className="flex items-center gap-1.5">
+               <span className={`text-[9px] font-bold w-3 ${i === 0 ? 'text-yellow-400' : 'text-muted-foreground/50'}`}>{i + 1}</span>
+               <span className={`text-[11px] w-20 truncate ${d.team === 'home' ? 'text-blue-400' : 'text-red-400'}`}>{d.name}</span>
+               <div className="flex-1 h-2.5 bg-muted/30 rounded-sm overflow-hidden">
+                 <div
+                   className={`h-full rounded-sm transition-all duration-700 ${barColor}`}
+                   style={{ width: `${(d.value / maxVal) * 100}%` }}
+                 />
+               </div>
+               <span className="text-[11px] font-mono text-muted-foreground w-8 text-right">{d.value}{unit}</span>
+             </div>
+           ))}
+         </div>
+       </div>
+     );
+   };
+   
+   return (
+     <div className="bg-card border border-border rounded-xl p-4">
+       <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-3">📊 Live Ranking</h4>
+       
+       <MiniRanking title="Punkty" icon="🏆" barColor="bg-emerald-500"
+         data={topScorers.map(e => ({ name: e.name, team: e.team, value: e.points }))} unit="" />
+       
+       <MiniRanking title="Atak K%" icon="💥" barColor="bg-red-500"
+         data={topAttack.map(e => ({ name: e.name, team: e.team, value: e.killPct }))} unit="%" />
+       
+       <MiniRanking title="Asy" icon="🎯" barColor="bg-violet-500"
+         data={topAces.map(e => ({ name: e.name, team: e.team, value: e.serve.ace }))} unit="" />
+       
+       <MiniRanking title="Bloki" icon="🧱" barColor="bg-blue-500"
+         data={topBlocks.map(e => ({ name: e.name, team: e.team, value: e.block.pts }))} unit="" />
+       
+       <MiniRanking title="Przyjęcie %" icon="🛡️" barColor="bg-yellow-500"
+         data={topReception.map(e => ({ name: e.name, team: e.team, value: e.perfPct }))} unit="%" />
+       
+       <MiniRanking title="Obrony" icon="🏊" barColor="bg-cyan-500"
+         data={topDigs.map(e => ({ name: e.name, team: e.team, value: e.dig }))} unit="" />
+     </div>
+   );
+ })()}
+
  </div>
  </div>
  {/* END RIGHT 1/3 */}
