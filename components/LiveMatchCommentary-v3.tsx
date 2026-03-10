@@ -147,6 +147,14 @@ interface CommentaryEntry {
  momentumScore: number;
  dramaScore: number;
  tagData: Record<string, any>;
+ ragDebug?: Array<{
+   namespace: string;
+   query: string;
+   topScore: number;
+   retrieved: number;
+   used: boolean;
+   preview: string;
+ }>;
  // LINEUP CARD DATA (only when type === 'lineup')
  lineupData?: SetLineup;
  // SET SUMMARY DATA (only when type === 'set_summary')
@@ -358,6 +366,7 @@ export default function LiveMatchCommentaryV3() {
  const [openTagPopup, setOpenTagPopup] = useState<string | null>(null);
  const [favPlayer, setFavPlayer] = useState<string | null>(null);
  const [openFavPopup, setOpenFavPopup] = useState<number | null>(null);
+ const [openRagDebug, setOpenRagDebug] = useState<number | null>(null);
  // TTS State
  const [ttsAutoPlay, setTtsAutoPlay] = useState(false);
  const [ttsPlaying, setTtsPlaying] = useState<number | null>(null); // rallyNumber currently playing
@@ -1801,6 +1810,7 @@ export default function LiveMatchCommentaryV3() {
  milestones: data.milestones || [],
  icon: data.icon || '', momentumScore: data.momentumScore || 0,
  dramaScore: data.dramaScore || 0,
+ ragDebug: data.ragDebug || [],
  };
  } catch (error) {
  console.error('Commentary generation error:', error);
@@ -2281,6 +2291,7 @@ export default function LiveMatchCommentaryV3() {
  icon: result.icon,
  momentumScore: result.momentumScore,
  dramaScore: result.dramaScore,
+ ragDebug: result.ragDebug || [],
  };
 
  setCommentaries((prev) => [newCommentary, ...prev]);
@@ -2979,6 +2990,45 @@ export default function LiveMatchCommentaryV3() {
  setNumber={rally?.score_after ? Math.ceil((rally.score_after.home + rally.score_after.away) / 25) : 1}
  commentary={commentary.text}
  />
+
+ {/* RAG DEBUG PANEL */}
+ {commentary.ragDebug && commentary.ragDebug.length > 0 && (
+   <div className="mt-2">
+     <button
+       onClick={() => setOpenRagDebug(openRagDebug === commentary.rallyNumber ? null : commentary.rallyNumber)}
+       className="text-[10px] px-2 py-0.5 rounded border border-slate-600 text-slate-400 hover:text-slate-200 hover:border-slate-400 transition-all font-mono"
+     >
+       {openRagDebug === commentary.rallyNumber ? '▲ RAG' : '▼ RAG'}
+     </button>
+     {openRagDebug === commentary.rallyNumber && (
+       <div className="mt-2 bg-slate-900 border border-slate-700 rounded-lg p-3 text-[11px] font-mono space-y-1.5">
+         <div className="text-slate-400 font-bold mb-2 text-[10px] uppercase tracking-wider">RAG Trace — Rally #{commentary.rallyNumber}</div>
+         {commentary.ragDebug.map((ns, i) => (
+           <div key={i} className={`flex gap-2 items-start p-1.5 rounded ${ns.used ? 'bg-green-950/50 border border-green-800/40' : ns.retrieved > 0 ? 'bg-yellow-950/50 border border-yellow-800/40' : 'bg-slate-800/50 border border-slate-700/40'}`}>
+             <span className={`font-bold shrink-0 w-4 text-center ${ns.used ? 'text-green-400' : ns.retrieved > 0 ? 'text-yellow-400' : 'text-slate-500'}`}>
+               {ns.used ? '✓' : ns.retrieved > 0 ? '~' : '✗'}
+             </span>
+             <div className="flex-1 min-w-0">
+               <div className="flex items-center gap-2 flex-wrap">
+                 <span className="text-slate-200 font-bold">{ns.namespace}</span>
+                 <span className={`text-[10px] px-1.5 py-0.5 rounded ${ns.topScore >= 0.5 ? 'bg-green-900 text-green-300' : ns.topScore >= 0.3 ? 'bg-yellow-900 text-yellow-300' : 'bg-slate-700 text-slate-400'}`}>
+                   {ns.topScore > 0 ? ns.topScore.toFixed(3) : '—'}
+                 </span>
+                 <span className="text-slate-500">{ns.retrieved} wynikow</span>
+               </div>
+               {ns.query && <div className="text-slate-500 truncate mt-0.5">q: {ns.query}</div>}
+               {ns.preview && ns.used && <div className="text-slate-400 mt-0.5 line-clamp-2 break-words">{ns.preview}</div>}
+               {!ns.used && ns.retrieved > 0 && <div className="text-yellow-600 mt-0.5">retrieved but score &lt; threshold</div>}
+             </div>
+           </div>
+         ))}
+         <div className="pt-1 border-t border-slate-700 text-slate-500 text-[10px]">
+           ✓ uzyte &nbsp;|&nbsp; ~ pobrane ale za niski score &nbsp;|&nbsp; ✗ brak wynikow
+         </div>
+       </div>
+     )}
+   </div>
+ )}
  </div>
  </div>
  );

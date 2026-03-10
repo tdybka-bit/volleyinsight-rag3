@@ -589,6 +589,18 @@ if (!rally.touches || rally.touches.length === 0) {
  });
 
  // ========================================================================
+ // STEP 4.9: RAG DEBUG COLLECTOR
+ // ========================================================================
+ const ragDebug: Array<{
+   namespace: string;
+   query: string;
+   topScore: number;
+   retrieved: number;
+   used: boolean;
+   preview: string;
+ }> = [];
+
+ // ========================================================================
  // STEP 5: RAG QUERY - TACTICS NAMESPACE
  // ========================================================================
  
@@ -607,14 +619,21 @@ if (!rally.touches || rally.touches.length === 0) {
  }
  }
  
- if (actionType.includes('block')) {
- tacticsQuery = `block blok ${rallyAttackCombo} ${rallyAttackLocation}`.trim();
- } else if (actionType.includes('attack') || actionType.includes('kill')) {
- tacticsQuery = `attack atak ${rallyAttackCombo} ${rallyAttackLocation}`.trim();
- } else if (actionType.includes('ace') || actionType.includes('serve')) {
- tacticsQuery = `serve zagrywka ${rallyServeType}`.trim();
- } else if (actionType.includes('dig') || actionType.includes('defense')) {
- tacticsQuery = `defense obrona ${rallyAttackCombo}`.trim();
+ // FIX: scoringAction is in Polish - check both Polish AND English terms
+ if (actionType.includes('block') || actionType.includes('blok')) {
+   tacticsQuery = `block blok ${rallyAttackCombo} ${rallyAttackLocation}`.trim();
+ } else if (actionType.includes('attack') || actionType.includes('kill') || actionType.includes('atak')) {
+   tacticsQuery = `attack atak ${rallyAttackCombo} ${rallyAttackLocation}`.trim();
+ } else if (actionType.includes('ace') || actionType.includes('serve') || actionType.includes('serwis') || actionType.includes('zagrywka')) {
+   tacticsQuery = `serve zagrywka ${rallyServeType}`.trim();
+ } else if (actionType.includes('dig') || actionType.includes('defense') || actionType.includes('obrona')) {
+   tacticsQuery = `defense obrona dig ${rallyAttackCombo}`.trim();
+ } else if (actionType.includes('przyjeci') || actionType.includes('receive') || actionType.includes('pass')) {
+   tacticsQuery = `reception przyjecie ${rallyServeType}`.trim();
+ }
+ // Fallback: always query tactical-knowledge with generic context
+ if (!tacticsQuery) {
+   tacticsQuery = `volleyball taktyka akcja ${scoringAction}`.trim();
  }
 
  let tacticsContext = '';
@@ -643,8 +662,17 @@ if (!rally.touches || rally.touches.length === 0) {
  .substring(0, 800);
  console.log('Tactics context:', tacticsContext.substring(0, 80) + '...');
  }
+ ragDebug.push({
+   namespace: 'tactical-knowledge',
+   query: tacticsQuery,
+   topScore: tacticsResults.matches[0]?.score || 0,
+   retrieved: tacticsResults.matches.length,
+   used: tacticsContext.length > 0,
+   preview: tacticsContext.substring(0, 120),
+ });
  } catch (error) {
  console.error('Tactics error:', error);
+ ragDebug.push({ namespace: 'tactical-knowledge', query: tacticsQuery, topScore: 0, retrieved: 0, used: false, preview: 'ERROR' });
  }
  }
 
@@ -672,16 +700,35 @@ if (!rally.touches || rally.touches.length === 0) {
  
  if (examplesResults.matches && examplesResults.matches.length > 0) {
  commentaryExamplesContext = examplesResults.matches
- .filter((match) => (match.score || 0) > 0.30) // Low threshold - accept relevant examples
- .map((match) => match.metadata?.commentary || match.metadata?.betterCommentary || '')
+ .filter((match) => (match.score || 0) > 0.30)
+ .map((match) => {
+   // FIX: try all possible metadata keys
+   return match.metadata?.commentary ||
+     match.metadata?.betterCommentary ||
+     match.metadata?.better_commentary ||
+     match.metadata?.content ||
+     match.metadata?.text ||
+     match.metadata?.text_preview ||
+     match.metadata?.example ||
+     '';
+ })
  .filter(Boolean)
  .join('\n')
  .substring(0, 300);
  console.log('Commentary examples found:', commentaryExamplesContext.substring(0, 80) + '...');
  console.log('[RAG-DEBUG] Examples scores:', examplesResults.matches.map(m => m.score?.toFixed(3)).join(', '));
  }
+ ragDebug.push({
+   namespace: 'commentary-examples',
+   query: commentaryQuery,
+   topScore: examplesResults.matches[0]?.score || 0,
+   retrieved: examplesResults.matches.length,
+   used: commentaryExamplesContext.length > 0,
+   preview: commentaryExamplesContext.substring(0, 120),
+ });
  } catch (error) {
  console.error('Commentary examples error:', error);
+ ragDebug.push({ namespace: 'commentary-examples', query: commentaryQuery, topScore: 0, retrieved: 0, used: false, preview: 'ERROR' });
  }
 
  // ========================================================================
@@ -735,24 +782,29 @@ if (!rally.touches || rally.touches.length === 0) {
  });
  
  if (hintsResults.matches && hintsResults.matches.length > 0) {
- // Filter hints with score > 0.3 (better quality)
+ // FIX: raised threshold from 0.3 to 0.5 to avoid random hint matches
+ const HINTS_THRESHOLD = 0.5;
  const relevantHints = hintsResults.matches
- .filter(match => (match.score || 0) > 0.3)
- .map((match) => match.metadata?.betterCommentary || '')
+ .filter(match => (match.score || 0) > HINTS_THRESHOLD)
+ .map((match) => match.metadata?.betterCommentary || match.metadata?.content || match.metadata?.text || '')
  .filter(Boolean);
  
  if (relevantHints.length > 0) {
  commentaryHintsContext = relevantHints.join('\n').substring(0, 600);
  console.log('Commentary hints found:', commentaryHintsContext.substring(0, 150) + '...');
  console.log('Hints scores:', hintsResults.matches.map(m => m.score?.toFixed(3)));
+ ragDebug.push({ namespace: 'commentary-hints', query: hintsQuery, topScore: hintsResults.matches[0]?.score || 0, retrieved: hintsResults.matches.length, used: true, preview: commentaryHintsContext.substring(0, 120) });
  } else {
- console.log('No relevant hints (all scores < 0.3)');
+ console.log(`No relevant hints (all scores < ${HINTS_THRESHOLD})`);
+ ragDebug.push({ namespace: 'commentary-hints', query: hintsQuery, topScore: hintsResults.matches[0]?.score || 0, retrieved: hintsResults.matches.length, used: false, preview: `all scores < ${HINTS_THRESHOLD} (top: ${hintsResults.matches[0]?.score?.toFixed(3)})` });
  }
  } else {
  console.log('No commentary hints found for this query');
+ ragDebug.push({ namespace: 'commentary-hints', query: hintsQuery, topScore: 0, retrieved: 0, used: false, preview: 'no matches' });
  }
  } catch (error) {
  console.error('Commentary hints error:', error);
+ ragDebug.push({ namespace: 'commentary-hints', query: hintsQuery, topScore: 0, retrieved: 0, used: false, preview: 'ERROR' });
  }
 
  // ========================================================================
@@ -807,9 +859,18 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('Naming rules found:', namingRulesContext.substring(0, 100) + '...');
  console.log('[RAG-DEBUG] Naming scores:', namingResults.matches.map(m => m.score?.toFixed(3)).join(', '));
  }
+ ragDebug.push({
+   namespace: 'naming-rules',
+   query: namingResults.matches[0] ? `${scoringPlayer} naming rule declension odmiana` : '',
+   topScore: namingResults.matches[0]?.score || 0,
+   retrieved: namingResults.matches.length,
+   used: namingRulesContext.length > 0,
+   preview: namingRulesContext.substring(0, 120),
+ });
  }
  } catch (error) {
  console.log('Naming rules namespace not yet populated');
+ ragDebug.push({ namespace: 'naming-rules', query: `${scoringPlayer} naming rule`, topScore: 0, retrieved: 0, used: false, preview: 'namespace empty/error' });
  }
 
     // Fallback: if no RAG naming rules found, ask GPT to decline name
@@ -871,10 +932,19 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('Commentary phrases found:', phrases.length, 'variants');
  console.log('[RAG-DEBUG] Phrases scores:', phrasesResults.matches.map(m => m.score?.toFixed(3)).join(', '));
  }
+ ragDebug.push({
+   namespace: 'commentary-phrases',
+   query: phrasesQuery,
+   topScore: phrasesResults.matches[0]?.score || 0,
+   retrieved: phrasesResults.matches.length,
+   used: commentaryPhrasesContext.length > 0,
+   preview: commentaryPhrasesContext.substring(0, 120),
+ });
  }
  }
  } catch (error) {
  console.log('Commentary phrases namespace not yet populated');
+ ragDebug.push({ namespace: 'commentary-phrases', query: '', topScore: 0, retrieved: 0, used: false, preview: 'namespace empty/error' });
  }
 
  // ========================================================================
@@ -959,16 +1029,30 @@ if (!rally.touches || rally.touches.length === 0) {
  toneRulesContext = `TONE GUIDANCE:\n${toneRules.join('\n')}`;
  console.log('Tone rules found:', toneRules.length, 'rules');
  }
+ ragDebug.push({
+   namespace: 'tone-rules',
+   query: toneQuery,
+   topScore: toneResults.matches[0]?.score || 0,
+   retrieved: toneResults.matches.length,
+   used: toneRulesContext.length > 0,
+   preview: toneRulesContext.substring(0, 120),
+ });
  }
  } catch (error) {
  console.log('i, Tone rules namespace not yet populated');
+ ragDebug.push({ namespace: 'tone-rules', query: '', topScore: 0, retrieved: 0, used: false, preview: 'ERROR' });
  }
 
  // ========================================================================
  // STEP 6: RAG QUERY - PLAYER INFO
  // ========================================================================
  
- const searchQuery = `${scoringPlayer} ${scoringAction} characteristics playing style`;
+ // FIX B+: use position + team name to disambiguate player profiles
+ const playerPosition = playerPositions[scoringPlayer] || '';
+ const playerTeamShort = playerTeamName.split(' ').slice(0, 2).join(' '); // FIX: use player's OWN team, not scoring team
+ const searchQuery = [scoringPlayer, playerPosition, playerTeamShort, 'profil zawodnik charakterystyka']
+   .filter(Boolean).join(' ');
+ console.log('[PLAYER-PROFILE-QUERY]', searchQuery);
  console.log('RAG query:', searchQuery);
 
  const embeddingResponse = await openai.embeddings.create({
@@ -988,34 +1072,65 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('RAG results:', searchResults.matches.length, 'matches');
 
  let playerContext = '';
- if (searchResults.matches.length > 0) {
- playerContext = searchResults.matches
+ // FIX: filter by score > 0.5 to avoid wrong player profiles being returned
+ const PROFILE_THRESHOLD = 0.5;
+ const goodProfileMatches = searchResults.matches.filter(m => (m.score || 0) > PROFILE_THRESHOLD);
+ if (goodProfileMatches.length > 0) {
+ playerContext = goodProfileMatches
  .map((match) => match.metadata?.content || match.metadata?.text || '')
+ .filter(Boolean)
  .join('\n\n');
  console.log('Player context found:', playerContext.substring(0, 200) + '...');
+ ragDebug.push({
+   namespace: 'player-profiles',
+   query: searchQuery,
+   topScore: searchResults.matches[0]?.score || 0,
+   retrieved: searchResults.matches.length,
+   used: playerContext.length > 0,
+   preview: playerContext.substring(0, 120),
+ });
  } else {
+ console.log(`player-profiles: all scores < ${PROFILE_THRESHOLD} (top: ${searchResults.matches[0]?.score?.toFixed(3) || 'none'}) → fallback`);
  console.log('No RAG context in player-profiles, trying expert-knowledge...');
+ ragDebug.push({ namespace: 'player-profiles', query: searchQuery, topScore: searchResults.matches[0]?.score || 0, retrieved: searchResults.matches.length, used: false, preview: `scores < ${PROFILE_THRESHOLD} → fallback to expert-knowledge` });
  
  // Fallback: query expert-knowledge namespace
+ // FIX: player-focused query + higher threshold + filter out rulebook content
+ const expertQuery = `${scoringPlayer} zawodnik profil charakterystyka styl gry`;
  try {
+   const expertEmbedding = await openai.embeddings.create({
+     model: 'text-embedding-3-small',
+     input: expertQuery,
+     dimensions: 768,
+   });
    const expertResults = await index.namespace('expert-knowledge').query({
-     vector: queryEmbedding,
+     vector: expertEmbedding.data[0].embedding,
      topK: 3,
      includeMetadata: true,
    });
    
+   const EXPERT_THRESHOLD = 0.5;
+   const RULEBOOK_KEYWORDS = ['12.6', '12.7', 'przepis', 'regulamin', 'sędzia', 'FIVB', 'art.', 'punkt zasad', 'błędy po uderzeniu'];
+   
    if (expertResults.matches && expertResults.matches.length > 0) {
-     playerContext = expertResults.matches
-       .filter(m => (m.score || 0) > 0.3)
+     const expertContext = expertResults.matches
+       .filter(m => (m.score || 0) > EXPERT_THRESHOLD)
        .map((match) => match.metadata?.content || match.metadata?.text || '')
        .filter(Boolean)
+       .filter(text => !RULEBOOK_KEYWORDS.some(kw => text.includes(kw)))
        .join('\n\n');
-     if (playerContext) {
-       console.log('[EXPERT-KNOWLEDGE] Found context:', playerContext.substring(0, 200) + '...');
+     if (expertContext) {
+       playerContext = expertContext;
+       console.log('[EXPERT-KNOWLEDGE] Found player context:', playerContext.substring(0, 200) + '...');
+       ragDebug.push({ namespace: 'expert-knowledge', query: expertQuery, topScore: expertResults.matches[0]?.score || 0, retrieved: expertResults.matches.length, used: true, preview: playerContext.substring(0, 120) });
+     } else {
+       console.log('[EXPERT-KNOWLEDGE] No useful content (low score or rulebook filtered)');
+       ragDebug.push({ namespace: 'expert-knowledge', query: expertQuery, topScore: expertResults.matches[0]?.score || 0, retrieved: expertResults.matches.length, used: false, preview: `scores < ${EXPERT_THRESHOLD} or rulebook filtered` });
      }
    }
  } catch (err) {
    console.log('expert-knowledge namespace error:', err);
+   ragDebug.push({ namespace: 'expert-knowledge', query: expertQuery, topScore: 0, retrieved: 0, used: false, preview: 'ERROR' });
  }
  }
 
@@ -1507,6 +1622,7 @@ INSTRUKCJE:
  icon,
  momentumScore,
  dramaScore,
+ ragDebug,
  }), {
  headers: {
  'Content-Type': 'application/json',

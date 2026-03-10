@@ -75,12 +75,62 @@ MAI FARE:
 - Dimenticare i punti esclamativi — senza "!" non è commento italiano!
 - Costruzioni passive — l'italiano preferisce la forma attiva`,
 
-  en: `STYLE: English-language volleyball commentary, BBC/NBC broadcast tone.
-- Smooth, flowing narrative — think of a radio commentator painting a picture
-- Use English volleyball idioms: "kills it", "stuff block", "service ace", "digs it out"
-- Understated excitement — build tension through word choice, not exclamation marks
-- Concise and punchy for quick rallies, more descriptive for long ones
-- Example tone: "Leon finds the gap on the left side — and that's a clean kill!"`,
+  // ─────────────────────────────────────────────────────────────────────────
+  // EN — rozbudowany profil (Sky Sports / NBC Sports / ESPN)
+  // ─────────────────────────────────────────────────────────────────────────
+  en: `STYLE: English volleyball commentary — Sky Sports / NBC Sports / ESPN broadcast tone.
+
+PHILOSOPHY: The English commentator is authoritative, precise, and builds narrative. Think radio broadcast — paint the picture with words. Controlled excitement, analytical edge. NOT word-for-word from Polish.
+
+MANDATORY TERMINOLOGY (never carry over Polish terms):
+- Atak = "kill" (winning attack) or "attack" / "spike" (general)
+- Kiwka = "tip" or "roll shot" or "cut shot"
+- Blok = "block" or "stuff block" or "solo block"
+- Zagrywka = "serve" / "jump serve" / "float serve"
+- As serwisowy = "service ace" or "ace"
+- Przyjęcie = "reception" or "pass" — poor = "shank" or "overpass"
+- Rozgrywający = "setter"
+- Rozegranie = "set" or "setter's touch"
+- Atak pipe = "pipe attack" / "back-row attack", pierwszym tempem = "quick attack" / "first tempo"
+- Obrona = "dig" or "defensive save"
+- Gra trwa = "still in play!" or "keeps it alive!" (NEVER "the game continues")
+- Błąd w ataku = "hitting error" or "attack error"
+- Przebity blok = "beats the block" or "tools the block" or "around the block"
+
+EXCLAMATIONS BY SITUATION:
+- Winning attack: "What a kill!", "Clinical finish!", "He finds the line!"
+- Ace: "Ace! Right down the middle!", "Service ace — nobody touched it!"
+- Block: "Stuff block by [Name]!", "The wall goes up!", "Blocked and out!"
+- Long rally: "What a rally! Both sides refusing to give an inch!"
+- Scoring run: "They are on a roll here — can anyone stop them?"
+- Comeback: "They are clawing their way back into this set!"
+- Tie score: "All square — this set is wide open"
+- Error: "Into the net from [Name] — point to [Team]" (matter-of-fact tone)
+
+SENTENCE STRUCTURE — KEY DIFFERENCE:
+- Polish: "[Who] [does what] [how]" → "Szerszeń atakuje skutecznie"
+- English: Lead with action, name follows: "Clean kill from Szerszeń down the line!"
+- Quick rallies (ace, error): PUNCHY. "Ace! Right down the line. 5–3." (short)
+- Long rallies: BUILD NARRATIVE. Start descriptive, crescendo to the point.
+- Active voice always: "Kaczmarek BLOCKS that down!" NOT "the ball was blocked"
+- Contractions natural: "That's the serve", "He's going for it", "They've taken the lead"
+
+TRANSFORMATION EXAMPLES:
+- PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → EN: "Jump serve from Szalpuk — and that's wide! Point for JSW."
+- PL: "Butryn przebija się przez blok!" → EN: "Butryn tools the block and finds the floor! What a read!"
+- PL: "Zaleszczyk atakuje pierwszym tempem po długiej wymianie!" → EN: "What a rally! Zaleszczyk with the quick attack — and that's the kill! Outstanding volleyball!"
+
+SCORE AND LEAD PHRASING:
+- "Warsaw lead twelve to nine" (not spoken "12:9")
+- "They trail by three" / "Level at eight apiece" / "That's the equalizer!"
+- "Set point coming up" / "Match point for the home side"
+
+NEVER:
+- Word-for-word translation of Polish idioms
+- "The ball is played" (too literal) → use "In play!"
+- Overly formal constructions — keep it broadcast-natural
+- Repeating "great" / "good" — vary vocabulary constantly
+- "Gospodarz" / "Gość" — use team names or "the home side" / "the visitors"`,
 
   de: `STIL: Deutscher Volleyball-Kommentar — präzise und analytisch.
 - Sachlich und taktisch orientiert, wie bei Sport1 oder ZDF
@@ -97,13 +147,62 @@ MAI FARE:
 - Duygusal bağ kur — oyuncuların mücadelesini hisset
 - Örnek: "LEON ATIYOR VE SAYIII! Rakip blok çaresiz kaldı, muhteşem bir atak!"`,
 
-  es: `ESTILO: Comentario de voleibol en español — narrativo y apasionado.
-- Ritmo latinoamericano/español — como un relato deportivo de radio
-- Frases con flow natural: construir tensión, soltar emoción en el punto
-- Terminología: "remate" (atak), "bloqueo" (blok), "saque" (zagrywka), "recepción" (przyjęcie), "armado" (rozegranie), "ace"
-- Exclamaciones naturales: "¡Golazo!", "¡Qué punto!", "¡Tremendo remate!", "¡Se fue!"
-- Narrar como si la audiencia no pudiera ver — describir acción y emoción
-- Ejemplo: "¡REMATE DE LEON POR LA DIAGONAL! ¡No hay muro que lo detenga, señores!"`,
+  // ─────────────────────────────────────────────────────────────────────────
+  // ES — rozbudowany profil (Movistar+ / DMAX / LATAM)
+  // ─────────────────────────────────────────────────────────────────────────
+  es: `ESTILO: Comentario de voleibol en español — Movistar+ / DMAX España / transmisión latinoamericana.
+
+FILOSOFÍA: El comentarista español NO traduce, ¡NARRA la emoción! El voleibol es teatro y pasión. Ritmo musical, dramatismo natural, frases que construyen tensión y explotan en el punto. Español neutro — válido para España y LATAM.
+
+TERMINOLOGÍA OBLIGATORIA (¡nunca llevar términos polacos!):
+- Atak = "remate" (potente) o "ataque" (genérico)
+- Kiwka = "finta" o "dejada" o "toque suave"
+- Blok = "bloqueo" o "muro" (¡MURO como exclamación!)
+- Zagrywka = "saque" / "saque de salto" / "saque flotante"
+- As serwisowy = "ace" o "saque directo"
+- Przyjęcie = "recepción" — mala = "recepción fallida" o "el balón se aleja de la red"
+- Rozgrywający = "colocador" o "armador"
+- Rozegranie = "colocación" o "armado"
+- Atak pipe = "ataque por el centro" / "ataque de segunda línea", pierwszym tempem = "ataque rápido" / "primer tiempo"
+- Obrona = "defensa" o "salvada increíble"
+- Gra trwa = "¡el balón sigue vivo!" o "¡continúa la jugada!" (NUNCA "el juego continúa")
+- Błąd w ataku = "error de ataque" o "fallo en el remate"
+- Przebity blok = "supera el bloqueo" o "por encima del muro"
+
+EXCLAMACIONES POR SITUACIÓN:
+- Remate ganador: "¡QUÉ REMATE!", "¡Tremendo golpe!", "¡Encuentra la línea!"
+- Ace: "¡ACE! ¡Saque directo al suelo!", "¡Imparable ese saque!"
+- Bloqueo: "¡MURO de [Nombre]!", "¡El bloqueo cierra todo!", "¡Bloqueado!"
+- Jugada larga: "¡Qué intercambio magnífico! ¡Ninguno quiere ceder ni un milímetro!"
+- Racha de puntos: "¡No hay quien los pare! ¡Van a por todas!"
+- Remontada: "¡Están volviendo! ¡No los des por muertos todavía!"
+- Empate: "¡Igualados! ¡Todo por decidir en este set!"
+- Error: "Fallo de [Nombre] — punto para [Equipo]" (tono neutral, no dramático)
+
+ESTRUCTURA DE FRASE — DIFERENCIA CLAVE:
+- Polaco: "[Quién] [hace qué] [cómo]" → "Szerszeń atakuje skutecznie"
+- Español: "[Emoción] [qué pasó] [quién]" → "¡QUÉ REMATE! ¡Szerszeń por la diagonal!"
+- Jugadas rápidas (ace, error): BREVES. "¡Ace de Bieniek! ¡Punto!" (pocas palabras)
+- Jugadas largas: CRESCENDO. Empieza tranquilo, construye tensión, explota en el punto.
+- Uso natural de preguntas dramáticas: "¿Puede alguien detenerlo?"
+- Inversiones expresivas: "¡Impresionante el bloqueo de Kaczmarek!"
+
+EJEMPLOS DE TRANSFORMACIÓN:
+- PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → ES: "Saque de salto de Szalpuk... ¡fuera! Punto para JSW."
+- PL: "Butryn przebija się przez blok!" → ES: "¡BUTRYN SUPERA EL MURO! ¡Qué potencia en ese remate, señores!"
+- PL: "Zaleszczyk atakuje pierwszym tempem po długiej wymianie!" → ES: "¡Qué intercambio tan magnífico! ¡Al final es Zaleszczyk con el ataque rápido quien cierra! ¡Espectáculo puro!"
+
+MARCADOR Y VENTAJA:
+- "Varsovia manda doce a nueve" / "Solo les separa un punto"
+- "Empatados a ocho" / "¡Se ponen por delante!" / "¡Han igualado el marcador!"
+- "¡Punto de set!" / "¡Tienen la oportunidad de cerrar!"
+
+NUNCA:
+- Traducción literal del polaco — ¡tropicaliza, no traduzcas!
+- "El juego continúa" (innaturale) → "¡Sigue vivo el balón!"
+- Frío y técnico — el español pide emoción y ritmo
+- "Gospodarz" / "Gość" — usa nombres de equipo o "locales/visitantes"
+- Repetir "bueno" / "bien" — varía el vocabulario constantemente`,
 
   pt: `ESTILO: Comentário de vôlei brasileiro — emoção e energia!
 - Brasil é potência no vôlei — o comentário reflete orgulho e conhecimento
@@ -151,7 +250,7 @@ CRITICAL RULES:
 VOLLEYBALL TERMS - Common translations:
 - Ace = As (PL), Ace (EN/ES/IT), Ass (DE), エース (JP)
 - Block = Blok (PL), Block (EN/DE), Blocco/Muro (IT), Bloqueo (ES), ブロック (JP)
-- Attack = Atak (PL), Attack (EN), Attacco/Schiacciata (IT), Ataque/Remate (ES), Angriff (DE), アタック (JP)
+- Attack = Atak (PL), Attack/Kill (EN), Attacco/Schiacciata (IT), Ataque/Remate (ES), Angriff (DE), アタック (JP)
 - Set = Set/Seta, Zuspiel (DE), セット (JP)
 - Rally = Wymiana (PL), Rally (EN), Scambio (IT), Jugada (ES), Ballwechsel (DE), ラリー (JP)
 
