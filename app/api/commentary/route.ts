@@ -130,7 +130,8 @@ RADIO STYLE MEANS:
 - If the data says "zagrywka" (without "BLAD"), the serve was GOOD - do NOT say it was an error!
 - If data says "blok PRZEBITY", the BLOCKER lost - the attacker beat them. Do NOT say the blocker broke through.
 - The LAST touch in the chain determines the point. Do NOT add extra actions after it.
-- Short rallies (2-3 touches) = 1-2 sentences. Longer rallies (5+) = 2-3 sentences.
+- FOCUS ON CLIMAX: Skup sie na OSTATNIEJ akcji (kto i jak zdobyl punkt). Wczesniejsze dotkniecia = krotki kontekst, NIE play-by-play.
+- 1-2 dotkniecia (as/blad serwisu) = max 1 zdanie. 3-5 dotkiec = 1-2 zdania. 6+ dotkiec = max 3 zdania z kulminacja na koncu.
 
 CRITICAL RULES:
 - Be FACTUAL - describe ONLY what is in the touch chain data
@@ -206,13 +207,17 @@ EXAMPLES (Polish):
 ALWAYS mention it's the END OF SET!`;
  }
 
- if (isHotSituation) {
+if (isHotSituation) {
  return basePrompt + `
-- HOT SITUATION (20:20+)! NOW you can add emotion!
+- ZONE HOT (20+)! Pelna petarda — kazdy punkt to dramat!
+- Maksymalna emocja, krotkie i mocne zdania. Czas na kulminacje narracji.
+- Jesli byl watek narracyjny (dominujacy zawodnik, seria) — teraz jest moment by go zamknac lub podkreslic.
 
 EXAMPLES (Polish):
-- "W kluczowym momencie Grozdanov pokazuje klase! Blok ktory moze zadecydowac o secie!"
-- "McCarthy as serwisowy w najwazniejszym momencie! Nerwy ze stali!"`;
+- "BUTRYN! W koncowce seta to on bierze sprawy w swoje rece!"
+- "McCarthy as w kluczowym momencie! Nerwy ze stali — mistrzowski serwis!"
+- "Blok Grozdanova! Juz piatym blokiem zamyka rywala! To moze byc punkt przelomowy!"
+- "Nikt nie ustepuje! Kazde dotkniecie pilki to oddzielna historia!"`;
  } else if (hasStreak) {
  return basePrompt + `
 - SCORING STREAK (5+)! Emphasize the momentum!
@@ -240,25 +245,23 @@ EXAMPLES (Polish):
 - "Punkt dla gosci, ale wciaz spory dystans - 8:18."`;
  } else if (isEarlySet) {
  return basePrompt + `
-- EARLY SET (1-10 points): Keep it calm and factual!
+- ZONE CALM (wynik do 8): Spokojny, rzeczowy start. Zero dramy, zero oceniania.
+- Krotkie zdania, sam fakt. Budujemy atmosfere powoli.
 
 EXAMPLES (Polish):
 - "Grozdanov skuteczny w bloku. Dobry poczatek."
-- "Blad serwisowy McCarthy. Punkt dla przeciwnika."
-- "Sasak konczy atak. Prowadzenie dla gosci."
-
-NO DRAMA - just describe what happened!`;
+- "Blad serwisowy McCarthy. Punkt dla rywali."
+- "Sasak konczy atak. Goscie obejmuja prowadzenie."`;
  } else {
  return basePrompt + `
-- MID-SET (11-19 points): Factual but with ENERGY!
+- ZONE MID (9-19): Rosnie napiecie. Rzeczowy ale z energia. Akcent na taktykę i walkę.
+- Mozesz wspomniec wątek narracyjny jesli pojawia sie w danych (kto dominuje, mini-seria).
 
 EXAMPLES (Polish):
-- "Grozdanov skuteczny w bloku! Zatrzymal rywala."
-- "McCarthy pewny w zagrywce. Punkt dla gospodarzy!"
-- "Sasak konczy atak! Goscie zwieksza przewage."
-- "Kwolek przebija blok! Swietne uderzenie!"
-
-Factual YES, but keep VOLLEYBALL ENERGY!`;
+- "Grozdanov znow przy siatce! Juz trzeci blok w tym secie!"
+- "McCarthy celny w zagrywce — rosnie przewaga gospodarzy."
+- "Sasak przebija blok po przekatnej! Walka trwa."
+- "Kwolek z kontra! Goscie nie oddaja pola."`;
  }
 };
 
@@ -452,8 +455,26 @@ if (!rally.touches || rally.touches.length === 0) {
  // STEP 4: SITUATION ANALYSIS
  // ========================================================================
  
- const isHotSituation = finalScore.home >= 20 && finalScore.away >= 20 && !setEndInfo.isSetEnd;
- const isEarlySet = rally.rally_number <= 10;
+ // OPCJA D: Strefy napięcia — na podstawie max wyniku w secie
+  const maxScore = Math.max(finalScore.home, finalScore.away);
+  const isEarlySet = maxScore <= 8;           // ZONE CALM: spokojny start, zero dramy
+  const isHotSituation = maxScore >= 20 && !setEndInfo.isSetEnd;  // ZONE HOT: pełna petarda
+
+  // WĄTEK NARRACYJNY: kto dominuje w ostatnich akcjach?
+  let setNarrativeContext = '';
+  if (recentRallies.length >= 5) {
+    const dominantPlayer: Record<string, number> = {};
+    recentRallies.slice(-8).forEach(r => {
+      const lastTouch = r.touches?.[r.touches.length - 1];
+      if (lastTouch?.player) {
+        dominantPlayer[lastTouch.player] = (dominantPlayer[lastTouch.player] || 0) + 1;
+      }
+    });
+    const topPlayer = Object.entries(dominantPlayer).sort(([,a],[,b]) => b - a)[0];
+    if (topPlayer && topPlayer[1] >= 3) {
+      setNarrativeContext = `\nWATEK: ${topPlayer[0]} dominuje - ${topPlayer[1]} z ostatnich ${Math.min(recentRallies.length, 8)} punktow. Wspomnij jesli pasuje naturalnie.`;
+    }
+  }
  
  const currentPlayerStats = playerStats[scoringPlayer] || { blocks: 0, aces: 0, attacks: 0, errors: 0, points: 0 };
  let milestone = '';
@@ -1199,7 +1220,7 @@ if (!rally.touches || rally.touches.length === 0) {
    } else if (actionLower.includes('przyjecie') || actionLower.includes('pass') || actionLower.includes('receive')) {
      if (actionLower.includes('perfect')) desc += ' - idealne przyjecie';
      else if (actionLower.includes('positive')) desc += ' - dobre przyjecie';
-     else if (actionLower.includes('negative') || actionLower.includes('poor')) desc += ' - bardzo slabe przyjecie, pilka daleko od siatki';
+     else if (actionLower.includes('negative') || actionLower.includes('poor')) desc += ' - slabe przyjecie (rozgrywajacy ma ograniczone opcje)';
      else desc += ' - przyjecie';
    // SET
    } else if (actionLower.includes('rozegranie') || actionLower.includes('setting') || actionLower === 'set') {
@@ -1285,7 +1306,7 @@ ${touchChainLines.join('\n')}
 
 KRYTYCZNE ZASADY KOMENTARZA - LAMANIE = PORAZKA:
 1. OPISUJ TYLKO TO CO JEST W PRZEBIEGU AKCJI POWYZEJ. Nic wiecej!
-2. Zachowaj DOKLADNA kolejnosc dotkniec - krok po kroku.
+2. KULMINACJA NAJPIERW — opisz kto i jak zdobyl punkt. Wczesniejsze dotkniecia opisuj SKROTOWO lub POMIJAJ jesli nie wnosza wartosci narracyjnej.
 3. ZAGRYWKA: Blad serwisowy jest TYLKO gdy jest napisane ">>> BLAD SERWISU". W kazdym innym przypadku zagrywka jest dobra i gra toczy sie dalej - nie musisz tego podkreslac.
 4. BLOK PRZEBITY: Ostatnie dotkniecie z "(przegral z atakujacym)" oznacza ze ATAKUJACY zdobyl punkt. NIE opisuj blokujacego jako zdobywce punktu.
 5. Jesli zagrywka jest poprawna, to nastepuje przyjecie - to jest LOGICZNE. Jesli zagrywka jest bledem, to akcja sie KONCZY i nie ma przyjecia.
@@ -1304,8 +1325,11 @@ KRYTYCZNE ZASADY KOMENTARZA - LAMANIE = PORAZKA:
  if (brokenStreak >= 3) {
  situationContext += `\nPRZELAMANIE! Koniec serii ${brokenStreak} punktow ${brokenStreakTeam === 'home' ? homeTeamFull : awayTeamFull}. Wazny punkt przerywajacy passmo!`;
  }
- if (momentumContext) {
- situationContext += `\n${momentumContext}`;
+  if (momentumContext) {
+  situationContext += `\n${momentumContext}`;
+ }
+ if (setNarrativeContext) {
+  situationContext += setNarrativeContext;
  }
  if (milestone) {
  situationContext += `\nMILESTONE: To jest ${milestone} dla ${scoringPlayer}! WSPOMNIEJ O TYM!`;
