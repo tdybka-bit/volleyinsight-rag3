@@ -1,5 +1,5 @@
-import LiveMatchCommentaryV3 from '@/components/LiveMatchCommentary-v3';
+import LiveMatchCommentaryV4 from '@/components/LiveMatchCommentary-v4';
 
 export default function LiveCommentaryPage() {
-  return <LiveMatchCommentaryV3 />;
+  return <LiveMatchCommentaryV4 />;
 }
