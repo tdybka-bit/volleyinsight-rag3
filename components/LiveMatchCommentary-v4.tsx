@@ -361,7 +361,10 @@ export default function LiveMatchCommentaryV4() {
  const headerRef = useRef<HTMLDivElement>(null);
  const [headerHeight, setHeaderHeight] = useState(0);
  const [isRetranslating, setIsRetranslating] = useState(false);
- const [selectedMatch, setSelectedMatch] = useState('2025-11-12_ZAW-LBN.json');
+ const [selectedMatch, setSelectedMatch] = useState(() => {
+   if (typeof window !== 'undefined') return localStorage.getItem('vi_selected_match') || '2025-11-12_ZAW-LBN.json';
+   return '2025-11-12_ZAW-LBN.json';
+ });
  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
  const [openTagPopup, setOpenTagPopup] = useState<string | null>(null);
  const [favPlayer, setFavPlayer] = useState<string | null>(null);
@@ -2475,7 +2478,7 @@ export default function LiveMatchCommentaryV4() {
          {/* Match selector */}
          <select
            value={selectedMatch}
-           onChange={e => { setSelectedMatch(e.target.value); setCommentaries([]); setCurrentRallyIndex(0); setCurrentSetNumber(0); setIsPlaying(false); }}
+           onChange={e => { setSelectedMatch(e.target.value); localStorage.setItem('vi_selected_match', e.target.value); setCommentaries([]); setCurrentRallyIndex(0); setCurrentSetNumber(0); setIsPlaying(false); }}
            style={{ padding: '4px 10px', borderRadius: 7, background: '#1a2740', border: '1px solid rgba(255,255,255,.1)', color: '#e2e8f0', fontSize: 11, fontWeight: 600, cursor: 'pointer', colorScheme: 'dark' as any }}
          >
            <option value="2025-11-12_ZAW-LBN.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Aluron Zawiercie vs Bogdanka Lublin (12.11)</option>
