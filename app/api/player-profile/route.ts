@@ -13,8 +13,8 @@ const pinecone = new Pinecone({
 const index = pinecone.index('ed-volley');
 
 // ============================================================================
-// PLAYER PROFILE ENDPOINT v1.3
-// Fix: diacritics normalization (Szerszeń → szerszen matches Szerszen in IDs)
+// PLAYER PROFILE ENDPOINT v1.4
+// Fix: semantic search zamiast ID listing (Colab sync używa hashów jako ID)
 // ============================================================================
 
 // Strip diacritics: ń→n, ą→a, ć→c, ę→e, ł→l, ó→o, ś→s, ź→z, ż→z
@@ -30,45 +30,7 @@ function getNameParts(playerName: string): string[] {
     .filter(p => p.length >= 3);
 }
 
-const PROFILE_NAMESPACES = ['player-profiles', ''];
-
-// Strategy A: List IDs by prefix (for player-profiles namespace)
-async function findByIdListing(
-  playerName: string,
-  namespace: string
-): Promise<Array<{ id: string; text: string }>> {
-  const nameParts = getNameParts(playerName);
-  console.log(`[PROFILE] ID listing in ns="${namespace}" for:`, nameParts);
-
-  const matchingIds: string[] = [];
-  let paginationToken: string | undefined = undefined;
-
-  for (let page = 0; page < 10; page++) {
-    const listResult = await index.namespace(namespace).listPaginated({
-      limit: 100,
-      paginationToken,
-    });
-    const vectors = listResult.vectors || [];
-    for (const v of vectors) {
-      // Normalize BOTH sides: strip diacritics from ID too
-      const idNorm = stripDiacritics(v.id).toLowerCase();
-      if (nameParts.some(part => idNorm.includes(part))) {
-        matchingIds.push(v.id);
-      }
-    }
-    if (matchingIds.length >= 10) break;
-    if (!listResult.pagination?.next) break;
-    paginationToken = listResult.pagination.next;
-  }
-
-  if (matchingIds.length === 0) return [];
-  console.log(`[PROFILE] ID listing found: ${matchingIds.length} IDs`);
-
-  const fetchResult = await index.namespace(namespace).fetch(matchingIds.slice(0, 10));
-  return dedup(fetchResult);
-}
-
-// Strategy B: Semantic search + name verification (for default namespace with 10K+ records)
+// Semantic search + filtr po nazwisku w treści
 async function findBySemantic(
   playerName: string,
   namespace: string
@@ -89,7 +51,7 @@ async function findBySemantic(
     includeMetadata: true,
   });
 
-  // Filter: player name must appear in ID OR text (with diacritics normalization)
+  // Filtr: nazwisko musi pojawić się w ID lub w treści chunka
   const filtered = searchResults.matches.filter(m => {
     const idNorm = stripDiacritics(m.id).toLowerCase();
     const textNorm = stripDiacritics(
@@ -115,24 +77,8 @@ async function findBySemantic(
   return results;
 }
 
-function dedup(fetchResult: any): Array<{ id: string; text: string }> {
-  const seenTexts = new Set<string>();
-  const results: Array<{ id: string; text: string }> = [];
-  for (const [id, record] of Object.entries(fetchResult.records || {})) {
-    const rec = record as any;
-    const meta = rec.metadata || {};
-    const text = (meta.text as string) || (meta.content as string) || (meta.description as string) || '';
-    const textKey = text.substring(0, 100);
-    if (text && !seenTexts.has(textKey)) {
-      seenTexts.add(textKey);
-      results.push({ id, text });
-    }
-  }
-  return results;
-}
-
 export async function POST(request: NextRequest) {
-  console.log('========= PLAYER-PROFILE v1.3 =========');
+  console.log('========= PLAYER-PROFILE v1.4 =========');
 
   try {
     const { playerName } = await request.json();
@@ -145,16 +91,17 @@ export async function POST(request: NextRequest) {
 
     let allChunks: Array<{ id: string; text: string }> = [];
 
-    // 1) "player-profiles" namespace — ID prefix listing
+    // 1) player-profiles namespace — semantic search
+    //    (Colab sync v2 używa hashów jako ID, nie nazwisk — stąd semantic zamiast ID listing)
     try {
-      const ppChunks = await findByIdListing(playerName, 'player-profiles');
+      const ppChunks = await findBySemantic(playerName, 'player-profiles');
       allChunks.push(...ppChunks);
       console.log(`[PROFILE] player-profiles: ${ppChunks.length} chunks`);
     } catch (e) {
       console.error('[PROFILE] player-profiles search error:', e);
     }
 
-    // 2) Default namespace "" — semantic search + name filter
+    // 2) Default namespace "" — fallback jeśli za mało wyników
     if (allChunks.length < 3) {
       try {
         const defaultChunks = await findBySemantic(playerName, '');

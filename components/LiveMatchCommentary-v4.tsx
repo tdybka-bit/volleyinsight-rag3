@@ -2487,6 +2487,13 @@ export default function LiveMatchCommentaryV4() {
            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#ef4444', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
            <span style={{ fontSize: 9, color: '#f87171', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em' }}>Live</span>
          </div>
+         {/* KPI Cockpit link */}
+          <button
+            onClick={() => window.open('/cockpit', '_blank')}
+            style={{ fontSize: 9, fontWeight: 700, color: '#93c5fd', background: 'rgba(59,130,246,.15)', border: '1px solid rgba(59,130,246,.3)', borderRadius: 5, padding: '3px 9px', cursor: 'pointer', letterSpacing: '.05em', display: 'flex', alignItems: 'center', gap: 4 }}
+          >
+            {'📊 KPIs'}
+          </button>
        </div>
        {/* Language switcher */}
        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -2617,7 +2624,7 @@ export default function LiveMatchCommentaryV4() {
                      <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: '#475569', width: 18, textAlign: 'right', flexShrink: 0 }}>#{p.jersey}</span>
                      <span style={{ fontSize: 13, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: isBuddy ? '#fde047' : '#cbd5e1', fontWeight: isBuddy ? 600 : 400 }}>{p.name}</span>
                      {pos && <span style={{ fontSize: 10, fontWeight: 700, color: POS_CLR[pos] || '#64748b', flexShrink: 0 }}>{pos === 'rozgrywający' ? 'S' : pos === 'przyjmujący' ? 'OH' : pos === 'atakujący' ? 'OP' : pos === 'środkowy' ? 'MB' : pos === 'libero' ? 'L' : ''}</span>}
-                     {isBuddy && <span style={{ color: '#facc15', fontSize: 11, flexShrink: 0 }}>★</span>}
+                     <span style={{ color: isBuddy ? '#facc15' : '#334155', fontSize: 11, flexShrink: 0, transition: 'color .2s', cursor: 'pointer' }}>{isBuddy ? '★' : '☆'}</span>
                    </button>
                  );
                })}
@@ -2637,7 +2644,7 @@ export default function LiveMatchCommentaryV4() {
                      <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: '#475569', width: 18, textAlign: 'right', flexShrink: 0 }}>#{p.jersey}</span>
                      <span style={{ fontSize: 13, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: isBuddy ? '#fde047' : '#cbd5e1', fontWeight: isBuddy ? 600 : 400 }}>{p.name}</span>
                      {pos && <span style={{ fontSize: 10, fontWeight: 700, color: POS_CLR[pos] || '#64748b', flexShrink: 0 }}>{pos === 'rozgrywający' ? 'S' : pos === 'przyjmujący' ? 'OH' : pos === 'atakujący' ? 'OP' : pos === 'środkowy' ? 'MB' : pos === 'libero' ? 'L' : ''}</span>}
-                     {isBuddy && <span style={{ color: '#facc15', fontSize: 11, flexShrink: 0 }}>★</span>}
+                     <span style={{ color: isBuddy ? '#facc15' : '#334155', fontSize: 11, flexShrink: 0, transition: 'color .2s', cursor: 'pointer' }}>{isBuddy ? '★' : '☆'}</span>
                    </button>
                  );
                })}
@@ -2783,7 +2790,7 @@ export default function LiveMatchCommentaryV4() {
                            </div>
                          );
                        })}
-                       {isBuddy && <span style={{ color: '#facc15', fontSize: 10 }}>★</span>}
+                       <span style={{ color: isBuddy ? '#facc15' : '#1e293b', fontSize: 10, transition: 'color .2s' }}>{isBuddy ? '★' : '☆'}</span>
                      </div>
                      <p style={{ fontSize: 15, lineHeight: 1.65, margin: '0 0 4px', color: '#e2e8f0' }}>{commentary.text}</p>
                      {/* TTS + InlineFeedback row */}
