@@ -197,6 +197,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Wybierz ulubionego zawodnika aby aktywowac BUDDY panel',
    sources: 'zrodel w bazie wiedzy', source1: 'zrodlo w bazie wiedzy', sources24: 'zrodla w bazie wiedzy',
    highRelevance: 'wysoka trafnosc', medRelevance: 'srednia trafnosc',
+   setEnd: 'Koniec seta', setWinner: 'Wygrywa', topScorers: 'TOP punktujący', pts: 'pkt',
  },
  en: {
    statsTitle: 'Match Statistics', points: 'Points', serve: 'Serve',
@@ -208,6 +209,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Select a favorite player to activate BUDDY panel',
    sources: 'sources in knowledge base', source1: 'source in knowledge base', sources24: 'sources in knowledge base',
    highRelevance: 'high relevance', medRelevance: 'medium relevance',
+   setEnd: 'End of set', setWinner: 'Winner', topScorers: 'TOP scorers', pts: 'pts',
  },
  it: {
    statsTitle: 'Statistiche partita', points: 'Punti', serve: 'Battuta',
@@ -219,6 +221,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Seleziona un giocatore preferito per attivare il pannello BUDDY',
    sources: 'fonti nella base dati', source1: 'fonte nella base dati', sources24: 'fonti nella base dati',
    highRelevance: 'alta rilevanza', medRelevance: 'media rilevanza',
+   setEnd: 'Fine del set', setWinner: 'Vince', topScorers: 'TOP marcatori', pts: 'pt',
  },
  de: {
    statsTitle: 'Spielstatistiken', points: 'Punkte', serve: 'Aufschlag',
@@ -230,6 +233,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Wahle einen Lieblingsspieler um das BUDDY-Panel zu aktivieren',
    sources: 'Quellen in der Wissensdatenbank', source1: 'Quelle in der Wissensdatenbank', sources24: 'Quellen in der Wissensdatenbank',
    highRelevance: 'hohe Relevanz', medRelevance: 'mittlere Relevanz',
+   setEnd: 'Satzende', setWinner: 'Sieger', topScorers: 'TOP Scorer', pts: 'Pkt',
  },
  tr: {
    statsTitle: 'Mac Istatistikleri', points: 'Sayilar', serve: 'Servis',
@@ -241,6 +245,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'BUDDY panelini etkinlestirmek icin bir oyuncu secin',
    sources: 'kaynak', source1: 'kaynak', sources24: 'kaynak',
    highRelevance: 'yuksek uyum', medRelevance: 'orta uyum',
+   setEnd: 'Set sonu', setWinner: 'Kazanan', topScorers: 'En iyi skorer', pts: 'puan',
  },
  es: {
    statsTitle: 'Estadisticas del partido', points: 'Puntos', serve: 'Saque',
@@ -252,6 +257,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Selecciona un jugador favorito para activar el panel BUDDY',
    sources: 'fuentes en la base', source1: 'fuente en la base', sources24: 'fuentes en la base',
    highRelevance: 'alta relevancia', medRelevance: 'relevancia media',
+   setEnd: 'Fin del set', setWinner: 'Gana', topScorers: 'TOP anotadores', pts: 'pts',
  },
  pt: {
    statsTitle: 'Estatisticas do jogo', points: 'Pontos', serve: 'Saque',
@@ -263,17 +269,19 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Selecione um jogador favorito para ativar o painel BUDDY',
    sources: 'fontes na base', source1: 'fonte na base', sources24: 'fontes na base',
    highRelevance: 'alta relevancia', medRelevance: 'relevancia media',
+   setEnd: 'Fim do set', setWinner: 'Vence', topScorers: 'TOP pontuadores', pts: 'pts',
  },
  jp: {
-   statsTitle: 'Match Statistics', points: 'Points', serve: 'Serve',
-   reception: 'Reception', attack: 'Attack', block: 'Block', other: 'Other',
-   expertTitle: 'Expert Knowledge', loading: 'Loading player profile...',
-   noProfile: 'No profile in knowledge base',
-   addProfile: 'Add info about {player}',
-   profilePending: 'Expert player info coming soon...',
-   selectPlayer: 'Select a favorite player to activate BUDDY panel',
-   sources: 'sources', source1: 'source', sources24: 'sources',
-   highRelevance: 'high relevance', medRelevance: 'medium relevance',
+   statsTitle: '試合統計', points: 'ポイント', serve: 'サーブ',
+   reception: 'レセプション', attack: 'アタック', block: 'ブロック', other: 'その他',
+   expertTitle: '専門知識', loading: '選手プロフィール読込中...',
+   noProfile: 'プロフィールなし',
+   addProfile: '{player}の情報を追加',
+   profilePending: '専門情報まもなく...',
+   selectPlayer: 'BUDDYパネルを有効にする選手を選択',
+   sources: 'ソース', source1: 'ソース', sources24: 'ソース',
+   highRelevance: '高関連性', medRelevance: '中関連性',
+   setEnd: 'セット終了', setWinner: '勝者', topScorers: 'TOP得点者', pts: '点',
  },
 };
 
@@ -403,6 +411,19 @@ export default function LiveMatchCommentaryV4() {
  bp: number; // break points (points scored while opponent serving)
  }>>({});
  
+ // ── Sync state to localStorage for Cockpit ──────────────────────────────────
+ useEffect(() => {
+   if (typeof window === 'undefined') return;
+   const currentRally = rallies[currentRallyIndex - 1] as any;
+   localStorage.setItem('vi_current_set', String(currentSetNumber || 1));
+   localStorage.setItem('vi_current_score_home', String(currentRally?.score_after?.home ?? 0));
+   localStorage.setItem('vi_current_score_away', String(currentRally?.score_after?.away ?? 0));
+ }, [currentSetNumber, currentRallyIndex, rallies]);
+
+ useEffect(() => {
+   if (typeof window !== 'undefined') localStorage.setItem('vi_language', language);
+ }, [language]);
+
  // Dynamic team name helpers — prefer JSON full names, fallback to TEAM_FULL_NAMES map
  const getHomeTeamFull = () => matchData?.teams?.homeFullName || TEAM_FULL_NAMES[matchData?.teams?.home || ''] || matchData?.teams?.home || 'Gospodarze';
  const getAwayTeamFull = () => matchData?.teams?.awayFullName || TEAM_FULL_NAMES[matchData?.teams?.away || ''] || matchData?.teams?.away || 'Goscie';
@@ -912,15 +933,18 @@ export default function LiveMatchCommentaryV4() {
  for (const [name, d] of Object.entries(pData)) {
    const totalAtk = d.atk_L + d.atk_R + d.atk_M + d.atk_B + d.atk_P;
    
-   // Check if player is a setter (names already normalized)
-   const isSetter = setterNames.has(name);
+   // Libero detection FIRST — libero never serves and rarely attacks
+   const isLibero = d.rcv > 0 && d.srv === 0 && totalAtk <= 3;
    
-   if (isSetter) {
+   // Check if player is a setter (high assist count) — but not if identified as libero
+   const isSetter = !isLibero && setterNames.has(name);
+   
+   if (isLibero) {
+     playerPositions[name] = 'libero';
+   } else if (isSetter) {
      playerPositions[name] = 'rozgrywający';
    } else if (d.atk_M >= 5 && d.atk_M > (d.atk_L + d.atk_R + d.atk_B + d.atk_P)) {
      playerPositions[name] = 'środkowy';
-   } else if (d.rcv > 0 && d.srv === 0 && totalAtk <= 3) {
-     playerPositions[name] = 'libero';
    } else if ((d.atk_R + d.atk_B) > (d.atk_L + d.atk_P) && (d.atk_R + d.atk_B) >= 5) {
      playerPositions[name] = 'atakujący';
    } else if (d.rcv >= 3 && (d.atk_L >= 3 || d.atk_P >= 2)) {
@@ -1255,10 +1279,11 @@ export default function LiveMatchCommentaryV4() {
  }
  for (const [name, d] of Object.entries(pData2)) {
    const totalAtk = d.atk_L + d.atk_R + d.atk_M + d.atk_B + d.atk_P;
-   if (d.atk_M >= 5 && d.atk_M > (d.atk_L + d.atk_R + d.atk_B + d.atk_P)) {
-     playerPositions[name] = 'środkowy';
-   } else if (d.rcv > 0 && d.srv === 0 && totalAtk <= 3) {
+   const isLibero = d.rcv > 0 && d.srv === 0 && totalAtk <= 3;
+   if (isLibero) {
      playerPositions[name] = 'libero';
+   } else if (d.atk_M >= 5 && d.atk_M > (d.atk_L + d.atk_R + d.atk_B + d.atk_P)) {
+     playerPositions[name] = 'środkowy';
    } else if ((d.atk_R + d.atk_B) > (d.atk_L + d.atk_P) && (d.atk_R + d.atk_B) >= 5) {
      playerPositions[name] = 'atakujący';
    } else if (d.rcv >= 3 && (d.atk_L >= 3 || d.atk_P >= 2)) {
@@ -2408,6 +2433,45 @@ export default function LiveMatchCommentaryV4() {
  // Current lineup for this set
  const currentLineup = matchData?.lineups?.find(l => l.setNumber === currentSetNumber) || matchData?.lineups?.[0];
 
+ // ── DYNAMIC ACTIVE LINEUP with substitution history ──────────────────────
+ // Build: start from lineup, apply all subs up to currentRallyIndex
+ interface SubEvent { playerOut: string; playerIn: string; team: 'home'|'away'; scoreHome: number; scoreAway: number; rallyIdx: number; }
+ const subHistory: SubEvent[] = [];
+ const playedRallies = rallies.slice(0, currentRallyIndex);
+ playedRallies.forEach((r: any, idx: number) => {
+   if (!r.substitutions) return;
+   r.substitutions.forEach((s: any) => {
+     subHistory.push({
+       playerOut: s.player_out, playerIn: s.player_in,
+       team: s.team as 'home'|'away',
+       scoreHome: r.score_after?.home ?? 0,
+       scoreAway: r.score_after?.away ?? 0,
+       rallyIdx: idx,
+     });
+   });
+ });
+
+ // Apply subs to starting lineup
+ const startHome = (currentLineup?.home || []).map(p => p.name);
+ const startAway = (currentLineup?.away || []).map(p => p.name);
+ const activeHome = [...startHome];
+ const activeAway = [...startAway];
+ subHistory.forEach(s => {
+   const arr = s.team === 'home' ? activeHome : activeAway;
+   const idx = arr.indexOf(s.playerOut);
+   if (idx !== -1) arr[idx] = s.playerIn;
+ });
+
+ // Map: who replaced whom (for display)
+ const replacedBy: Record<string, string> = {}; // playerOut -> playerIn
+ const replacedAt: Record<string, {scoreHome:number; scoreAway:number}> = {};
+ subHistory.forEach(s => {
+   replacedBy[s.playerOut] = s.playerIn;
+   replacedAt[s.playerOut] = { scoreHome: s.scoreHome, scoreAway: s.scoreAway };
+ });
+ const isSubstitute: Record<string, boolean> = {};
+ subHistory.forEach(s => { isSubstitute[s.playerIn] = true; });
+
  // Leaderboard data
  const lbEntries = Object.entries(playerStats).map(([name, s]) => ({
    name, team: playerTeamMap[name] || '',
@@ -2447,7 +2511,7 @@ export default function LiveMatchCommentaryV4() {
          return (
            <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
              <div style={{ width: 100, display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
-               <span style={{ width: 12, fontSize: 9, fontWeight: 700, color: i === 0 ? '#facc15' : '#374151' }}>{i + 1}</span>
+               <span style={{ width: 12, fontSize: 9, fontWeight: 700, color: i === 0 ? '#facc15' : '#64748b' }}>{i + 1}</span>
                <span style={{ fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: d.team === 'home' ? '#93c5fd' : '#fcd34d' }} title={d.name}>
                  {d.name.split(' ').slice(-1)[0]}
                </span>
@@ -2500,10 +2564,10 @@ export default function LiveMatchCommentaryV4() {
        </div>
        {/* Language switcher */}
        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-         <span style={{ fontSize: 9, color: '#374151', textTransform: 'uppercase', letterSpacing: '.08em', marginRight: 4 }}>Język</span>
+         <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.08em', marginRight: 4 }}>Język</span>
          {languages.map(l => (
            <button key={l.code} onClick={() => setLanguage(l.code as Language)}
-             style={{ padding: '2px 7px', borderRadius: 5, fontSize: 10, fontWeight: 700, border: 'none', cursor: 'pointer', background: language === l.code ? 'rgba(59,130,246,.2)' : 'transparent', color: language === l.code ? '#93c5fd' : '#374151', outline: language === l.code ? '1px solid rgba(59,130,246,.4)' : 'none' }}>
+             style={{ padding: '2px 7px', borderRadius: 5, fontSize: 10, fontWeight: 700, border: 'none', cursor: 'pointer', background: language === l.code ? 'rgba(59,130,246,.2)' : 'transparent', color: language === l.code ? '#93c5fd' : '#94a3b8', outline: language === l.code ? '1px solid rgba(59,130,246,.4)' : 'none' }}>
              {l.code.toUpperCase()}
            </button>
          ))}
@@ -2519,7 +2583,7 @@ export default function LiveMatchCommentaryV4() {
            <img src={getTeamLogo(matchData?.teams?.home || '')} alt="" style={{ width: 32, height: 32, objectFit: 'contain', flexShrink: 0 }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
            <div>
              <div style={{ fontSize: 14, fontWeight: 700 }}>{getHomeTeamFull()}</div>
-             <div style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.12em' }}>Gospodarze</div>
+             <div style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em' }}>Gospodarze</div>
            </div>
          </div>
          {/* Center: score + controls */}
@@ -2532,7 +2596,7 @@ export default function LiveMatchCommentaryV4() {
                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#ef4444', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
                <span style={{ fontSize: 9, color: '#f87171', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em' }}>Live</span>
              </div>
-             <div style={{ fontSize: 10, color: '#374151' }}>Set {currentRally ? (currentRally as any).set_number || 1 : 1}</div>
+             <div style={{ fontSize: 10, color: '#94a3b8' }}>Set {currentRally ? (currentRally as any).set_number || 1 : 1}</div>
              {/* Play controls */}
              <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
                <button onClick={handlePlayPause} disabled={isGenerating || !matchData}
@@ -2542,19 +2606,19 @@ export default function LiveMatchCommentaryV4() {
                  {isPlaying ? '⏸' : currentRallyIndex >= rallies.length ? '↺' : '▶'}
                </button>
                <button onClick={handleReset} disabled={!matchData}
-                 style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, color: '#374151', background: 'transparent', border: 'none', cursor: 'pointer' }}>↺</button>
+                 style={{ padding: '2px 8px', borderRadius: 4, fontSize: 11, color: '#94a3b8', background: 'transparent', border: 'none', cursor: 'pointer' }}>↺</button>
                {/* Speed */}
                {[{l:'S',v:5000},{l:'N',v:3000},{l:'F',v:1500}].map(opt => (
                  <button key={opt.v} onClick={() => setSpeed(opt.v)}
                    style={{ padding: '1px 6px', borderRadius: 3, fontSize: 9, fontWeight: 700, border: 'none', cursor: 'pointer',
-                     background: speed === opt.v ? 'rgba(59,130,246,.3)' : 'rgba(255,255,255,.05)', color: speed === opt.v ? '#93c5fd' : '#374151' }}>
+                     background: speed === opt.v ? 'rgba(59,130,246,.3)' : 'rgba(255,255,255,.05)', color: speed === opt.v ? '#93c5fd' : '#94a3b8' }}>
                    {opt.l}
                  </button>
                ))}
                {/* Radio TTS */}
                <button onClick={() => { setTtsAutoPlay(!ttsAutoPlay); if (ttsAutoPlay && ttsAudioRef.current) { ttsAudioRef.current.pause(); ttsAudioRef.current = null; setTtsPlaying(null); } }}
                  style={{ padding: '1px 6px', borderRadius: 3, fontSize: 9, fontWeight: 700, border: 'none', cursor: 'pointer',
-                   background: ttsAutoPlay ? 'rgba(16,185,129,.2)' : 'rgba(255,255,255,.05)', color: ttsAutoPlay ? '#34d399' : '#374151' }}>
+                   background: ttsAutoPlay ? 'rgba(16,185,129,.2)' : 'rgba(255,255,255,.05)', color: ttsAutoPlay ? '#34d399' : '#94a3b8' }}>
                  {ttsAutoPlay ? '🔊' : '🔇'}
                </button>
                <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 9, color: '#1e293b' }}>{currentRallyIndex}/{rallies.length}</span>
@@ -2568,7 +2632,7 @@ export default function LiveMatchCommentaryV4() {
          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, justifyContent: 'flex-end' }}>
            <div style={{ textAlign: 'right' }}>
              <div style={{ fontSize: 14, fontWeight: 700 }}>{getAwayTeamFull()}</div>
-             <div style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.12em' }}>Goście</div>
+             <div style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em' }}>Goście</div>
            </div>
            <img src={getTeamLogo(matchData?.teams?.away || '')} alt="" style={{ width: 32, height: 32, objectFit: 'contain', flexShrink: 0 }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
            <div style={{ width: 5, height: 32, borderRadius: 99, background: '#f59e0b' }} />
@@ -2612,59 +2676,109 @@ export default function LiveMatchCommentaryV4() {
        <div style={{ width: 180, flexShrink: 0, borderRight: '1px solid #0f172a', padding: 12, overflowY: 'auto' }}>
          {currentLineup ? (
            <>
-             {/* Home */}
-             <div style={{ marginBottom: 14 }}>
-               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 7 }}>
-                 <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#3b82f6' }} />
-                 <span style={{ fontSize: 9, fontWeight: 700, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '.12em' }}>{matchData?.teams?.home?.toUpperCase() || 'HOME'}</span>
+             {/* Helper to render one team's lineup */}
+             {(['home', 'away'] as const).map(side => {
+               const teamColor = side === 'home' ? '#60a5fa' : '#fbbf24';
+               const dotColor  = side === 'home' ? '#3b82f6' : '#f59e0b';
+               const teamLabel = side === 'home' ? matchData?.teams?.home?.toUpperCase() || 'HOME' : matchData?.teams?.away?.toUpperCase() || 'AWAY';
+               const startingPlayers = side === 'home' ? (currentLineup.home || []) : (currentLineup.away || []);
+               const activePlayers   = side === 'home' ? activeHome : activeAway;
+
+               // Build full display list: active players + subbed-out players (greyed)
+               const subbedOut = startingPlayers.map(p => p.name).filter(n => !activePlayers.includes(n));
+               // subs who came in (not in starting lineup)
+               const subbedIn  = activePlayers.filter(n => !startingPlayers.map(p => p.name).includes(n));
+
+               return (
+                 <div key={side} style={{ marginBottom: 14 }}>
+                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 7 }}>
+                     <div style={{ width: 6, height: 6, borderRadius: '50%', background: dotColor }} />
+                     <span style={{ fontSize: 9, fontWeight: 700, color: teamColor, textTransform: 'uppercase', letterSpacing: '.12em' }}>{teamLabel}</span>
+                     {subHistory.filter(s => s.team === side).length > 0 && (
+                       <span style={{ fontSize: 8, color: '#f59e0b', fontWeight: 700 }}>⇄{subHistory.filter(s => s.team === side).length}</span>
+                     )}
+                   </div>
+
+                   {/* Active players — on court NOW */}
+                   {activePlayers.map(name => {
+                     const p = startingPlayers.find(sp => sp.name === name);
+                     const pos = matchData?.playerPositions?.[name] || '';
+                     const isBuddy = favPlayer === name;
+                     const isSub = isSubstitute[name];
+                     return (
+                       <button key={name} onClick={() => { setFavPlayer(isBuddy ? null : name); if (!isBuddy) setRightTab('buddy'); }}
+                         style={{ display: 'flex', alignItems: 'center', gap: 5, width: '100%', padding: '4px 7px', borderRadius: 8, border: 'none', textAlign: 'left', marginBottom: 2, cursor: 'pointer',
+                           background: isBuddy ? 'rgba(234,179,8,.1)' : isSub ? 'rgba(16,185,129,.05)' : 'transparent',
+                           outline: isBuddy ? '1px solid rgba(234,179,8,.3)' : isSub ? '1px solid rgba(16,185,129,.15)' : 'none' }}>
+                         <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: '#94a3b8', width: 18, textAlign: 'right', flexShrink: 0 }}>
+                           {p ? `#${p.jersey}` : ''}
+                         </span>
+                         {isSub && <span style={{ fontSize: 9, color: '#34d399', flexShrink: 0 }}>↑</span>}
+                         <span style={{ fontSize: 12, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                           color: isBuddy ? '#fde047' : isSub ? '#86efac' : '#cbd5e1', fontWeight: isBuddy ? 600 : 400 }}>
+                           {name}
+                         </span>
+                         {pos && <span style={{ fontSize: 10, fontWeight: 700, color: POS_CLR[pos] || '#94a3b8', flexShrink: 0 }}>{pos === 'rozgrywający' ? 'S' : pos === 'przyjmujący' ? 'OH' : pos === 'atakujący' ? 'OP' : pos === 'środkowy' ? 'MB' : pos === 'libero' ? 'L' : ''}</span>}
+                         <span style={{ color: isBuddy ? '#facc15' : '#4b6080', fontSize: 13, flexShrink: 0 }}>{isBuddy ? '★' : '☆'}</span>
+                       </button>
+                     );
+                   })}
+
+                   {/* Subbed-out players — greyed, with ↓ and score */}
+                   {subbedOut.map(name => {
+                     const p = startingPlayers.find(sp => sp.name === name);
+                     const pos = matchData?.playerPositions?.[name] || '';
+                     const isBuddy = favPlayer === name;
+                     const subInfo = replacedAt[name];
+                     return (
+                       <button key={name} onClick={() => { setFavPlayer(isBuddy ? null : name); if (!isBuddy) setRightTab('buddy'); }}
+                         style={{ display: 'flex', alignItems: 'center', gap: 5, width: '100%', padding: '3px 7px', borderRadius: 8, border: 'none', textAlign: 'left', marginBottom: 2, cursor: 'pointer', background: 'transparent', opacity: 0.4 }}>
+                         <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color: '#64748b', width: 18, textAlign: 'right', flexShrink: 0 }}>
+                           {p ? `#${p.jersey}` : ''}
+                         </span>
+                         <span style={{ fontSize: 9, color: '#f87171', flexShrink: 0 }}>↓</span>
+                         <span style={{ fontSize: 11, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#64748b', textDecoration: 'line-through' }}>
+                           {name}
+                         </span>
+                         {subInfo && <span style={{ fontSize: 8, color: '#64748b', flexShrink: 0 }}>{subInfo.scoreHome}:{subInfo.scoreAway}</span>}
+                       </button>
+                     );
+                   })}
+                 </div>
+               );
+             })}
+
+             {/* Sub history log */}
+             {subHistory.length > 0 && (
+               <div style={{ borderTop: '1px solid #0f172a', paddingTop: 8, marginTop: 4 }}>
+                 <div style={{ fontSize: 8, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 5 }}>⇄ Zmiany</div>
+                 {subHistory.map((s, i) => (
+                   <div key={i} style={{ fontSize: 9, color: '#64748b', marginBottom: 3, lineHeight: 1.4 }}>
+                     <span style={{ color: s.team === 'home' ? '#60a5fa' : '#fbbf24', fontWeight: 700 }}>
+                       {s.team === 'home' ? matchData?.teams?.home : matchData?.teams?.away}
+                     </span>
+                     {' · '}
+                     <span style={{ color: '#f87171' }}>{s.playerOut}</span>
+                     <span style={{ color: '#475569' }}> → </span>
+                     <span style={{ color: '#34d399' }}>{s.playerIn}</span>
+                     <span style={{ color: '#334155', marginLeft: 4 }}>{s.scoreHome}:{s.scoreAway}</span>
+                   </div>
+                 ))}
                </div>
-               {currentLineup.home.map(p => {
-                 const pos = matchData?.playerPositions?.[p.name] || '';
-                 const isBuddy = favPlayer === p.name;
-                 return (
-                   <button key={p.name} onClick={() => { setFavPlayer(isBuddy ? null : p.name); if (!isBuddy) setRightTab('buddy'); }}
-                     style={{ display: 'flex', alignItems: 'center', gap: 5, width: '100%', padding: '5px 7px', borderRadius: 8, border: 'none', textAlign: 'left', marginBottom: 2, cursor: 'pointer', background: isBuddy ? 'rgba(234,179,8,.1)' : 'transparent', outline: isBuddy ? '1px solid rgba(234,179,8,.3)' : 'none' }}>
-                     <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: '#475569', width: 18, textAlign: 'right', flexShrink: 0 }}>#{p.jersey}</span>
-                     <span style={{ fontSize: 13, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: isBuddy ? '#fde047' : '#cbd5e1', fontWeight: isBuddy ? 600 : 400 }}>{p.name}</span>
-                     {pos && <span style={{ fontSize: 10, fontWeight: 700, color: POS_CLR[pos] || '#64748b', flexShrink: 0 }}>{pos === 'rozgrywający' ? 'S' : pos === 'przyjmujący' ? 'OH' : pos === 'atakujący' ? 'OP' : pos === 'środkowy' ? 'MB' : pos === 'libero' ? 'L' : ''}</span>}
-                     <span style={{ color: isBuddy ? '#facc15' : '#334155', fontSize: 11, flexShrink: 0, transition: 'color .2s', cursor: 'pointer' }}>{isBuddy ? '★' : '☆'}</span>
-                   </button>
-                 );
-               })}
-             </div>
-             {/* Away */}
-             <div>
-               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 7 }}>
-                 <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#f59e0b' }} />
-                 <span style={{ fontSize: 9, fontWeight: 700, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '.12em' }}>{matchData?.teams?.away?.toUpperCase() || 'AWAY'}</span>
-               </div>
-               {currentLineup.away.map(p => {
-                 const pos = matchData?.playerPositions?.[p.name] || '';
-                 const isBuddy = favPlayer === p.name;
-                 return (
-                   <button key={p.name} onClick={() => { setFavPlayer(isBuddy ? null : p.name); if (!isBuddy) setRightTab('buddy'); }}
-                     style={{ display: 'flex', alignItems: 'center', gap: 5, width: '100%', padding: '5px 7px', borderRadius: 8, border: 'none', textAlign: 'left', marginBottom: 2, cursor: 'pointer', background: isBuddy ? 'rgba(234,179,8,.1)' : 'transparent', outline: isBuddy ? '1px solid rgba(234,179,8,.3)' : 'none' }}>
-                     <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: '#475569', width: 18, textAlign: 'right', flexShrink: 0 }}>#{p.jersey}</span>
-                     <span style={{ fontSize: 13, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: isBuddy ? '#fde047' : '#cbd5e1', fontWeight: isBuddy ? 600 : 400 }}>{p.name}</span>
-                     {pos && <span style={{ fontSize: 10, fontWeight: 700, color: POS_CLR[pos] || '#64748b', flexShrink: 0 }}>{pos === 'rozgrywający' ? 'S' : pos === 'przyjmujący' ? 'OH' : pos === 'atakujący' ? 'OP' : pos === 'środkowy' ? 'MB' : pos === 'libero' ? 'L' : ''}</span>}
-                     <span style={{ color: isBuddy ? '#facc15' : '#334155', fontSize: 11, flexShrink: 0, transition: 'color .2s', cursor: 'pointer' }}>{isBuddy ? '★' : '☆'}</span>
-                   </button>
-                 );
-               })}
-             </div>
+             )}
            </>
          ) : (
-           <div style={{ fontSize: 11, color: '#374151', textAlign: 'center', marginTop: 40 }}>Naciśnij ▶ żeby rozpocząć</div>
+           <div style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center', marginTop: 40 }}>Naciśnij ▶ żeby rozpocząć</div>
          )}
        </div>
 
        {/* CENTER: Commentary feed */}
        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
          {commentaries.length === 0 ? (
-           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, color: '#374151' }}>
+           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, color: '#94a3b8' }}>
              <div style={{ fontSize: 32 }}>🏐</div>
              <div style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>Naciśnij ▶ żeby rozpocząć transmisję</div>
-             <div style={{ fontSize: 11, color: '#374151' }}>Rally-by-rally commentary powered by GPT-4o-mini + RAG</div>
+             <div style={{ fontSize: 11, color: '#94a3b8' }}>Rally-by-rally commentary powered by GPT-4o-mini + RAG</div>
            </div>
          ) : (
            <div ref={commentaryRef} style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px' }}>
@@ -2699,49 +2813,25 @@ export default function LiveMatchCommentaryV4() {
                  const winnerName = sd.winner === 'home' ? getHomeTeamFull() : getAwayTeamFull();
                  return (
                    <div key={index} style={{ background: 'linear-gradient(to right,rgba(6,78,59,.2),rgba(4,120,87,.15),rgba(6,78,59,.2))', border: '1px solid rgba(16,185,129,.2)', borderRadius: 12, padding: 16, marginBottom: 6, textAlign: 'center' }}>
-                     <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '.15em', color: '#065f46', marginBottom: 4 }}>Koniec seta {sd.setNumber}</div>
+                     <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '.15em', color: '#065f46', marginBottom: 4 }}>{BUDDY_I18N[language].setEnd} {sd.setNumber}</div>
                      <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 4 }}>{sd.finalScore.home} : {sd.finalScore.away}</div>
-                     <div style={{ fontSize: 11, color: '#34d399', marginBottom: 8 }}>Wygrywa: {winnerName}</div>
+                     <div style={{ fontSize: 11, color: '#34d399', marginBottom: 8 }}>{BUDDY_I18N[language].setWinner}: {winnerName}</div>
                      {sd.narrative && sd.narrative !== '...' && (
                        <p style={{ fontSize: 13, color: '#d1fae5', lineHeight: 1.6, fontStyle: 'italic', margin: '0 0 8px' }}>{sd.narrative}</p>
                      )}
                      {sd.narrative === '...' && <p style={{ fontSize: 11, color: '#34d399', margin: '0 0 8px', animation: 'pulse 1.5s infinite' }}>Generowanie podsumowania...</p>}
                      {sd.topScorers.length > 0 && (
                        <div style={{ borderTop: '1px solid rgba(16,185,129,.2)', paddingTop: 8, textAlign: 'left', display: 'inline-block', minWidth: 180 }}>
-                         <div style={{ fontSize: 9, fontWeight: 700, color: '#34d399', textTransform: 'uppercase', marginBottom: 4 }}>Top punktujący:</div>
+                         <div style={{ fontSize: 9, fontWeight: 700, color: '#34d399', textTransform: 'uppercase', marginBottom: 4 }}>{BUDDY_I18N[language].topScorers}:</div>
                          {sd.topScorers.map((s, i) => (
                            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, padding: '2px 0' }}>
                              <span style={{ color: favPlayer === s.player ? '#fde047' : '#cbd5e1' }}>{i + 1}. {s.player}</span>
-                             <span style={{ color: '#34d399', fontWeight: 700, marginLeft: 16 }}>{s.points} pkt</span>
+                             <span style={{ color: '#34d399', fontWeight: 700, marginLeft: 16 }}>{s.points} {BUDDY_I18N[language].pts}</span>
                            </div>
                          ))}
                        </div>
                      )}
-                     <div style={{ marginTop: 10 }}>
-                       <button onClick={() => runAudit(sd.setNumber)} disabled={isAuditing}
-                         style={{ padding: '4px 12px', background: 'rgba(168,85,247,.2)', border: '1px solid rgba(168,85,247,.3)', borderRadius: 6, color: '#c084fc', fontSize: 10, fontWeight: 700, cursor: 'pointer' }}>
-                         {isAuditing ? '🔍 Audytuję...' : '🔍 Audyt Gemini'}
-                       </button>
-                     </div>
-                     {auditResult && auditResult.setNumber === sd.setNumber && (
-                       <div style={{ marginTop: 10, background: 'rgba(15,23,42,.6)', borderRadius: 8, padding: 12, textAlign: 'left' }}>
-                         <div style={{ fontSize: 11, fontWeight: 700, color: '#facc15', marginBottom: 8 }}>🔍 Audyt Set {sd.setNumber} — {auditResult.overallScore}/10</div>
-                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 6, marginBottom: 8 }}>
-                           {Object.entries(auditResult.categories || {}).map(([key, val]: [string, any]) => (
-                             <div key={key} style={{ textAlign: 'center' }}>
-                               <div style={{ fontSize: 9, color: '#64748b', textTransform: 'capitalize' }}>{key}</div>
-                               <div style={{ fontSize: 14, fontWeight: 700, color: val.score >= 7 ? '#34d399' : val.score >= 5 ? '#facc15' : '#f87171' }}>{val.score}</div>
-                             </div>
-                           ))}
-                         </div>
-                         {auditResult.topIssues?.map((issue: string, i: number) => (
-                           <div key={i} style={{ fontSize: 10, color: '#f87171', marginBottom: 2 }}>❌ {issue}</div>
-                         ))}
-                         {auditResult.suggestions?.map((s: string, i: number) => (
-                           <div key={i} style={{ fontSize: 10, color: '#60a5fa', marginBottom: 2 }}>💡 {s}</div>
-                         ))}
-                       </div>
-                     )}
+
                    </div>
                  );
                }
@@ -2753,7 +2843,7 @@ export default function LiveMatchCommentaryV4() {
                    {rally && (
                      <div style={{ flexShrink: 0, minWidth: 64, background: isHome ? 'linear-gradient(135deg,rgba(29,78,216,.25),rgba(59,130,246,.15))' : 'linear-gradient(135deg,rgba(120,53,15,.25),rgba(245,158,11,.15))', border: `1px solid ${isHome ? 'rgba(59,130,246,.35)' : 'rgba(245,158,11,.35)'}`, borderRadius: 8, padding: '6px 8px', textAlign: 'center' }}>
                        <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 20, fontWeight: 700, color: isHome ? '#93c5fd' : '#fcd34d', lineHeight: 1 }}>
-                         {rally.score_after.home}<span style={{ color: '#334155', fontSize: 14, margin: '0 1px' }}>:</span>{rally.score_after.away}
+                         {rally.score_after.home}<span style={{ color: '#475569', fontSize: 14, margin: '0 1px' }}>:</span>{rally.score_after.away}
                        </div>
                      </div>
                    )}
@@ -2799,7 +2889,7 @@ export default function LiveMatchCommentaryV4() {
                      {/* TTS + InlineFeedback row */}
                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                        <button onClick={() => playTTS(commentary.text, commentary.rallyNumber)}
-                         style={{ fontSize: 10, padding: '1px 6px', borderRadius: 4, border: 'none', cursor: 'pointer', background: ttsPlaying === commentary.rallyNumber ? 'rgba(16,185,129,.2)' : 'rgba(255,255,255,.05)', color: ttsPlaying === commentary.rallyNumber ? '#34d399' : '#374151' }}>
+                         style={{ fontSize: 10, padding: '1px 6px', borderRadius: 4, border: 'none', cursor: 'pointer', background: ttsPlaying === commentary.rallyNumber ? 'rgba(16,185,129,.2)' : 'rgba(255,255,255,.05)', color: ttsPlaying === commentary.rallyNumber ? '#34d399' : '#94a3b8' }}>
                          {ttsPlaying === commentary.rallyNumber ? '🔊' : '🔈'}
                        </button>
                        <InlineFeedback
@@ -2811,7 +2901,7 @@ export default function LiveMatchCommentaryV4() {
                        {/* RAG debug */}
                        {commentary.ragDebug && commentary.ragDebug.length > 0 && (
                          <button onClick={() => setOpenRagDebug(openRagDebug === commentary.rallyNumber ? null : commentary.rallyNumber)}
-                           style={{ fontSize: 9, padding: '1px 6px', borderRadius: 4, border: '1px solid #1e293b', color: '#374151', background: 'transparent', cursor: 'pointer', fontFamily: 'monospace' }}>
+                           style={{ fontSize: 9, padding: '1px 6px', borderRadius: 4, border: '1px solid #1e293b', color: '#94a3b8', background: 'transparent', cursor: 'pointer', fontFamily: 'monospace' }}>
                            {openRagDebug === commentary.rallyNumber ? '▲ RAG' : '▼ RAG'}
                          </button>
                        )}
@@ -2821,9 +2911,9 @@ export default function LiveMatchCommentaryV4() {
                        <div style={{ marginTop: 6, background: '#0a0f1a', border: '1px solid #1e293b', borderRadius: 8, padding: 10, fontSize: 10, fontFamily: 'monospace' }}>
                          {commentary.ragDebug.map((ns, i) => (
                            <div key={i} style={{ display: 'flex', gap: 6, padding: '3px 6px', borderRadius: 4, marginBottom: 2, background: ns.used ? 'rgba(16,185,129,.05)' : ns.retrieved > 0 ? 'rgba(234,179,8,.05)' : 'rgba(255,255,255,.02)' }}>
-                             <span style={{ color: ns.used ? '#34d399' : ns.retrieved > 0 ? '#facc15' : '#374151', width: 10 }}>{ns.used ? '✓' : ns.retrieved > 0 ? '~' : '✗'}</span>
+                             <span style={{ color: ns.used ? '#34d399' : ns.retrieved > 0 ? '#facc15' : '#64748b', width: 10 }}>{ns.used ? '✓' : ns.retrieved > 0 ? '~' : '✗'}</span>
                              <span style={{ color: '#cbd5e1', fontWeight: 700 }}>{ns.namespace}</span>
-                             <span style={{ color: '#374151' }}>{ns.topScore > 0 ? ns.topScore.toFixed(3) : '—'}</span>
+                             <span style={{ color: '#94a3b8' }}>{ns.topScore > 0 ? ns.topScore.toFixed(3) : '—'}</span>
                            </div>
                          ))}
                        </div>
@@ -2841,7 +2931,7 @@ export default function LiveMatchCommentaryV4() {
          <div style={{ display: 'flex', borderBottom: '1px solid #0f172a', flexShrink: 0 }}>
            {(['ranking', 'buddy', 'set'] as const).map(t => (
              <button key={t} onClick={() => setRightTab(t)}
-               style={{ flex: 1, padding: '8px 4px', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', border: 'none', cursor: 'pointer', borderBottom: rightTab === t ? '2px solid #3b82f6' : '2px solid transparent', color: rightTab === t ? '#fff' : '#374151', background: rightTab === t ? 'rgba(59,130,246,.05)' : 'transparent' }}>
+               style={{ flex: 1, padding: '8px 4px', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', border: 'none', cursor: 'pointer', borderBottom: rightTab === t ? '2px solid #3b82f6' : '2px solid transparent', color: rightTab === t ? '#fff' : '#94a3b8', background: rightTab === t ? 'rgba(59,130,246,.05)' : 'transparent' }}>
                {t === 'ranking' ? '📊 Ranking' : t === 'buddy' ? '★ Buddy' : '⚡ Set'}
              </button>
            ))}
@@ -2852,7 +2942,7 @@ export default function LiveMatchCommentaryV4() {
            {rightTab === 'ranking' && (
              <div>
                {Object.keys(playerStats).length === 0 ? (
-                 <div style={{ fontSize: 11, color: '#374151', textAlign: 'center', marginTop: 40 }}>Naciśnij ▶ żeby zobaczyć ranking</div>
+                 <div style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center', marginTop: 40 }}>Naciśnij ▶ żeby zobaczyć ranking</div>
                ) : (
                  <>
                    <RankCard title="Punkty" icon="🏆" data={topScorersLB.map(e => ({ name: e.name, team: e.team, value: e.points }))} isPercent={false} barColor="linear-gradient(to right,#065f46,#34d399)" border="rgba(16,185,129,.15)" />
@@ -2872,7 +2962,7 @@ export default function LiveMatchCommentaryV4() {
                {!favPlayer ? (
                  <div style={{ textAlign: 'center', padding: '40px 16px' }}>
                    <div style={{ fontSize: 24, marginBottom: 8 }}>★</div>
-                   <div style={{ fontSize: 11, color: '#374151' }}>{BUDDY_I18N[language].selectPlayer}</div>
+                   <div style={{ fontSize: 11, color: '#94a3b8' }}>{BUDDY_I18N[language].selectPlayer}</div>
                    <div style={{ fontSize: 10, color: '#1e293b', marginTop: 4 }}>Kliknij zawodnika w lewej kolumnie</div>
                  </div>
                ) : (() => {
@@ -2902,15 +2992,15 @@ export default function LiveMatchCommentaryV4() {
                      <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4, padding: '3px 10px', borderRadius: 6, display: 'inline-block', background: isHomePlayer ? 'rgba(59,130,246,.1)' : 'rgba(245,158,11,.1)', color: isHomePlayer ? '#93c5fd' : '#fcd34d' }}>
                        {favPlayer}
                      </div>
-                     {pl && <div style={{ fontSize: 10, color: '#374151', marginBottom: 10 }}>#{pl.jersey} · {isHomePlayer ? getHomeTeamFull() : getAwayTeamFull()}</div>}
-                     <div style={{ fontSize: 9, fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 8 }}>{BUDDY_I18N[language].statsTitle}</div>
+                     {pl && <div style={{ fontSize: 10, color: '#94a3b8', marginBottom: 10 }}>#{pl.jersey} · {isHomePlayer ? getHomeTeamFull() : getAwayTeamFull()}</div>}
+                     <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 8 }}>{BUDDY_I18N[language].statsTitle}</div>
                      {secs.map(sec => (
                        <div key={sec.lbl} style={{ marginBottom: 8, borderRadius: 10, padding: '8px 10px', background: 'rgba(255,255,255,.025)', borderLeft: '2px solid rgba(255,255,255,.07)' }}>
                          <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 6, color: sec.c }}>{sec.lbl}</div>
                          <div style={{ display: 'grid', gridTemplateColumns: `repeat(${sec.rows.length},1fr)`, gap: 4 }}>
                            {sec.rows.map(r => (
                              <div key={r.l} style={{ textAlign: 'center' }}>
-                               <div style={{ fontSize: 8, color: '#374151', textTransform: 'uppercase', marginBottom: 2 }}>{r.l}</div>
+                               <div style={{ fontSize: 8, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 2 }}>{r.l}</div>
                                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 700, color: '#cbd5e1' }}>{r.v}</div>
                              </div>
                            ))}
@@ -2919,15 +3009,15 @@ export default function LiveMatchCommentaryV4() {
                      ))}
                      {/* Expert knowledge */}
                      <div style={{ marginTop: 4, background: 'rgba(255,255,255,.02)', border: '1px solid #0f172a', borderRadius: 10, padding: '10px 12px' }}>
-                       <div style={{ fontSize: 9, fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 6 }}>{BUDDY_I18N[language].expertTitle}</div>
+                       <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 6 }}>{BUDDY_I18N[language].expertTitle}</div>
                        {isLoadingProfile ? (
-                         <div style={{ fontSize: 11, color: '#374151', animation: 'pulse 1.5s infinite' }}>{BUDDY_I18N[language].loading}</div>
+                         <div style={{ fontSize: 11, color: '#94a3b8', animation: 'pulse 1.5s infinite' }}>{BUDDY_I18N[language].loading}</div>
                        ) : playerProfile?.found && playerProfile.summary ? (
                          <div style={{ fontSize: 11, color: '#94a3b8', lineHeight: 1.6, whiteSpace: 'pre-line' }}>{translatedProfileSummary || playerProfile.summary}</div>
                        ) : playerProfile?.found === false ? (
-                         <div style={{ fontSize: 10, color: '#374151', fontStyle: 'italic' }}>{BUDDY_I18N[language].noProfile}</div>
+                         <div style={{ fontSize: 10, color: '#94a3b8', fontStyle: 'italic' }}>{BUDDY_I18N[language].noProfile}</div>
                        ) : (
-                         <div style={{ fontSize: 10, color: '#374151', fontStyle: 'italic' }}>{BUDDY_I18N[language].profilePending}</div>
+                         <div style={{ fontSize: 10, color: '#94a3b8', fontStyle: 'italic' }}>{BUDDY_I18N[language].profilePending}</div>
                        )}
                      </div>
                    </>
@@ -2939,11 +3029,12 @@ export default function LiveMatchCommentaryV4() {
            {/* ── SET TAB ─────────────────────────────────────────────────── */}
            {rightTab === 'set' && (
              <div>
-               <div style={{ fontSize: 9, fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 10 }}>⚡ Wynik meczu</div>
+               <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 10 }}>⚡ Wynik meczu</div>
                <div style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.06)', borderRadius: 14, padding: 12, marginBottom: 12 }}>
                  {(() => {
-                   const hW = Object.values(setResults).filter(sc => sc.home > sc.away).length;
-                   const aW = Object.values(setResults).filter(sc => sc.away > sc.home).length;
+                   const completedSets = Object.entries(setResults).filter(([sn]) => Number(sn) < currentSetNumber);
+                   const hW = completedSets.filter(([, sc]) => sc.home > sc.away).length;
+                   const aW = completedSets.filter(([, sc]) => sc.away > sc.home).length;
                    return (
                      <>
                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
@@ -2951,14 +3042,17 @@ export default function LiveMatchCommentaryV4() {
                          <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 700, color: '#fff' }}>{hW} : {aW}</span>
                          <span style={{ fontSize: 12, fontWeight: 700, color: '#fcd34d' }}>{getAwayTeamFull().split(' ').slice(-1)[0]}</span>
                        </div>
-                       {Object.entries(setResults).sort(([a], [b]) => Number(a) - Number(b)).map(([sn, sc]) => {
+                       {Object.entries(setResults)
+                         .sort(([a], [b]) => Number(a) - Number(b))
+                         .filter(([sn]) => Number(sn) < currentSetNumber)
+                         .map(([sn, sc]) => {
                          const hw = sc.home > sc.away;
                          return (
                            <div key={sn} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 8px', borderRadius: 8, marginBottom: 4, background: 'rgba(255,255,255,.02)' }}>
-                             <span style={{ fontSize: 10, color: '#374151' }}>Set {sn}</span>
+                             <span style={{ fontSize: 10, color: '#94a3b8' }}>Set {sn}</span>
                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: hw ? '#93c5fd' : '#475569' }}>{sc.home}</span>
-                               <span style={{ fontSize: 9, color: '#1e293b' }}>:</span>
+                               <span style={{ fontSize: 9, color: '#475569' }}>:</span>
                                <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: !hw ? '#fcd34d' : '#475569' }}>{sc.away}</span>
                              </div>
                              <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 4, background: hw ? 'rgba(59,130,246,.1)' : 'rgba(245,158,11,.1)', color: hw ? '#60a5fa' : '#fbbf24' }}>
@@ -2974,7 +3068,7 @@ export default function LiveMatchCommentaryV4() {
                {/* Show ranking below set results */}
                {Object.keys(playerStats).length > 0 && (
                  <>
-                   <div style={{ fontSize: 9, fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 10 }}>Statystyki meczu</div>
+                   <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 10 }}>Statystyki meczu</div>
                    <RankCard title="Punkty" icon="🏆" data={topScorersLB.map(e => ({ name: e.name, team: e.team, value: e.points }))} isPercent={false} barColor="linear-gradient(to right,#065f46,#34d399)" border="rgba(16,185,129,.15)" />
                    <RankCard title="Atak K%" icon="💥" data={topAttackLB.map(e => ({ name: e.name, team: e.team, value: e.killPct }))} isPercent={true} barColor="linear-gradient(to right,#7f1d1d,#f87171)" border="rgba(239,68,68,.15)" />
                  </>
