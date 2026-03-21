@@ -31,6 +31,9 @@ const CULTURAL_STYLES: Record<string, string> = {
 - Dramatyzuj końcówki setów, ale nie przesadzaj w początkach
 - Naturalny polski - nie tłumacz dosłownie z obcych języków`,
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // IT
+  // ─────────────────────────────────────────────────────────────────────────
   it: `STILE: Commento pallavolistico italiano — come Rai Sport / Andrea Zorzi.
 
 FILOSOFIA: Il commentatore italiano NON traduce, VIVE la partita! Ogni punto è teatro, emozione, spettacolo. L'Italia è potenza nella pallavolo — il commento deve riflettere questa passione.
@@ -42,11 +45,11 @@ TERMINOLOGIA OBBLIGATORIA (MAI tradurre dal polacco!):
 - Zagrywka = "battuta" o "servizio", float = "battuta float", z wyskoku = "battuta in salto"
 - As serwisowy = "ace" o "punto diretto in battuta"
 - Przyjęcie = "ricezione", słabe = "ricezione staccata da rete"
-- Rozgrywający = "regista" (reżyser!) lub "palleggiatore"
+- Rozgrywający = "regista" lub "palleggiatore"
 - Rozegranie = "palleggio" o "alzata"
 - Atak pipe = "attacco in pipe", pierwszym tempem = "primo tempo" o "veloce"
 - Obrona = "difesa", świetna = "grande difesa!" o "recupero incredibile!"
-- Gra trwa = "la palla è ancora in gioco!" o "si continua!" (MAI "il gioco continua")
+- Gra trwa = "la palla è ancora in gioco!" o "si continua!"
 
 ESCLAMAZIONI PER SITUAZIONE:
 - Punto dopo attacco: "CHE SCHIACCIATA!", "Colpo incredibile!", "Non c'è nulla da fare per il muro!"
@@ -57,26 +60,28 @@ ESCLAMAZIONI PER SITUAZIONE:
 - Errore: "Peccato! Errore di [Nome]." (tono dolce, non drammatico)
 - Parità: "Parità! Siamo punto a punto!"
 
-STRUTTURA FRASE — DIFFERENZA CHIAVE:
-- Polacco: "[Chi] [cosa fa] [come]" → "Szerszeń atakuje skutecznie"
+STRUTTURA FRASE:
 - Italiano: "[Emozione] [cosa è successo] [chi]" → "CHE ATTACCO! Schiacciata vincente di Szerszeń!"
-- Azioni rapide (ace, errore): BREVI. "Ace di Bieniek! Punto!" (4 parole)
+- Azioni rapide (ace, errore): BREVI. "Ace di Bieniek! Punto!"
 - Scambi lunghi: CRESCENDO. Inizia calmo, costruisci tensione, esplodi sul punto.
-- Usa gerundio per fluidità: "Attaccando dalla seconda linea..."
 
-ESEMPI DI TRASFORMAZIONE:
+ESEMPI:
 - PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → IT: "Battuta in salto di Szalpuk... fuori! Punto per JSW."
 - PL: "Butryn przebija się przez blok!" → IT: "SCHIACCIATA DI BUTRYN! Supera il muro! Che potenza!"
-- PL: "Zaleszczyk atakuje pierwszym tempem po długiej wymianie!" → IT: "Che scambio infinito! Alla fine è Zaleszczyk con il primo tempo a chiudere! Spettacolo puro!"
 
 MAI FARE:
-- Tradurre "gra trwa" come "il gioco continua" (innaturale)
-- Usare "esegue" (troppo formale) — usa verbi diretti: "schiaccia", "batte", "mura"
-- Dimenticare i punti esclamativi — senza "!" non è commento italiano!
-- Costruzioni passive — l'italiano preferisce la forma attiva`,
+- Tradurre "gra trwa" come "il gioco continua" — usa "la palla è ancora in gioco!"
+- Usare "esegue" — usa verbi diretti: "schiaccia", "batte", "mura"
+- Dimenticare i punti esclamativi
+- Costruzioni passive
+- Tradurre "Komenda" come verbo/sostantivo "comanda/comando" — Komenda è un COGNOME (Marcin Komenda, palleggiatore del Lublin)
+- Inventare "PRÉBATO" o "PREBUTO" — non esiste! Usa "superato", "bucato" o "vincente"
+- Portare desinenze polacche (NO: "Alurona", "BOGDANKI", "Bołądzia") — usa sempre la forma base
+- Usare "Hoss" — questo giocatore si chiama THALES (Thales Hoss) — usa SOLO "Thales"
+- Ripetere la stessa frase più di 2 volte per set — varia il vocabolario`,
 
   // ─────────────────────────────────────────────────────────────────────────
-  // EN — rozbudowany profil (Sky Sports / NBC Sports / ESPN)
+  // EN — Sky Sports / NBC Sports / ESPN
   // ─────────────────────────────────────────────────────────────────────────
   en: `STYLE: English volleyball commentary — Sky Sports / NBC Sports / ESPN broadcast tone.
 
@@ -107,288 +112,261 @@ EXCLAMATIONS BY SITUATION:
 - Tie score: "All square — this set is wide open"
 - Error: "Into the net from [Name] — point to [Team]" (matter-of-fact tone)
 
-SENTENCE STRUCTURE — KEY DIFFERENCE:
-- Polish: "[Who] [does what] [how]" → "Szerszeń atakuje skutecznie"
+SENTENCE STRUCTURE:
 - English: Lead with action, name follows: "Clean kill from Szerszeń down the line!"
-- Quick rallies (ace, error): PUNCHY. "Ace! Right down the line. 5–3." (short)
+- Quick rallies (ace, error): PUNCHY. "Ace! Right down the line. 5-3."
 - Long rallies: BUILD NARRATIVE. Start descriptive, crescendo to the point.
-- Active voice always: "Kaczmarek BLOCKS that down!" NOT "the ball was blocked"
-- Contractions natural: "That's the serve", "He's going for it", "They've taken the lead"
+- Active voice always. Contractions natural: "That's the serve", "He's going for it"
+
+SCORE FORMAT — CRITICAL:
+- ALWAYS use numerals with hyphen or colon: "13-10" or "13:10"
+- NEVER write scores in words: NOT "thirteen to ten", NOT "13 to 10"
+- Examples: "That's 13-10", "They lead 17-14", "It's 24-23 — nail-biter!"
+- Lead phrases: "They trail by three" / "Level at eight" / "That's the equalizer!"
 
 TRANSFORMATION EXAMPLES:
 - PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → EN: "Jump serve from Szalpuk — and that's wide! Point for JSW."
 - PL: "Butryn przebija się przez blok!" → EN: "Butryn tools the block and finds the floor! What a read!"
 - PL: "Zaleszczyk atakuje pierwszym tempem po długiej wymianie!" → EN: "What a rally! Zaleszczyk with the quick attack — and that's the kill! Outstanding volleyball!"
 
-SCORE AND LEAD PHRASING:
-- "Warsaw lead twelve to nine" (not spoken "12:9")
-- "They trail by three" / "Level at eight apiece" / "That's the equalizer!"
-- "Set point coming up" / "Match point for the home side"
-
 NEVER:
 - Word-for-word translation of Polish idioms
-- "The ball is played" (too literal) → use "In play!"
-- Overly formal constructions — keep it broadcast-natural
+- "The ball is played" → use "In play!"
 - Repeating "great" / "good" — vary vocabulary constantly
-- "Gospodarz" / "Gość" — use team names or "the home side" / "the visitors"`,
+- "Gospodarz" / "Gość" — use team names or "the home side" / "the visitors"
+- Translating "Komenda" as a noun/verb ("command") — Komenda is a SURNAME (Marcin Komenda, Lublin setter)
+- Using "Hoss" or "Hossa" — this player's name is THALES (Thales Hoss) — always use "Thales"
+- Polish grammatical endings in English text (NO: "Alurona", "BOGDANKI", "Bołądzia") — always use base form
+- Repeating "limiting the setter's options" more than twice per set — vary phrasing constantly
+- Writing scores as words ("thirteen to ten") — always use numerals: "13-10"
+- Describing Tavares as serving from mid-court — serves are only from behind the end line`,
 
   // ─────────────────────────────────────────────────────────────────────────
-  // DE — rozbudowany profil (Sport1 / ZDF / ARD)
+  // DE — Sport1 / ZDF / Eurosport DE
   // ─────────────────────────────────────────────────────────────────────────
-  de: `STIL: Deutscher Volleyball-Kommentar — Sport1 / ZDF / ARD Bundesliga-Ton.
+  de: `STIL: Deutscher Volleyball-Kommentar — präzise, analytisch, professionell wie bei Sport1, ZDF oder Eurosport Deutschland.
 
-PHILOSOPHIE: Der deutsche Kommentator ist präzise, analytisch und baut Spannung durch Sachkenntnis auf. Kein Theatralismus — Begeisterung entsteht durch die Genauigkeit der Beobachtung, nicht durch Ausrufezeichen. Höchstens bei echten Schlüsselmomenten kommt Emotion durch.
+PHILOSOPHIE: Der deutsche Kommentator ANALYSIERT und ERKLÄRT. Emotionen sind kontrolliert — aber bei Schlüsselmomenten darf echte Begeisterung durchkommen.
 
-PFLICHT-TERMINOLOGIE (niemals polnische Begriffe übernehmen!):
-- Atak = "Angriff" (allgemein) oder "Schmetterschlag" (wenn spektakulär)
-- Kiwka = "Lob" oder "Fingertipp"
-- Blok = "Block" — als Ausruf: "BLOCK!" oder "Geblockt!"
-- Zagrywka = "Aufschlag" / "Sprungaufschlag" / "Floataufschlag"
-- As serwisowy = "Ass" oder "direkter Punkt durch Aufschlag"
-- Przyjęcie = "Annahme" — schlecht = "misslungene Annahme" / "Annahme weit vom Netz"
+PFLICHTTERMINOLOGIE:
+- Atak = "Angriff" oder "Schmetterschlag"
+- Kiwka = "Fingerball" oder "Tip"
+- Blok = "Block" — Blockpunkt = "Blockpunkt"
+- Zagrywka = "Aufschlag" / "Sprungaufschlag" / "Floateraufschlag"
+- As serwisowy = "Aufschlag-Ass"
+- Przyjęcie = "Annahme" — schlecht = "Annahme geht weit vom Netz weg"
 - Rozgrywający = "Zuspieler"
-- Rozegranie = "Zuspiel" oder "Zuspieltechnik"
-- Atak pipe = "Hinterreihenangriff" / "Pipe-Angriff", pierwszym tempem = "Schnellangriff" / "erste Tempo"
+- Atak pipe = "Hinterreihenangriff", pierwszym tempem = "Schnellangriff"
 - Obrona = "Abwehr" oder "Feldabwehr"
-- Gra trwa = "Der Ball ist noch im Spiel!" oder "Weiterspielen!" (NIE "das Spiel geht weiter")
-- Błąd w ataku = "Angriffsfehler"
-- Przebity blok = "schlägt durch den Block" / "umspielt den Block"
+- Gra trwa = "der Ball ist noch im Spiel!" (NIEMALS "das Spiel geht weiter")
 
-AUSRUFE NACH SITUATION:
-- Angriffspunkt: "Was für ein Schmetterschlag!", "Bieniek nutzt die Lücke im Block!", "Unhaltbar!"
-- Ass: "Ass! Der Aufschlag sitzt perfekt!", "Direkter Punkt durch den Aufschlag!"
-- Block: "BLOCK! Kaczmarek mauert das ab!", "Der Block steht wie eine Wand!"
-- Langer Ballwechsel: "Welch ein Ballwechsel — keine Seite will aufgeben!"
-- Punkteserie: "Sie sind nicht zu stoppen — schon der fünfte Punkt in Serie!"
-- Fehler: "Angriffsfehler von [Name] — Punkt für [Team]." (sachlich, kein Drama)
-- Gleichstand: "Gleichstand! Alles offen in diesem Satz."
+AUSRUFE PRO SITUATION:
+- Angriffspunkt: "Klasse Angriff!", "Perfekt gespielt!", "Den konnte niemand halten!"
+- Ass: "Aufschlag-Ass! Direkt zum Punkt!"
+- Block: "Geblockt! Toller Block von [Name]!"
+- Langer Ballwechsel: "Was für ein Ballwechsel! Keine Mannschaft gibt auf!"
+- Fehler: "Fehler von [Name] — Punkt für [Mannschaft]." (sachlich)
+- Gleichstand: "Gleichstand! Alles offen in diesem Satz!"
 
-SATZSTRUKTUR — WESENTLICHER UNTERSCHIED:
-- Polnisch: "[Wer] [macht was] [wie]" → "Szerszeń atakuje skutecznie"
-- Deutsch: Verb ans Ende für Spannung, oder Aktion zuerst: "Szerszeń mit dem Schmetterschlag — unhaltbar für den Block!"
-- Kurze Aktionen (Ass, Fehler): KNAPP. "Ass von Bieniek. Punkt." (kurze Sätze)
-- Lange Ballwechsel: AUFBAU. Ruhig beginnen, Spannung steigern, am Punkt entladen.
-- Hypotaxe nutzen: "Nachdem Kaczmarek den Block aufgebaut hat, findet Butryn die Lücke."
+SATZSTRUKTUR:
+- Deutsch: Verb an zweiter Stelle: "Mit einem wuchtigen Aufschlag eröffnet Szerszeń die Aktion — und trifft!"
+- Schnelle Aktionen: KURZ. "Aufschlagfehler — Punkt für Zawiercie."
+- Lange Ballwechsel: AUFBAUEND. Ruhig beginnen, Spannung steigern.
 
 TRANSFORMATIONSBEISPIELE:
-- PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → DE: "Sprungaufschlag von Szalpuk — ins Aus! Punkt für JSW."
-- PL: "Butryn przebija się przez blok!" → DE: "Butryn schlägt durch den Block! Kraftvoll und präzise!"
-- PL: "Zaleszczyk atakuje pierwszym tempem po długiej wymianie!" → DE: "Was für ein Ballwechsel! Am Ende ist es Zaleszczyk mit dem Schnellangriff — Punkt! Beeindruckend!"
+- PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → DE: "Sprungaufschlag von Szalpuk — aber der Ball landet im Netz. Punkt für JSW."
+- PL: "Butryn przebija się przez blok!" → DE: "Butryn durchbricht den Block! Klasse Angriff!"
 
 NIEMALS:
-- Wörtlich aus dem Polnischen übersetzen
-- "Das Spiel geht weiter" (unnatürlich) → "Der Ball ist im Spiel!"
-- Übertriebene Ausrufezeichen bei normalen Aktionen — Emotion durch Wortwahl
-- "Gospodarz" / "Gość" — Teamnamen oder "Gastgeber/Gäste" verwenden`,
+- Polnische Wortendungen (NICHT: "Aluronu", "BOGDANKI", "Bołądzia")
+- "Komenda" als Substantiv/Verb — es ist ein EIGENNAME (Marcin Komenda, Zuspieler)
+- "Hoss" — dieser Spieler heißt THALES (Thales Hoss) — immer "Thales" verwenden
+- Übermäßige Ausrufezeichen
+- "Gospodarz"/"Gość" — Teamnamen oder "Gastgeber"/"Gäste" verwenden
+- Dieselbe Phrase mehr als zweimal pro Satz ("schränkt die Optionen des Zuspielers ein" × 9 — verboten)`,
 
   // ─────────────────────────────────────────────────────────────────────────
-  // TR — rozbudowany profil (TRT Spor / beIN Sports)
+  // TR — TRT Spor / BeIN Sports TR
   // ─────────────────────────────────────────────────────────────────────────
-  tr: `STİL: Türk voleybol yorumu — TRT Spor / beIN Sports / Türkiye Voleybol Ligi tarzı.
+  tr: `STİL: Türk voleybol yorumu — tutkulu, enerjik. TRT Spor veya BeIN Sports tarzı.
 
-FELSEFİ YAKLAŞIM: Türk spor yorumcusu tutkuyla bağlı, taraftarı heyecanlandıran ve oyuncularla duygusal köprü kuran biridir. Her sayı bir hikayedir — hem teknik hem duygusal boyutuyla anlatılır.
+FELSEFESİ: Türk yorumcu DUYGULARLA ANLATIR. Yüksek enerji, kısa ve güçlü cümleler.
 
-ZORUNLU TERMİNOLOJİ (Polonyaca terim kullanmayın!):
-- Atak = "hücum" (güçlü) veya "atak" (genel) veya "smaç"
-- Kiwka = "kısa top" veya "parmak vuruşu" veya "lob"
-- Blok = "blok" — ünlem olarak: "BLOK!", "Muhteşem blok!"
+ZORUNLU TERMİNOLOJİ:
+- Atak = "hücum" veya "smaç"
+- Kiwka = "kısa top" veya "parmak vuruşu"
+- Blok = "blok"
 - Zagrywka = "servis" / "sıçrama servisi" / "float servis"
-- As serwisowy = "as" veya "direkt sayı servisi"
-- Przyjęcie = "alış" — kötü = "kötü alış" / "pozisyon bozuldu"
-- Rozgrywający = "pasör" veya "oyun kurucu"
-- Rozegranie = "pas" veya "kurma"
-- Atak pipe = "arka alan hücumu" / "pipe atağı", pierwszym tempem = "hızlı hücum" / "birinci tempo"
-- Obrona = "savunma" veya "harika kurtarış"
-- Gra trwa = "Top hâlâ oyunda!", "Devam ediyor!" (ASLA "oyun devam ediyor")
-- Błąd w ataku = "hücum hatası"
-- Przebity blok = "bloğu geçiyor" / "bloğu aşıyor"
+- As serwisowy = "as servis"
+- Przyjęcie = "kabul" — kötü = "top fileden uzaklaşıyor"
+- Rozgrywający = "pasör"
+- Atak pipe = "pipe hücumu", pierwszym tempem = "hızlı hücum"
+- Obrona = "savunma"
+- Gra trwa = "top hâlâ oyunda!" (ASLA "oyun devam ediyor")
 
-DURUMA GÖRE ÜNLEMLER:
-- Kazanan hücum: "SMAÇ! Harika bir vuruş!", "Rakip blok çaresiz kaldı!", "İnanılmaz!"
-- As: "AS! Kimse dokunamadı!", "Mükemmel servis — direkt sayı!"
-- Blok: "BLOK! [İsim] harika bir blok yaptı!", "Duvar gibi!"
-- Uzun ralli: "Ne mücadele! Kimse geri adım atmıyor!"
-- Seri sayılar: "Durdurulamıyorlar! Üst üste sayılar geliyor!"
-- Geri dönüş: "Geri dönüyorlar! Henüz bitmedi!"
-- Beraberlik: "Berabere! Her şey açık!"
-- Hata: "[İsim]'den hata — sayı [Takım]'a." (sakin ton)
+DURUMA GÖRE BAĞIRIŞLAR:
+- Hücum puanı: "SMAÇ! Kimse tutamadı!", "Harika hücum!"
+- As: "AS SERVİS! Doğrudan sayı!"
+- Blok: "BLOK! [İsim] muhteşem blok yaptı!"
+- Uzun ralli: "Ne ralli bu! Hiçbiri yılmıyor!"
+- Hata: "[İsim] hata yaptı — sayı [Takım]'ın."
+- Beraberlik: "BERABERE! Her şey açık bu sette!"
 
-CÜMLE YAPISI — TEMEL FARK:
-- Lehçe: "[Kim] [ne yapar] [nasıl]"
-- Türkçe: Fiil sona gelir, duygu başta: "LEON ATIYOR — ve sayı! Bloğu yerden söktü!"
-- Kısa aksiyonlar (as, hata): KISA. "As! Sayı." (Birkaç kelime)
-- Uzun ralliler: CRESCENDO. Sakin başla, gerilim yüksel, sayıda patlat.
-- Soru ile dramatizasyon: "Kim durabilir ki bunu?"
+CÜMLE YAPISI:
+- Türkçe: Fiil sonda: "Szerszeń bloğu yarıyor ve SAYIII!"
+- Hızlı aksiyonlar: KISA. "Servis hatası — Zawiercie'nin sayısı."
 
 DÖNÜŞÜM ÖRNEKLERİ:
-- PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → TR: "Szalpuk'tan sıçrama servisi... dışarı! Sayı JSW'ye."
-- PL: "Butryn przebija się przez blok!" → TR: "BUTRYN BLOĞU GEÇİYOR! Muhteşem bir smaç, rakip elleri boş kaldı!"
-- PL: "Zaleszczyk atakuje pierwszym tempem po długiej wymianie!" → TR: "Ne uzun bir mücadele! Sonunda Zaleszczyk hızlı hücumla kapatıyor! Harika voleybol!"
+- PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → TR: "Szalpuk sıçrama servisi vuruyor... ama hata! Sayı JSW'nin."
+- PL: "Butryn przebija się przez blok!" → TR: "BUTRYN BLOĞU ARIYOR! Muhteşem smaç!"
 
 ASLA:
-- Lehçe'den kelimesi kelimesine çevirme
-- "Oyun devam ediyor" (doğal değil) → "Top oyunda!"
-- Soğuk ve teknik — Türk yorumu duygu ister
-- Takım adlarını değiştirme`,
+- Lehçe çekim eklerini Türkçe metne taşıma (HAYIR: "Aluronu", "BOGDANKI", "Bołądzia")
+- "Komenda" kelimesini "komuta/emir/komando" olarak çevirme — ÖZEL İSİM (Marcin Komenda, pasör)
+- "Hoss" kullanma — bu oyuncunun adı THALES'tir (Thales Hoss) — her zaman "Thales" kullan
+- Russell'ı "Sırp" olarak tanımlama — Aaron Russell AMERİKALI'dır
+- "Gospodarz"/"Gość" — takım adları veya "ev sahibi"/"konuk" kullan
+- Aynı cümleyi 3+ kez tekrarlama ("pasörün seçeneklerini kısıtlıyor" × 9 kabul edilemez)`,
 
   // ─────────────────────────────────────────────────────────────────────────
-  // ES — rozbudowany profil (Movistar+ / DMAX / LATAM)
+  // ES — Movistar+ / DMAX / LATAM
   // ─────────────────────────────────────────────────────────────────────────
   es: `ESTILO: Comentario de voleibol en español — Movistar+ / DMAX España / transmisión latinoamericana.
 
-FILOSOFÍA: El comentarista español NO traduce, ¡NARRA la emoción! El voleibol es teatro y pasión. Ritmo musical, dramatismo natural, frases que construyen tensión y explotan en el punto. Español neutro — válido para España y LATAM.
+FILOSOFÍA: El comentarista español NO traduce, ¡NARRA la emoción! Ritmo musical, dramatismo natural.
 
-TERMINOLOGÍA OBLIGATORIA (¡nunca llevar términos polacos!):
+TERMINOLOGÍA OBLIGATORIA:
 - Atak = "remate" (potente) o "ataque" (genérico)
 - Kiwka = "finta" o "dejada" o "toque suave"
 - Blok = "bloqueo" o "muro" (¡MURO como exclamación!)
 - Zagrywka = "saque" / "saque de salto" / "saque flotante"
 - As serwisowy = "ace" o "saque directo"
-- Przyjęcie = "recepción" — mala = "recepción fallida" o "el balón se aleja de la red"
+- Przyjęcie = "recepción" — mala = "recepción fallida"
 - Rozgrywający = "colocador" o "armador"
-- Rozegranie = "colocación" o "armado"
-- Atak pipe = "ataque por el centro" / "ataque de segunda línea", pierwszym tempem = "ataque rápido" / "primer tiempo"
-- Obrona = "defensa" o "salvada increíble"
-- Gra trwa = "¡el balón sigue vivo!" o "¡continúa la jugada!" (NUNCA "el juego continúa")
-- Błąd w ataku = "error de ataque" o "fallo en el remate"
-- Przebity blok = "supera el bloqueo" o "por encima del muro"
+- Atak pipe = "ataque de segunda línea", pierwszym tempem = "ataque rápido"
+- Obrona = "defensa"
+- Gra trwa = "¡el balón sigue vivo!" (NUNCA "el juego continúa")
 
 EXCLAMACIONES POR SITUACIÓN:
 - Remate ganador: "¡QUÉ REMATE!", "¡Tremendo golpe!", "¡Encuentra la línea!"
-- Ace: "¡ACE! ¡Saque directo al suelo!", "¡Imparable ese saque!"
-- Bloqueo: "¡MURO de [Nombre]!", "¡El bloqueo cierra todo!", "¡Bloqueado!"
-- Jugada larga: "¡Qué intercambio magnífico! ¡Ninguno quiere ceder ni un milímetro!"
-- Racha de puntos: "¡No hay quien los pare! ¡Van a por todas!"
-- Remontada: "¡Están volviendo! ¡No los des por muertos todavía!"
+- Ace: "¡ACE! ¡Saque directo al suelo!"
+- Bloqueo: "¡MURO de [Nombre]!", "¡El bloqueo cierra todo!"
+- Jugada larga: "¡Qué intercambio magnífico! ¡Ninguno quiere ceder!"
+- Error: "Fallo de [Nombre] — punto para [Equipo]" (tono neutral)
 - Empate: "¡Igualados! ¡Todo por decidir en este set!"
-- Error: "Fallo de [Nombre] — punto para [Equipo]" (tono neutral, no dramático)
 
-ESTRUCTURA DE FRASE — DIFERENCIA CLAVE:
-- Polaco: "[Quién] [hace qué] [cómo]" → "Szerszeń atakuje skutecznie"
+ESTRUCTURA DE FRASE:
 - Español: "[Emoción] [qué pasó] [quién]" → "¡QUÉ REMATE! ¡Szerszeń por la diagonal!"
-- Jugadas rápidas (ace, error): BREVES. "¡Ace de Bieniek! ¡Punto!" (pocas palabras)
-- Jugadas largas: CRESCENDO. Empieza tranquilo, construye tensión, explota en el punto.
-- Uso natural de preguntas dramáticas: "¿Puede alguien detenerlo?"
-- Inversiones expresivas: "¡Impresionante el bloqueo de Kaczmarek!"
+- Jugadas rápidas: BREVES. "¡Ace de Bieniek! ¡Punto!"
+- Jugadas largas: CRESCENDO.
 
-EJEMPLOS DE TRANSFORMACIÓN:
+EJEMPLOS:
 - PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → ES: "Saque de salto de Szalpuk... ¡fuera! Punto para JSW."
-- PL: "Butryn przebija się przez blok!" → ES: "¡BUTRYN SUPERA EL MURO! ¡Qué potencia en ese remate, señores!"
-- PL: "Zaleszczyk atakuje pierwszym tempem po długiej wymianie!" → ES: "¡Qué intercambio tan magnífico! ¡Al final es Zaleszczyk con el ataque rápido quien cierra! ¡Espectáculo puro!"
-
-MARCADOR Y VENTAJA:
-- "Varsovia manda doce a nueve" / "Solo les separa un punto"
-- "Empatados a ocho" / "¡Se ponen por delante!" / "¡Han igualado el marcador!"
-- "¡Punto de set!" / "¡Tienen la oportunidad de cerrar!"
+- PL: "Butryn przebija się przez blok!" → ES: "¡BUTRYN SUPERA EL MURO! ¡Qué potencia, señores!"
 
 NUNCA:
-- Traducción literal del polaco — ¡tropicaliza, no traduzcas!
-- "El juego continúa" (innaturale) → "¡Sigue vivo el balón!"
-- Frío y técnico — el español pide emoción y ritmo
-- "Gospodarz" / "Gość" — usa nombres de equipo o "locales/visitantes"
-- Repetir "bueno" / "bien" — varía el vocabulario constantemente`,
+- Traducción literal del polaco
+- "El juego continúa" → "¡Sigue vivo el balón!"
+- "Gospodarz" / "Gość" — nombres de equipo o "locales/visitantes"
+- Traducir "Komenda" como sustantivo/verbo ("comando/manda") — es un APELLIDO (Marcin Komenda, colocador del Lublin)
+- Usar "Hoss" o "Hossa" — este jugador se llama THALES (Thales Hoss) — usar siempre "Thales"
+- Desinencias polacas (NO: "Aluronu", "BOGDANKI", "Bołądzia")
+- Repetir "limita las opciones del colocador" más de dos veces por set`,
 
   // ─────────────────────────────────────────────────────────────────────────
-  // PT — rozbudowany profil (Globo / SporTV / Band Sports)
+  // PT — Globo / SporTV — PT-BR
   // ─────────────────────────────────────────────────────────────────────────
-  pt: `ESTILO: Comentário de vôlei brasileiro — Globo / SporTV / Band Sports.
+  pt: `ESTILO: Comentário de vôlei brasileiro — Globo / SporTV. Energia e emoção com conhecimento técnico.
 
-FILOSOFIA: O narrador brasileiro VIBRA com a jogada! O Brasil é potência no vôlei — o comentário reflete orgulho, paixão e conhecimento técnico. Ritmo musical, frases que explodem no ponto, narração envolvente nos rallies longos. Português brasileiro — não europeu.
+FILOSOFIA: O comentarista brasileiro NARRA COM O CORAÇÃO! PT-BR autêntico — não tradução do polonês.
 
-TERMINOLOGIA OBRIGATÓRIA (nunca usar termos poloneses!):
-- Atak = "ataque" (geral) ou "cortada" (quando potente)
-- Kiwka = "toque" ou "bolinha curta" ou "lob"
-- Blok = "bloqueio" — exclamação: "BLOQUEIO!", "Fechou o bloqueio!"
-- Zagrywka = "saque" / "saque em suspensão" / "saque flutuante"
-- As serwisowy = "ace" ou "ponto direto no saque"
-- Przyjęcie = "recepção" — má = "recepção falha" / "bola longe da rede"
+TERMINOLOGIA OBRIGATÓRIA:
+- Atak = "ataque" ou "cortada"
+- Kiwka = "toque curto" ou "tchau-tchau"
+- Blok = "bloqueio"
+- Zagrywka = "saque" / "saque em salto" / "saque flutuante"
+- As serwisowy = "ace!" ou "ponto direto no saque!"
+- Przyjęcie = "recepção" — ruim = "recepção saiu longe da rede"
 - Rozgrywający = "levantador"
-- Rozegranie = "levantamento" ou "distribuição"
-- Atak pipe = "ataque de fundo" / "ataque pelo meio em segunda linha", pierwszym tempem = "ataque rápido" / "primeiro tempo"
-- Obrona = "defesa" ou "levantada incrível"
-- Gra trwa = "a bola ainda está viva!", "continua a jogada!" (NUNCA "o jogo continua")
-- Błąd w ataku = "erro de ataque" ou "bola pra fora"
-- Przebity blok = "passa pelo bloqueio" / "furou o bloqueio"
+- Atak pipe = "pipe" ou "ataque de fundo", pierwszym tempem = "ataque rápido"
+- Obrona = "defesa"
+- Gra trwa = "a bola ainda está em jogo!" (NUNCA "o jogo continua")
 
-EXCLAMAÇÕES POR SITUAÇÃO:
-- Cortada vencedora: "QUE CORTADA!", "Mandou muito bem!", "Bloqueio não chegou nem perto!"
-- Ace: "ACE! Saque perfeito, ninguém tocou!", "Ponto direto no saque!"
-- Bloqueio: "BLOQUEIO! [Nome] fechou muito bem!", "A muralha funcionou!"
-- Ralli longo: "Que jogada sensacional! Ninguém quer ceder!"
-- Sequência de pontos: "Não tem como parar! Ponto atrás de ponto!"
-- Virada: "Estão voltando! Ainda dá!"
-- Empate: "Empatou! Tudo igual, tudo aberto!"
-- Erro: "Erro de [Nome] — ponto para [Time]." (tom neutro)
+EXCLAMAÇÕES:
+- Ataque vencedor: "QUE CORTADA!", "Que pancada!", "O bloqueio nem viu passar!"
+- Ace: "ACE! Ponto direto!", "Ninguém conseguiu tocar!"
+- Bloqueio: "BLOQUEIO! [Nome] fechou tudo!"
+- Rally longo: "Que rali incrível! Ninguém quer ceder!"
+- Erro: "Erro de [Nome] — ponto para [Time]."
+- Empate: "EMPATOU! Tudo em aberto nesse set!"
 
-ESTRUTURA DE FRASE — DIFERENÇA CHAVE:
-- Polonês: "[Quem] [faz o quê] [como]"
-- Português BR: Narração em crescendo, nome do jogador com ênfase no pico: "LEON ATACA — e consegue! O bloqueio não viu a bola passar!"
-- Ações rápidas (ace, erro): CURTAS. "Ace de Bieniek! Ponto!" (poucas palavras)
-- Rallies longos: CRESCENDO. Começa descritivo, constrói tensão, explode no ponto.
-- Uso natural de interjeições: "Vamos!", "Que isso!", "Nossa!"
+ESTRUTURA DA FRASE:
+- PT-BR: Verbo de ação + nome: "SZERSZEŃ MANDA VER! Que cortada pelo meio!"
+- Lances rápidos: CURTOS. "Ace de Bieniek! Ponto!"
+- Interjeições naturais: "Eita!", "Que isso!", "Caramba!", "Nossa!"
 
-EXEMPLOS DE TRANSFORMAÇÃO:
-- PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → PT: "Saque em suspensão de Szalpuk... pra fora! Ponto pro JSW."
-- PL: "Butryn przebija się przez blok!" → PT: "BUTRYN FURA O BLOQUEIO! Que pancada, o bloqueio adversário não teve chance!"
-- PL: "Zaleszczyk atakuje pierwszym tempem po długiej wymianie!" → PT: "Que ralli incrível! No final é Zaleszczyk com o ataque rápido que fecha! Espetacular!"
+EXEMPLOS:
+- PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → PT: "Saque em salto de Szalpuk... mas errou! Ponto para JSW."
+- PL: "Butryn przebija się przez blok!" → PT: "BUTRYN FUROU O BLOQUEIO! Que cortada, meu Deus!"
 
 NUNCA:
-- Tradução literal do polonês
-- Português europeu (usar BR: "você" não "tu", "ônibus" não "autocarro")
-- "O jogo continua" (não natural) → "A bola tá viva!"
-- Frio e técnico — o vôlei brasileiro pede garra e emoção`,
+- Traduzir "Komenda" como substantivo/verbo — é um SOBRENOME (Marcin Komenda, levantador do Lublin)
+- Usar "Hoss" — este jogador se chama THALES (Thales Hoss) — usar sempre "Thales"
+- Usar "Che" em exclamações — "Che" é italiano! Em português é sempre "Que": "Que ace!", "Que cortada!", "Que jogada!"
+- Desinências polonesas (NÃO: "Aluronu", "BOGDANKI", "Bołądzia")
+- "A Komenda" com artigo feminino — Marcin Komenda é homem, use "O Komenda" ou sem artigo
+- Repetir a mesma frase mais de 2 vezes por comentário
+- Tradução literal do polonês`,
 
   // ─────────────────────────────────────────────────────────────────────────
-  // JP — rozbudowany profil (NHK / Fuji TV / TBS Sports)
+  // JP — NHK / フジテレビ / テレビ朝日
   // ─────────────────────────────────────────────────────────────────────────
-  jp: `スタイル：日本語バレーボール実況 — NHK・フジテレビ・TBSスポーツ放送スタイル。
+  jp: `スタイル：日本語バレーボール実況 — NHK・フジテレビ・テレビ朝日スタイル。品格と熱量を兼ね備えた解説。
 
-哲学：日本の実況アナウンサーは正確で品格があり、選手へのリスペクトを示しながら興奮を伝える。感情的になりすぎず、しかし重要な場面では声のトーンで興奮を表現する。丁寧語を基本とし、決定的な場面では短く力強い言葉を使う。
+哲学：正確な情報と独特の感嘆詞・擬音語を組み合わせ、視聴者を試合に引き込む。冷静な分析と決定的な瞬間の爆発的な興奮のメリハリが命。
 
-必須バレーボール用語（ポーランド語をそのまま使わない）：
-- Atak = 「アタック」または「スパイク」（強打の場合）
+必須用語（ポーランド語の用語を絶対に持ち込まない！）：
+- Atak = 「スパイク」（強打）または「アタック」
 - Kiwka = 「フェイント」または「ショートボール」
-- Blok = 「ブロック」— 感嘆詞として「ブロック！」「完璧なブロック！」
-- Zagrywka = 「サーブ」/ 「ジャンプサーブ」/ 「フローターサーブ」
-- As serwisowy = 「サービスエース」または「エース」
-- Przyjęcie = 「レセプション」または「サーブレシーブ」— 悪い場合「乱れたレシーブ」
+- Blok = 「ブロック」— ブロックポイント = 「シャットアウト！」
+- Zagrywka = 「サーブ」/「ジャンプサーブ」/「フローターサーブ」
+- As serwisowy = 「サービスエース！」
+- Przyjęcie = 「レシーブ」— 悪い = 「レシーブが乱れる」
 - Rozgrywający = 「セッター」
-- Rozegranie = 「トス」またはセットアップ
-- Atak pipe = 「バックアタック」/「パイプ攻撃」、pierwszym tempem = 「クイック攻撃」/「Aクイック」
-- Obrona = 「ディグ」または「守備」
-- Gra trwa = 「まだ続いています！」「ラリーが続く！」（「試合が続く」は不自然）
-- Błąd w ataku = 「攻撃ミス」
-- Przebity blok = 「ブロックを抜いた」/「ブロックを突き破る」
+- Atak pipe = 「バックアタック」（「セカンドライン」ではない）、pierwszym tempem = 「クイック攻撃」
+- Obrona = 「レシーブ」または「ディグ」
+- Gra trwa = 「まだ続きます！」（「ゲームが続く」は不自然）
 
-場面別の表現：
-- 決定打：「素晴らしいスパイク！」「見事な一打！」「ブロックを突き抜けました！」
-- エース：「サービスエース！誰も触れませんでした！」「完璧なサーブ！」
-- ブロック：「ブロック！[選手名]が完璧に止めました！」「壁のようなブロック！」
-- 長いラリー：「素晴らしいラリー！両チームとも譲りません！」
-- 連続得点：「止まりません！連続ポイントです！」
-- ミス：「[選手名]のミス — [チーム名]の得点です」（落ち着いたトーン）
+カタカナ表記の例：Leon=レオン、Bołądź=ボワンジ、Grozdanov=グロズダノフ、Komenda=コメンダ、Tavares=タバレス
 
-文章構造 — 重要な違い：
-- ポーランド語：「[誰が][何をする][どのように]」
-- 日本語：動詞は文末、感嘆詞で盛り上げ：「レオン、スパイク！ブロックを突き抜けました！素晴らしい！」
-- 短い場面（エース・ミス）：簡潔に。「エース！ポイント。」
-- 長いラリー：徐々に盛り上げ、得点で解放。
-- 選手名のあとに「選手」をつける場合もあるが、実況では名字のみが自然
+状況別の感嘆表現：
+- スパイクポイント：「決まったー！」「完璧なスパイク！」「ブロックを砕きました！」
+- サービスエース：「エース！」「誰も触れられなかった！」
+- ブロック：「シャット！ブロックポイント！」「壁のようなブロック！」
+- 長いラリー：「素晴らしいラリー！」「どちらも譲りません！」
+- エラー：「残念、ミスが出ました。[チーム]にポイント。」（落ち着いたトーン）
+
+文構造：
+- 日本語：感嘆 + 動作 + 結果：「素晴らしいスパイク！シェルシェニがブロックを打ち抜きました！」
+- 短い動作：「サービスエース！ザヴィエルチェに点が入ります。」
+- 長いラリー：「一本目…二本目…三本目！まだ続きます！決まったー！」
 
 変換例：
-- PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → JP: 「Szalpukのジャンプサーブ…アウト！JSWの得点です。」
-- PL: "Butryn przebija się przez blok!" → JP: 「Butryn、ブロックを突き破りました！素晴らしいスパイクです！」
-- PL: "Zaleszczyk atakuje pierwszym tempem po długiej wymianie!" → JP: 「素晴らしいラリーでした！最後はZaleszczyk のクイック攻撃で決めました！見事！」
+- PL: "Szalpuk zagrywa z wyskoku, jednak popełnia błąd" → JP：「シャルプクのジャンプサーブ…しかしアウト！ザヴィエルチェにポイントが入ります。」
+- PL: "Butryn przebija się przez blok!" → JP：「ブトリン！ブロックをものともしないスパイク！決まったー！」
 
-絶対にしてはいけないこと：
-- 選手名を日本語化・カタカナ化しなくてもよい（原文のまま使用可）
-- ポーランド語の直訳
-- 過剰な感嘆詞の連発 — 日本の実況は品格を保つ
-- チーム名の変更`,
+絶対禁止：
+- コメントを「」（鍵括弧）で囲むこと — スポーツ実況は小説ではない！「」は絶対に使わない
+- ポーランド語の語尾変化を持ち込むこと（例：「ボワンジア」「ボグダンキ」「ビエンカ」は誤り）
+- 「コメンダ」を「コマンド/命令」として翻訳すること — コメンダはルブリンのセッターの名前
+- 「Hoss（ホス/ホッサ）」という選手は存在しない — このリベロの名前はTHALES（サレス）— 常に「サレス」を使う
+- 「サービスエースのミス」— 「サーブミス」または「サーブアウト」と書くこと
+- 「セカンドライン」→「バックアタック」が正しい
+- 同じフレーズを3回以上繰り返すこと（「セッターの選択肢が限られる」× 9は絶対NG）`,
 };
 
 // ============================================================================
-// TRANSLATION SYSTEM PROMPT - WITH CULTURAL STYLE
+// TRANSLATION SYSTEM PROMPT
 // ============================================================================
 
 const getTranslationSystemPrompt = (targetLanguage: string) => {
@@ -413,11 +391,10 @@ CRITICAL RULES:
 8. Use ${langName} volleyball terminology, not translated Polish terms
 9. Sentence structure should follow ${langName} natural patterns, NOT Polish word order
 
-VOLLEYBALL TERMS - Common translations:
+VOLLEYBALL TERMS:
 - Ace = As (PL), Ace (EN/ES/IT), Ass (DE), エース (JP)
 - Block = Blok (PL), Block (EN/DE), Blocco/Muro (IT), Bloqueo (ES), ブロック (JP)
 - Attack = Atak (PL), Attack/Kill (EN), Attacco/Schiacciata (IT), Ataque/Remate (ES), Angriff (DE), アタック (JP)
-- Set = Set/Seta, Zuspiel (DE), セット (JP)
 - Rally = Wymiana (PL), Rally (EN), Scambio (IT), Jugada (ES), Ballwechsel (DE), ラリー (JP)
 
 NEVER:
@@ -484,7 +461,7 @@ export async function POST(request: NextRequest) {
     console.log(`📝 Original text: "${text.substring(0, 80)}..."`);
 
     // ========================================================================
-    // STEP 1: TRANSLATE COMMENTARY TEXT (STYLISTIC ADAPTATION)
+    // STEP 1: TRANSLATE COMMENTARY TEXT
     // ========================================================================
 
     const systemPrompt = getTranslationSystemPrompt(toLanguage);
@@ -508,8 +485,8 @@ ${langName} commentary:`;
 
     let translatedText = completion.choices[0].message.content || text;
 
-    // Clean up: remove wrapping quotes if GPT added them
-    translatedText = translatedText.replace(/^[""]|[""]$/g, '').trim();
+    // FIX F: Strip JP 「」quotes + standard quote cleanup
+    translatedText = translatedText.replace(/^[「""]|[」""]$/g, '').trim();
 
     console.log(`✅ Adapted: "${translatedText.substring(0, 80)}..."`);
 

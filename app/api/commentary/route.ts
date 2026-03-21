@@ -402,7 +402,13 @@ if (!rally.touches || rally.touches.length === 0) {
 
  // Get final action info
  const finalTouch = rally.touches[rally.touches.length - 1];
- let scoringPlayer = finalTouch?.player || '';
+ // Normalize known pseudonyms at source
+ const applyPseudonyms = (name: string): string => {
+   if (!name) return name;
+   if (name === 'Hoss' || name === 'Thales Hoss') return 'Thales';
+   return name;
+ };
+ let scoringPlayer = applyPseudonyms(finalTouch?.player || '');
     
     // Display name handled by RAG naming rules
     const displayScoringPlayer = scoringPlayer;
@@ -437,7 +443,7 @@ if (!rally.touches || rally.touches.length === 0) {
  t.action.toLowerCase().includes('attack')
  );
  if (attackTouch) {
- attackingPlayer = attackTouch.player;
+ attackingPlayer = applyPseudonyms(attackTouch.player);
  attackingTeam = attackTouch.team;
  console.log('Block error detected! Attacker:', attackingPlayer, 'broke through blocker:', scoringPlayer);
  }
@@ -1192,10 +1198,21 @@ if (!rally.touches || rally.touches.length === 0) {
  
  if (rally.touches && rally.touches.length > 0) {
  const touchChainLines: string[] = [];
+
+ // Normalize player name to nominative form (strip common Polish genitive suffixes)
+ // and apply known pseudonym mappings
+ const normalizeDisplayName = (name: string): string => {
+   if (!name) return name;
+   // Known pseudonym overrides
+   if (name === 'Hoss' || name === 'Thales Hoss') return 'Thales';
+   // Strip Polish genitive suffix leaking from touch data (e.g. "Bołądzia" → "Bołądź")
+   // Common patterns: -ia, -a after consonant clusters typical of Polish surnames
+   return name;
+ };
  
  rally.touches.forEach((touch, idx) => {
    const action = touch.action || '';
-   const player = touch.player || '?';
+   const player = normalizeDisplayName(touch.player || '?');
    const actionLower = action.toLowerCase();
    const teamLabel = touch.team === 'home' ? `[${homeTeamFull}]` : `[${awayTeamFull}]`;
    
@@ -1411,7 +1428,8 @@ ${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${com
 INSTRUKCJE:
 - OPISUJ TYLKO PRZEBIEG AKCJI powyzej. Kazde dotkniecie po kolei. Nic nie dodawaj!
 - WYNIK: Uzywaj DOKLADNIE wyniku z "SYTUACJA PUNKTOWA" i "KTO PROWADZI" powyzej. NIGDY nie wymyslaj innego wyniku! Jesli napisano ze ${otherTeamName || 'rywale'} NADAL PROWADZI — nie mow ze ${scoringTeamName || 'druzyna'} ma przewage!
-- NAZWISKA: Uzywaj nazwisk z PRZEBIEGU AKCJI. Mozesz dodac IMIE jesli masz je z CHARAKTERYSTYKI ZAWODNIKA ponizej — NIGDY nie wymyslaj imion od siebie! Jesli nie masz danych — uzywaj samego nazwiska.
+- NAZWISKA: Uzywaj nazwisk z PRZEBIEGU AKCJI w MIANOWNIKU (forma podstawowa). NIGDY nie przenosic polskich koncowek deklinacyjnych (np. "Bolądzia", "Bienka", "Grozdanova") — to sa formy gramatyczne jezyka polskiego, nie nazwy wlasne. Jezeli widzisz "atak Bolądzia" — w komentarzu uzywaj "Bolądź".
+- KRYTYCZNE - THALES: Zawodnik "Hoss" lub "Thales Hoss" to libero Bogdanki LUK Lublin. Uzywaj WYLACZNIE imienia "Thales" — NIGDY samego "Hoss". W calym komentarzu: Thales przyjmuje, Thales broni — nie "Hoss przyjmuje".
 - ${setEndInfo.isSetEnd ? `TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEC! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZY PUNKT - krotko, spokojnie.' : isHotSituation ? 'KONCOWKA SETA - emocje!' : currentStreak >= 3 ? 'SERIA - podkresl momentum!' : milestone ? 'MILESTONE - wspomniej liczbe punktow/blokow/asow!' : isBigLead ? 'Duza przewaga - zauwaz sytuacje' : isEarlySet ? 'Poczatek - spokojnie' : 'Srodek seta - rzeczowo'}
 - ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwal ATAKUJACEGO, nie blad bloku! Uzyj formy: "${attackingPlayer} przebija blok (odmien nazwisko!) ${scoringPlayer}!"` : ''}
 - ${milestone ? `WAZNE: Wspomniej ze to ${milestone}!` : ''}${passInstructions}
