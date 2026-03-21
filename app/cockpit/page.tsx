@@ -643,6 +643,11 @@ export default function CockpitPage() {
   const [liveScoreAway, setLiveScoreAway] = useState(0);
   const [language, setLanguage]           = useState('pl');
 
+  // Split view state
+  const [splitMode, setSplitMode]     = useState(false);
+  const [panelATab, setPanelATab]     = useState<TabKey>('serve_type');
+  const [panelBTab, setPanelBTab]     = useState<TabKey>('receive');
+
   useEffect(() => {
     const readLS = () => {
       const stored = localStorage.getItem('vi_selected_match');
@@ -692,14 +697,107 @@ export default function CockpitPage() {
   }, [rawInstances, currentSet, liveScoreHome, liveScoreAway]);
 
   const tab  = TABS[activeTab];
+  const tabA = TABS[panelATab];
+  const tabB = TABS[panelBTab];
   const SETS = ['1', '2', '3', '4', '5'];
-  const allData = stats ? mergeAll(stats, tab.key) : null;
+  const allData  = stats ? mergeAll(stats, tab.key)  : null;
+  const allDataA = stats ? mergeAll(stats, tabA.key) : null;
+  const allDataB = stats ? mergeAll(stats, tabB.key) : null;
   const allZones = stats ? mergeZones(stats) : null;
   const maxZoneTotal = allZones
     ? Math.max(...Object.values(allZones.home).map(z => z.total), ...Object.values(allZones.away).map(z => z.total), 1)
     : 1;
   const meta = MATCH_META[matchFile];
   const isLive = currentSet < 99 && currentSet > 0;
+
+  // ── HELPER: render grid content for a given tab key ──────────────────────
+  const renderPanelContent = (tabKey: TabKey, mergedData: { home: Record<string, number>; away: Record<string, number> } | null) => {
+    const t = TABS[tabKey];
+    if (tabKey === 'serve_zone' && allZones) {
+      return (
+        <div style={{ padding: '12px 16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
+            {SETS.map(s => {
+              const d = stats?.sets[s];
+              const empty = !d;
+              const isCurrent = Number(s) === currentSet && isLive;
+              const setMax = d ? Math.max(...Object.values(d.homeZones).map(z => z.total), ...Object.values(d.awayZones).map(z => z.total), 1) : 1;
+              return (
+                <div key={s} style={{ background: '#0c1828', borderRadius: 10, border: `1px solid ${empty ? '#0f172a' : isCurrent ? 'rgba(59,130,246,.35)' : '#1e293b'}`, padding: '8px 4px', opacity: empty ? 0.2 : 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                  <div style={{ fontSize: 8, fontWeight: 700, color: isCurrent ? '#60a5fa' : '#64748b', textTransform: 'uppercase', letterSpacing: '.2em' }}>
+                    {(COCKPIT_I18N[language] || COCKPIT_I18N.pl).set} {s}{isCurrent ? ' ●' : ''}
+                  </div>
+                  {!empty && d && <><CourtZoneMap zones={d.homeZones} teamColor="#60a5fa" teamLabel={stats!.shortHome.substring(0, 4)} maxTotal={setMax} /><CourtZoneMap zones={d.awayZones} teamColor="#fbbf24" teamLabel={stats!.shortAway.substring(0, 4)} maxTotal={setMax} /></>}
+                  {empty && <div style={{ width: 200, height: 80, borderRadius: 5, background: '#0a1020', opacity: 0.3 }} />}
+                </div>
+              );
+            })}
+            <div style={{ background: '#0a1000', borderRadius: 10, border: '2px solid #1a2200', padding: '8px 4px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+              <div style={{ fontSize: 9, fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '.12em' }}>{(COCKPIT_I18N[language] || COCKPIT_I18N.pl).match}</div>
+              {stats && <><CourtZoneMap zones={allZones.home} teamColor="#60a5fa" teamLabel={stats.shortHome.substring(0, 4)} maxTotal={maxZoneTotal} /><CourtZoneMap zones={allZones.away} teamColor="#fbbf24" teamLabel={stats.shortAway.substring(0, 4)} maxTotal={maxZoneTotal} /></>}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    // Standard donut grid
+    return (
+      <div style={{ padding: '12px 16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
+          {SETS.map(s => {
+            const d = stats?.sets[s];
+            const empty = !d;
+            const isCurrent = Number(s) === currentSet && isLive;
+            return (
+              <div key={s} style={{ background: '#0c1828', borderRadius: 10, border: `1px solid ${empty ? '#0f172a' : isCurrent ? 'rgba(59,130,246,.35)' : '#1e293b'}`, padding: '10px 6px', opacity: empty ? 0.2 : 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '.2em', color: isCurrent ? '#60a5fa' : '#64748b', textTransform: 'uppercase' }}>
+                    {(COCKPIT_I18N[language] || COCKPIT_I18N.pl).set} {s}{isCurrent ? ' ●' : ''}
+                  </div>
+                  {!empty && d && (
+                    <div style={{ marginTop: 3, fontSize: 16, fontWeight: 800 }}>
+                      <span style={{ color: d.homeWon ? '#60a5fa' : '#64748b' }}>{d.scoreHome}</span>
+                      <span style={{ color: '#1e293b', margin: '0 3px' }}>:</span>
+                      <span style={{ color: !d.homeWon ? '#fbbf24' : '#64748b' }}>{d.scoreAway}</span>
+                    </div>
+                  )}
+                </div>
+                {empty && <div style={{ width: 90, height: 90, borderRadius: '50%', background: '#111827', opacity: .1 }} />}
+                {!empty && d && <><SvgDonut data={(d.home as any)[t.key] || {}} cats={t.cats} colors={t.colors} size={120} thickness={26} label={stats!.shortHome.substring(0, 6)} labelColor="#60a5fa" unit={t.unit} /><SvgDonut data={(d.away as any)[t.key] || {}} cats={t.cats} colors={t.colors} size={120} thickness={26} label={stats!.shortAway.substring(0, 6)} labelColor="#fbbf24" unit={t.unit} /></>}
+              </div>
+            );
+          })}
+          {mergedData && (
+            <div style={{ background: '#0a1000', borderRadius: 10, border: '2px solid #1a2200', padding: '10px 6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+              <div style={{ fontSize: 9, fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '.15em' }}>{(COCKPIT_I18N[language] || COCKPIT_I18N.pl).match}</div>
+              {stats && <><SvgDonut data={mergedData.home} cats={t.cats} colors={t.colors} size={120} thickness={26} label={stats.shortHome.substring(0, 6)} labelColor="#60a5fa" unit={t.unit} /><SvgDonut data={mergedData.away} cats={t.cats} colors={t.colors} size={120} thickness={26} label={stats.shortAway.substring(0, 6)} labelColor="#fbbf24" unit={t.unit} /></>}
+            </div>
+          )}
+        </div>
+        {t.cats.length > 0 && (
+          <div style={{ marginTop: 14, padding: '10px 14px', background: '#0c1422', borderRadius: 8, border: '1px solid #1e293b', display: 'flex', flexWrap: 'wrap', gap: 7, alignItems: 'center' }}>
+            <span style={{ fontSize: 9, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.1em', marginRight: 3 }}>{(TAB_I18N[language] || TAB_I18N.pl)[tabKey]}</span>
+            <div style={{ width: 1, height: 14, background: '#1e293b' }} />
+            {t.cats.map((c, i) => {
+              const tH = t.cats.reduce((s, cc) => s + (mergedData?.home?.[cc] || 0), 0);
+              const tA = t.cats.reduce((s, cc) => s + (mergedData?.away?.[cc] || 0), 0);
+              const pH = tH > 0 ? Math.round(((mergedData?.home?.[c] || 0) / tH) * 100) : 0;
+              const pA = tA > 0 ? Math.round(((mergedData?.away?.[c] || 0) / tA) * 100) : 0;
+              return (
+                <div key={c} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(255,255,255,.03)', borderRadius: 4, padding: '2px 7px' }}>
+                  <div style={{ width: 7, height: 7, borderRadius: 2, background: t.colors[i], flexShrink: 0 }} />
+                  <span style={{ fontSize: 9, color: '#cbd5e1' }}>{c}</span>
+                  <span style={{ fontSize: 8, color: '#60a5fa', fontWeight: 700 }}>{pH}%</span>
+                  <span style={{ fontSize: 8, color: '#334155' }}>/</span>
+                  <span style={{ fontSize: 8, color: '#fbbf24', fontWeight: 700 }}>{pA}%</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div style={{ minHeight: '100vh', background: '#060c18', color: '#cbd5e1', fontFamily: 'JetBrains Mono, monospace' }}>
@@ -728,6 +826,23 @@ export default function CockpitPage() {
               <span style={{ fontSize: 9, color: '#f87171', fontWeight: 800, letterSpacing: '.12em' }}>LIVE</span>
             </div>
           )}
+          {/* Split view toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: '#0a1120', borderRadius: 6, padding: '2px', border: '1px solid #1e293b' }}>
+            <button onClick={() => setSplitMode(false)}
+              style={{ padding: '3px 10px', borderRadius: 5, fontSize: 9, fontWeight: 700, border: 'none', cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '.06em',
+                background: !splitMode ? 'rgba(59,130,246,.2)' : 'transparent',
+                color: !splitMode ? '#93c5fd' : '#475569',
+                outline: !splitMode ? '1px solid rgba(59,130,246,.3)' : 'none' }}>
+              ▣ Jeden
+            </button>
+            <button onClick={() => setSplitMode(true)}
+              style={{ padding: '3px 10px', borderRadius: 5, fontSize: 9, fontWeight: 700, border: 'none', cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '.06em',
+                background: splitMode ? 'rgba(16,185,129,.15)' : 'transparent',
+                color: splitMode ? '#34d399' : '#475569',
+                outline: splitMode ? '1px solid rgba(16,185,129,.3)' : 'none' }}>
+              ⊞ Podzielony
+            </button>
+          </div>
           <a href="/" style={{ fontSize: 10, color: '#93c5fd', textDecoration: 'none', padding: '4px 10px', border: '1px solid #1e3a5f', borderRadius: 5, fontWeight: 700 }}>
             {(COCKPIT_I18N[language] || COCKPIT_I18N.pl).back}
           </a>
@@ -801,209 +916,88 @@ export default function CockpitPage() {
         </div>
       )}
 
-      {stats && !loading && isLive && (
-        <div style={{ padding: '16px 20px' }}>
-
-          {/* ── SERVE ZONE TAB — court heatmap ── */}
-          {activeTab === 'serve_zone' && allZones && (
-            <>
-              {/* Per-set courts */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, marginBottom: 16 }}>
-                {SETS.map(s => {
-                  const d = stats.sets[s];
-                  const empty = !d;
-                  const isCurrent = Number(s) === currentSet && isLive;
-                  const setMaxTotal = d
-                    ? Math.max(...Object.values(d.homeZones).map(z => z.total), ...Object.values(d.awayZones).map(z => z.total), 1)
-                    : 1;
-                  return (
-                    <div key={s} style={{
-                      background: '#0c1828', borderRadius: 14,
-                      border: `1px solid ${empty ? '#0f172a' : isCurrent ? 'rgba(59,130,246,.35)' : '#1e293b'}`,
-                      padding: '12px 8px', opacity: empty ? 0.2 : 1,
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
-                    }}>
-                      <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.25em', color: isCurrent ? '#60a5fa' : '#64748b', textTransform: 'uppercase' }}>
-                          {(COCKPIT_I18N[language] || COCKPIT_I18N.pl).set} {s}{isCurrent ? ' ●' : ''}
-                        </div>
-                        {!empty && d && (
-                          <div style={{ fontSize: 16, fontWeight: 800 }}>
-                            <span style={{ color: d.homeWon ? '#60a5fa' : '#64748b' }}>{d.scoreHome}</span>
-                            <span style={{ color: '#1e293b', margin: '0 4px' }}>:</span>
-                            <span style={{ color: !d.homeWon ? '#fbbf24' : '#64748b' }}>{d.scoreAway}</span>
-                          </div>
-                        )}
-                      </div>
-                      {!empty && d && (
-                        <>
-                          <CourtZoneMap zones={d.homeZones} teamColor="#60a5fa" teamLabel={stats.shortHome.substring(0,5)} maxTotal={setMaxTotal} />
-                          <CourtZoneMap zones={d.awayZones} teamColor="#fbbf24" teamLabel={stats.shortAway.substring(0,5)} maxTotal={setMaxTotal} />
-                        </>
-                      )}
-                      {empty && <div style={{ width: 300, height: 200, borderRadius: 8, background: '#0a1020', opacity: 0.3 }} />}
-                    </div>
-                  );
-                })}
-
-                {/* TOTAL column */}
-                <div style={{
-                  background: '#0a1000', borderRadius: 14, border: '2px solid #1a2200',
-                  padding: '12px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
-                }}>
-                  <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.2em', color: '#fbbf24', textTransform: 'uppercase' }}>
-                    {(COCKPIT_I18N[language] || COCKPIT_I18N.pl).match}
-                  </div>
-                  <CourtZoneMap zones={allZones.home} teamColor="#60a5fa" teamLabel={stats.shortHome.substring(0,5)} maxTotal={maxZoneTotal} />
-                  <CourtZoneMap zones={allZones.away} teamColor="#fbbf24" teamLabel={stats.shortAway.substring(0,5)} maxTotal={maxZoneTotal} />
-                </div>
-              </div>
-
-              {/* Zone legend */}
-              <div style={{ padding: '14px 20px', background: '#0c1422', borderRadius: 10, border: '1px solid #1e293b' }}>
-                <div style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.15em', marginBottom: 10 }}>
-                  {(TAB_I18N[language] || TAB_I18N.pl).serve_zone} — legenda
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-                  {[
-                    { color: '#10b981', label: 'Ace ≥12% — skuteczna strefa' },
-                    { color: '#3b82f6', label: 'Pozytywna ≥20% — dobra strefa' },
-                    { color: '#ef4444', label: 'Błąd ≥25% — ryzykowna strefa' },
-                    { color: '#64748b', label: 'Neutralna' },
-                  ].map((l, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: l.color, opacity: 0.8 }} />
-                      <span style={{ fontSize: 11, color: '#94a3b8' }}>{l.label}</span>
-                    </div>
-                  ))}
-                  <div style={{ fontSize: 10, color: '#475569', marginLeft: 'auto' }}>
-                    Rozmiar koła = liczba zagrywek w strefę
-                  </div>
-                </div>
-                <div style={{ marginTop: 10, display: 'flex', gap: 20, flexWrap: 'wrap' }}>
-                  {[
-                    { z: '5', desc: 'Strefa 5 — lewy tył (libero!)' },
-                    { z: '6', desc: 'Strefa 6 — środek tył' },
-                    { z: '1', desc: 'Strefa 1 — prawy tył' },
-                    { z: '4', desc: 'Strefa 4 — lewy przód' },
-                    { z: '3', desc: 'Strefa 3 — środek przód' },
-                    { z: '2', desc: 'Strefa 2 — prawy przód' },
-                  ].map(l => (
-                    <div key={l.z} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                      <span style={{ fontSize: 9, fontWeight: 800, color: '#60a5fa', fontFamily: 'JetBrains Mono', background: 'rgba(59,130,246,.1)', padding: '1px 6px', borderRadius: 4 }}>Z{l.z}</span>
-                      <span style={{ fontSize: 10, color: '#64748b' }}>{l.desc}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* ── STANDARD DONUT GRID (all other tabs) ── */}
-          {activeTab !== 'serve_zone' && (
-            <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
-
-            {SETS.map(s => {
-              const d = stats.sets[s];
-              const empty = !d;
-              const isCurrent = Number(s) === currentSet && isLive;
-
+      {stats && !loading && isLive && !splitMode && (
+        <>
+          {/* Single mode tab bar */}
+          <div style={{ background: '#0a1120', borderBottom: '1px solid #0f172a', padding: '0 16px', display: 'flex', gap: 4, overflowX: 'auto' }}>
+            {TAB_ORDER.map(t => {
+              const isActive = activeTab === t;
               return (
-                <div key={s} style={{
-                  background: '#0c1828',
-                  borderRadius: 14,
-                  border: `1px solid ${empty ? '#0f172a' : isCurrent ? 'rgba(59,130,246,.35)' : '#1e293b'}`,
-                  padding: '16px 10px',
-                  opacity: empty ? 0.2 : 1,
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16,
+                <button key={t} onClick={() => setActiveTab(t)} style={{
+                  padding: '8px 14px', borderRadius: 0, fontSize: 10, fontWeight: 800, letterSpacing: '.07em',
+                  cursor: 'pointer', border: 'none', textTransform: 'uppercase', fontFamily: 'inherit',
+                  borderBottom: isActive ? '2px solid #3b82f6' : '2px solid transparent',
+                  color: isActive ? '#93c5fd' : '#64748b',
+                  background: isActive ? 'rgba(59,130,246,.05)' : 'transparent',
+                  whiteSpace: 'nowrap', flexShrink: 0,
                 }}>
-                  <div style={{ textAlign: 'center', width: '100%' }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.25em', color: isCurrent ? '#60a5fa' : '#64748b', textTransform: 'uppercase' }}>
-                      {(COCKPIT_I18N[language] || COCKPIT_I18N.pl).set} {s}{isCurrent ? ' ●' : ''}
-                    </div>
-                    {!empty && d && (
-                      <div style={{ marginTop: 5, fontSize: 20, fontWeight: 800, lineHeight: 1 }}>
-                        <span style={{ color: d.homeWon ? '#60a5fa' : '#64748b' }}>{d.scoreHome}</span>
-                        <span style={{ color: '#1e293b', margin: '0 5px' }}>:</span>
-                        <span style={{ color: !d.homeWon ? '#fbbf24' : '#64748b' }}>{d.scoreAway}</span>
-                      </div>
-                    )}
-                  </div>
-                  {empty && <div style={{ width: 120, height: 120, borderRadius: '50%', background: '#111827', opacity: .1 }} />}
-                  {!empty && d && (
-                    <SvgDonut data={(d.home as any)[tab.key] || {}} cats={tab.cats} colors={tab.colors}
-                      size={160} thickness={28} label={stats.shortHome.substring(0, 6)} labelColor="#60a5fa" unit={tab.unit} />
-                  )}
-                  {!empty && d && (
-                    <SvgDonut data={(d.away as any)[tab.key] || {}} cats={tab.cats} colors={tab.colors}
-                      size={160} thickness={28} label={stats.shortAway.substring(0, 6)} labelColor="#fbbf24" unit={tab.unit} />
-                  )}
-                </div>
+                  {(TAB_I18N[language] || TAB_I18N.pl)[t]}
+                </button>
               );
             })}
-
-            {/* TOTAL */}
-            {allData && (
-              <div style={{
-                background: '#0a1000', borderRadius: 14, border: '2px solid #1a2200',
-                padding: '16px 10px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16,
-              }}>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.2em', color: '#fbbf24', textTransform: 'uppercase' }}>{(COCKPIT_I18N[language] || COCKPIT_I18N.pl).match}</div>
-                  <div style={{ marginTop: 4, fontSize: 16, fontWeight: 800 }}>
-                    <span style={{ color: stats.matchScore.home >= stats.matchScore.away ? '#60a5fa' : '#64748b' }}>{stats.matchScore.home}</span>
-                    <span style={{ color: '#1e293b', margin: '0 4px' }}>:</span>
-                    <span style={{ color: stats.matchScore.away > stats.matchScore.home ? '#fbbf24' : '#64748b' }}>{stats.matchScore.away}</span>
-                  </div>
-                </div>
-                <SvgDonut data={allData.home} cats={tab.cats} colors={tab.colors}
-                  size={160} thickness={28} label={stats.shortHome.substring(0, 6)} labelColor="#60a5fa" unit={tab.unit} />
-                <SvgDonut data={allData.away} cats={tab.cats} colors={tab.colors}
-                  size={160} thickness={28} label={stats.shortAway.substring(0, 6)} labelColor="#fbbf24" unit={tab.unit} />
-              </div>
-            )}
           </div>
+          {renderPanelContent(activeTab, allData)}
+        </>
+      )}
 
-          {/* ── LEGENDA z % share ── */}
-          <div style={{ marginTop: 20, padding: '14px 20px', background: '#0c1422', borderRadius: 10, border: '1px solid #1e293b' }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center', marginBottom: tab.descriptions ? 12 : 0 }}>
-              <span style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.15em', marginRight: 4 }}>
-                {(TAB_I18N[language] || TAB_I18N.pl)[activeTab]}
-              </span>
-              <div style={{ width: 1, height: 18, background: '#1e293b' }} />
-              {tab.cats.map((c, i) => {
-                const totalH = tab.cats.reduce((s, cc) => s + (allData?.home?.[cc] || 0), 0);
-                const totalA = tab.cats.reduce((s, cc) => s + (allData?.away?.[cc] || 0), 0);
-                const pctH = totalH > 0 ? Math.round(((allData?.home?.[c] || 0) / totalH) * 100) : 0;
-                const pctA = totalA > 0 ? Math.round(((allData?.away?.[c] || 0) / totalA) * 100) : 0;
-                return (
-                  <div key={c} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,.03)', borderRadius: 6, padding: '4px 10px' }}>
-                    <div style={{ width: 10, height: 10, borderRadius: 3, background: tab.colors[i], flexShrink: 0, boxShadow: `0 0 5px ${tab.colors[i]}50` }} />
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#cbd5e1' }}>{c}</span>
-                    <span style={{ fontSize: 10, color: '#60a5fa', fontWeight: 700 }}>{pctH}%</span>
-                    <span style={{ fontSize: 9, color: '#334155' }}>/</span>
-                    <span style={{ fontSize: 10, color: '#fbbf24', fontWeight: 700 }}>{pctA}%</span>
-                  </div>
-                );
-              })}
+      {stats && !loading && isLive && splitMode && (
+        <>
+          {/* Split mode — dwa panele GÓRA-DÓŁ */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+
+            {/* Panel A — górny */}
+            <div style={{ borderBottom: '3px solid #0f172a' }}>
+              <div style={{ background: '#080e1a', borderBottom: '1px solid #0f172a', padding: '0 16px', display: 'flex', gap: 2, overflowX: 'auto', flexShrink: 0, alignItems: 'center' }}>
+                <span style={{ fontSize: 8, fontWeight: 800, color: '#3b82f6', letterSpacing: '.15em', marginRight: 6, flexShrink: 0 }}>▲ GÓRA</span>
+                {TAB_ORDER.map(t => (
+                  <button key={t} onClick={() => setPanelATab(t)} style={{
+                    padding: '6px 12px', borderRadius: 0, fontSize: 9, fontWeight: 800, letterSpacing: '.07em',
+                    cursor: 'pointer', border: 'none', textTransform: 'uppercase', fontFamily: 'inherit',
+                    borderBottom: panelATab === t ? '2px solid #3b82f6' : '2px solid transparent',
+                    color: panelATab === t ? '#93c5fd' : '#475569',
+                    background: panelATab === t ? 'rgba(59,130,246,.05)' : 'transparent',
+                    whiteSpace: 'nowrap', flexShrink: 0,
+                  }}>
+                    {(TAB_I18N[language] || TAB_I18N.pl)[t]}
+                  </button>
+                ))}
+              </div>
+              {renderPanelContent(panelATab, allDataA)}
             </div>
-            {tab.descriptions && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, borderTop: '1px solid #1e293b', paddingTop: 10 }}>
-                {tab.cats.map((c, i) => tab.descriptions?.[c] ? (
-                  <div key={c} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <div style={{ width: 7, height: 7, borderRadius: 2, background: tab.colors[i], flexShrink: 0 }} />
-                    <span style={{ fontSize: 10, color: '#64748b' }}>
-                      <span style={{ color: '#94a3b8', fontWeight: 700 }}>{c}:</span> {tab.descriptions[c]}
-                    </span>
-                  </div>
-                ) : null)}
+
+            {/* Panel B — dolny */}
+            <div>
+              <div style={{ background: '#080e1a', borderBottom: '1px solid #0f172a', padding: '0 16px', display: 'flex', gap: 2, overflowX: 'auto', flexShrink: 0, alignItems: 'center' }}>
+                <span style={{ fontSize: 8, fontWeight: 800, color: '#f59e0b', letterSpacing: '.15em', marginRight: 6, flexShrink: 0 }}>▼ DÓŁ</span>
+                {TAB_ORDER.map(t => (
+                  <button key={t} onClick={() => setPanelBTab(t)} style={{
+                    padding: '6px 12px', borderRadius: 0, fontSize: 9, fontWeight: 800, letterSpacing: '.07em',
+                    cursor: 'pointer', border: 'none', textTransform: 'uppercase', fontFamily: 'inherit',
+                    borderBottom: panelBTab === t ? '2px solid #f59e0b' : '2px solid transparent',
+                    color: panelBTab === t ? '#fbbf24' : '#475569',
+                    background: panelBTab === t ? 'rgba(245,158,11,.05)' : 'transparent',
+                    whiteSpace: 'nowrap', flexShrink: 0,
+                  }}>
+                    {(TAB_I18N[language] || TAB_I18N.pl)[t]}
+                  </button>
+                ))}
               </div>
-            )}
+              {renderPanelContent(panelBTab, allDataB)}
+            </div>
           </div>
-          </> /* end activeTab !== serve_zone */
-          )}
-        </div>
+          {/* Info bar */}
+          <div style={{ padding: '6px 16px', background: '#0a1120', borderTop: '1px solid #0f172a', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontSize: 9, color: '#34d399', fontWeight: 700 }}>⊞ SPLIT</span>
+            <span style={{ fontSize: 9, color: '#334155' }}>|</span>
+            <span style={{ fontSize: 9, color: '#475569' }}>
+              <span style={{ color: '#60a5fa' }}>▲ {(TAB_I18N[language] || TAB_I18N.pl)[panelATab]}</span>
+              <span style={{ color: '#334155' }}> + </span>
+              <span style={{ color: '#fbbf24' }}>▼ {(TAB_I18N[language] || TAB_I18N.pl)[panelBTab]}</span>
+            </span>
+            <span style={{ fontSize: 9, color: '#334155' }}>|</span>
+            <span style={{ fontSize: 9, color: '#475569' }}>Set {currentSet} · {liveScoreHome}:{liveScoreAway}</span>
+          </div>
+        </>
       )}
 
       <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }`}</style>
