@@ -316,6 +316,9 @@ const TEAM_NAME_FIXES: Record<string, string> = {
  'JSW Jastrzebski Węgiel': 'JSW Jastrzębski Węgiel',
  'Asseco Resovia Rzeszow': 'Asseco Resovia Rzeszów',
  'Asseco Resovia Rzeszów': 'Asseco Resovia Rzeszów',
+ // Fix Polish genitive form leaking from VolleyStation JSON
+ 'BOGDANKI LUK Lublin': 'BOGDANKA LUK Lublin',
+ 'Bogdanki LUK Lublin': 'Bogdanka LUK Lublin',
 };
 
 function normalizeTeamName(raw: string): string {
@@ -330,6 +333,8 @@ function normalizeTeamName(raw: string): string {
    .replace(/Å‚/g, 'ł').replace(/Å\u0082/g, 'ł')
    .replace(/Ä‡/g, 'ć').replace(/Ä\u0087/g, 'ć')
    .replace(/Äa/g, 'ą').replace(/Ä\u0085/g, 'ą');
+ // Fix Polish genitive leaking from VolleyStation (e.g. "BOGDANKI" → "BOGDANKA")
+ fixed = fixed.replace(/BOGDANKI/g, 'BOGDANKA').replace(/Bogdanki/g, 'Bogdanka');
  // Apply known fixes
  return TEAM_NAME_FIXES[fixed] || fixed;
 }

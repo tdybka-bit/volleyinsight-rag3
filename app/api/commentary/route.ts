@@ -98,7 +98,14 @@ function checkSetEnd(
 
 const getLanguagePrompt = (lang: string) => {
  const prompts: Record<string, string> = {
- pl: 'Jestes doswiadczonym komentarorem meczow siatkarskich w Polsce. Komentuj po POLSKU.',
+ pl: `Jestes doswiadczonym komentarorem meczow siatkarskich w Polsce — jak Tomasz Swędrowski lub Wojciech Drzyzga na zywo w radiu lub TV.
+
+STYL PL — RADIO NA ZYWO:
+- Prowadz narracje z EMOCJA proporcjonalna do sytuacji. Blad serwisowy = krotko i zwiezle. Koniec seta = wybuch emocji!
+- UNIKAJ mechanicznych zwrotow: zamiast "zwieksza przewage" uzyj "odskoczy", "dokrecil srube", "nie odpuszcza". Zamiast "zmniejsza strate" uzyj "wraca do gry!", "nie daje sie!", "zapala iskre!".
+- UNIKAJ "gra trwa" — uzyj "akcja trwa!", "wymiana!", "pilka zyje!", "nie daja sie!".
+- Przeplataj krotkie zdania uderzajace z dluzszymi opisowymi. Czasem zacznij od akcji: "Mocna zagrywka!", "Swietna obrona!".
+- Przynajmniej JEDNO zdanie z wykrzyknikiem na komentarz (chyba ze to blad serwisowy — wtedy wystarczy jedno krotkie).`,
  en: 'You are an experienced volleyball commentator. Comment in ENGLISH.',
  it: 'Sei un commentatore esperto di pallavolo. Commenta in ITALIANO.',
  de: 'Du bist ein erfahrener Volleyball-Kommentator. Kommentiere auf DEUTSCH.',
@@ -402,13 +409,7 @@ if (!rally.touches || rally.touches.length === 0) {
 
  // Get final action info
  const finalTouch = rally.touches[rally.touches.length - 1];
- // Normalize known pseudonyms at source
- const applyPseudonyms = (name: string): string => {
-   if (!name) return name;
-   if (name === 'Hoss' || name === 'Thales Hoss') return 'Thales';
-   return name;
- };
- let scoringPlayer = applyPseudonyms(finalTouch?.player || '');
+ let scoringPlayer = finalTouch?.player || '';
     
     // Display name handled by RAG naming rules
     const displayScoringPlayer = scoringPlayer;
@@ -443,7 +444,7 @@ if (!rally.touches || rally.touches.length === 0) {
  t.action.toLowerCase().includes('attack')
  );
  if (attackTouch) {
- attackingPlayer = applyPseudonyms(attackTouch.player);
+ attackingPlayer = attackTouch.player;
  attackingTeam = attackTouch.team;
  console.log('Block error detected! Attacker:', attackingPlayer, 'broke through blocker:', scoringPlayer);
  }
@@ -1198,21 +1199,10 @@ if (!rally.touches || rally.touches.length === 0) {
  
  if (rally.touches && rally.touches.length > 0) {
  const touchChainLines: string[] = [];
-
- // Normalize player name to nominative form (strip common Polish genitive suffixes)
- // and apply known pseudonym mappings
- const normalizeDisplayName = (name: string): string => {
-   if (!name) return name;
-   // Known pseudonym overrides
-   if (name === 'Hoss' || name === 'Thales Hoss') return 'Thales';
-   // Strip Polish genitive suffix leaking from touch data (e.g. "Bołądzia" → "Bołądź")
-   // Common patterns: -ia, -a after consonant clusters typical of Polish surnames
-   return name;
- };
  
  rally.touches.forEach((touch, idx) => {
    const action = touch.action || '';
-   const player = normalizeDisplayName(touch.player || '?');
+   const player = touch.player || '?';
    const actionLower = action.toLowerCase();
    const teamLabel = touch.team === 'home' ? `[${homeTeamFull}]` : `[${awayTeamFull}]`;
    
@@ -1237,7 +1227,7 @@ if (!rally.touches || rally.touches.length === 0) {
    } else if (actionLower.includes('przyjecie') || actionLower.includes('pass') || actionLower.includes('receive')) {
      if (actionLower.includes('perfect')) desc += ' - idealne przyjecie';
      else if (actionLower.includes('positive')) desc += ' - dobre przyjecie';
-     else if (actionLower.includes('negative') || actionLower.includes('poor')) desc += ' - slabe przyjecie (rozgrywajacy ma ograniczone opcje)';
+     else if (actionLower.includes('negative') || actionLower.includes('poor')) desc += ' - slabe przyjecie, trudna sytuacja';
      else desc += ' - przyjecie';
    // SET
    } else if (actionLower.includes('rozegranie') || actionLower.includes('setting') || actionLower === 'set') {
@@ -1428,8 +1418,7 @@ ${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${com
 INSTRUKCJE:
 - OPISUJ TYLKO PRZEBIEG AKCJI powyzej. Kazde dotkniecie po kolei. Nic nie dodawaj!
 - WYNIK: Uzywaj DOKLADNIE wyniku z "SYTUACJA PUNKTOWA" i "KTO PROWADZI" powyzej. NIGDY nie wymyslaj innego wyniku! Jesli napisano ze ${otherTeamName || 'rywale'} NADAL PROWADZI — nie mow ze ${scoringTeamName || 'druzyna'} ma przewage!
-- NAZWISKA: Uzywaj nazwisk z PRZEBIEGU AKCJI w MIANOWNIKU (forma podstawowa). NIGDY nie przenosic polskich koncowek deklinacyjnych (np. "Bolądzia", "Bienka", "Grozdanova") — to sa formy gramatyczne jezyka polskiego, nie nazwy wlasne. Jezeli widzisz "atak Bolądzia" — w komentarzu uzywaj "Bolądź".
-- KRYTYCZNE - THALES: Zawodnik "Hoss" lub "Thales Hoss" to libero Bogdanki LUK Lublin. Uzywaj WYLACZNIE imienia "Thales" — NIGDY samego "Hoss". W calym komentarzu: Thales przyjmuje, Thales broni — nie "Hoss przyjmuje".
+- NAZWISKA: Uzywaj nazwisk z PRZEBIEGU AKCJI. Mozesz dodac IMIE jesli masz je z CHARAKTERYSTYKI ZAWODNIKA ponizej — NIGDY nie wymyslaj imion od siebie! Jesli nie masz danych — uzywaj samego nazwiska.
 - ${setEndInfo.isSetEnd ? `TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEC! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZY PUNKT - krotko, spokojnie.' : isHotSituation ? 'KONCOWKA SETA - emocje!' : currentStreak >= 3 ? 'SERIA - podkresl momentum!' : milestone ? 'MILESTONE - wspomniej liczbe punktow/blokow/asow!' : isBigLead ? 'Duza przewaga - zauwaz sytuacje' : isEarlySet ? 'Poczatek - spokojnie' : 'Srodek seta - rzeczowo'}
 - ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwal ATAKUJACEGO, nie blad bloku! Uzyj formy: "${attackingPlayer} przebija blok (odmien nazwisko!) ${scoringPlayer}!"` : ''}
 - ${milestone ? `WAZNE: Wspomniej ze to ${milestone}!` : ''}${passInstructions}
@@ -1437,6 +1426,7 @@ INSTRUKCJE:
 - ${isFirstPoint ? 'NIE uzywaj "zwieksza/zmniejsza przewage" - to PIERWSZY punkt!' : ''}
 - Uzywaj POPRAWNEJ odmiany nazwisk (Leon -> Leona w dopelniaczu)
 - NIE POWTARZAJ INFORMACJI! Wynik, kto zdobyl punkt, kto prowadzi — wymien MAKSYMALNIE RAZ. Jesli opisales akcje i wspomniales o wyniku, NIE dodawaj kolejnego zdania o tym samym.
+- ZAKAZ MECHANICZNYCH ZWROTOW (jezyk PL): NIE uzywaj "zwieksza przewage", "zmniejsza strate", "gra trwa" — to brzmi jak raport statystyczny, nie relacja radiowa! Zastap emocjonalnymi odpowiednikami z tone-rules.
 - ${attackCombo ? `DANE TAKTYCZNE: Atak typu ${attackCombo}${attackLocation ? `, strefa: ${attackLocation}` : ''}${attackStyle ? `, styl: ${attackStyle}` : ''}. Uzyj tych danych by opisac KONKRETNIE co sie stalo (np. atak po skosie, atak pipe, szybki atak srodkiem) zamiast ogolnikow!` : serveType ? `DANE TAKTYCZNE: Zagrywka typu ${serveType}. Opisz ja konkretnie!` : ''}
 - ${rally.substitutions?.length ? 'ZMIANA! Wplec ja naturalnie w komentarz. Uzywaj wskazowek taktycznych z danych zmiany (koncowka seta, strata, swieze sily). Przyklad: "Trener reaguje na slabe przyjecie i wprowadza swieze sily!" lub "W koncowce seta trener szuka rozwiazania - na parkiet wchodzi [gracz]!"' : ''}
 - ${rally.phase === 'Transition' ? 'KONTRA! Podkresl dynamike kontry - szybka reakcja po obronie, improwizacja atakujacego, mniej czasu na rozegranie.' : rally.phase === 'First Ball' ? 'Atak po przyjeciu - mozesz wspomniec jakosc przyjecia jesli wplywa na atak (np. idealne przyjecie = pelna kombinacja, slabe = pilka wymuszona).' : ''}
