@@ -10,9 +10,20 @@ interface Instance {
   labels: Record<string, string | number>;
 }
 
+// Zone data: { zone_id: { total, ace, positive, negative, error } }
+interface ZoneData {
+  total: number;
+  ace: number;
+  positive: number;
+  negative: number;
+  error: number;
+}
+
 interface SetStats {
   home: Record<string, Record<string, number>>;
   away: Record<string, Record<string, number>>;
+  homeZones: Record<string, ZoneData>;  // serve zone heatmap
+  awayZones: Record<string, ZoneData>;
   scoreHome: number;
   scoreAway: number;
   homeWon: boolean;
@@ -37,7 +48,7 @@ const MATCH_META: Record<string, { label: string; homePrefix: string; awayPrefix
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
 
-type TabKey = 'serve_type' | 'serve_grade' | 'attack_loc' | 'attack_grade' | 'receive' | 'block' | 'dig';
+type TabKey = 'serve_type' | 'serve_grade' | 'attack_loc' | 'attack_grade' | 'receive' | 'block' | 'dig' | 'serve_zone';
 
 interface TabConfig {
   label: string;
@@ -71,21 +82,21 @@ const COCKPIT_I18N: Record<string, Record<string, string>> = {
 
 const TAB_I18N: Record<string, Record<TabKey, string>> = {
   pl: { serve_type: 'Zagrywka · Typ', serve_grade: 'Zagrywka · Skuteczność', attack_loc: 'Atak · Strefa',
-        attack_grade: 'Atak · Jakość', receive: 'Przyjęcie', block: 'Blok', dig: 'Obrona (Dig)' },
+        attack_grade: 'Atak · Jakość', receive: 'Przyjęcie', block: 'Blok', dig: 'Obrona (Dig)', serve_zone: 'Zagrywka · Boisko' },
   en: { serve_type: 'Serve · Type', serve_grade: 'Serve · Efficiency', attack_loc: 'Attack · Zone',
-        attack_grade: 'Attack · Quality', receive: 'Reception', block: 'Block', dig: 'Defense (Dig)' },
+        attack_grade: 'Attack · Quality', receive: 'Reception', block: 'Block', dig: 'Defense (Dig)', serve_zone: 'Serve · Court Map' },
   it: { serve_type: 'Battuta · Tipo', serve_grade: 'Battuta · Efficacia', attack_loc: 'Attacco · Zona',
-        attack_grade: 'Attacco · Qualità', receive: 'Ricezione', block: 'Muro', dig: 'Difesa (Dig)' },
+        attack_grade: 'Attacco · Qualità', receive: 'Ricezione', block: 'Muro', dig: 'Difesa (Dig)', serve_zone: 'Battuta · Campo' },
   de: { serve_type: 'Aufschlag · Typ', serve_grade: 'Aufschlag · Effizienz', attack_loc: 'Angriff · Zone',
-        attack_grade: 'Angriff · Qualität', receive: 'Annahme', block: 'Block', dig: 'Abwehr (Dig)' },
+        attack_grade: 'Angriff · Qualität', receive: 'Annahme', block: 'Block', dig: 'Abwehr (Dig)', serve_zone: 'Aufschlag · Feld' },
   tr: { serve_type: 'Servis · Tip', serve_grade: 'Servis · Etkinlik', attack_loc: 'Atak · Bölge',
-        attack_grade: 'Atak · Kalite', receive: 'Kabul', block: 'Blok', dig: 'Savunma (Dig)' },
+        attack_grade: 'Atak · Kalite', receive: 'Kabul', block: 'Blok', dig: 'Savunma (Dig)', serve_zone: 'Servis · Saha' },
   es: { serve_type: 'Saque · Tipo', serve_grade: 'Saque · Eficacia', attack_loc: 'Ataque · Zona',
-        attack_grade: 'Ataque · Calidad', receive: 'Recepción', block: 'Bloqueo', dig: 'Defensa (Dig)' },
+        attack_grade: 'Ataque · Calidad', receive: 'Recepción', block: 'Bloqueo', dig: 'Defensa (Dig)', serve_zone: 'Saque · Cancha' },
   pt: { serve_type: 'Saque · Tipo', serve_grade: 'Saque · Eficácia', attack_loc: 'Ataque · Zona',
-        attack_grade: 'Ataque · Qualidade', receive: 'Recepção', block: 'Bloqueio', dig: 'Defesa (Dig)' },
+        attack_grade: 'Ataque · Qualidade', receive: 'Recepção', block: 'Bloqueio', dig: 'Defesa (Dig)', serve_zone: 'Saque · Quadra' },
   jp: { serve_type: 'サーブ · タイプ', serve_grade: 'サーブ · 効果', attack_loc: 'アタック · ゾーン',
-        attack_grade: 'アタック · 質', receive: 'レセプション', block: 'ブロック', dig: 'ディグ' },
+        attack_grade: 'アタック · 質', receive: 'レセプション', block: 'ブロック', dig: 'ディグ', serve_zone: 'サーブ · コート' },
 };
 
 const TABS: Record<TabKey, TabConfig> = {
@@ -173,9 +184,17 @@ const TABS: Record<TabKey, TabConfig> = {
       'Nieskuteczna': 'Piłka dotknięta, ale punkt dla rywala',
     },
   },
+  // serve_zone uses CourtZoneMap component — not SvgDonut, stub for type safety
+  serve_zone: {
+    label: 'Zagrywka · Boisko',
+    key: 'serve_types', // unused — zone tab renders differently
+    cats: [],
+    colors: [],
+    unit: '',
+  },
 };
 
-const TAB_ORDER: TabKey[] = ['serve_type', 'serve_grade', 'attack_loc', 'attack_grade', 'receive', 'block', 'dig'];
+const TAB_ORDER: TabKey[] = ['serve_type', 'serve_grade', 'attack_loc', 'attack_grade', 'receive', 'block', 'dig', 'serve_zone'];
 
 // ─── GRADE MAPPING ────────────────────────────────────────────────────────────
 
@@ -327,6 +346,134 @@ function SvgDonut({ data, cats, colors, size = 120, thickness = 22, label, label
   );
 }
 
+// ─── VOLLEYBALL COURT ZONE MAP ───────────────────────────────────────────────
+//
+//  VolleyStation zones on receiving side (opponent's court):
+//
+//   Net ────────────────────────
+//   │  4  │  3  │  2  │  front row
+//   │  5  │  6  │  1  │  back row
+//   ────────────────────────────
+//
+// Zone 1 = back right, 5 = back left, 6 = back center (libero!)
+// Sub-zones A/B/C/D = quadrants inside each zone
+
+// Layout positions (cx, cy) inside a 300x200 court SVG (net at top)
+const ZONE_POSITIONS: Record<string, { cx: number; cy: number; label: string }> = {
+  '1': { cx: 240, cy: 140, label: 'Z1' },  // back right
+  '2': { cx: 240, cy:  55, label: 'Z2' },  // front right
+  '3': { cx: 150, cy:  55, label: 'Z3' },  // front center
+  '4': { cx:  60, cy:  55, label: 'Z4' },  // front left
+  '5': { cx:  60, cy: 140, label: 'Z5' },  // back left
+  '6': { cx: 150, cy: 140, label: 'Z6' },  // back center
+  '7': { cx: 240, cy:  95, label: 'Z7' },  // mid right
+  '8': { cx: 150, cy:  95, label: 'Z8' },  // mid center
+  '9': { cx:  60, cy:  95, label: 'Z9' },  // mid left
+};
+
+function CourtZoneMap({ zones, teamColor, teamLabel, maxTotal }: {
+  zones: Record<string, ZoneData>;
+  teamColor: string;
+  teamLabel: string;
+  maxTotal: number;
+}) {
+  const W = 300; const H = 200;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+      <span style={{ fontSize: 11, fontWeight: 800, color: teamColor, fontFamily: 'JetBrains Mono, monospace', letterSpacing: '.1em', textTransform: 'uppercase' }}>
+        {teamLabel}
+      </span>
+      <svg width={W} height={H} style={{ borderRadius: 8, overflow: 'visible' }}>
+        {/* Court background */}
+        <rect x={0} y={0} width={W} height={H} fill="#0a1628" rx={6} />
+        {/* Court lines */}
+        <rect x={20} y={15} width={260} height={170} fill="none" stroke="#1e3a5f" strokeWidth={1.5} />
+        {/* Net */}
+        <line x1={20} y1={95} x2={280} y2={95} stroke="#3b82f6" strokeWidth={2} strokeDasharray="4,3" />
+        {/* Vertical dividers */}
+        <line x1={107} y1={15} x2={107} y2={185} stroke="#0f2040" strokeWidth={1} />
+        <line x1={193} y1={15} x2={193} y2={185} stroke="#0f2040" strokeWidth={1} />
+        {/* Horizontal dividers */}
+        <line x1={20} y1={100} x2={280} y2={100} stroke="#0f2040" strokeWidth={1} />
+
+        {/* Zone labels (subtle background) */}
+        {Object.entries(ZONE_POSITIONS).map(([z, pos]) => (
+          <text key={z} x={pos.cx} y={pos.cy + 28} textAnchor="middle"
+            style={{ fontSize: 9, fill: '#1e3a5f', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
+            {pos.label}
+          </text>
+        ))}
+
+        {/* Serve dots per zone */}
+        {Object.entries(ZONE_POSITIONS).map(([z, pos]) => {
+          const zd = zones[z];
+          if (!zd || zd.total === 0) return null;
+
+          // Circle size proportional to total (min 8, max 38)
+          const r = Math.max(8, Math.min(38, 8 + (zd.total / Math.max(maxTotal, 1)) * 30));
+
+          // Color: blend based on ace% vs error%
+          const aceRate  = zd.ace   / zd.total;
+          const errRate  = zd.error / zd.total;
+          const posRate  = zd.positive / zd.total;
+
+          // Pick dominant color
+          let fillColor: string;
+          let glowColor: string;
+          if (aceRate >= 0.12) {
+            fillColor = `rgba(16,185,129,${0.3 + aceRate * 0.5})`;
+            glowColor = '#10b981';
+          } else if (errRate >= 0.25) {
+            fillColor = `rgba(239,68,68,${0.3 + errRate * 0.4})`;
+            glowColor = '#ef4444';
+          } else if (posRate >= 0.20) {
+            fillColor = `rgba(59,130,246,${0.3 + posRate * 0.4})`;
+            glowColor = '#3b82f6';
+          } else {
+            fillColor = 'rgba(148,163,184,0.2)';
+            glowColor = '#64748b';
+          }
+
+          return (
+            <g key={z}>
+              {/* Glow */}
+              <circle cx={pos.cx} cy={pos.cy} r={r + 3} fill={glowColor} opacity={0.15} />
+              {/* Main circle */}
+              <circle cx={pos.cx} cy={pos.cy} r={r} fill={fillColor} stroke={glowColor} strokeWidth={1.5} />
+              {/* Count */}
+              <text x={pos.cx} y={pos.cy + 1} textAnchor="middle" dominantBaseline="central"
+                style={{ fontSize: Math.max(9, Math.min(13, r * 0.6)), fontWeight: 800, fill: '#f1f5f9', fontFamily: 'JetBrains Mono, monospace' }}>
+                {zd.total}
+              </text>
+              {/* Ace% if notable */}
+              {aceRate >= 0.08 && (
+                <text x={pos.cx} y={pos.cy + r + 10} textAnchor="middle"
+                  style={{ fontSize: 8, fill: '#10b981', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
+                  {Math.round(aceRate * 100)}% ace
+                </text>
+              )}
+            </g>
+          );
+        })}
+
+        {/* NET label */}
+        <text x={150} y={91} textAnchor="middle"
+          style={{ fontSize: 8, fill: '#3b82f6', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '.2em' }}>
+          NET
+        </text>
+      </svg>
+
+      {/* Mini legend */}
+      <div style={{ display: 'flex', gap: 10, fontSize: 9, color: '#64748b', fontFamily: 'JetBrains Mono, monospace' }}>
+        <span style={{ color: '#10b981' }}>● ace ≥12%</span>
+        <span style={{ color: '#3b82f6' }}>● pos ≥20%</span>
+        <span style={{ color: '#ef4444' }}>● err ≥25%</span>
+      </div>
+    </div>
+  );
+}
+
 // ─── PARSE ───────────────────────────────────────────────────────────────────
 
 function parseInstances(
@@ -367,6 +514,15 @@ function parseInstances(
       serve_types: {}, serve_grades: {}, atk_loc: {}, atk_grades: {}, rec_grades: {}, blk_grades: {}, dig_grades: {},
     };
 
+    // Zone heatmap data
+    const initZones = (): Record<string, ZoneData> => {
+      const z: Record<string, ZoneData> = {};
+      ['1','2','3','4','5','6','7','8','9'].forEach(k => { z[k] = { total: 0, ace: 0, positive: 0, negative: 0, error: 0 }; });
+      return z;
+    };
+    const homeZones = initZones();
+    const awayZones = initZones();
+
     const inc = (obj: Record<string, number>, k: string) => { if (k) obj[k] = (obj[k] || 0) + 1; };
 
     for (const inst of si) {
@@ -380,6 +536,17 @@ function parseInstances(
       if (action === 'Serve') {
         if (lbl['Serve Type']) inc(t.serve_types, lbl['Serve Type'] as string);
         if (lbl['Serve Grade']) inc(t.serve_grades, mapServeGrade(lbl['Serve Grade'] as string));
+        // Zone heatmap
+        const toZone = String(lbl['To Zone'] || '').replace(/[ABCD]$/, ''); // strip sub-zone
+        const grade  = String(lbl['Serve Grade'] || '');
+        const zMap   = isH ? homeZones : awayZones;
+        if (toZone && zMap[toZone]) {
+          zMap[toZone].total++;
+          if (grade === 'Perfect')  zMap[toZone].ace++;
+          else if (grade === 'Positive') zMap[toZone].positive++;
+          else if (grade === 'Average' || grade === 'Poor') zMap[toZone].negative++;
+          else if (grade === 'Fail') zMap[toZone].error++;
+        }
       } else if (action === 'Attack') {
         if (lbl['Attack Location']) inc(t.atk_loc, lbl['Attack Location'] as string);
         if (lbl['Attack Grade']) inc(t.atk_grades, mapAttackGrade(lbl['Attack Grade'] as string));
@@ -412,7 +579,7 @@ function parseInstances(
     const homeWon = scoreHome > scoreAway;
     if (sn < maxSet) { if (homeWon) matchHome++; else matchAway++; }
 
-    setStats[s] = { home, away, scoreHome, scoreAway, homeWon };
+    setStats[s] = { home, away, homeZones, awayZones, scoreHome, scoreAway, homeWon };
   }
 
   return {
@@ -433,6 +600,30 @@ function mergeAll(stats: MatchStats, key: string) {
     for (const t of ['home', 'away'] as const) {
       const src = (d[t] as any)[key] || {};
       for (const [k, v] of Object.entries(src)) r[t][k] = (r[t][k] || 0) + (v as number);
+    }
+  }
+  return r;
+}
+
+function mergeZones(stats: MatchStats): { home: Record<string, ZoneData>; away: Record<string, ZoneData> } {
+  const init = (): Record<string, ZoneData> => {
+    const z: Record<string, ZoneData> = {};
+    ['1','2','3','4','5','6','7','8','9'].forEach(k => { z[k] = { total: 0, ace: 0, positive: 0, negative: 0, error: 0 }; });
+    return z;
+  };
+  const r = { home: init(), away: init() };
+  for (const s of ['1','2','3','4','5']) {
+    const d = stats.sets[s];
+    if (!d) continue;
+    for (const t of ['home','away'] as const) {
+      const src = t === 'home' ? d.homeZones : d.awayZones;
+      for (const z of Object.keys(src)) {
+        r[t][z].total    += src[z].total;
+        r[t][z].ace      += src[z].ace;
+        r[t][z].positive += src[z].positive;
+        r[t][z].negative += src[z].negative;
+        r[t][z].error    += src[z].error;
+      }
     }
   }
   return r;
@@ -503,6 +694,10 @@ export default function CockpitPage() {
   const tab  = TABS[activeTab];
   const SETS = ['1', '2', '3', '4', '5'];
   const allData = stats ? mergeAll(stats, tab.key) : null;
+  const allZones = stats ? mergeZones(stats) : null;
+  const maxZoneTotal = allZones
+    ? Math.max(...Object.values(allZones.home).map(z => z.total), ...Object.values(allZones.away).map(z => z.total), 1)
+    : 1;
   const meta = MATCH_META[matchFile];
   const isLive = currentSet < 99 && currentSet > 0;
 
@@ -608,6 +803,105 @@ export default function CockpitPage() {
 
       {stats && !loading && isLive && (
         <div style={{ padding: '16px 20px' }}>
+
+          {/* ── SERVE ZONE TAB — court heatmap ── */}
+          {activeTab === 'serve_zone' && allZones && (
+            <>
+              {/* Per-set courts */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, marginBottom: 16 }}>
+                {SETS.map(s => {
+                  const d = stats.sets[s];
+                  const empty = !d;
+                  const isCurrent = Number(s) === currentSet && isLive;
+                  const setMaxTotal = d
+                    ? Math.max(...Object.values(d.homeZones).map(z => z.total), ...Object.values(d.awayZones).map(z => z.total), 1)
+                    : 1;
+                  return (
+                    <div key={s} style={{
+                      background: '#0c1828', borderRadius: 14,
+                      border: `1px solid ${empty ? '#0f172a' : isCurrent ? 'rgba(59,130,246,.35)' : '#1e293b'}`,
+                      padding: '12px 8px', opacity: empty ? 0.2 : 1,
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+                    }}>
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.25em', color: isCurrent ? '#60a5fa' : '#64748b', textTransform: 'uppercase' }}>
+                          {(COCKPIT_I18N[language] || COCKPIT_I18N.pl).set} {s}{isCurrent ? ' ●' : ''}
+                        </div>
+                        {!empty && d && (
+                          <div style={{ fontSize: 16, fontWeight: 800 }}>
+                            <span style={{ color: d.homeWon ? '#60a5fa' : '#64748b' }}>{d.scoreHome}</span>
+                            <span style={{ color: '#1e293b', margin: '0 4px' }}>:</span>
+                            <span style={{ color: !d.homeWon ? '#fbbf24' : '#64748b' }}>{d.scoreAway}</span>
+                          </div>
+                        )}
+                      </div>
+                      {!empty && d && (
+                        <>
+                          <CourtZoneMap zones={d.homeZones} teamColor="#60a5fa" teamLabel={stats.shortHome.substring(0,5)} maxTotal={setMaxTotal} />
+                          <CourtZoneMap zones={d.awayZones} teamColor="#fbbf24" teamLabel={stats.shortAway.substring(0,5)} maxTotal={setMaxTotal} />
+                        </>
+                      )}
+                      {empty && <div style={{ width: 300, height: 200, borderRadius: 8, background: '#0a1020', opacity: 0.3 }} />}
+                    </div>
+                  );
+                })}
+
+                {/* TOTAL column */}
+                <div style={{
+                  background: '#0a1000', borderRadius: 14, border: '2px solid #1a2200',
+                  padding: '12px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+                }}>
+                  <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.2em', color: '#fbbf24', textTransform: 'uppercase' }}>
+                    {(COCKPIT_I18N[language] || COCKPIT_I18N.pl).match}
+                  </div>
+                  <CourtZoneMap zones={allZones.home} teamColor="#60a5fa" teamLabel={stats.shortHome.substring(0,5)} maxTotal={maxZoneTotal} />
+                  <CourtZoneMap zones={allZones.away} teamColor="#fbbf24" teamLabel={stats.shortAway.substring(0,5)} maxTotal={maxZoneTotal} />
+                </div>
+              </div>
+
+              {/* Zone legend */}
+              <div style={{ padding: '14px 20px', background: '#0c1422', borderRadius: 10, border: '1px solid #1e293b' }}>
+                <div style={{ fontSize: 10, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.15em', marginBottom: 10 }}>
+                  {(TAB_I18N[language] || TAB_I18N.pl).serve_zone} — legenda
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
+                  {[
+                    { color: '#10b981', label: 'Ace ≥12% — skuteczna strefa' },
+                    { color: '#3b82f6', label: 'Pozytywna ≥20% — dobra strefa' },
+                    { color: '#ef4444', label: 'Błąd ≥25% — ryzykowna strefa' },
+                    { color: '#64748b', label: 'Neutralna' },
+                  ].map((l, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: l.color, opacity: 0.8 }} />
+                      <span style={{ fontSize: 11, color: '#94a3b8' }}>{l.label}</span>
+                    </div>
+                  ))}
+                  <div style={{ fontSize: 10, color: '#475569', marginLeft: 'auto' }}>
+                    Rozmiar koła = liczba zagrywek w strefę
+                  </div>
+                </div>
+                <div style={{ marginTop: 10, display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+                  {[
+                    { z: '5', desc: 'Strefa 5 — lewy tył (libero!)' },
+                    { z: '6', desc: 'Strefa 6 — środek tył' },
+                    { z: '1', desc: 'Strefa 1 — prawy tył' },
+                    { z: '4', desc: 'Strefa 4 — lewy przód' },
+                    { z: '3', desc: 'Strefa 3 — środek przód' },
+                    { z: '2', desc: 'Strefa 2 — prawy przód' },
+                  ].map(l => (
+                    <div key={l.z} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <span style={{ fontSize: 9, fontWeight: 800, color: '#60a5fa', fontFamily: 'JetBrains Mono', background: 'rgba(59,130,246,.1)', padding: '1px 6px', borderRadius: 4 }}>Z{l.z}</span>
+                      <span style={{ fontSize: 10, color: '#64748b' }}>{l.desc}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ── STANDARD DONUT GRID (all other tabs) ── */}
+          {activeTab !== 'serve_zone' && (
+            <>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
 
             {SETS.map(s => {
@@ -707,6 +1001,8 @@ export default function CockpitPage() {
               </div>
             )}
           </div>
+          </> /* end activeTab !== serve_zone */
+          )}
         </div>
       )}
 
