@@ -1649,7 +1649,7 @@ export default function LiveMatchCommentaryV4() {
  // ========================================================================
  
  // Returns a Promise that resolves when audio finishes (for sync with rally advancement)
- const playTTS = async (text: string, rallyNumber: number, waitForEnd = false): Promise<void> => {
+ const playTTS = async (text: string, rallyNumber: number, waitForEnd = false, tags: string[] = []): Promise<void> => {
    // Stop current audio if playing
    if (ttsAudioRef.current) {
      ttsAudioRef.current.pause();
@@ -1668,7 +1668,7 @@ export default function LiveMatchCommentaryV4() {
      const res = await fetch('/api/tts', {
        method: 'POST',
        headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify({ text, language }),
+       body: JSON.stringify({ text, language, tags }),
      });
      
      if (!res.ok) {
@@ -2337,7 +2337,7 @@ export default function LiveMatchCommentaryV4() {
 
  // RADIO MODE: wait for audio to finish, then advance
  if (ttsAutoPlay && newCommentary.text && newCommentary.type !== 'set_summary') {
-   await playTTS(newCommentary.text, newCommentary.rallyNumber, true);
+   await playTTS(newCommentary.text, newCommentary.rallyNumber, true, newCommentary.tags || []);
    // Small pause between rallies for breathing room
    await new Promise(resolve => setTimeout(resolve, 800));
    setCurrentRallyIndex((prev) => prev + 1);
@@ -2893,7 +2893,7 @@ export default function LiveMatchCommentaryV4() {
                      <p style={{ fontSize: 15, lineHeight: 1.65, margin: '0 0 4px', color: '#e2e8f0' }}>{commentary.text}</p>
                      {/* TTS + InlineFeedback row */}
                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                       <button onClick={() => playTTS(commentary.text, commentary.rallyNumber)}
+                       <button onClick={() => playTTS(commentary.text, commentary.rallyNumber, false, commentary.tags || [])}
                          style={{ fontSize: 10, padding: '1px 6px', borderRadius: 4, border: 'none', cursor: 'pointer', background: ttsPlaying === commentary.rallyNumber ? 'rgba(16,185,129,.2)' : 'rgba(255,255,255,.05)', color: ttsPlaying === commentary.rallyNumber ? '#34d399' : '#94a3b8' }}>
                          {ttsPlaying === commentary.rallyNumber ? '🔊' : '🔈'}
                        </button>
