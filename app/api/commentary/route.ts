@@ -1227,7 +1227,19 @@ if (!rally.touches || rally.touches.length === 0) {
    } else if (actionLower.includes('przyjecie') || actionLower.includes('pass') || actionLower.includes('receive')) {
      if (actionLower.includes('perfect')) desc += ' - idealne przyjecie';
      else if (actionLower.includes('positive')) desc += ' - dobre przyjecie';
-     else if (actionLower.includes('negative') || actionLower.includes('poor')) desc += ' - slabe przyjecie, trudna sytuacja';
+     else if (actionLower.includes('negative') || actionLower.includes('poor')) {
+       const poorReceptionVariants = [
+         ' - nieprecyzyjne przyjecie',
+         ' - trudne przyjecie',
+         ' - przyjecie daleko od strefy',
+         ' - nieudane przyjecie',
+         ' - przyjecie wymuszone',
+         ' - slabe przyjecie',
+         ' - klopoty z przyjecia',
+         ' - przyjecie poza strefa',
+       ];
+       desc += poorReceptionVariants[Math.floor(Math.random() * poorReceptionVariants.length)];
+     }
      else desc += ' - przyjecie';
    // SET
    } else if (actionLower.includes('rozegranie') || actionLower.includes('setting') || actionLower === 'set') {

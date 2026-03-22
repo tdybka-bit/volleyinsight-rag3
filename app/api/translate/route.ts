@@ -461,6 +461,48 @@ export async function POST(request: NextRequest) {
     console.log(`📝 Original text: "${text.substring(0, 80)}..."`);
 
     // ========================================================================
+    // PRE-PROCESSING: Strip Polish genitive surname forms before translation
+    // Polish commentary correctly uses genitive (Bołądź->Bołądzia, Kwolek->Kwoleka)
+    // but these forms must NOT leak into other languages — normalize to nominative
+    // ========================================================================
+    const GENITIVE_TO_NOMINATIVE: Record<string, string> = {
+      'Bołądzia': 'Bołądź',   'Bołądźa': 'Bołądź',
+      'Kwoleka': 'Kwolek',    'Kwolka': 'Kwolek',
+      'Bienieka': 'Bieniek',  'Bieńka': 'Bieniek',
+      'Grozdanova': 'Grozdanov',
+      'Sasaka': 'Sasak',
+      'Komendy': 'Komenda',
+      'Leona': 'Leon',
+      'Tavaresa': 'Tavares',  'Tavares Rodriguesa': 'Tavares',
+      'Popiwczaka': 'Popiwczak',
+      'Malinowskiego': 'Malinowski', 'Malinowska': 'Malinowski',
+      'Prokopczuka': 'Prokopczuk',
+      'Russella': 'Russell',
+      'McCarthya': 'McCarthy',
+      'Zniszczoła': 'Zniszczoł',
+      'Szalpuka': 'Szalpuk',
+      'Graniecznego': 'Granieczny',
+      'Kaczmareka': 'Kaczmarek', 'Kaczmarka': 'Kaczmarek',
+      'Gyimaha': 'Gyimah',
+      'Janusza': 'Janusz',
+      'Zatorskiego': 'Zatorski',
+      'Hossa': 'Thales',  // also enforce Thales here
+      'Łaby': 'Łaba',
+    };
+
+    let normalizedText = text;
+    if (fromLanguage === 'pl' && toLanguage !== 'pl') {
+      for (const [genitive, nominative] of Object.entries(GENITIVE_TO_NOMINATIVE)) {
+        // Replace whole-word occurrences (with word boundaries)
+        const regex = new RegExp(`\\b${genitive}\\b`, 'g');
+        normalizedText = normalizedText.replace(regex, nominative);
+      }
+      if (normalizedText !== text) {
+        console.log('📝 Genitive normalized:', normalizedText.substring(0, 100));
+      }
+    }
+
+    // ========================================================================
     // STEP 1: TRANSLATE COMMENTARY TEXT
     // ========================================================================
 
@@ -469,7 +511,7 @@ export async function POST(request: NextRequest) {
 
     const translationPrompt = `Adapt this volleyball commentary into ${langName}. Sound like a native ${langName} sports commentator:
 
-"${text}"
+"${normalizedText}"
 
 ${langName} commentary:`;
 
