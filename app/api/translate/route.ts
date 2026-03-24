@@ -78,6 +78,7 @@ MAI FARE:
 - Inventare "PRÉBATO" o "PREBUTO" — non esiste! Usa "superato", "bucato" o "vincente"
 - Portare desinenze polacche (NO: "Alurona", "BOGDANKI", "Bołądzia") — usa sempre la forma base
 - Usare "Hoss" — questo giocatore si chiama THALES (Thales Hoss) — usa SOLO "Thales"
+- Usare "Peccato" o "peccato" più di 2 volte per set — è VIETATO! Sostituisci con: "fuori!", "nella rete!", "errore!", "che occasione sprecata!", "regalo agli avversari!", "non ci siamo!", "va fuori!"
 - Ripetere la stessa frase più di 2 volte per set — varia il vocabolario`,
 
   // ─────────────────────────────────────────────────────────────────────────

@@ -629,6 +629,179 @@ function mergeZones(stats: MatchStats): { home: Record<string, ZoneData>; away: 
   return r;
 }
 
+// ─── WAFFLE CHART ────────────────────────────────────────────────────────────
+function WaffleChart({ data, cats, colors, label, labelColor }: {
+  data: Record<string, number>; cats: string[]; colors: string[];
+  label: string; labelColor: string;
+}) {
+  const total = cats.reduce((s, c) => s + (data[c] || 0), 0);
+  if (total === 0) return <div style={{ width: 120, height: 120, background: '#0a1020', borderRadius: 6, opacity: .3 }} />;
+  const cells: number[] = [];
+  cats.forEach((c, i) => {
+    const count = Math.round((data[c] || 0) / total * 100);
+    for (let j = 0; j < count; j++) cells.push(i);
+  });
+  while (cells.length < 100) cells.push(cats.length - 1);
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+      <span style={{ fontSize: 9, fontWeight: 800, color: labelColor, letterSpacing: '.1em', fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 11px)', gridTemplateRows: 'repeat(10, 11px)', gap: 1 }}>
+        {cells.slice(0, 100).map((ci, idx) => (
+          <div key={idx} style={{ width: 11, height: 11, borderRadius: 2, background: colors[ci] || '#1e293b' }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── RADIAL BAR ──────────────────────────────────────────────────────────────
+function RadialBar({ data, cats, colors, label, labelColor }: {
+  data: Record<string, number>; cats: string[]; colors: string[];
+  label: string; labelColor: string;
+}) {
+  const total = cats.reduce((s, c) => s + (data[c] || 0), 0);
+  const cx = 65; const cy = 65;
+  const trackW = 9; const gap = 3;
+  const maxR = 56; 
+  if (total === 0) return <div style={{ width: 130, height: 130, background: '#0a1020', borderRadius: '50%', opacity: .3 }} />;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+      <span style={{ fontSize: 9, fontWeight: 800, color: labelColor, letterSpacing: '.1em', fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
+      <svg width={130} height={130}>
+        {cats.map((cat, i) => {
+          const r = maxR - i * (trackW + gap);
+          const pct = (data[cat] || 0) / total;
+          const startAngle = -Math.PI / 2;
+          const endAngle = startAngle + pct * 2 * Math.PI;
+          const x1 = cx + r * Math.cos(startAngle);
+          const y1 = cy + r * Math.sin(startAngle);
+          const x2 = cx + r * Math.cos(endAngle);
+          const y2 = cy + r * Math.sin(endAngle);
+          const large = pct > 0.5 ? 1 : 0;
+          return (
+            <g key={cat}>
+              <circle cx={cx} cy={cy} r={r} fill="none" stroke="#0f172a" strokeWidth={trackW} />
+              {pct > 0 && <path d={`M${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2}`} fill="none" stroke={colors[i]} strokeWidth={trackW} strokeLinecap="round" />}
+              <text x={cx + r + 4} y={cy - r + trackW / 2 + 3} style={{ fontSize: 8, fill: colors[i], fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>{Math.round(pct * 100)}%</text>
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+// ─── TREEMAP ─────────────────────────────────────────────────────────────────
+function Treemap({ data, cats, colors, label, labelColor }: {
+  data: Record<string, number>; cats: string[]; colors: string[];
+  label: string; labelColor: string;
+}) {
+  const total = cats.reduce((s, c) => s + (data[c] || 0), 0);
+  if (total === 0) return <div style={{ width: 140, height: 90, background: '#0a1020', borderRadius: 6, opacity: .3 }} />;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+      <span style={{ fontSize: 9, fontWeight: 800, color: labelColor, letterSpacing: '.1em', fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
+      <div style={{ width: 140, height: 90, display: 'flex', gap: 2, alignItems: 'stretch' }}>
+        {cats.map((cat, i) => {
+          const pct = (data[cat] || 0) / total;
+          if (pct === 0) return null;
+          return (
+            <div key={cat} style={{
+              flex: pct, background: colors[i], borderRadius: 4, display: 'flex',
+              flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minWidth: 20,
+            }}>
+              <div style={{ fontSize: 8, fontWeight: 800, color: 'rgba(255,255,255,.9)', fontFamily: 'JetBrains Mono, monospace', textAlign: 'center', padding: '0 2px', lineHeight: 1.3 }}>
+                {pct >= 0.15 ? cat.substring(0, 6) : ''}
+              </div>
+              <div style={{ fontSize: 10, fontWeight: 800, color: '#fff', fontFamily: 'JetBrains Mono, monospace' }}>
+                {Math.round(pct * 100)}%
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── STACKED BAR ─────────────────────────────────────────────────────────────
+function StackedBar({ homeData, awayData, cats, colors, homeLabel, awayLabel, homeColor, awayColor }: {
+  homeData: Record<string, number>; awayData: Record<string, number>;
+  cats: string[]; colors: string[];
+  homeLabel: string; awayLabel: string; homeColor: string; awayColor: string;
+}) {
+  const hTotal = cats.reduce((s, c) => s + (homeData[c] || 0), 0);
+  const aTotal = cats.reduce((s, c) => s + (awayData[c] || 0), 0);
+  if (hTotal === 0 && aTotal === 0) return <div style={{ height: 60, background: '#0a1020', borderRadius: 6, opacity: .3 }} />;
+  const Bar = ({ data, total, label, color }: { data: Record<string,number>; total: number; label: string; color: string }) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <span style={{ fontSize: 9, fontWeight: 800, color, fontFamily: 'JetBrains Mono, monospace', letterSpacing: '.08em' }}>{label}</span>
+      <div style={{ display: 'flex', height: 22, borderRadius: 4, overflow: 'hidden', width: '100%' }}>
+        {total === 0 ? <div style={{ flex: 1, background: '#0f172a' }} /> :
+          cats.map((cat, i) => {
+            const pct = (data[cat] || 0) / total;
+            if (pct === 0) return null;
+            return <div key={cat} style={{ flex: pct, background: colors[i], display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {pct >= 0.12 && <span style={{ fontSize: 8, fontWeight: 800, color: '#fff', fontFamily: 'JetBrains Mono, monospace' }}>{Math.round(pct*100)}%</span>}
+            </div>;
+          })
+        }
+      </div>
+    </div>
+  );
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
+      <Bar data={homeData} total={hTotal} label={homeLabel} color={homeColor} />
+      <Bar data={awayData} total={aTotal} label={awayLabel} color={awayColor} />
+    </div>
+  );
+}
+
+// ─── LOLLIPOP ────────────────────────────────────────────────────────────────
+function Lollipop({ homeData, awayData, cats, homeLabel, awayLabel, homeColor, awayColor }: {
+  homeData: Record<string, number>; awayData: Record<string, number>;
+  cats: string[]; homeLabel: string; awayLabel: string; homeColor: string; awayColor: string;
+}) {
+  const allVals = cats.flatMap(c => [homeData[c] || 0, awayData[c] || 0]);
+  const maxVal = Math.max(...allVals, 1);
+  const W = 200;
+  return (
+    <div style={{ width: '100%' }}>
+      {cats.map((cat, i) => {
+        const hv = homeData[cat] || 0;
+        const av = awayData[cat] || 0;
+        const hPct = hv / maxVal;
+        const aPct = av / maxVal;
+        return (
+          <div key={cat} style={{ marginBottom: 10 }}>
+            <div style={{ fontSize: 8, color: '#475569', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, marginBottom: 3 }}>{cat}</div>
+            {/* Home */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+              <span style={{ fontSize: 8, color: homeColor, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', width: 28 }}>{homeLabel}</span>
+              <div style={{ flex: 1, position: 'relative', height: 12 }}>
+                <div style={{ position: 'absolute', top: 5, left: 0, width: `${hPct * 100}%`, height: 2, background: `${homeColor}40`, borderRadius: 1 }} />
+                <div style={{ position: 'absolute', top: 1, left: `calc(${hPct * 100}% - 5px)`, width: 10, height: 10, borderRadius: '50%', background: homeColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: 6, fontWeight: 800, color: '#0a0e17', fontFamily: 'JetBrains Mono, monospace' }}>{hv}</span>
+                </div>
+              </div>
+            </div>
+            {/* Away */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontSize: 8, color: awayColor, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', width: 28 }}>{awayLabel}</span>
+              <div style={{ flex: 1, position: 'relative', height: 12 }}>
+                <div style={{ position: 'absolute', top: 5, left: 0, width: `${aPct * 100}%`, height: 2, background: `${awayColor}40`, borderRadius: 1 }} />
+                <div style={{ position: 'absolute', top: 1, left: `calc(${aPct * 100}% - 5px)`, width: 10, height: 10, borderRadius: '50%', background: awayColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: 6, fontWeight: 800, color: '#0a0e17', fontFamily: 'JetBrains Mono, monospace' }}>{av}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ─── MAIN ────────────────────────────────────────────────────────────────────
 
 export default function CockpitPage() {
@@ -713,69 +886,84 @@ export default function CockpitPage() {
   // ── HELPER: render grid content for a given tab key ──────────────────────
   const renderPanelContent = (tabKey: TabKey, mergedData: { home: Record<string, number>; away: Record<string, number> } | null) => {
     const t = TABS[tabKey];
+    const sHome = stats?.shortHome.substring(0, 5) || 'H';
+    const sAway = stats?.shortAway.substring(0, 5) || 'A';
+
+    // Serve zone — court heatmap (unchanged)
     if (tabKey === 'serve_zone' && allZones) {
       return (
         <div style={{ padding: '12px 16px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
             {SETS.map(s => {
-              const d = stats?.sets[s];
-              const empty = !d;
+              const d = stats?.sets[s]; const empty = !d;
               const isCurrent = Number(s) === currentSet && isLive;
               const setMax = d ? Math.max(...Object.values(d.homeZones).map(z => z.total), ...Object.values(d.awayZones).map(z => z.total), 1) : 1;
               return (
                 <div key={s} style={{ background: '#0c1828', borderRadius: 10, border: `1px solid ${empty ? '#0f172a' : isCurrent ? 'rgba(59,130,246,.35)' : '#1e293b'}`, padding: '8px 4px', opacity: empty ? 0.2 : 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                  <div style={{ fontSize: 8, fontWeight: 700, color: isCurrent ? '#60a5fa' : '#64748b', textTransform: 'uppercase', letterSpacing: '.2em' }}>
-                    {(COCKPIT_I18N[language] || COCKPIT_I18N.pl).set} {s}{isCurrent ? ' ●' : ''}
-                  </div>
-                  {!empty && d && <><CourtZoneMap zones={d.homeZones} teamColor="#60a5fa" teamLabel={stats!.shortHome.substring(0, 4)} maxTotal={setMax} /><CourtZoneMap zones={d.awayZones} teamColor="#fbbf24" teamLabel={stats!.shortAway.substring(0, 4)} maxTotal={setMax} /></>}
+                  <div style={{ fontSize: 8, fontWeight: 700, color: isCurrent ? '#60a5fa' : '#64748b', textTransform: 'uppercase', letterSpacing: '.2em' }}>{(COCKPIT_I18N[language] || COCKPIT_I18N.pl).set} {s}{isCurrent ? ' ●' : ''}</div>
+                  {!empty && d && <><CourtZoneMap zones={d.homeZones} teamColor="#60a5fa" teamLabel={sHome} maxTotal={setMax} /><CourtZoneMap zones={d.awayZones} teamColor="#fbbf24" teamLabel={sAway} maxTotal={setMax} /></>}
                   {empty && <div style={{ width: 200, height: 80, borderRadius: 5, background: '#0a1020', opacity: 0.3 }} />}
                 </div>
               );
             })}
             <div style={{ background: '#0a1000', borderRadius: 10, border: '2px solid #1a2200', padding: '8px 4px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
               <div style={{ fontSize: 9, fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '.12em' }}>{(COCKPIT_I18N[language] || COCKPIT_I18N.pl).match}</div>
-              {stats && <><CourtZoneMap zones={allZones.home} teamColor="#60a5fa" teamLabel={stats.shortHome.substring(0, 4)} maxTotal={maxZoneTotal} /><CourtZoneMap zones={allZones.away} teamColor="#fbbf24" teamLabel={stats.shortAway.substring(0, 4)} maxTotal={maxZoneTotal} /></>}
+              {stats && <><CourtZoneMap zones={allZones.home} teamColor="#60a5fa" teamLabel={sHome} maxTotal={maxZoneTotal} /><CourtZoneMap zones={allZones.away} teamColor="#fbbf24" teamLabel={sAway} maxTotal={maxZoneTotal} /></>}
             </div>
           </div>
         </div>
       );
     }
-    // Standard donut grid
+
+    // Determine chart type per tab
+    const useWaffle     = tabKey === 'serve_type' || tabKey === 'receive';
+    const useRadial     = tabKey === 'serve_grade';
+    const useTreemap    = tabKey === 'attack_loc';
+    const useStacked    = tabKey === 'attack_grade';
+    const useLollipop   = tabKey === 'block' || tabKey === 'dig';
+
     return (
       <div style={{ padding: '12px 16px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
           {SETS.map(s => {
-            const d = stats?.sets[s];
-            const empty = !d;
+            const d = stats?.sets[s]; const empty = !d;
             const isCurrent = Number(s) === currentSet && isLive;
+            const hData = (!empty && d) ? (d.home as any)[t.key] || {} : {};
+            const aData = (!empty && d) ? (d.away as any)[t.key] || {} : {};
             return (
-              <div key={s} style={{ background: '#0c1828', borderRadius: 10, border: `1px solid ${empty ? '#0f172a' : isCurrent ? 'rgba(59,130,246,.35)' : '#1e293b'}`, padding: '10px 6px', opacity: empty ? 0.2 : 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+              <div key={s} style={{ background: '#0c1828', borderRadius: 10, border: `1px solid ${empty ? '#0f172a' : isCurrent ? 'rgba(59,130,246,.35)' : '#1e293b'}`, padding: '10px 8px', opacity: empty ? 0.2 : 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '.2em', color: isCurrent ? '#60a5fa' : '#64748b', textTransform: 'uppercase' }}>
-                    {(COCKPIT_I18N[language] || COCKPIT_I18N.pl).set} {s}{isCurrent ? ' ●' : ''}
-                  </div>
-                  {!empty && d && (
-                    <div style={{ marginTop: 3, fontSize: 16, fontWeight: 800 }}>
-                      <span style={{ color: d.homeWon ? '#60a5fa' : '#64748b' }}>{d.scoreHome}</span>
-                      <span style={{ color: '#1e293b', margin: '0 3px' }}>:</span>
-                      <span style={{ color: !d.homeWon ? '#fbbf24' : '#64748b' }}>{d.scoreAway}</span>
-                    </div>
-                  )}
+                  <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '.2em', color: isCurrent ? '#60a5fa' : '#64748b', textTransform: 'uppercase' }}>{(COCKPIT_I18N[language] || COCKPIT_I18N.pl).set} {s}{isCurrent ? ' ●' : ''}</div>
+                  {!empty && d && <div style={{ marginTop: 3, fontSize: 15, fontWeight: 800 }}><span style={{ color: d.homeWon ? '#60a5fa' : '#64748b' }}>{d.scoreHome}</span><span style={{ color: '#1e293b', margin: '0 3px' }}>:</span><span style={{ color: !d.homeWon ? '#fbbf24' : '#64748b' }}>{d.scoreAway}</span></div>}
                 </div>
-                {empty && <div style={{ width: 90, height: 90, borderRadius: '50%', background: '#111827', opacity: .1 }} />}
-                {!empty && d && <><SvgDonut data={(d.home as any)[t.key] || {}} cats={t.cats} colors={t.colors} size={120} thickness={26} label={stats!.shortHome.substring(0, 6)} labelColor="#60a5fa" unit={t.unit} /><SvgDonut data={(d.away as any)[t.key] || {}} cats={t.cats} colors={t.colors} size={120} thickness={26} label={stats!.shortAway.substring(0, 6)} labelColor="#fbbf24" unit={t.unit} /></>}
+                {empty && <div style={{ width: 120, height: 80, borderRadius: 6, background: '#111827', opacity: .1 }} />}
+                {!empty && d && (
+                  <>
+                    {useWaffle  && <><WaffleChart data={hData} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><WaffleChart data={aData} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
+                    {useRadial  && <><RadialBar   data={hData} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><RadialBar   data={aData} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
+                    {useTreemap && <><Treemap     data={hData} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><Treemap     data={aData} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
+                    {useStacked && <StackedBar homeData={hData} awayData={aData} cats={t.cats} colors={t.colors} homeLabel={sHome} awayLabel={sAway} homeColor="#60a5fa" awayColor="#fbbf24" />}
+                    {useLollipop && <Lollipop homeData={hData} awayData={aData} cats={t.cats} homeLabel={sHome} awayLabel={sAway} homeColor="#60a5fa" awayColor="#fbbf24" />}
+                  </>
+                )}
               </div>
             );
           })}
+          {/* TOTAL column */}
           {mergedData && (
-            <div style={{ background: '#0a1000', borderRadius: 10, border: '2px solid #1a2200', padding: '10px 6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+            <div style={{ background: '#0a1000', borderRadius: 10, border: '2px solid #1a2200', padding: '10px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
               <div style={{ fontSize: 9, fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '.15em' }}>{(COCKPIT_I18N[language] || COCKPIT_I18N.pl).match}</div>
-              {stats && <><SvgDonut data={mergedData.home} cats={t.cats} colors={t.colors} size={120} thickness={26} label={stats.shortHome.substring(0, 6)} labelColor="#60a5fa" unit={t.unit} /><SvgDonut data={mergedData.away} cats={t.cats} colors={t.colors} size={120} thickness={26} label={stats.shortAway.substring(0, 6)} labelColor="#fbbf24" unit={t.unit} /></>}
+              {useWaffle  && <><WaffleChart data={mergedData.home} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><WaffleChart data={mergedData.away} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
+              {useRadial  && <><RadialBar   data={mergedData.home} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><RadialBar   data={mergedData.away} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
+              {useTreemap && <><Treemap     data={mergedData.home} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><Treemap     data={mergedData.away} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
+              {useStacked && <StackedBar homeData={mergedData.home} awayData={mergedData.away} cats={t.cats} colors={t.colors} homeLabel={sHome} awayLabel={sAway} homeColor="#60a5fa" awayColor="#fbbf24" />}
+              {useLollipop && <Lollipop homeData={mergedData.home} awayData={mergedData.away} cats={t.cats} homeLabel={sHome} awayLabel={sAway} homeColor="#60a5fa" awayColor="#fbbf24" />}
             </div>
           )}
         </div>
+        {/* Legend */}
         {t.cats.length > 0 && (
-          <div style={{ marginTop: 14, padding: '10px 14px', background: '#0c1422', borderRadius: 8, border: '1px solid #1e293b', display: 'flex', flexWrap: 'wrap', gap: 7, alignItems: 'center' }}>
+          <div style={{ marginTop: 12, padding: '10px 14px', background: '#0c1422', borderRadius: 8, border: '1px solid #1e293b', display: 'flex', flexWrap: 'wrap', gap: 7, alignItems: 'center' }}>
             <span style={{ fontSize: 9, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.1em', marginRight: 3 }}>{(TAB_I18N[language] || TAB_I18N.pl)[tabKey]}</span>
             <div style={{ width: 1, height: 14, background: '#1e293b' }} />
             {t.cats.map((c, i) => {
