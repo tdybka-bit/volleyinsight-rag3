@@ -167,6 +167,15 @@ interface CommentaryEntry {
    narrative?: string;
    originalNarrative?: string;
  };
+ // MATCH SUMMARY DATA (only when type === 'match_summary')
+ matchSummaryData?: {
+   matchScore: { home: number; away: number };
+   setResults: Array<{ setNumber: number; homeScore: number; awayScore: number; homeWon: boolean }>;
+   topScorers: Array<{ player: string; points: number; team: 'home' | 'away' }>;
+   totalRallies: number;
+   winner: string;
+   narrative?: string;
+ };
 }
 
 type Language = 'pl' | 'en' | 'it' | 'de' | 'tr' | 'es' | 'pt' | 'jp';
@@ -197,7 +206,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Wybierz ulubionego zawodnika aby aktywowac BUDDY panel',
    sources: 'zrodel w bazie wiedzy', source1: 'zrodlo w bazie wiedzy', sources24: 'zrodla w bazie wiedzy',
    highRelevance: 'wysoka trafnosc', medRelevance: 'srednia trafnosc',
-   setEnd: 'Koniec seta', setWinner: 'Wygrywa', topScorers: 'TOP punktujący', pts: 'pkt',
+   setEnd: 'Koniec seta', setWinner: 'Wygrywa', topScorers: 'TOP punktujący', pts: 'pkt', matchEnd: 'KONIEC MECZU', matchWinner: 'Zwycięzca',
  },
  en: {
    statsTitle: 'Match Statistics', points: 'Points', serve: 'Serve',
@@ -209,7 +218,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Select a favorite player to activate BUDDY panel',
    sources: 'sources in knowledge base', source1: 'source in knowledge base', sources24: 'sources in knowledge base',
    highRelevance: 'high relevance', medRelevance: 'medium relevance',
-   setEnd: 'End of set', setWinner: 'Winner', topScorers: 'TOP scorers', pts: 'pts',
+   setEnd: 'End of set', setWinner: 'Winner', topScorers: 'TOP scorers', pts: 'pts', matchEnd: 'MATCH OVER', matchWinner: 'Winner',
  },
  it: {
    statsTitle: 'Statistiche partita', points: 'Punti', serve: 'Battuta',
@@ -221,7 +230,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Seleziona un giocatore preferito per attivare il pannello BUDDY',
    sources: 'fonti nella base dati', source1: 'fonte nella base dati', sources24: 'fonti nella base dati',
    highRelevance: 'alta rilevanza', medRelevance: 'media rilevanza',
-   setEnd: 'Fine del set', setWinner: 'Vince', topScorers: 'TOP marcatori', pts: 'pt',
+   setEnd: 'Fine del set', setWinner: 'Vince', topScorers: 'TOP marcatori', pts: 'pt', matchEnd: 'FINE PARTITA', matchWinner: 'Vincitore',
  },
  de: {
    statsTitle: 'Spielstatistiken', points: 'Punkte', serve: 'Aufschlag',
@@ -233,7 +242,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Wahle einen Lieblingsspieler um das BUDDY-Panel zu aktivieren',
    sources: 'Quellen in der Wissensdatenbank', source1: 'Quelle in der Wissensdatenbank', sources24: 'Quellen in der Wissensdatenbank',
    highRelevance: 'hohe Relevanz', medRelevance: 'mittlere Relevanz',
-   setEnd: 'Satzende', setWinner: 'Sieger', topScorers: 'TOP Scorer', pts: 'Pkt',
+   setEnd: 'Satzende', setWinner: 'Sieger', topScorers: 'TOP Scorer', pts: 'Pkt', matchEnd: 'SPIELENDE', matchWinner: 'Sieger',
  },
  tr: {
    statsTitle: 'Mac Istatistikleri', points: 'Sayilar', serve: 'Servis',
@@ -245,7 +254,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'BUDDY panelini etkinlestirmek icin bir oyuncu secin',
    sources: 'kaynak', source1: 'kaynak', sources24: 'kaynak',
    highRelevance: 'yuksek uyum', medRelevance: 'orta uyum',
-   setEnd: 'Set sonu', setWinner: 'Kazanan', topScorers: 'En iyi skorer', pts: 'puan',
+   setEnd: 'Set sonu', setWinner: 'Kazanan', topScorers: 'En iyi skorer', pts: 'puan', matchEnd: 'MAÇ SONU', matchWinner: 'Kazanan',
  },
  es: {
    statsTitle: 'Estadisticas del partido', points: 'Puntos', serve: 'Saque',
@@ -257,7 +266,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Selecciona un jugador favorito para activar el panel BUDDY',
    sources: 'fuentes en la base', source1: 'fuente en la base', sources24: 'fuentes en la base',
    highRelevance: 'alta relevancia', medRelevance: 'relevancia media',
-   setEnd: 'Fin del set', setWinner: 'Gana', topScorers: 'TOP anotadores', pts: 'pts',
+   setEnd: 'Fin del set', setWinner: 'Gana', topScorers: 'TOP anotadores', pts: 'pts', matchEnd: 'FIN DEL PARTIDO', matchWinner: 'Ganador',
  },
  pt: {
    statsTitle: 'Estatisticas do jogo', points: 'Pontos', serve: 'Saque',
@@ -269,7 +278,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Selecione um jogador favorito para ativar o painel BUDDY',
    sources: 'fontes na base', source1: 'fonte na base', sources24: 'fontes na base',
    highRelevance: 'alta relevancia', medRelevance: 'relevancia media',
-   setEnd: 'Fim do set', setWinner: 'Vence', topScorers: 'TOP pontuadores', pts: 'pts',
+   setEnd: 'Fim do set', setWinner: 'Vence', topScorers: 'TOP pontuadores', pts: 'pts', matchEnd: 'FIM DO JOGO', matchWinner: 'Vencedor',
  },
  jp: {
    statsTitle: '試合統計', points: 'ポイント', serve: 'サーブ',
@@ -281,7 +290,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'BUDDYパネルを有効にする選手を選択',
    sources: 'ソース', source1: 'ソース', sources24: 'ソース',
    highRelevance: '高関連性', medRelevance: '中関連性',
-   setEnd: 'セット終了', setWinner: '勝者', topScorers: 'TOP得点者', pts: '点',
+   setEnd: 'セット終了', setWinner: '勝者', topScorers: 'TOP得点者', pts: '点', matchEnd: '試合終了', matchWinner: '優勝',
  },
 };
 
@@ -1649,7 +1658,7 @@ export default function LiveMatchCommentaryV4() {
  // ========================================================================
  
  // Returns a Promise that resolves when audio finishes (for sync with rally advancement)
- const playTTS = async (text: string, rallyNumber: number, waitForEnd = false, tags: string[] = []): Promise<void> => {
+ const playTTS = async (text: string, rallyNumber: number, waitForEnd = false): Promise<void> => {
    // Stop current audio if playing
    if (ttsAudioRef.current) {
      ttsAudioRef.current.pause();
@@ -1668,7 +1677,7 @@ export default function LiveMatchCommentaryV4() {
      const res = await fetch('/api/tts', {
        method: 'POST',
        headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify({ text, language, tags }),
+       body: JSON.stringify({ text, language }),
      });
      
      if (!res.ok) {
@@ -1779,7 +1788,7 @@ export default function LiveMatchCommentaryV4() {
 
  const generateCommentary = async (rally: Rally) => {
  try {
- console.log('Generating commentary for rally #', rally.rally_number, '(always PL first, then translate to', language, ')');
+ console.log('Generating commentary for rally #', rally.rally_number, 'directly in', language);
  setIsGenerating(true);
  
  const updatedStats = calculatePlayerStats(rally);
@@ -1789,12 +1798,13 @@ export default function LiveMatchCommentaryV4() {
  
  const rallyAnalysis = analyzeRallyChain(rally);
 
- // ALWAYS generate in Polish first (best quality - all context is PL)
+ // Generate DIRECTLY in target language — no translation step needed
+ // Commentary route now has full cultural profiles for all 8 languages
  const data = await fetchWithUTF8('/api/commentary', {
  method: 'POST',
  body: JSON.stringify({ 
  rally, 
- language: 'pl', // Always Polish for generation
+ language: language, // Native generation in target language
  playerStats: updatedStats,
  recentRallies: recentRallies,
  rallyAnalysis: rallyAnalysis,
@@ -1806,33 +1816,11 @@ export default function LiveMatchCommentaryV4() {
 
  let finalCommentary = data.commentary || '';
  let finalTags = data.tags || [];
- const polishOriginal = finalCommentary;
-
- // If not Polish, translate via /api/translate (stylistic adaptation)
- if (language !== 'pl' && finalCommentary) {
-   try {
-     console.log(`🌍 Translating rally #${rally.rally_number} to ${language}...`);
-     const trRes = await fetchWithUTF8('/api/translate', {
-       method: 'POST',
-       body: JSON.stringify({ 
-         text: finalCommentary, 
-         fromLanguage: 'pl', 
-         toLanguage: language, 
-         tags: finalTags 
-       }),
-     });
-     if (trRes.translatedText) {
-       finalCommentary = trRes.translatedText;
-       finalTags = trRes.translatedTags || finalTags;
-       console.log(`✅ Rally #${rally.rally_number} translated to ${language}`);
-     }
-   } catch (trErr) {
-     console.warn(`⚠️ Translation failed for rally #${rally.rally_number}, keeping Polish:`, trErr);
-   }
- }
+ // Store Polish original for reference (generate PL version only if needed for retranslation)
+ const polishOriginal = language === 'pl' ? finalCommentary : '';
 
  setIsGenerating(false);
- console.log('Commentary generated:', { polish: polishOriginal.substring(0, 50), final: finalCommentary.substring(0, 50) });
+ console.log('Commentary generated natively in', language, ':', finalCommentary.substring(0, 60));
  
  return {
  commentary: finalCommentary,
@@ -2039,7 +2027,7 @@ export default function LiveMatchCommentaryV4() {
          body: JSON.stringify({ 
            homeTeam, 
            awayTeam, 
-           language: 'pl',
+           language: language, // Generate directly in target language
            homePlayers,
            awayPlayers,
            playerPositions: positions,
@@ -2047,21 +2035,7 @@ export default function LiveMatchCommentaryV4() {
        });
        const data = await res.json();
        if (data.intro) {
-         let displayText = data.intro;
-         // Auto-translate if not PL
-         if (language !== 'pl') {
-           try {
-             const trRes = await fetch('/api/translate', {
-               method: 'POST',
-               headers: { 'Content-Type': 'application/json' },
-               body: JSON.stringify({ text: data.intro, fromLanguage: 'pl', toLanguage: language, tags: [] }),
-             });
-             if (trRes.ok) {
-               const trData = await trRes.json();
-               displayText = trData.translatedText || data.intro;
-             }
-           } catch (e) { /* keep PL on error */ }
-         }
+         const displayText = data.intro;
          setCommentaries(prev => prev.map(c =>
            c.rallyNumber === -999 && c.type === 'intro'
              ? { ...c, text: displayText, originalText: data.intro }
@@ -2161,26 +2135,13 @@ export default function LiveMatchCommentaryV4() {
                  touches: r.touches,
                  final_action: r.final_action,
                })),
-               language: 'pl', // Always generate in PL (best quality), translate after
+               language: language, // Generate directly in target language
              }),
            });
            const data = await res.json();
            if (data.narrative) {
-             let displayNarrative = data.narrative;
-             const polishNarrative = data.narrative;
-             
-             // Translate if not Polish
-             if (language !== 'pl') {
-               try {
-                 const trRes = await fetchWithUTF8('/api/translate', {
-                   method: 'POST',
-                   body: JSON.stringify({ text: data.narrative, fromLanguage: 'pl', toLanguage: language, tags: [] }),
-                 });
-                 if (trRes.translatedText) {
-                   displayNarrative = trRes.translatedText;
-                 }
-               } catch (e) { /* keep PL on error */ }
-             }
+             const displayNarrative = data.narrative;
+             const polishNarrative = language === 'pl' ? data.narrative : '';
              
              setCommentaries((prev) => prev.map(c => 
                c.rallyNumber === (-summarySetNum - 100) && c.type === 'set_summary'
@@ -2335,17 +2296,73 @@ export default function LiveMatchCommentaryV4() {
  }
  }, 100);
 
- // RADIO MODE: wait for audio to finish, then advance
+ // RADIO MODE: wait for audio
  if (ttsAutoPlay && newCommentary.text && newCommentary.type !== 'set_summary') {
    await playTTS(newCommentary.text, newCommentary.rallyNumber, true, newCommentary.tags || []);
-   // Small pause between rallies for breathing room
    await new Promise(resolve => setTimeout(resolve, 800));
+ }
+
+ const isLastRally = currentRallyIndex >= rallies.length - 1;
+
+ if (isLastRally) {
+   setIsPlaying(false);
+   // Calculate match score
+   const allSetNums = [...new Set(rallies.map((r: any) => r.set_number || 1))].sort();
+   const setResults = allSetNums.map((s: number) => {
+     const sRallies = rallies.filter((r: any) => (r.set_number || 1) === s);
+     const last = sRallies[sRallies.length - 1];
+     const hS = last?.score_after?.home || 0;
+     const aS = last?.score_after?.away || 0;
+     return { setNumber: s, homeScore: hS, awayScore: aS, homeWon: hS > aS };
+   });
+   const homeSets = setResults.filter((s: any) => s.homeWon).length;
+   const awaySets = setResults.filter((s: any) => !s.homeWon).length;
+   // Match-wide top scorers
+   const matchScorers: Record<string, { points: number; team: 'home' | 'away' }> = {};
+   rallies.forEach((r: any) => {
+     r.touches?.forEach((t: any) => {
+       if (!t.player) return;
+       const g = (t.grade || '').toLowerCase();
+       const at = (t.actionType || '').toLowerCase();
+       if ((at === 'serve' && g === 'perfect') || (at === 'attack' && g === 'perfect') || (at === 'block' && g === 'perfect')) {
+         const team = r.team_scored === 'home' ? 'home' : 'away';
+         if (!matchScorers[t.player]) matchScorers[t.player] = { points: 0, team };
+         matchScorers[t.player].points++;
+       }
+     });
+   });
+   const topMatchScorers = Object.entries(matchScorers).sort(([,a],[,b]) => b.points - a.points).slice(0, 5).map(([player, d]) => ({ player, points: d.points, team: d.team }));
+   const homeTeam = getHomeTeamFull(); const awayTeam = getAwayTeamFull();
+   const winner = homeSets > awaySets ? homeTeam : awayTeam;
+   const matchEntry: CommentaryEntry = {
+     rallyNumber: -9999, text: `${winner} wygrywa mecz ${homeSets}:${awaySets}!`,
+     originalText: `${winner} wygrywa mecz ${homeSets}:${awaySets}!`,
+     timestamp: new Date(), player: '', team: '', action: '',
+     type: 'match_summary', tags: ['#koniec_meczu'], originalTags: [], milestones: [],
+     icon: 'MATCH_END', momentumScore: 0, dramaScore: 0, tagData: {},
+     matchSummaryData: { matchScore: { home: homeSets, away: awaySets }, setResults, topScorers: topMatchScorers, totalRallies: rallies.length, winner, narrative: '...' },
+   };
+   setCommentaries(prev => [matchEntry, ...prev]);
+   (async () => {
+     try {
+       const res = await fetch('/api/match-summary', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({ homeTeam, awayTeam, matchScore: { home: homeSets, away: awaySets }, setResults, topScorers: topMatchScorers, totalRallies: rallies.length, language }),
+       });
+       const data = await res.json();
+       if (data.narrative) {
+         setCommentaries(prev => prev.map(c => c.rallyNumber === -9999 && c.type === 'match_summary'
+           ? { ...c, text: data.narrative, matchSummaryData: { ...c.matchSummaryData!, narrative: data.narrative } } : c));
+       }
+     } catch (e) { console.error('[MATCH-SUMMARY]', e); }
+   })();
+   return;
+ }
+
+ // Advance to next rally
+ if (ttsAutoPlay) {
    setCurrentRallyIndex((prev) => prev + 1);
  } else {
-   // NORMAL MODE: advance on timer
-   setTimeout(() => {
-     setCurrentRallyIndex((prev) => prev + 1);
-   }, speed);
+   setTimeout(() => { setCurrentRallyIndex((prev) => prev + 1); }, speed);
  }
  };
 
@@ -2813,6 +2830,44 @@ export default function LiveMatchCommentaryV4() {
                }
 
                // ── SET SUMMARY CARD ────────────────────────────────────────
+               // ── MATCH SUMMARY CARD ──────────────────────────────────────
+               if (commentary.type === 'match_summary' && commentary.matchSummaryData) {
+                 const md = commentary.matchSummaryData;
+                 const i18n = BUDDY_I18N[language];
+                 return (
+                   <div key={index} style={{ background: 'linear-gradient(to right,rgba(88,28,135,.25),rgba(124,58,237,.2),rgba(88,28,135,.25))', border: '2px solid rgba(167,139,250,.35)', borderRadius: 14, padding: 20, marginBottom: 8, textAlign: 'center' }}>
+                     <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '.2em', color: '#7c3aed', marginBottom: 6, fontWeight: 800 }}>🏆 {i18n.matchEnd}</div>
+                     <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 36, fontWeight: 800, color: '#fff', marginBottom: 4 }}>
+                       {md.matchScore.home} <span style={{ color: '#475569', fontSize: 22 }}>:</span> {md.matchScore.away}
+                     </div>
+                     <div style={{ fontSize: 13, color: '#a78bfa', marginBottom: 10, fontWeight: 700 }}>{i18n.matchWinner}: {md.winner}</div>
+                     <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
+                       {md.setResults.map(s => (
+                         <div key={s.setNumber} style={{ background: s.homeWon ? 'rgba(59,130,246,.15)' : 'rgba(245,158,11,.15)', border: `1px solid ${s.homeWon ? 'rgba(59,130,246,.3)' : 'rgba(245,158,11,.3)'}`, borderRadius: 6, padding: '3px 8px', fontSize: 11, fontFamily: "'JetBrains Mono',monospace", color: s.homeWon ? '#93c5fd' : '#fcd34d' }}>
+                           S{s.setNumber} {s.homeScore}:{s.awayScore}
+                         </div>
+                       ))}
+                     </div>
+                     {md.narrative && md.narrative !== '...' && (
+                       <p style={{ fontSize: 14, color: '#e9d5ff', lineHeight: 1.65, fontStyle: 'italic', margin: '0 0 12px', padding: '0 8px' }}>{md.narrative}</p>
+                     )}
+                     {md.narrative === '...' && <p style={{ fontSize: 11, color: '#a78bfa', margin: '0 0 12px', animation: 'pulse 1.5s infinite' }}>Generowanie podsumowania meczu...</p>}
+                     {md.topScorers.length > 0 && (
+                       <div style={{ borderTop: '1px solid rgba(167,139,250,.2)', paddingTop: 10, display: 'inline-block', minWidth: 200, textAlign: 'left' }}>
+                         <div style={{ fontSize: 9, fontWeight: 800, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 5 }}>MVP meczu:</div>
+                         {md.topScorers.slice(0,3).map((s, i) => (
+                           <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, padding: '2px 0' }}>
+                             <span style={{ color: s.team === 'home' ? '#93c5fd' : '#fcd34d' }}>{i + 1}. {s.player}</span>
+                             <span style={{ color: '#a78bfa', fontWeight: 700, marginLeft: 16 }}>{s.points} pkt</span>
+                           </div>
+                         ))}
+                       </div>
+                     )}
+                   </div>
+                 );
+               }
+
+               // ── SET SUMMARY CARD ────────────────────────────────────────
                if (commentary.type === 'set_summary' && commentary.summaryData) {
                  const sd = commentary.summaryData;
                  const winnerName = sd.winner === 'home' ? getHomeTeamFull() : getAwayTeamFull();
@@ -2893,7 +2948,7 @@ export default function LiveMatchCommentaryV4() {
                      <p style={{ fontSize: 15, lineHeight: 1.65, margin: '0 0 4px', color: '#e2e8f0' }}>{commentary.text}</p>
                      {/* TTS + InlineFeedback row */}
                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                       <button onClick={() => playTTS(commentary.text, commentary.rallyNumber, false, commentary.tags || [])}
+                       <button onClick={() => playTTS(commentary.text, commentary.rallyNumber)}
                          style={{ fontSize: 10, padding: '1px 6px', borderRadius: 4, border: 'none', cursor: 'pointer', background: ttsPlaying === commentary.rallyNumber ? 'rgba(16,185,129,.2)' : 'rgba(255,255,255,.05)', color: ttsPlaying === commentary.rallyNumber ? '#34d399' : '#94a3b8' }}>
                          {ttsPlaying === commentary.rallyNumber ? '🔊' : '🔈'}
                        </button>
