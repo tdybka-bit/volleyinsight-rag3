@@ -821,6 +821,10 @@ export default function CockpitPage() {
   const [panelATab, setPanelATab]     = useState<TabKey>('serve_type');
   const [panelBTab, setPanelBTab]     = useState<TabKey>('receive');
 
+  // Cockpit Insights
+  const [insights, setInsights]         = useState<Record<string, string>>({});
+  const [insightLoading, setInsightLoading] = useState<Record<string, boolean>>({});
+
   useEffect(() => {
     const readLS = () => {
       const stored = localStorage.getItem('vi_selected_match');
@@ -882,6 +886,39 @@ export default function CockpitPage() {
     : 1;
   const meta = MATCH_META[matchFile];
   const isLive = currentSet < 99 && currentSet > 0;
+
+  // ── COCKPIT INSIGHTS ─────────────────────────────────────────────────────
+  const fetchInsight = useCallback(async (tabKey: TabKey, data: { home: Record<string, number>; away: Record<string, number> } | null) => {
+    if (!data || !stats || tabKey === 'serve_zone') return;
+    const cacheKey = `${matchFile}-${tabKey}`;
+    if (insights[cacheKey] || insightLoading[cacheKey]) return;
+    setInsightLoading(prev => ({ ...prev, [cacheKey]: true }));
+    try {
+      const res = await fetch('/api/cockpit-insights', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tabKey,
+          homeTeam: stats.teamHome,
+          awayTeam: stats.teamAway,
+          homeData: data.home,
+          awayData: data.away,
+          language,
+        }),
+      });
+      const d = await res.json();
+      if (d.insight) setInsights(prev => ({ ...prev, [cacheKey]: d.insight }));
+    } catch (e) {
+      console.error('[INSIGHT]', e);
+    } finally {
+      setInsightLoading(prev => ({ ...prev, [cacheKey]: false }));
+    }
+  }, [stats, matchFile, language, insights, insightLoading]);
+
+  // Auto-fetch insight when tab changes or data loads
+  useEffect(() => {
+    if (allData && isLive) fetchInsight(activeTab, allData);
+  }, [activeTab, allData, isLive]);
 
   // ── HELPER: render grid content for a given tab key ──────────────────────
   const renderPanelContent = (tabKey: TabKey, mergedData: { home: Record<string, number>; away: Record<string, number> } | null) => {
@@ -981,6 +1018,32 @@ export default function CockpitPage() {
                 </div>
               );
             })}
+          </div>
+        )}
+        {/* ── INSIGHTS PANEL ── */}
+        {tabKey !== 'serve_zone' && (
+          <div style={{ marginTop: 10, padding: '12px 16px', background: 'rgba(6,78,59,.1)', borderRadius: 8, border: '1px solid rgba(16,185,129,.15)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <span style={{ fontSize: 9, fontWeight: 800, color: '#10b981', textTransform: 'uppercase', letterSpacing: '.15em' }}>⚡ Insights</span>
+              {insightLoading[`${matchFile}-${tabKey}`] && (
+                <span style={{ fontSize: 8, color: '#34d399', animation: 'pulse 1.5s infinite' }}>Analizuję...</span>
+              )}
+              {!insights[`${matchFile}-${tabKey}`] && !insightLoading[`${matchFile}-${tabKey}`] && isLive && (
+                <button onClick={() => fetchInsight(tabKey, mergedData)}
+                  style={{ fontSize: 8, padding: '2px 8px', borderRadius: 4, background: 'rgba(16,185,129,.15)', border: '1px solid rgba(16,185,129,.3)', color: '#34d399', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700 }}>
+                  Generuj
+                </button>
+              )}
+            </div>
+            {insights[`${matchFile}-${tabKey}`] ? (
+              <p style={{ fontSize: 12, color: '#a7f3d0', lineHeight: 1.65, margin: 0 }}>
+                {insights[`${matchFile}-${tabKey}`]}
+              </p>
+            ) : !insightLoading[`${matchFile}-${tabKey}`] ? (
+              <p style={{ fontSize: 11, color: '#065f46', margin: 0, fontStyle: 'italic' }}>
+                {isLive ? 'Kliknij "Generuj" aby uzyskać interpretację taktyczną' : 'Uruchom komentarz aby aktywować Insights'}
+              </p>
+            ) : null}
           </div>
         )}
       </div>
