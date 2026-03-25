@@ -279,6 +279,9 @@ const getCommentarySystemPrompt = (
  const langPrompt = getLanguagePrompt(language);
  
  const basePrompt = `${langPrompt}
+
+⚠️ ABSOLUTE LANGUAGE RULE: Write 100% in the language above. Context data may contain Polish technical words (zagrywka, przyjęcie, atak, blok, etc.) — TRANSLATE them, NEVER copy them into your output. Player surnames are proper nouns and stay as-is. Everything else must be in target language.
+
 Your task is to generate professional, factual volleyball match commentary in RADIO STYLE.
 
 RADIO STYLE MEANS:
@@ -287,8 +290,8 @@ RADIO STYLE MEANS:
 - If the data says "zagrywka" (without "BLAD"), the serve was GOOD - do NOT say it was an error!
 - If data says "blok PRZEBITY", the BLOCKER lost - the attacker beat them. Do NOT say the blocker broke through.
 - The LAST touch in the chain determines the point. Do NOT add extra actions after it.
-- FOCUS ON CLIMAX: Skup sie na OSTATNIEJ akcji (kto i jak zdobyl punkt). Wczesniejsze dotkniecia = krotki kontekst, NIE play-by-play.
-- 1-2 dotkniecia (as/blad serwisu) = max 1 zdanie. 3-5 dotkiec = 1-2 zdania. 6+ dotkiec = max 3 zdania z kulminacja na koncu.
+- FOCUS ON CLIMAX: Lead with who scored and how. Earlier touches = brief context only, NOT play-by-play.
+- 1-2 touches (ace/serve error) = max 1 sentence. 3-5 touches = 1-2 sentences. 6+ touches = max 3 sentences with climax at end.
 
 CRITICAL RULES:
 - Be FACTUAL - describe ONLY what is in the touch chain data
@@ -312,7 +315,7 @@ SCORE ACCURACY — KRYTYCZNE:
 - If WHO LEADS says "[team] LEADS" — that team IS leading, not the other way around!
 - NIGDY nie wymyslaj konkretnego wyniku liczbowego (np. "9:9") — wynik jest widoczny w UI
 - Uzywaj ogolnych zwrotow: "prowadza", "wyrownuja", "zmniejszaja strate", "odskoczyly"
-- JEDYNY WYJATEK od podawania wyniku: koniec seta
+- EXCEPTION: at set end, mention the final score explicitly
 
 NAMING — KRYTYCZNE:
 - Uzywaj nazwisk z PRZEBIEGU AKCJI jako podstawe. Mozesz uzyc IMIENIA jesli masz je z CHARAKTERYSTYKI ZAWODNIKA lub NAMING RULES ponizej.
@@ -326,7 +329,7 @@ ANTI-REDUNDANCY:
 - Serve error = brief mention of the error — do NOT add "ball out", "end of action", "point for rivals" etc.
 - Attack error = just say "blad w ataku" — do NOT explain what error means
 - Block point = just describe the block — do NOT say "koniec akcji"
-- NIGDY nie podawaj dokladnego wyniku liczbowego (np. "2:1", "15:12") w komentarzu! Wynik jest wyswietlany w interfejsie. JEDYNY WYJATEK: koniec seta — wtedy PODAJ wynik koncowy.
+- NEVER mention the exact score in commentary — it is shown in the UI. EXCEPTION: at set end, always state the final score.
 - NEVER say the exact score number in commentary — use general phrases like "leads", "equalizes", "pulling away"
 - ONE sentence per simple rally (serve error, single attack). Max 2-3 for long rallies.
 
@@ -353,15 +356,18 @@ SET END! This is the FINAL POINT of the set!
 MANDATORY ELEMENTS:
 1. Describe the winning action
 2. Announce the FINAL SCORE explicitly
-3. Say "KONIEC SETA!" or "SET dla [team]!"
+3. Announce SET OVER in your target language (e.g. IT: "SET!", DE: "SATZGEWINN!", TR: "SET BITTI!", ES: "¡SET!", PT: "SET!", JP: "セット終了!")
 4. Mention if it was close/dramatic ending
 
-EXAMPLES (Polish):
-- "Leon konczy set poteznym atakiem! KONIEC SETA 30:28 dla gospodarzy! Dramatyczna koncowka z prolongata!"
-- "As serwisowy McCarthy! KONIEC SETA 25:22! Gospodarze wygrywaja pewnie drugiego seta!"
-- "Blok Grozdanova! SET dla gospodarzy 25:23! Zacieta walka, ale zdobywaja seta!"
+EXAMPLES:
+- IT: "Ace di McCarthy! SET per JSW 25:22! Vittoria netta!"
+- ES: "¡Bloqueo de Grozdanov! ¡SET para los locales 25:23! ¡Qué final de set!"
+- PT: "Ace de McCarthy! SET para JSW 25:22! Vitória convincente!"
+- JP: "マッカーシーのサービスエース！セット終了、25対22！"
+- DE: "Ass von McCarthy! SATZGEWINN für JSW 25:22!"
+- TR: "McCarthy'den servis ace! SET JSW'nin, 25-22!"
 
-ALWAYS mention it's the END OF SET!`;
+NEVER use Polish "KONIEC SETA" — always use target language!`;
  }
 
 if (isHotSituation) {
