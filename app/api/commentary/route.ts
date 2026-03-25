@@ -399,7 +399,7 @@ ALWAYS mention the milestone number!`;
 
 EXAMPLES (Polish):
 - "Gospodarze prowadza 15:5. Grozdanov dolozyl kolejny punkt."
-- "Punkt dla gosci, ale wciaz spory dystans - 8:18."`;
+- "Point for gosci, ale wciaz spory dystans - 8:18."`;
  } else if (isEarlySet) {
  return basePrompt + `
 - ZONE CALM (wynik do 8): Spokojny, rzeczowy start. Zero dramy, zero oceniania.
@@ -407,7 +407,7 @@ EXAMPLES (Polish):
 
 EXAMPLES (Polish):
 - "Grozdanov skuteczny w bloku. Dobry poczatek."
-- "Blad serwisowy McCarthy. Punkt dla rywali."
+- "Blad serwisowy McCarthy. Point for rywali."
 - "Sasak konczy atak. Goscie obejmuja prowadzenie."`;
  } else {
  return basePrompt + `
@@ -732,19 +732,19 @@ if (!rally.touches || rally.touches.length === 0) {
  
  let scoreSituation = '';
  if (isFirstPoint) {
-   scoreSituation = `PIERWSZY PUNKT w secie dla ${scoringTeamName}. Wynik: ${scoreDisplay}.`;
+   scoreSituation = `FIRST POINT of set for ${scoringTeamName}. Wynik: ${scoreDisplay}.`;
  } else if (isTied) {
-   scoreSituation = `WYROWNANIE ${scoreDisplay}! ${scoringTeamName} wyrownuje.`;
+   scoreSituation = `TIED ${scoreDisplay}! ${scoringTeamName} equalizes.`;
  } else if (wasTiedBefore && !isTied) {
-   scoreSituation = `${scoringTeamName} OBEJMUJE PROWADZENIE ${scoreDisplay}.`;
+   scoreSituation = `${scoringTeamName} TAKES THE LEAD ${scoreDisplay}.`;
  } else if (scoringTeamLeads && scoreDiff >= 2) {
-   scoreSituation = `${scoringTeamName} zdobywa punkt i prowadzi o ${scoreDiff}. Wynik: ${scoreDisplay}.`;
+   scoreSituation = `${scoringTeamName} scores, leads by ${scoreDiff}. Wynik: ${scoreDisplay}.`;
  } else if (scoringTeamLeads && scoreDiff === 1) {
-   scoreSituation = `${scoringTeamName} prowadzi o 1. Wynik: ${scoreDisplay}.`;
+   scoreSituation = `${scoringTeamName} leads by 1. Score: ${scoreDisplay}.`;
  } else if (scoringTeamTrails) {
-   scoreSituation = `${scoringTeamName} zdobywa punkt. Wynik: ${scoreDisplay}. ${otherTeamName} nadal prowadzi o ${scoreDiff}.`;
+   scoreSituation = `${scoringTeamName} scores. Score: ${scoreDisplay}. ${otherTeamName} still leads by ${scoreDiff}.`;
  } else {
-   scoreSituation = `Wynik: ${scoreDisplay}. Punkt dla ${scoringTeamName}.`;
+   scoreSituation = `Wynik: ${scoreDisplay}. Point for ${scoringTeamName}.`;
  }
  
  // EXPLICIT who leads — GPT must not invent its own interpretation
@@ -1488,15 +1488,15 @@ CRITICAL COMMENTARY RULES:
  
  let situationContext = '';
  if (setEndInfo.isSetEnd) {
- situationContext += `\nKONIEC SETA! To byl OSTATNI PUNKT! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}. MUSISZ POWIEDZIEC ZE SET SIE SKONCZYL!`;
+ situationContext += `\nSET OVER! Final score: ${score}. Winner: ${setEndInfo.winner}. YOU MUST ANNOUNCE THE SET IS OVER!`;
  }
  if (currentStreak >= 5) {
- situationContext += `\nMOMENTUM: ${streakTeam === 'home' ? homeTeamFull : awayTeamFull} ma POTEZNA serie ${currentStreak} punktow pod rzad! To moze byc przelomowy moment!`;
+ situationContext += `\nMOMENTUM: ${streakTeam === 'home' ? homeTeamFull : awayTeamFull} on a HUGE ${currentStreak}-point run! Turning point!`;
  } else if (currentStreak >= 3) {
- situationContext += `\nSERIA: ${streakTeam === 'home' ? homeTeamFull : awayTeamFull} zdobywa ${currentStreak}. punkt z rzedu. Rosnie presja na rywala.`;
+ situationContext += `\nSTREAK: ${streakTeam === 'home' ? homeTeamFull : awayTeamFull} scores ${currentStreak} in a row. Pressure building.`;
  }
  if (brokenStreak >= 3) {
- situationContext += `\nPRZELAMANIE! Koniec serii ${brokenStreak} punktow ${brokenStreakTeam === 'home' ? homeTeamFull : awayTeamFull}. Wazny punkt przerywajacy passmo!`;
+ situationContext += `\nSTREAK BROKEN! End of ${brokenStreak}-point run by ${brokenStreakTeam === 'home' ? homeTeamFull : awayTeamFull}. Momentum shift!`;
  }
   if (momentumContext) {
   situationContext += `\n${momentumContext}`;
@@ -1505,7 +1505,7 @@ CRITICAL COMMENTARY RULES:
   situationContext += setNarrativeContext;
  }
  if (milestone) {
- situationContext += `\nMILESTONE: To jest ${milestone} dla ${scoringPlayer}! WSPOMNIEJ O TYM!`;
+ situationContext += `\nMILESTONE: This is ${milestone} for ${scoringPlayer}! MENTION IT!`;
  }
  if (isBigLead && !setEndInfo.isSetEnd) {
  situationContext += `\nSYTUACJA: Duza przewaga ${scoreDiff} punktow! ${leadingTeamName} prowadzi ${score}.`;
@@ -1524,15 +1524,15 @@ Odmien nazwiska poprawnie wg zasad jezyka polskiego!`;
  let passInstructions = '';
  if (rallyAnalysis) {
  if (rallyAnalysis.passQuality === 'perfect') {
- passInstructions = '\n- Przyjecie bylo PERFEKCYJNE - wspomniej o latwosci wykonania akcji!';
+ passInstructions = '\n- Reception was PERFECT - mention the ease of the play!';
  } else if (rallyAnalysis.passQuality === 'negative') {
- passInstructions = '\n- Przyjecie DALEKO OD SIATKI lub BARDZO TRUDNE - podkresl trudnosc i walke zespolu! NIE mow "chaos"!';
+ passInstructions = '\n- Reception was POOR or FAR FROM NET - highlight the difficulty! Do NOT say "chaos"!';
  } else if (rallyAnalysis.passQuality === 'average') {
- passInstructions = '\n- Przyjecie bylo NIEDOKLADNE - troche trudnosci w akcji!';
+ passInstructions = '\n- Reception was IMPRECISE - slight difficulty in the play!';
  }
  
  if (rallyAnalysis.isLongRally) {
- passInstructions += `\n- To byla DLUGA wymiana (${rallyAnalysis.numTouches} dotkniec) - podkresl wysilek i dramatyzm!`;
+ passInstructions += `\n- This was a LONG rally (${rallyAnalysis.numTouches} touches) - emphasize the effort and drama!`;
  }
  }
  
@@ -1541,7 +1541,7 @@ Odmien nazwiska poprawnie wg zasad jezyka polskiego!`;
  if (rally.substitutions && rally.substitutions.length > 0) {
  const subDescriptions = rally.substitutions.map((sub: any) => {
  const teamLabel = sub.team_name || (sub.team === 'home' ? homeTeamFull : awayTeamFull);
- const situationHint = sub.score_status === 'Up' ? 'prowadzac' : sub.score_status === 'Down' ? 'przegrywajac' : '';
+ const situationHint = sub.score_status === 'Up' ? 'leading' : sub.score_status === 'Down' ? 'trailing' : '';
  const diffHint = sub.score_diff ? ` ${sub.score_diff} pkt` : '';
  
  // C2: Tactical reasoning for substitution
@@ -1550,53 +1550,53 @@ Odmien nazwiska poprawnie wg zasad jezyka polskiego!`;
  const totalPoints = (rally.score_before?.home || 0) + (rally.score_before?.away || 0);
  
  if (totalPoints >= 40 && Math.abs(scoreDiffNum) <= 2) {
-   tacticalHint = ' | KONCOWKA SETA - zmiana pod presja, trener szuka rozwiazania!';
+   tacticalHint = ' | SET ENDGAME - under pressure, coach looking for solution!';
  } else if (sub.score_status === 'Down' && scoreDiffNum >= 4) {
-   tacticalHint = ' | Duza strata - trener reaguje, proba odwrocenia losow meczu!';
+   tacticalHint = ' | Big deficit - coach reacts, trying to turn the match around!';
  } else if (sub.score_status === 'Down' && scoreDiffNum >= 2) {
-   tacticalHint = ' | Przegrana seria - trener szuka impulsu, swieze sily na parkiecie.';
+   tacticalHint = ' | Losing streak - coach seeking momentum, fresh legs on court.';
  } else if (sub.score_status === 'Up' && scoreDiffNum >= 5) {
-   tacticalHint = ' | Bezpieczna przewaga - mozliwe danie szansy rezerwowemu.';
+   tacticalHint = ' | Safe lead - possibly giving reserve player a chance.';
  } else if (totalPoints <= 10) {
-   tacticalHint = ' | Wczesna zmiana - prawdopodobnie planowana rotacja lub reakcja na slaba gre.';
+   tacticalHint = ' | Early sub - likely planned rotation or reaction to poor play.';
  }
  
- return `${teamLabel}: ${sub.player_out} schodzi, ${sub.player_in} wchodzi${situationHint ? ` (${situationHint}${diffHint})` : ''}${tacticalHint}`;
+ return `${teamLabel}: ${sub.player_out} OUT, ${sub.player_in} IN${situationHint ? ` (${situationHint}${diffHint})` : ''}${tacticalHint}`;
  });
- substitutionContext = `\nZMIANY W TYM RALLY:\n${subDescriptions.join('\n')}\n`;
+ substitutionContext = `\nSUBSTITUTIONS THIS RALLY:\n${subDescriptions.join('\n')}\n`;
  }
 
  const commentaryPrompt = `${touchContext}
 
-${Object.keys(playerPositions).length > 0 ? `POZYCJE ZAWODNIKOW (uzyj naturalnie, nie powtarzaj za kazdym razem):
+${Object.keys(playerPositions).length > 0 ? `PLAYER POSITIONS (use naturally, don't repeat every time):
 ${Object.entries(playerPositions).map(([name, pos]) => `${name} = ${pos}`).join(', ')}
 ` : ''}
-WYNIK I KONTEKST:
-GOSPODARZE: ${homeTeamFull} | GOSCIE: ${awayTeamFull}
-Rally #${rally.rally_number} | Set ${setNumber} | Wynik: ${score} | Punkt zdobyla: ${rally.team_scored === 'home' ? homeTeamFull + ' (gospodarze)' : awayTeamFull + ' (goscie)'}
-${rally.phase ? `FAZA GRY: ${rally.phase === 'First Ball' ? 'ATAK PO PRZYJECIU (First Ball / Side-out) - pierwsza szansa na atak po przyjeciu zagrywki. Kluczowa jest jakosc przyjecia i wybor kombinacji ataku.' : rally.phase === 'Transition' ? 'KONTRA (Transition) - atak po obronie w polu. Czesto bardziej chaotyczny, wymaga improwizacji. Rozgrywajacy ma mniej opcji, atakujacy musza reagowac szybko.' : rally.phase}` : ''}
-${rally.homeRotation || rally.awayRotation ? `ROTACJA: ${homeTeamFull} R${rally.homeRotation || '?'} | ${awayTeamFull} R${rally.awayRotation || '?'}${rally.homeRotation === 1 || rally.awayRotation === 1 ? ' (R1 = rozgrywajacy przy siatce, pelne opcje ataku)' : ''}${rally.homeRotation === 4 || rally.awayRotation === 4 ? ' (R4 = rozgrywajacy z tylu, ograniczone opcje)' : ''}` : ''}
-SYTUACJA PUNKTOWA: ${scoreSituation}
-KTO PROWADZI: ${leadInfo}${situationContext}${errorContext}${substitutionContext}
+SCORE & CONTEXT:
+HOME: ${homeTeamFull} | AWAY: ${awayTeamFull}
+Rally #${rally.rally_number} | Set ${setNumber} | Score: ${score} | Point scored by: ${rally.team_scored === 'home' ? homeTeamFull + ' (home)' : awayTeamFull + ' (away)'}
+${rally.phase ? `PHASE: ${rally.phase === 'First Ball' ? 'SIDE-OUT (First Ball) - first attack after reception. Reception quality and attack combination are key.' : rally.phase === 'Transition' ? 'TRANSITION - attack after defensive dig. Often more chaotic, requires improvisation. Setter has fewer options.' : rally.phase}` : ''}
+${rally.homeRotation || rally.awayRotation ? `ROTATION: ${homeTeamFull} R${rally.homeRotation || '?'} | ${awayTeamFull} R${rally.awayRotation || '?'}${rally.homeRotation === 1 || rally.awayRotation === 1 ? ' (R1 = setter at net, full attack options)' : ''}${rally.homeRotation === 4 || rally.awayRotation === 4 ? ' (R4 = setter in back row, limited options)' : ''}` : ''}
+SCORE SITUATION: ${scoreSituation}
+WHO LEADS: ${leadInfo}${situationContext}${errorContext}${substitutionContext}
 
-${tacticsContext ? `WIEDZA TAKTYCZNA O AKCJI:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `PRZYKLADY DOBRYCH KOMENTARZY:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `[!!] USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `VARIACJE ZWROTOW:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `CHARAKTERYSTYKA ZAWODNIKA:\n${playerContext}` : ''}
+${tacticsContext ? `TACTICAL CONTEXT:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `GOOD COMMENTARY EXAMPLES:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `[!!] USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `PHRASE VARIATIONS:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `PLAYER PROFILE:\n${playerContext}` : ''}
 
-INSTRUKCJE:
-- OPISUJ TYLKO PRZEBIEG AKCJI powyzej. Kazde dotkniecie po kolei. Nic nie dodawaj!
-- WYNIK: Uzywaj DOKLADNIE wyniku z "SYTUACJA PUNKTOWA" i "KTO PROWADZI" powyzej. NIGDY nie wymyslaj innego wyniku! Jesli napisano ze ${otherTeamName || 'rywale'} NADAL PROWADZI — nie mow ze ${scoringTeamName || 'druzyna'} ma przewage!
-- NAZWISKA: Uzywaj nazwisk z PRZEBIEGU AKCJI. Mozesz dodac IMIE jesli masz je z CHARAKTERYSTYKI ZAWODNIKA ponizej — NIGDY nie wymyslaj imion od siebie! Jesli nie masz danych — uzywaj samego nazwiska.
-- ${setEndInfo.isSetEnd ? `TO JEST KONIEC SETA! MUSISZ TO POWIEDZIEC! Wynik koncowy: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZY PUNKT - krotko, spokojnie.' : isHotSituation ? 'KONCOWKA SETA - emocje!' : currentStreak >= 3 ? 'SERIA - podkresl momentum!' : milestone ? 'MILESTONE - wspomniej liczbe punktow/blokow/asow!' : isBigLead ? 'Duza przewaga - zauwaz sytuacje' : isEarlySet ? 'Poczatek - spokojnie' : 'Srodek seta - rzeczowo'}
-- ${attackingPlayer ? `To ATAK ${attackingPlayer} - pochwal ATAKUJACEGO, nie blad bloku! Uzyj formy: "${attackingPlayer} przebija blok (odmien nazwisko!) ${scoringPlayer}!"` : ''}
-- ${milestone ? `WAZNE: Wspomniej ze to ${milestone}!` : ''}${passInstructions}
+INSTRUCTIONS:
+- Describe ONLY the touch chain above. Each touch in order. Do not add anything!
+- SCORE: Use EXACTLY the score from SCORE SITUATION and WHO LEADS above. NEVER invent a different score! If it says ${otherTeamName || 'opponent'} STILL LEADS — do not say ${scoringTeamName || 'team'} is ahead!
+- NAMES: Use surnames from touch chain. You may add a first name only if PLAYER PROFILE confirms it — NEVER invent names! If unsure — surname only.
+- ${setEndInfo.isSetEnd ? `THIS IS SET END! YOU MUST ANNOUNCE IT! Final score: ${score}. Winner: ${setEndInfo.winner}.` : isFirstPoint ? 'FIRST POINT — brief and calm.' : isHotSituation ? 'SET ENDGAME — build tension!' : currentStreak >= 3 ? 'STREAK — highlight momentum!' : milestone ? 'MILESTONE — mention the number!' : isBigLead ? 'Big lead — note the dominance' : isEarlySet ? 'Early set — calm' : 'Mid-set — factual'}
+- ${attackingPlayer ? `This is ${attackingPlayer}'s ATTACK — praise the ATTACKER, not the block error! Use: "${attackingPlayer} beats ${scoringPlayer}'s block!"` : ''}
+- ${milestone ? `IMPORTANT: Mention this is ${milestone}!` : ''}${passInstructions}
 - ${commentaryHintsContext ? 'APPLY USER HINTS - they have PRIORITY over other context!' : ''}
-- ${isFirstPoint ? 'NIE uzywaj "zwieksza/zmniejsza przewage" - to PIERWSZY punkt!' : ''}
-- Uzywaj POPRAWNEJ odmiany nazwisk (Leon -> Leona w dopelniaczu)
-- NIE POWTARZAJ INFORMACJI! Wynik, kto zdobyl punkt, kto prowadzi — wymien MAKSYMALNIE RAZ. Jesli opisales akcje i wspomniales o wyniku, NIE dodawaj kolejnego zdania o tym samym.
-- ZAKAZ MECHANICZNYCH ZWROTOW (jezyk PL): NIE uzywaj "zwieksza przewage", "zmniejsza strate", "gra trwa" — to brzmi jak raport statystyczny, nie relacja radiowa! Zastap emocjonalnymi odpowiednikami z tone-rules.
-- ${attackCombo ? `DANE TAKTYCZNE: Atak typu ${attackCombo}${attackLocation ? `, strefa: ${attackLocation}` : ''}${attackStyle ? `, styl: ${attackStyle}` : ''}. Uzyj tych danych by opisac KONKRETNIE co sie stalo (np. atak po skosie, atak pipe, szybki atak srodkiem) zamiast ogolnikow!` : serveType ? `DANE TAKTYCZNE: Zagrywka typu ${serveType}. Opisz ja konkretnie!` : ''}
-- ${rally.substitutions?.length ? 'ZMIANA! Wplec ja naturalnie w komentarz. Uzywaj wskazowek taktycznych z danych zmiany (koncowka seta, strata, swieze sily). Przyklad: "Trener reaguje na slabe przyjecie i wprowadza swieze sily!" lub "W koncowce seta trener szuka rozwiazania - na parkiet wchodzi [gracz]!"' : ''}
-- ${rally.phase === 'Transition' ? 'KONTRA! Podkresl dynamike kontry - szybka reakcja po obronie, improwizacja atakujacego, mniej czasu na rozegranie.' : rally.phase === 'First Ball' ? 'Atak po przyjeciu - mozesz wspomniec jakosc przyjecia jesli wplywa na atak (np. idealne przyjecie = pelna kombinacja, slabe = pilka wymuszona).' : ''}
-- ${(rally.homeRotation || rally.awayRotation) ? 'ROTACJA: Wspomnij o rotacji TYLKO gdy to jest istotne taktycznie (np. rozgrywajacy z tylu = mniej opcji, atak z 2. linii w rotacji obronnej). NIE wspominaj numeru rotacji w kazdym komentarzu!' : ''}
+- ${isFirstPoint ? 'Do NOT use "increases/reduces lead" — this is the FIRST point!' : ''}
+- Player surnames are invariable — do NOT add Polish declension endings
+- DO NOT REPEAT INFORMATION! Score, who scored, who leads — mention ONCE. Do not add another sentence saying the same thing.
+- AVOID MECHANICAL PHRASES: Do NOT use literal score-report language. Use emotional equivalents from tone-rules context.
+- ${attackCombo ? `TACTICAL DATA: Attack type ${attackCombo}${attackLocation ? `, zone: ${attackLocation}` : ''}${attackStyle ? `, style: ${attackStyle}` : ''}. Use this to describe SPECIFICALLY what happened (e.g. diagonal attack, pipe, quick middle) instead of vague terms!` : serveType ? `TACTICAL DATA: Serve type ${serveType}. Describe it specifically!` : ''}
+- ${rally.substitutions?.length ? 'SUBSTITUTION! Weave naturally into commentary using tactical hints.' : ''}
+- ${rally.phase === 'Transition' ? 'TRANSITION ATTACK! Highlight the quick reaction, improvisation, less time to set up.' : rally.phase === 'First Ball' ? 'SIDE-OUT attack — mention reception quality only if it affected the attack (perfect = full combination, poor = forced ball).' : ''}
+- ${(rally.homeRotation || rally.awayRotation) ? 'ROTATION: Mention ONLY when tactically relevant (e.g. setter in back row = fewer options). Do NOT mention rotation number in every commentary!' : ''}
 `;
 
  
