@@ -280,7 +280,12 @@ const getCommentarySystemPrompt = (
  
  const basePrompt = `${langPrompt}
 
-⚠️ ABSOLUTE LANGUAGE RULE: Write 100% in the language above. Context data may contain Polish technical words (zagrywka, przyjęcie, atak, blok, etc.) — TRANSLATE them, NEVER copy them into your output. Player surnames are proper nouns and stay as-is. Everything else must be in target language.
+⚠️ ABSOLUTE LANGUAGE RULE: Write 100% in the language above. Context data may contain Polish technical words — TRANSLATE them ALL:
+- "zagrywka z wyskoku" → IT:"servizio in salto" / ES:"saque en salto" / TR:"sıçrama servisi" / DE:"Sprungaufschlag" / JP:"ジャンプサーブ"
+- "przyjęcie" → IT:"ricezione" / ES:"recepción" / TR:"kabul" / DE:"Annahme" / JP:"レセプション"
+- "potężny" → IT:"potente" / ES:"potente" / TR:"güçlü" / DE:"kraftvoll" / JP:"強力な"
+- "punkt dla" → IT:"punto per" / ES:"punto para" / TR:"sayı" / DE:"Punkt für" / JP:"ポイント"
+Player surnames stay as-is. NEVER copy Polish words verbatim.
 
 Your task is to generate professional, factual volleyball match commentary in RADIO STYLE.
 
