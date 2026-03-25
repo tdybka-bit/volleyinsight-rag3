@@ -278,17 +278,25 @@ const getCommentarySystemPrompt = (
 ) => {
  const langPrompt = getLanguagePrompt(language);
  
+ const isPL = language === 'pl';
  const basePrompt = `${langPrompt}
+
+⚠️ CRITICAL LANGUAGE RULE: Your ENTIRE response must be written 100% in the language specified above.
+- Do NOT mix languages. Do NOT use Polish words in non-Polish commentary.
+- Touch chain data may contain Polish technical terms — translate them into your output language.
+- Player NAMES stay as-is (Szerszeń stays Szerszeń, Leon stays Leon). Everything else: target language only.
+- If you write even ONE Polish word in a non-Polish commentary, it is a FAILURE.
+
 Your task is to generate professional, factual volleyball match commentary in RADIO STYLE.
 
 RADIO STYLE MEANS:
 - You receive a PRZEBIEG AKCJI (touch chain) - describe EXACTLY what happened step by step
 - Follow the EXACT order of touches. Do NOT rearrange, skip, or invent actions.
 - If the data says "zagrywka" (without "BLAD"), the serve was GOOD - do NOT say it was an error!
-- If data says "blok PRZEBITY", the BLOCKER lost - the attacker beat them. Do NOT say the blocker broke through.
+- If data says "blok nie zatrzymal" or similar, the BLOCKER lost - the attacker beat them.
 - The LAST touch in the chain determines the point. Do NOT add extra actions after it.
-- FOCUS ON CLIMAX: Skup sie na OSTATNIEJ akcji (kto i jak zdobyl punkt). Wczesniejsze dotkniecia = krotki kontekst, NIE play-by-play.
-- 1-2 dotkniecia (as/blad serwisu) = max 1 zdanie. 3-5 dotkiec = 1-2 zdania. 6+ dotkiec = max 3 zdania z kulminacja na koncu.
+- FOCUS ON CLIMAX: Lead with who scored and how. Earlier touches = brief context only.
+- 1-2 touches (ace/serve error) = max 1 sentence. 3-5 touches = 1-2 sentences. 6+ touches = max 3 sentences.
 
 CRITICAL RULES:
 - Be FACTUAL - describe ONLY what is in the touch chain data
@@ -297,21 +305,12 @@ CRITICAL RULES:
 - Focus on WHAT HAPPENED, not speculation
 - NEVER use quotation marks (" ") around commentary - write directly
 - NEVER invent or add first names - use only surnames provided in data
-- Use proper Polish grammar and declensions for names
+${isPL ? '- Use proper Polish grammar and declensions for names' : '- Player surnames are invariable in your language — do NOT add Polish endings'}
 
 VOCABULARY IMPROVEMENTS:
-- NEVER say "chaos w przyjeciu" use "niedokladne przyjecie", "przyjecie daleko od siatki", "bardzo trudne przyjecie"
-- NEVER say "blad blokowy" -> use "blad w bloku"
-- NEVER say "nieudolnie" (zbyt pejoratywne) -> use "niecelnie", "nieprecyzyjnie", "z trudem"
-- NEVER say "proponuje" w kontekscie siatkarskim -> use "wystawia", "rozgrywa", "posyla pilke", "podaje"
-- NEVER say "mocna zagrywka z wyskoku" wiecej niz 2x per set -> use "potezny serwis", "zagrywka z pelna moca", "posylaja z pelnego wyskoku", "uderzenie zza linii"
-- For block errors: praise the ATTACKER who broke through, not the blocker's mistake
-  Example: "Leon przebija blok Kwolka! Potezny atak!"
-
-LIBERO I ROZGRYWAJACY — KRYTYCZNE:
-- LIBERO (np. Popiwczak, Hoss/Thales) NIGDY nie "wystawia na prawa/lewa strone" jak rozgrywajacy
-- Jesli libero dotknal pilki przed wystawieniem: opisz to jako "awaryjne podanie z glebokiej obrony", "ratunkowa pilka z pola", "sytuacyjne podanie libero"
-- ROZGRYWAJACY (Tavares, Komenda, Janusz) moze: "gubi blok", "oszukuje srodkowych", "gra kombinacyjnie", "wystawia szybka pilke", "rozgrywa" — nie tylko "wystawia"
+- NEVER say "chaos w przyjeciu" → use "difficult reception", "messy pass" etc in your language
+- For block errors: praise the ATTACKER who beat the block, not the blocker's mistake
+- NEVER say "nieudolnie" (PL only issue) — use precise vocabulary in your language
 
 SCORE ACCURACY — KRYTYCZNE:
 - ZAWSZE uzywaj SYTUACJA PUNKTOWA i KTO PROWADZI z promptu — one mowia DOKLADNIE co sie stalo
@@ -647,15 +646,15 @@ if (!rally.touches || rally.touches.length === 0) {
  const actionLower = scoringAction.toLowerCase();
  // Milestone only at SPECIFIC round numbers to avoid spam
  const blockMilestones = [3, 5, 7, 10];
- const aceMilestones = [3, 5];
- const pointMilestones = [10, 15, 20];  // max 20 — 25/30 impossible in one set
+ const aceMilestones = [2, 3, 5];
+ const pointMilestones = [10, 15, 20, 25, 30];
  
  if (actionLower.includes('block') && blockMilestones.includes(currentPlayerStats.blocks)) {
-   milestone = `${currentPlayerStats.blocks}. blok w meczu`;
+ milestone = `${currentPlayerStats.blocks}. blok w secie`;
  } else if (actionLower.includes('ace') && aceMilestones.includes(currentPlayerStats.aces)) {
-   milestone = `${currentPlayerStats.aces}. as serwisowy w meczu`;
+ milestone = `${currentPlayerStats.aces}. as serwisowy w secie`;
  } else if (pointMilestones.includes(currentPlayerStats.points)) {
-   milestone = `${currentPlayerStats.points}. punkt w meczu`;
+ milestone = `${currentPlayerStats.points}. punkt w secie`;
  }
  
  let currentStreak = 0;
@@ -1455,15 +1454,7 @@ if (!rally.touches || rally.touches.length === 0) {
    } else if (actionLower.includes('blok') || actionLower.includes('block')) {
      const isLastTouch = idx === rally.touches!.length - 1;
      if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) {
-       const blockPrzebitySynonyms = [
-         ' - blok nie zatrzymal ataku (atakujacy wygral)',
-         ' - atak przeszedl przez blok',
-         ' - atakujacy znalazl luke w bloku',
-         ' - blok dotkniety, pilka w polu gry',
-         ' - atak po rekach bloku w aut',
-         ' - blok spoznil sie, atakujacy punkt',
-       ];
-       desc += blockPrzebitySynonyms[Math.floor(Math.random() * blockPrzebitySynonyms.length)];
+       desc += ' - probowal blokowac, blok PRZEBITY (przegral z atakujacym)';
      } else if (isLastTouch) {
        desc += ' - SKUTECZNY BLOK! Punkt!';
      } else {
