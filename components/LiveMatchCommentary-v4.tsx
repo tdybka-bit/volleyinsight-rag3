@@ -378,6 +378,9 @@ export default function LiveMatchCommentaryV4() {
  const [isGenerating, setIsGenerating] = useState(false);
  const [speed, setSpeed] = useState(3000);
  const [language, setLanguage] = useState<Language>('pl');
+ // Ref to always have current language in async closures (fixes stale closure bug)
+ const languageRef = useRef<Language>('pl');
+ useEffect(() => { languageRef.current = language; }, [language]);
  const [mode, setMode] = useState<Mode>('demo');
  const commentaryRef = useRef<HTMLDivElement>(null);
  const headerRef = useRef<HTMLDivElement>(null);
@@ -1379,14 +1382,9 @@ export default function LiveMatchCommentaryV4() {
  // Re-translate all commentaries when language changes
  useEffect(() => {
  if (commentaries.length > 0) {
-   retranslateCommentaries();
+ retranslateCommentaries();
  }
  }, [language]);
-
- // NOTE: In the new native-generation architecture, changing language while commentary
- // is running requires a restart — there is no Polish original to retranslate from.
- // retranslateCommentaries() is kept only for switching BACK to PL (instant restore).
-
 
  // Fetch player profile from RAG when favPlayer changes
  useEffect(() => {
@@ -1453,30 +1451,12 @@ export default function LiveMatchCommentaryV4() {
        summaryData: { ...c.summaryData, narrative: c.summaryData.originalNarrative }
      } : {}),
    })));
-   setTranslatedProfileSummary(null);
+   setTranslatedProfileSummary(null); // Reset to show original PL profile
    return;
  }
-
- // For non-PL languages in new architecture:
- // originalText is empty (we generated natively, no PL source stored)
- // → retranslation would send the native text back through translate = garbage
- // → correct behavior: show a warning and suggest restart
- const hasNativeCommentaries = commentaries.some(c =>
-   c.type !== 'intro' && c.type !== 'set_summary' && c.type !== 'lineup' &&
-   (!c.originalText || c.originalText === c.text)
- );
-
- if (hasNativeCommentaries) {
-   console.warn('[RETRANSLATE] Native commentaries detected — restart required for language change');
-   // Show visual cue by resetting commentary text with language indicator
-   setCommentaries(prev => prev.map(c => {
-     if (c.type !== 'intro' && c.type !== 'set_summary' && c.type !== 'lineup' && c.type !== 'match_summary') {
-       return { ...c, text: c.originalText || c.text };
-     }
-     return c;
-   }));
-   return;
- }
+ 
+ setIsRetranslating(true);
+ console.log('Re-translating', commentaries.length, 'commentaries to', currentLanguage);
  
  // Use originalText as source for translation (never the current translated text!)
  const translationPromises = commentaries.map(async (commentary) => {
@@ -1811,7 +1791,8 @@ export default function LiveMatchCommentaryV4() {
 
  const generateCommentary = async (rally: Rally) => {
  try {
- console.log('Generating commentary for rally #', rally.rally_number, 'directly in', language);
+ const currentLang = languageRef.current; // Always current, not stale closure
+ console.log('Generating commentary for rally #', rally.rally_number, 'directly in', currentLang);
  setIsGenerating(true);
  
  const updatedStats = calculatePlayerStats(rally);
@@ -1827,7 +1808,7 @@ export default function LiveMatchCommentaryV4() {
  method: 'POST',
  body: JSON.stringify({ 
  rally, 
- language: language, // Native generation in target language
+ language: currentLang, // Use ref — always current value
  playerStats: updatedStats,
  recentRallies: recentRallies,
  rallyAnalysis: rallyAnalysis,
@@ -1839,11 +1820,10 @@ export default function LiveMatchCommentaryV4() {
 
  let finalCommentary = data.commentary || '';
  let finalTags = data.tags || [];
- // Store Polish original for reference (generate PL version only if needed for retranslation)
- const polishOriginal = language === 'pl' ? finalCommentary : '';
+ const polishOriginal = currentLang === 'pl' ? finalCommentary : '';
 
  setIsGenerating(false);
- console.log('Commentary generated natively in', language, ':', finalCommentary.substring(0, 60));
+ console.log('Commentary generated natively in', currentLang, ':', finalCommentary.substring(0, 60));
  
  return {
  commentary: finalCommentary,
@@ -2050,7 +2030,7 @@ export default function LiveMatchCommentaryV4() {
          body: JSON.stringify({ 
            homeTeam, 
            awayTeam, 
-           language: language, // Generate directly in target language
+           language: languageRef.current, // Use ref to avoid stale closure
            homePlayers,
            awayPlayers,
            playerPositions: positions,
@@ -2158,7 +2138,7 @@ export default function LiveMatchCommentaryV4() {
                  touches: r.touches,
                  final_action: r.final_action,
                })),
-               language: language, // Generate directly in target language
+               language: languageRef.current, // Use ref to avoid stale closure
              }),
            });
            const data = await res.json();
@@ -2611,20 +2591,7 @@ export default function LiveMatchCommentaryV4() {
        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.08em', marginRight: 4 }}>Język</span>
          {languages.map(l => (
-           <button key={l.code} onClick={() => {
-             if (l.code !== language && commentaries.length > 0 && l.code !== 'pl') {
-               // New architecture: language change requires restart
-               if (window.confirm(`Zmiana języka na ${l.code.toUpperCase()} wymaga restartu komentarza.\nKliknij OK aby zresetować i zacząć od nowa w ${l.code.toUpperCase()}.`)) {
-                 setLanguage(l.code as Language);
-                 setCommentaries([]);
-                 setCurrentRallyIndex(0);
-                 setCurrentSetNumber(0);
-                 setIsPlaying(false);
-               }
-             } else {
-               setLanguage(l.code as Language);
-             }
-           }}
+           <button key={l.code} onClick={() => setLanguage(l.code as Language)}
              style={{ padding: '2px 7px', borderRadius: 5, fontSize: 10, fontWeight: 700, border: 'none', cursor: 'pointer', background: language === l.code ? 'rgba(59,130,246,.2)' : 'transparent', color: language === l.code ? '#93c5fd' : '#94a3b8', outline: language === l.code ? '1px solid rgba(59,130,246,.4)' : 'none' }}>
              {l.code.toUpperCase()}
            </button>
