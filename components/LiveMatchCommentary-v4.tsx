@@ -378,6 +378,9 @@ export default function LiveMatchCommentaryV4() {
  const [isGenerating, setIsGenerating] = useState(false);
  const [speed, setSpeed] = useState(3000);
  const [language, setLanguage] = useState<Language>('pl');
+ // Ref to always have current language in async closures (fixes stale closure bug)
+ const languageRef = useRef<Language>('pl');
+ useEffect(() => { languageRef.current = language; }, [language]);
  const [mode, setMode] = useState<Mode>('demo');
  const commentaryRef = useRef<HTMLDivElement>(null);
  const headerRef = useRef<HTMLDivElement>(null);
@@ -1452,12 +1455,11 @@ export default function LiveMatchCommentaryV4() {
    return;
  }
 
- // NEW ARCHITECTURE: commentaries are generated natively per language
- // There is no Polish original to retranslate from — skip retranslation entirely
- // User must restart commentary to change language
- console.log('[RETRANSLATE] Skipping — native architecture, no PL source available. Restart required.');
+ // NEW ARCHITECTURE: commentaries generated natively per language.
+ // No Polish original stored → retranslation would corrupt output.
+ // Language change requires restart.
+ console.log('[RETRANSLATE] Skipping — native arch, no PL source. Restart required.');
  return;
- };
 
  // Funkcja liczaca wyniki setow do aktualnego rally
  const calculateSetResults = (upToRallyIndex: number) => {
@@ -1699,7 +1701,8 @@ export default function LiveMatchCommentaryV4() {
 
  const generateCommentary = async (rally: Rally) => {
  try {
- console.log('Generating commentary for rally #', rally.rally_number, 'directly in', language);
+ const currentLang = languageRef.current; // Always current, not stale closure
+ console.log('Generating commentary for rally #', rally.rally_number, 'directly in', currentLang);
  setIsGenerating(true);
  
  const updatedStats = calculatePlayerStats(rally);
@@ -1715,7 +1718,7 @@ export default function LiveMatchCommentaryV4() {
  method: 'POST',
  body: JSON.stringify({ 
  rally, 
- language: language, // Native generation in target language
+ language: currentLang, // Use ref — always current value
  playerStats: updatedStats,
  recentRallies: recentRallies,
  rallyAnalysis: rallyAnalysis,
@@ -1727,11 +1730,10 @@ export default function LiveMatchCommentaryV4() {
 
  let finalCommentary = data.commentary || '';
  let finalTags = data.tags || [];
- // Store Polish original for reference (generate PL version only if needed for retranslation)
- const polishOriginal = language === 'pl' ? finalCommentary : '';
+ const polishOriginal = currentLang === 'pl' ? finalCommentary : '';
 
  setIsGenerating(false);
- console.log('Commentary generated natively in', language, ':', finalCommentary.substring(0, 60));
+ console.log('Commentary generated natively in', currentLang, ':', finalCommentary.substring(0, 60));
  
  return {
  commentary: finalCommentary,
@@ -1938,7 +1940,7 @@ export default function LiveMatchCommentaryV4() {
          body: JSON.stringify({ 
            homeTeam, 
            awayTeam, 
-           language: language, // Generate directly in target language
+           language: languageRef.current, // Use ref to avoid stale closure
            homePlayers,
            awayPlayers,
            playerPositions: positions,
@@ -2046,7 +2048,7 @@ export default function LiveMatchCommentaryV4() {
                  touches: r.touches,
                  final_action: r.final_action,
                })),
-               language: language, // Generate directly in target language
+               language: languageRef.current, // Use ref to avoid stale closure
              }),
            });
            const data = await res.json();
