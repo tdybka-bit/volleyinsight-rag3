@@ -378,9 +378,6 @@ export default function LiveMatchCommentaryV4() {
  const [isGenerating, setIsGenerating] = useState(false);
  const [speed, setSpeed] = useState(3000);
  const [language, setLanguage] = useState<Language>('pl');
- // Ref to always have current language in async closures (fixes stale closure bug)
- const languageRef = useRef<Language>('pl');
- useEffect(() => { languageRef.current = language; }, [language]);
  const [mode, setMode] = useState<Mode>('demo');
  const commentaryRef = useRef<HTMLDivElement>(null);
  const headerRef = useRef<HTMLDivElement>(null);
@@ -1451,104 +1448,15 @@ export default function LiveMatchCommentaryV4() {
        summaryData: { ...c.summaryData, narrative: c.summaryData.originalNarrative }
      } : {}),
    })));
-   setTranslatedProfileSummary(null); // Reset to show original PL profile
+   setTranslatedProfileSummary(null);
    return;
  }
- 
- setIsRetranslating(true);
- console.log('Re-translating', commentaries.length, 'commentaries to', currentLanguage);
- 
- // Use originalText as source for translation (never the current translated text!)
- const translationPromises = commentaries.map(async (commentary) => {
- try {
- const sourceText = commentary.originalText || commentary.text;
- const sourceTags = commentary.originalTags || commentary.tags;
- 
- const response = await fetch('/api/translate', {
- method: 'POST',
- headers: {
- 'Content-Type': 'application/json',
- },
- body: JSON.stringify({
- text: sourceText,
- fromLanguage: 'pl', // Always translate FROM Polish original
- toLanguage: currentLanguage,
- tags: sourceTags,
- }),
- });
 
- if (!response.ok) {
- console.error('Translation failed for rally', commentary.rallyNumber);
- return commentary; // Keep current on error
- }
-
- const data = await response.json();
-
- // Translate narrative for set summaries (separate call)
- let translatedNarrative = commentary.summaryData?.narrative;
- if (commentary.type === 'set_summary' && commentary.summaryData?.originalNarrative) {
-   try {
-     const narRes = await fetch('/api/translate', {
-       method: 'POST',
-       headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify({
-         text: commentary.summaryData.originalNarrative,
-         fromLanguage: 'pl',
-         toLanguage: currentLanguage,
-         tags: [],
-       }),
-     });
-     if (narRes.ok) {
-       const narData = await narRes.json();
-       translatedNarrative = narData.translatedText;
-     }
-   } catch (e) { /* keep original narrative on error */ }
- }
-
- return {
- ...commentary,
- text: data.translatedText,
- tags: data.translatedTags || commentary.tags,
- // originalText and originalTags stay unchanged!
- // Translate narrative for set summaries
- ...(translatedNarrative && commentary.summaryData ? {
-   summaryData: { ...commentary.summaryData, narrative: translatedNarrative }
- } : {}),
- timestamp: new Date(),
- };
- } catch (error) {
- console.error('Translation error:', error);
- return commentary;
- }
- });
- 
- const results = await Promise.all(translationPromises);
- 
- setCommentaries(results);
- 
- // Also translate expert knowledge profile summary
- if (playerProfile?.found && playerProfile.summary) {
-   try {
-     const profileResp = await fetch('/api/translate', {
-       method: 'POST',
-       headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify({
-         text: playerProfile.summary,
-         fromLanguage: 'pl',
-         toLanguage: currentLanguage,
-       }),
-     });
-     if (profileResp.ok) {
-       const profileData = await profileResp.json();
-       setTranslatedProfileSummary(profileData.translatedText);
-     }
-   } catch (err) {
-     console.error('Profile translation error:', err);
-   }
- }
- 
- setIsRetranslating(false);
- console.log('Re-translation complete in parallel!');
+ // NEW ARCHITECTURE: commentaries are generated natively per language
+ // There is no Polish original to retranslate from — skip retranslation entirely
+ // User must restart commentary to change language
+ console.log('[RETRANSLATE] Skipping — native architecture, no PL source available. Restart required.');
+ return;
  };
 
  // Funkcja liczaca wyniki setow do aktualnego rally
@@ -1791,8 +1699,7 @@ export default function LiveMatchCommentaryV4() {
 
  const generateCommentary = async (rally: Rally) => {
  try {
- const currentLang = languageRef.current; // Always current, not stale closure
- console.log('Generating commentary for rally #', rally.rally_number, 'directly in', currentLang);
+ console.log('Generating commentary for rally #', rally.rally_number, 'directly in', language);
  setIsGenerating(true);
  
  const updatedStats = calculatePlayerStats(rally);
@@ -1808,7 +1715,7 @@ export default function LiveMatchCommentaryV4() {
  method: 'POST',
  body: JSON.stringify({ 
  rally, 
- language: currentLang, // Use ref — always current value
+ language: language, // Native generation in target language
  playerStats: updatedStats,
  recentRallies: recentRallies,
  rallyAnalysis: rallyAnalysis,
@@ -1820,10 +1727,11 @@ export default function LiveMatchCommentaryV4() {
 
  let finalCommentary = data.commentary || '';
  let finalTags = data.tags || [];
- const polishOriginal = currentLang === 'pl' ? finalCommentary : '';
+ // Store Polish original for reference (generate PL version only if needed for retranslation)
+ const polishOriginal = language === 'pl' ? finalCommentary : '';
 
  setIsGenerating(false);
- console.log('Commentary generated natively in', currentLang, ':', finalCommentary.substring(0, 60));
+ console.log('Commentary generated natively in', language, ':', finalCommentary.substring(0, 60));
  
  return {
  commentary: finalCommentary,
@@ -2030,7 +1938,7 @@ export default function LiveMatchCommentaryV4() {
          body: JSON.stringify({ 
            homeTeam, 
            awayTeam, 
-           language: languageRef.current, // Use ref to avoid stale closure
+           language: language, // Generate directly in target language
            homePlayers,
            awayPlayers,
            playerPositions: positions,
@@ -2138,7 +2046,7 @@ export default function LiveMatchCommentaryV4() {
                  touches: r.touches,
                  final_action: r.final_action,
                })),
-               language: languageRef.current, // Use ref to avoid stale closure
+               language: language, // Generate directly in target language
              }),
            });
            const data = await res.json();
