@@ -1608,7 +1608,8 @@ INSTRUCTIONS:
 - ${rally.substitutions?.length ? 'SUBSTITUTION! Weave naturally into commentary using tactical hints.' : ''}
 - ${rally.phase === 'Transition' ? 'TRANSITION ATTACK! Highlight the quick reaction, improvisation, less time to set up.' : rally.phase === 'First Ball' ? 'SIDE-OUT attack — mention reception quality only if it affected the attack (perfect = full combination, poor = forced ball).' : ''}
 - ${(rally.homeRotation || rally.awayRotation) ? 'ROTATION: Mention ONLY when tactically relevant (e.g. setter in back row = fewer options). Do NOT mention rotation number in every commentary!' : ''}
-`;
+
+🔴 FINAL REMINDER: Your response must be 100% in ${language === 'pl' ? 'Polish' : language === 'it' ? 'Italian' : language === 'de' ? 'German' : language === 'tr' ? 'Turkish' : language === 'es' ? 'Spanish' : language === 'pt' ? 'Portuguese' : language === 'jp' ? 'Japanese' : 'English'}. Zero Polish words allowed. If context data contains Polish — translate it. Do NOT write a single Polish word.`;
 
  
  // DEBUG: Check if naming rules are in prompt
