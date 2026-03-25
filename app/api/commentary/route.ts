@@ -1467,6 +1467,10 @@ if (!rally.touches || rally.touches.length === 0) {
    }
    
    touchChainLines.push(desc);
+ });
+
+ const winnerTeamLabel = rally.team_scored === 'home' ? homeTeamFull : awayTeamFull;
+
  
  touchContext = `
 TOUCH CHAIN (${numTouches} touches${isLongRally ? ' - LONG RALLY!' : ''}):
