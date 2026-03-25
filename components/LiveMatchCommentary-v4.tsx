@@ -1460,6 +1460,7 @@ export default function LiveMatchCommentaryV4() {
  // Language change requires restart.
  console.log('[RETRANSLATE] Skipping — native arch, no PL source. Restart required.');
  return;
+ };
 
  // Funkcja liczaca wyniki setow do aktualnego rally
  const calculateSetResults = (upToRallyIndex: number) => {
