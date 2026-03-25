@@ -302,8 +302,16 @@ CRITICAL RULES:
 VOCABULARY IMPROVEMENTS:
 - NEVER say "chaos w przyjeciu" use "niedokladne przyjecie", "przyjecie daleko od siatki", "bardzo trudne przyjecie"
 - NEVER say "blad blokowy" -> use "blad w bloku"
+- NEVER say "nieudolnie" (zbyt pejoratywne) -> use "niecelnie", "nieprecyzyjnie", "z trudem"
+- NEVER say "proponuje" w kontekscie siatkarskim -> use "wystawia", "rozgrywa", "posyla pilke", "podaje"
+- NEVER say "mocna zagrywka z wyskoku" wiecej niz 2x per set -> use "potezny serwis", "zagrywka z pelna moca", "posylaja z pelnego wyskoku", "uderzenie zza linii"
 - For block errors: praise the ATTACKER who broke through, not the blocker's mistake
- Example: "Leon przebija blok Kwolka! Potezny atak!"
+  Example: "Leon przebija blok Kwolka! Potezny atak!"
+
+LIBERO I ROZGRYWAJACY — KRYTYCZNE:
+- LIBERO (np. Popiwczak, Hoss/Thales) NIGDY nie "wystawia na prawa/lewa strone" jak rozgrywajacy
+- Jesli libero dotknal pilki przed wystawieniem: opisz to jako "awaryjne podanie z glebokiej obrony", "ratunkowa pilka z pola", "sytuacyjne podanie libero"
+- ROZGRYWAJACY (Tavares, Komenda, Janusz) moze: "gubi blok", "oszukuje srodkowych", "gra kombinacyjnie", "wystawia szybka pilke", "rozgrywa" — nie tylko "wystawia"
 
 SCORE ACCURACY — KRYTYCZNE:
 - ZAWSZE uzywaj SYTUACJA PUNKTOWA i KTO PROWADZI z promptu — one mowia DOKLADNIE co sie stalo
@@ -639,15 +647,15 @@ if (!rally.touches || rally.touches.length === 0) {
  const actionLower = scoringAction.toLowerCase();
  // Milestone only at SPECIFIC round numbers to avoid spam
  const blockMilestones = [3, 5, 7, 10];
- const aceMilestones = [2, 3, 5];
- const pointMilestones = [10, 15, 20, 25, 30];
+ const aceMilestones = [3, 5];
+ const pointMilestones = [10, 15, 20];  // max 20 — 25/30 impossible in one set
  
  if (actionLower.includes('block') && blockMilestones.includes(currentPlayerStats.blocks)) {
- milestone = `${currentPlayerStats.blocks}. blok w secie`;
+   milestone = `${currentPlayerStats.blocks}. blok w meczu`;
  } else if (actionLower.includes('ace') && aceMilestones.includes(currentPlayerStats.aces)) {
- milestone = `${currentPlayerStats.aces}. as serwisowy w secie`;
+   milestone = `${currentPlayerStats.aces}. as serwisowy w meczu`;
  } else if (pointMilestones.includes(currentPlayerStats.points)) {
- milestone = `${currentPlayerStats.points}. punkt w secie`;
+   milestone = `${currentPlayerStats.points}. punkt w meczu`;
  }
  
  let currentStreak = 0;
@@ -1447,7 +1455,15 @@ if (!rally.touches || rally.touches.length === 0) {
    } else if (actionLower.includes('blok') || actionLower.includes('block')) {
      const isLastTouch = idx === rally.touches!.length - 1;
      if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) {
-       desc += ' - probowal blokowac, blok PRZEBITY (przegral z atakujacym)';
+       const blockPrzebitySynonyms = [
+         ' - blok nie zatrzymal ataku (atakujacy wygral)',
+         ' - atak przeszedl przez blok',
+         ' - atakujacy znalazl luke w bloku',
+         ' - blok dotkniety, pilka w polu gry',
+         ' - atak po rekach bloku w aut',
+         ' - blok spoznil sie, atakujacy punkt',
+       ];
+       desc += blockPrzebitySynonyms[Math.floor(Math.random() * blockPrzebitySynonyms.length)];
      } else if (isLastTouch) {
        desc += ' - SKUTECZNY BLOK! Punkt!';
      } else {
