@@ -1,135 +1,118 @@
 import { NextRequest } from 'next/server';
-import { Pinecone } from '@pinecone-database/pinecone';
 import OpenAI from 'openai';
+import { Pinecone } from '@pinecone-database/pinecone';
 
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
-const index = pinecone.index('ed-volley');
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+
+// ============================================================================
+// INTRO COMMENTARY — pre-match atmospheric commentary in target language
+// ============================================================================
+
+const INTRO_PROMPTS: Record<string, string> = {
+  pl: `Jesteś polskim komentatorem siatkarskim (styl Tomasz Swędrowski / TVP Sport).
+Napisz krótkie, emocjonalne intro przed meczem PlusLigi po POLSKU.
+2-3 zdania. Atmosfera, napięcie, prezentacja drużyn. Bez statystyk.`,
+
+  en: `You are an English volleyball commentator (Sky Sports / NBC Sports style).
+Write a short, atmospheric pre-match introduction in ENGLISH.
+2-3 sentences. Build excitement, introduce both teams. No statistics.`,
+
+  it: `Sei un commentatore italiano di pallavolo (stile Rai Sport).
+Scrivi una breve, emozionante presentazione pre-partita in ITALIANO.
+2-3 frasi. Atmosfera, emozione, presentazione delle squadre. Niente statistiche.`,
+
+  de: `Du bist ein deutscher Volleyball-Kommentator (Sport1/ZDF Stil).
+Schreibe eine kurze, atmosphärische Vorstellung vor dem Spiel auf DEUTSCH.
+2-3 Sätze. Spannung aufbauen, beide Teams vorstellen. Keine Statistiken.`,
+
+  tr: `Sen profesyonel bir Türk voleybol yorumcususun (TRT Spor tarzı).
+Maç öncesi kısa, atmosferik bir giriş yap TÜRKÇE olarak.
+2-3 cümle. Heyecan yarat, her iki takımı tanıt. İstatistik yok.`,
+
+  es: `Eres un comentarista de voleibol español (Movistar+ / DMAX estilo).
+Escribe una breve presentación pre-partido emocionante en ESPAÑOL.
+2-3 frases. Ambiente, emoción, presentación de los equipos. Sin estadísticas.`,
+
+  pt: `Você é um comentarista brasileiro de vôlei (Globo/SporTV estilo).
+Escreva uma breve introdução pré-jogo emocionante em PORTUGUÊS BRASILEIRO.
+2-3 frases. Atmosfera, emoção, apresentação dos times. Sem estatísticas.`,
+
+  jp: `あなたはプロの日本語バレーボール実況アナウンサーです（NHK・フジテレビスタイル）。
+試合前の短い雰囲気ある紹介を日本語で書いてください。
+2〜3文。緊張感、両チームの紹介。統計は不要。`,
+};
 
 export async function POST(request: NextRequest) {
   try {
-    const { 
-      homeTeam, 
-      awayTeam, 
+    const {
+      homeTeam,
+      awayTeam,
       language = 'pl',
       homePlayers = [],
       awayPlayers = [],
       playerPositions = {},
     } = await request.json();
 
-    if (!homeTeam || !awayTeam) {
-      return new Response(JSON.stringify({ intro: '' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+    const index = pinecone.Index('ed-volley');
 
-    console.log(`[INTRO] Generating intro for ${homeTeam} vs ${awayTeam} (${language})`);
-    console.log(`[INTRO] Players: home=${homePlayers.length}, away=${awayPlayers.length}, positions=${Object.keys(playerPositions).length}`);
-
-    // ========================================================================
-    // STEP 1: Build player context from REAL lineup data (no hallucination!)
-    // ========================================================================
-    let playerContext = '';
-    
-    if (homePlayers.length > 0 || awayPlayers.length > 0) {
-      const formatPlayer = (name: string) => {
-        const pos = playerPositions[name];
-        return pos ? `${name} (${pos})` : name;
-      };
-      
-      if (homePlayers.length > 0) {
-        playerContext += `\n${homeTeam}: ${homePlayers.map(formatPlayer).join(', ')}`;
-      }
-      if (awayPlayers.length > 0) {
-        playerContext += `\n${awayTeam}: ${awayPlayers.map(formatPlayer).join(', ')}`;
-      }
-    }
-
-    // ========================================================================
-    // STEP 2: Query Pinecone for additional context (player profiles, tactics)
-    // ========================================================================
+    // Try to get some RAG context for key players
     let ragContext = '';
     try {
-      const embedding = await openai.embeddings.create({
-        model: 'text-embedding-3-small',
-        input: `${homeTeam} vs ${awayTeam} mecz siatkowka druzyna`,
-        dimensions: 768, // Match Pinecone index dimensions!
-      });
-      const vector = embedding.data[0].embedding;
-
-      const [profilesRes, tacticsRes] = await Promise.all([
-        index.namespace('player-profiles').query({ vector, topK: 4, includeMetadata: true }),
-        index.namespace('tactical-knowledge').query({ vector, topK: 2, includeMetadata: true }),
-      ]);
-
-      const profileSnippets = (profilesRes.matches || [])
-        .filter(m => (m.score || 0) > 0.3)
-        .map(m => m.metadata?.text || '')
-        .filter(Boolean);
-
-      const tacticsSnippets = (tacticsRes.matches || [])
-        .filter(m => (m.score || 0) > 0.3)
-        .map(m => m.metadata?.text || '')
-        .filter(Boolean);
-
-      if (profileSnippets.length > 0) {
-        ragContext += `\nPROFILE ZAWODNIKOW Z BAZY:\n${profileSnippets.join('\n').substring(0, 800)}`;
+      const keyPlayers = [...homePlayers.slice(0, 2), ...awayPlayers.slice(0, 2)];
+      if (keyPlayers.length > 0) {
+        const queryText = `${homeTeam} ${awayTeam} key players ${keyPlayers.join(' ')}`;
+        const embedding = await openai.embeddings.create({
+          model: 'text-embedding-3-small',
+          input: queryText,
+          dimensions: 768,
+        });
+        const results = await index.namespace('player-profiles').query({
+          vector: embedding.data[0].embedding,
+          topK: 3,
+          includeMetadata: true,
+        });
+        ragContext = results.matches
+          .filter(m => (m.score || 0) > 0.4)
+          .map(m => m.metadata?.content || m.metadata?.text || '')
+          .filter(Boolean)
+          .join('\n')
+          .substring(0, 400);
       }
-      if (tacticsSnippets.length > 0) {
-        ragContext += `\nKONTEKST TAKTYCZNY:\n${tacticsSnippets.join('\n').substring(0, 400)}`;
-      }
-      
-      console.log(`[INTRO] RAG: ${profileSnippets.length} profiles, ${tacticsSnippets.length} tactics`);
-    } catch (err) {
-      console.error('[INTRO] RAG error:', err);
-      // Continue without RAG - we still have real player data from frontend
+    } catch (e) {
+      // RAG optional — proceed without
     }
 
-    // ========================================================================
-    // STEP 3: Generate intro (always in Polish)
-    // ========================================================================
+    const systemPrompt = INTRO_PROMPTS[language] || INTRO_PROMPTS.pl;
+
+    const userPrompt = `${homeTeam} vs ${awayTeam}
+Składy: ${homeTeam}: ${homePlayers.slice(0, 5).join(', ')} | ${awayTeam}: ${awayPlayers.slice(0, 5).join(', ')}
+${ragContext ? `Kontekst zawodników:\n${ragContext}` : ''}
+
+Napisz intro w wymaganym języku. NIE używaj innych języków. Tylko ${language.toUpperCase()}.`;
+
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
-        {
-          role: 'system',
-          content: `Jestes komentatorem radiowym meczu siatkowki. Generujesz INTRO przed meczem - 2-3 zdania budujace nastroj i napiecie.
-
-ZASADY:
-- KROTKO: 2-3 zdania, max 60 slow
-- Wymien OBE druzyny z pelna nazwa
-- Zbuduj napiecie i atmosfere (hala, kibice, stawka)
-- Jesli masz info o zawodnikach - wspomniej 1-2 kluczowych graczy PO NAZWISKU
-- NIGDY NIE WYMYSLAJ graczy! Uzywaj TYLKO nazwisk z listy SKLAD DRUZYN ponizej!
-- Jesli nie znasz graczy — NIE wspominaj zadnych nazwisk, mow ogolnie o druzynie
-- NIE wymyslaj konkretnych wynikow ani statystyk
-- NIE uzywaj emoji
-- Styl: jakbys wlasnie wlaczyl transmisje radiowa`,
-        },
-        {
-          role: 'user',
-          content: `MECZ: ${homeTeam} vs ${awayTeam}
-${playerContext ? `\nSKLAD DRUZYN (TYLKO TE NAZWISKA SA PRAWDZIWE!):${playerContext}` : ''}
-${ragContext}
-
-Wygeneruj intro do meczu po polsku.`,
-        },
+        { role: 'system', content: systemPrompt },
+        { role: 'user',   content: userPrompt },
       ],
-      temperature: 0.9,
-      max_tokens: 150,
+      temperature: 0.7,
+      max_tokens: 200,
     });
 
-    const intro = completion.choices[0].message.content || '';
-    console.log(`[INTRO] Generated: ${intro.substring(0, 100)}...`);
+    let intro = completion.choices[0].message.content?.trim() || '';
+    intro = intro.replace(/^["「"']|["」"']$/g, '').trim();
+
+    console.log(`[INTRO] ${language}: "${intro.substring(0, 80)}..."`);
 
     return new Response(JSON.stringify({ intro }), {
-      status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
+
   } catch (error) {
     console.error('[INTRO] Error:', error);
-    return new Response(JSON.stringify({ intro: '' }), {
+    return new Response(JSON.stringify({ error: 'Intro generation failed', intro: '' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
