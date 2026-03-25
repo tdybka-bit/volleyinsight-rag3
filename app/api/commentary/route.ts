@@ -308,7 +308,7 @@ VOCABULARY IMPROVEMENTS:
 SCORE ACCURACY — KRYTYCZNE:
 - ALWAYS use SCORE SITUATION and WHO LEADS from the prompt — they tell you EXACTLY what happened
 - NIGDY nie wymyslaj wlasnej interpretacji wyniku
-- Jesli SYTUACJA mowi "ZMNIEJSZA STRATE" — NIE mow ze ta druzyna "utrzymuje przewage" ani "prowadzi"!
+- If SCORE SITUATION says team is trailing — do NOT say that team is "leading" or "maintaining advantage"!
 - If WHO LEADS says "[team] LEADS" — that team IS leading, not the other way around!
 - NIGDY nie wymyslaj konkretnego wyniku liczbowego (np. "9:9") — wynik jest widoczny w UI
 - Uzywaj ogolnych zwrotow: "prowadza", "wyrownuja", "zmniejszaja strate", "odskoczyly"
@@ -323,11 +323,11 @@ NAMING — KRYTYCZNE:
 
 ANTI-REDUNDANCY:
 - NEVER repeat what is obvious from the action itself
-- Serve error = just say "blad serwisowy [player]" — do NOT add "pilka w aut", "koniec akcji", "punkt dla rywali" etc.
+- Serve error = brief mention of the error — do NOT add "ball out", "end of action", "point for rivals" etc.
 - Attack error = just say "blad w ataku" — do NOT explain what error means
 - Block point = just describe the block — do NOT say "koniec akcji"
 - NIGDY nie podawaj dokladnego wyniku liczbowego (np. "2:1", "15:12") w komentarzu! Wynik jest wyswietlany w interfejsie. JEDYNY WYJATEK: koniec seta — wtedy PODAJ wynik koncowy.
-- NIGDY nie mow "Wynik X:Y" ani "prowadzi X:Y" — zamiast tego uzywaj ogolnych zwrotow jak "prowadza", "wyrownuja", "odskoczyly"
+- NEVER say the exact score number in commentary — use general phrases like "leads", "equalizes", "pulling away"
 - ONE sentence per simple rally (serve error, single attack). Max 2-3 for long rallies.
 
 AVOID PHRASES:
@@ -629,7 +629,7 @@ if (!rally.touches || rally.touches.length === 0) {
     });
     const topPlayer = Object.entries(dominantPlayer).sort(([,a],[,b]) => b - a)[0];
     if (topPlayer && topPlayer[1] >= 3) {
-      setNarrativeContext = `\nWATEK: ${topPlayer[0]} dominuje - ${topPlayer[1]} z ostatnich ${Math.min(recentRallies.length, 8)} punktow. Wspomnij jesli pasuje naturalnie.`;
+      setNarrativeContext = `\nNARRATIVE THREAD: ${topPlayer[0]} is dominant — ${topPlayer[1]} of last ${Math.min(recentRallies.length, 8)} points. Mention naturally if it fits.`;
     }
   }
  
@@ -732,19 +732,19 @@ if (!rally.touches || rally.touches.length === 0) {
  
  let scoreSituation = '';
  if (isFirstPoint) {
-   scoreSituation = `FIRST POINT of set for ${scoringTeamName}. Wynik: ${scoreDisplay}.`;
+   scoreSituation = `FIRST POINT of set for ${scoringTeamName}. Score: ${scoreDisplay}.`;
  } else if (isTied) {
    scoreSituation = `TIED ${scoreDisplay}! ${scoringTeamName} equalizes.`;
  } else if (wasTiedBefore && !isTied) {
    scoreSituation = `${scoringTeamName} TAKES THE LEAD ${scoreDisplay}.`;
  } else if (scoringTeamLeads && scoreDiff >= 2) {
-   scoreSituation = `${scoringTeamName} scores, leads by ${scoreDiff}. Wynik: ${scoreDisplay}.`;
+   scoreSituation = `${scoringTeamName} scores, leads by ${scoreDiff}. Score: ${scoreDisplay}.`;
  } else if (scoringTeamLeads && scoreDiff === 1) {
    scoreSituation = `${scoringTeamName} leads by 1. Score: ${scoreDisplay}.`;
  } else if (scoringTeamTrails) {
    scoreSituation = `${scoringTeamName} scores. Score: ${scoreDisplay}. ${otherTeamName} still leads by ${scoreDiff}.`;
  } else {
-   scoreSituation = `Wynik: ${scoreDisplay}. Point for ${scoringTeamName}.`;
+   scoreSituation = `Score: ${scoreDisplay}. Point for ${scoringTeamName}.`;
  }
  
  // EXPLICIT who leads — GPT must not invent its own interpretation
