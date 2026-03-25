@@ -103,7 +103,7 @@ const getLanguagePrompt = (lang: string) => {
  pl: `Jestes doswiadczonym komentarorem meczow siatkarskich w Polsce — jak Tomasz Swędrowski lub Wojciech Drzyzga na zywo w radiu lub TV.
 
 STYL PL — RADIO NA ZYWO:
-- Prowadz narracje z EMOCJA proporcjonalna do sytuacji. Blad serwisowy = krotko i zwiezle. Koniec seta = wybuch emocji!
+- Prowadz narracje z EMOCJA proporcjonalna do sytuacji. Serve error = krotko i zwiezle. Koniec seta = wybuch emocji!
 - UNIKAJ mechanicznych zwrotow: zamiast "zwieksza przewage" uzyj "odskoczy", "dokrecil srube", "nie odpuszcza". Zamiast "zmniejsza strate" uzyj "wraca do gry!", "nie daje sie!", "zapala iskre!".
 - UNIKAJ "gra trwa" — uzyj "akcja trwa!", "wymiana!", "pilka zyje!", "nie daja sie!".
 - Przeplataj krotkie zdania uderzajace z dluzszymi opisowymi. Czasem zacznij od akcji: "Mocna zagrywka!", "Swietna obrona!".
@@ -306,10 +306,10 @@ VOCABULARY IMPROVEMENTS:
  Example: "Leon przebija blok Kwolka! Potezny atak!"
 
 SCORE ACCURACY — KRYTYCZNE:
-- ZAWSZE uzywaj SYTUACJA PUNKTOWA i KTO PROWADZI z promptu — one mowia DOKLADNIE co sie stalo
+- ALWAYS use SCORE SITUATION and WHO LEADS from the prompt — they tell you EXACTLY what happened
 - NIGDY nie wymyslaj wlasnej interpretacji wyniku
 - Jesli SYTUACJA mowi "ZMNIEJSZA STRATE" — NIE mow ze ta druzyna "utrzymuje przewage" ani "prowadzi"!
-- Jesli SYTUACJA mowi "NADAL PROWADZI [druzyna]" — ta druzyna MA prowadzenie, nie odwrotnie!
+- If WHO LEADS says "[team] LEADS" — that team IS leading, not the other way around!
 - NIGDY nie wymyslaj konkretnego wyniku liczbowego (np. "9:9") — wynik jest widoczny w UI
 - Uzywaj ogolnych zwrotow: "prowadza", "wyrownuja", "zmniejszaja strate", "odskoczyly"
 - JEDYNY WYJATEK od podawania wyniku: koniec seta
@@ -407,7 +407,7 @@ EXAMPLES (Polish):
 
 EXAMPLES (Polish):
 - "Grozdanov skuteczny w bloku. Dobry poczatek."
-- "Blad serwisowy McCarthy. Point for rywali."
+- "Serve error McCarthy. Point for rywali."
 - "Sasak konczy atak. Goscie obejmuja prowadzenie."`;
  } else {
  return basePrompt + `
@@ -537,7 +537,7 @@ export async function POST(request: NextRequest) {
  // ========================================================================
 
  // FIX: Use final_action.player instead of last touch!
- // Problem: "Blad serwisowy Tavaresa" when it was McCarthy
+ // Problem: "Serve error Tavaresa" when it was McCarthy
  // Reason: Last touch != player who made the final action
 
  // FIX: final_action.player is correct, but final_action.type is too short!
@@ -696,9 +696,9 @@ if (!rally.touches || rally.touches.length === 0) {
    const homePoints = last6.filter(r => r.team_scored === 'home').length;
    const awayPoints = last6.filter(r => r.team_scored === 'away').length;
    if (homePoints >= 5) {
-     momentumContext = `MOMENTUM: Gospodarze dominuja - ${homePoints}:${awayPoints} w ostatnich 6 akcjach!`;
+     momentumContext = `MOMENTUM: Home team dominating - ${homePoints}:${awayPoints} in last 6 rallies!`;
    } else if (awayPoints >= 5) {
-     momentumContext = `MOMENTUM: Goscie dominuja - ${awayPoints}:${homePoints} w ostatnich 6 akcjach!`;
+     momentumContext = `MOMENTUM: Away team dominating - ${awayPoints}:${homePoints} in last 6 rallies!`;
    }
  }
  }
@@ -748,8 +748,8 @@ if (!rally.touches || rally.touches.length === 0) {
  }
  
  // EXPLICIT who leads — GPT must not invent its own interpretation
- const leadInfo = isTied ? 'REMIS' 
-   : `${leadingTeam} PROWADZI ${scoreDisplay}`;
+ const leadInfo = isTied ? 'TIED'
+   : `${leadingTeam} LEADS ${scoreDisplay}`;
 
  console.log('[COMMENTARY] Request:', {
  rally_number: rally.rally_number,
@@ -1508,17 +1508,17 @@ CRITICAL COMMENTARY RULES:
  situationContext += `\nMILESTONE: This is ${milestone} for ${scoringPlayer}! MENTION IT!`;
  }
  if (isBigLead && !setEndInfo.isSetEnd) {
- situationContext += `\nSYTUACJA: Duza przewaga ${scoreDiff} punktow! ${leadingTeamName} prowadzi ${score}.`;
+ situationContext += `\nBIG LEAD: ${scoreDiff} points ahead! ${leadingTeamName} leads ${score}.`;
  }
  
  let errorContext = '';
  if (attackingPlayer) {
- errorContext = `\nBLOK ERROR - WAZNE: ${attackingPlayer} (${attackingTeamName}) PRZEBIL BLOK ${scoringPlayer}!
-Skomentuj ATAK ${attackingPlayer}, nie blad blokujacego!
-Przyklad: "${attackingPlayer} przebija blok ${scoringPlayer}! Potezny atak!"
-Odmien nazwiska poprawnie wg zasad jezyka polskiego!`;
+ errorContext = `\nATTACK BEAT BLOCK: ${attackingPlayer} (${attackingTeamName}) beat ${scoringPlayer}'s block!
+Praise ${attackingPlayer}'s ATTACK, not the blocker's mistake!
+Example: "${attackingPlayer} beats ${scoringPlayer}'s block! Powerful attack!"
+Player surnames are invariable — do NOT add Polish endings!`;
  } else if (scoringAction.toLowerCase().includes('error')) {
- errorContext = `\nUWAGA: To byl BLAD zawodnika ${scoringPlayer}. Nie dramatyzuj - po prostu opisz blad.`;
+ errorContext = `\nNOTE: This was an ERROR by ${scoringPlayer}. Do not overdramatize — just describe the mistake.`;
  }
  
  let passInstructions = '';
