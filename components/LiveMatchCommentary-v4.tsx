@@ -1379,9 +1379,14 @@ export default function LiveMatchCommentaryV4() {
  // Re-translate all commentaries when language changes
  useEffect(() => {
  if (commentaries.length > 0) {
- retranslateCommentaries();
+   retranslateCommentaries();
  }
  }, [language]);
+
+ // NOTE: In the new native-generation architecture, changing language while commentary
+ // is running requires a restart — there is no Polish original to retranslate from.
+ // retranslateCommentaries() is kept only for switching BACK to PL (instant restore).
+
 
  // Fetch player profile from RAG when favPlayer changes
  useEffect(() => {
@@ -1448,12 +1453,30 @@ export default function LiveMatchCommentaryV4() {
        summaryData: { ...c.summaryData, narrative: c.summaryData.originalNarrative }
      } : {}),
    })));
-   setTranslatedProfileSummary(null); // Reset to show original PL profile
+   setTranslatedProfileSummary(null);
    return;
  }
- 
- setIsRetranslating(true);
- console.log('Re-translating', commentaries.length, 'commentaries to', currentLanguage);
+
+ // For non-PL languages in new architecture:
+ // originalText is empty (we generated natively, no PL source stored)
+ // → retranslation would send the native text back through translate = garbage
+ // → correct behavior: show a warning and suggest restart
+ const hasNativeCommentaries = commentaries.some(c =>
+   c.type !== 'intro' && c.type !== 'set_summary' && c.type !== 'lineup' &&
+   (!c.originalText || c.originalText === c.text)
+ );
+
+ if (hasNativeCommentaries) {
+   console.warn('[RETRANSLATE] Native commentaries detected — restart required for language change');
+   // Show visual cue by resetting commentary text with language indicator
+   setCommentaries(prev => prev.map(c => {
+     if (c.type !== 'intro' && c.type !== 'set_summary' && c.type !== 'lineup' && c.type !== 'match_summary') {
+       return { ...c, text: c.originalText || c.text };
+     }
+     return c;
+   }));
+   return;
+ }
  
  // Use originalText as source for translation (never the current translated text!)
  const translationPromises = commentaries.map(async (commentary) => {
@@ -2588,7 +2611,20 @@ export default function LiveMatchCommentaryV4() {
        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.08em', marginRight: 4 }}>Język</span>
          {languages.map(l => (
-           <button key={l.code} onClick={() => setLanguage(l.code as Language)}
+           <button key={l.code} onClick={() => {
+             if (l.code !== language && commentaries.length > 0 && l.code !== 'pl') {
+               // New architecture: language change requires restart
+               if (window.confirm(`Zmiana języka na ${l.code.toUpperCase()} wymaga restartu komentarza.\nKliknij OK aby zresetować i zacząć od nowa w ${l.code.toUpperCase()}.`)) {
+                 setLanguage(l.code as Language);
+                 setCommentaries([]);
+                 setCurrentRallyIndex(0);
+                 setCurrentSetNumber(0);
+                 setIsPlaying(false);
+               }
+             } else {
+               setLanguage(l.code as Language);
+             }
+           }}
              style={{ padding: '2px 7px', borderRadius: 5, fontSize: 10, fontWeight: 700, border: 'none', cursor: 'pointer', background: language === l.code ? 'rgba(59,130,246,.2)' : 'transparent', color: language === l.code ? '#93c5fd' : '#94a3b8', outline: language === l.code ? '1px solid rgba(59,130,246,.4)' : 'none' }}>
              {l.code.toUpperCase()}
            </button>
