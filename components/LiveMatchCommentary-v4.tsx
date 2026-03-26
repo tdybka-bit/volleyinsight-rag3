@@ -206,7 +206,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Wybierz ulubionego zawodnika aby aktywowac BUDDY panel',
    sources: 'zrodel w bazie wiedzy', source1: 'zrodlo w bazie wiedzy', sources24: 'zrodla w bazie wiedzy',
    highRelevance: 'wysoka trafnosc', medRelevance: 'srednia trafnosc',
-   setEnd: 'Koniec seta', setWinner: 'Wygrywa', topScorers: 'TOP punktujący', pts: 'pkt', matchEnd: 'KONIEC MECZU', matchWinner: 'Zwycięzca',
+   setEnd: 'Koniec seta', setWinner: 'Wygrywa', topScorers: 'TOP punktujący', pts: 'pkt', matchEnd: 'KONIEC MECZU', matchWinner: 'Zwycięzca', mvpTitle: 'MVP meczu',
  },
  en: {
    statsTitle: 'Match Statistics', points: 'Points', serve: 'Serve',
@@ -218,7 +218,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Select a favorite player to activate BUDDY panel',
    sources: 'sources in knowledge base', source1: 'source in knowledge base', sources24: 'sources in knowledge base',
    highRelevance: 'high relevance', medRelevance: 'medium relevance',
-   setEnd: 'End of set', setWinner: 'Winner', topScorers: 'TOP scorers', pts: 'pts', matchEnd: 'MATCH OVER', matchWinner: 'Winner',
+   setEnd: 'End of set', setWinner: 'Winner', topScorers: 'TOP scorers', pts: 'pts', matchEnd: 'MATCH OVER', matchWinner: 'Winner', mvpTitle: 'Match MVP',
  },
  it: {
    statsTitle: 'Statistiche partita', points: 'Punti', serve: 'Battuta',
@@ -230,7 +230,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Seleziona un giocatore preferito per attivare il pannello BUDDY',
    sources: 'fonti nella base dati', source1: 'fonte nella base dati', sources24: 'fonti nella base dati',
    highRelevance: 'alta rilevanza', medRelevance: 'media rilevanza',
-   setEnd: 'Fine del set', setWinner: 'Vince', topScorers: 'TOP marcatori', pts: 'pt', matchEnd: 'FINE PARTITA', matchWinner: 'Vincitore',
+   setEnd: 'Fine del set', setWinner: 'Vince', topScorers: 'TOP marcatori', pts: 'pt', matchEnd: 'FINE PARTITA', matchWinner: 'Vincitore', mvpTitle: 'MVP della partita',
  },
  de: {
    statsTitle: 'Spielstatistiken', points: 'Punkte', serve: 'Aufschlag',
@@ -242,7 +242,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Wahle einen Lieblingsspieler um das BUDDY-Panel zu aktivieren',
    sources: 'Quellen in der Wissensdatenbank', source1: 'Quelle in der Wissensdatenbank', sources24: 'Quellen in der Wissensdatenbank',
    highRelevance: 'hohe Relevanz', medRelevance: 'mittlere Relevanz',
-   setEnd: 'Satzende', setWinner: 'Sieger', topScorers: 'TOP Scorer', pts: 'Pkt', matchEnd: 'SPIELENDE', matchWinner: 'Sieger',
+   setEnd: 'Satzende', setWinner: 'Sieger', topScorers: 'TOP Scorer', pts: 'Pkt', matchEnd: 'SPIELENDE', matchWinner: 'Sieger', mvpTitle: 'Spieler des Spiels',
  },
  tr: {
    statsTitle: 'Mac Istatistikleri', points: 'Sayilar', serve: 'Servis',
@@ -254,7 +254,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'BUDDY panelini etkinlestirmek icin bir oyuncu secin',
    sources: 'kaynak', source1: 'kaynak', sources24: 'kaynak',
    highRelevance: 'yuksek uyum', medRelevance: 'orta uyum',
-   setEnd: 'Set sonu', setWinner: 'Kazanan', topScorers: 'En iyi skorer', pts: 'puan', matchEnd: 'MAÇ SONU', matchWinner: 'Kazanan',
+   setEnd: 'Set sonu', setWinner: 'Kazanan', topScorers: 'En iyi skorer', pts: 'puan', matchEnd: 'MAÇ SONU', matchWinner: 'Kazanan', mvpTitle: 'Maçın MVP\'si',
  },
  es: {
    statsTitle: 'Estadisticas del partido', points: 'Puntos', serve: 'Saque',
@@ -266,7 +266,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Selecciona un jugador favorito para activar el panel BUDDY',
    sources: 'fuentes en la base', source1: 'fuente en la base', sources24: 'fuentes en la base',
    highRelevance: 'alta relevancia', medRelevance: 'relevancia media',
-   setEnd: 'Fin del set', setWinner: 'Gana', topScorers: 'TOP anotadores', pts: 'pts', matchEnd: 'FIN DEL PARTIDO', matchWinner: 'Ganador',
+   setEnd: 'Fin del set', setWinner: 'Gana', topScorers: 'TOP anotadores', pts: 'pts', matchEnd: 'FIN DEL PARTIDO', matchWinner: 'Ganador', mvpTitle: 'MVP del partido',
  },
  pt: {
    statsTitle: 'Estatisticas do jogo', points: 'Pontos', serve: 'Saque',
@@ -278,7 +278,7 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'Selecione um jogador favorito para ativar o painel BUDDY',
    sources: 'fontes na base', source1: 'fonte na base', sources24: 'fontes na base',
    highRelevance: 'alta relevancia', medRelevance: 'relevancia media',
-   setEnd: 'Fim do set', setWinner: 'Vence', topScorers: 'TOP pontuadores', pts: 'pts', matchEnd: 'FIM DO JOGO', matchWinner: 'Vencedor',
+   setEnd: 'Fim do set', setWinner: 'Vence', topScorers: 'TOP pontuadores', pts: 'pts', matchEnd: 'FIM DO JOGO', matchWinner: 'Vencedor', mvpTitle: 'MVP da partida',
  },
  jp: {
    statsTitle: '試合統計', points: 'ポイント', serve: 'サーブ',
@@ -290,21 +290,65 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    selectPlayer: 'BUDDYパネルを有効にする選手を選択',
    sources: 'ソース', source1: 'ソース', sources24: 'ソース',
    highRelevance: '高関連性', medRelevance: '中関連性',
-   setEnd: 'セット終了', setWinner: '勝者', topScorers: 'TOP得点者', pts: '点', matchEnd: '試合終了', matchWinner: '優勝',
+   setEnd: 'セット終了', setWinner: '勝者', topScorers: 'TOP得点者', pts: '点', matchEnd: '試合終了', matchWinner: '優勝', mvpTitle: '試合のMVP',
  },
 };
 
 // Unified yellow tags a" readable on dark backgrounds
-const TAG_LABELS: Record<string, string> = {
- '#seria': '#seria',
- '#comeback': '#comeback',
- '#przelamanie': '#przelamanie',
- '#drama': '#drama',
- '#dluga_wymiana': '#dluga wymiana',
- '#milestone': '#milestone',
- '#debiut': '#debiut',
- '#zmiana': '#zmiana',
- '#koniec_seta': '#koniec seta',
+const TAG_LABELS_I18N: Record<Language, Record<string, string>> = {
+ pl: { '#seria': '#seria', '#comeback': '#comeback', '#przelamanie': '#przełamanie',
+       '#drama': '#drama', '#dluga_wymiana': '#długa wymiana', '#milestone': '#milestone',
+       '#debiut': '#debiut', '#zmiana': '#zmiana', '#koniec_seta': '#koniec seta' },
+ en: { '#seria': '#run', '#comeback': '#comeback', '#przelamanie': '#break',
+       '#drama': '#drama', '#dluga_wymiana': '#long rally', '#milestone': '#milestone',
+       '#debiut': '#debut', '#zmiana': '#sub', '#koniec_seta': '#set over' },
+ it: { '#seria': '#serie', '#comeback': '#rimonta', '#przelamanie': '#break',
+       '#drama': '#tensione', '#dluga_wymiana': '#lungo scambio', '#milestone': '#traguardo',
+       '#debiut': '#debutto', '#zmiana': '#cambio', '#koniec_seta': '#fine set' },
+ de: { '#seria': '#Serie', '#comeback': '#Aufholjagd', '#przelamanie': '#Break',
+       '#drama': '#Spannung', '#dluga_wymiana': '#langer Ballwechsel', '#milestone': '#Meilenstein',
+       '#debiut': '#Debut', '#zmiana': '#Wechsel', '#koniec_seta': '#Satzende' },
+ tr: { '#seria': '#seri', '#comeback': '#geri dönüş', '#przelamanie': '#kırılma',
+       '#drama': '#heyecan', '#dluga_wymiana': '#uzun rally', '#milestone': '#kilometre taşı',
+       '#debiut': '#debut', '#zmiana': '#değişiklik', '#koniec_seta': '#set sonu' },
+ es: { '#seria': '#racha', '#comeback': '#remontada', '#przelamanie': '#break',
+       '#drama': '#drama', '#dluga_wymiana': '#intercambio largo', '#milestone': '#hito',
+       '#debiut': '#debut', '#zmiana': '#cambio', '#koniec_seta': '#fin del set' },
+ pt: { '#seria': '#sequência', '#comeback': '#virada', '#przelamanie': '#break',
+       '#drama': '#drama', '#dluga_wymiana': '#rally longo', '#milestone': '#marco',
+       '#debiut': '#estreia', '#zmiana': '#substituição', '#koniec_seta': '#fim do set' },
+ jp: { '#seria': '#連続得点', '#comeback': '#カムバック', '#przelamanie': '#ブレーク',
+       '#drama': '#ドラマ', '#dluga_wymiana': '#長いラリー', '#milestone': '#記録',
+       '#debiut': '#デビュー', '#zmiana': '#選手交代', '#koniec_seta': '#セット終了' },
+};
+// Helper: get tag label for current language
+const getTagLabel = (tag: string, lang: Language): string => {
+ return TAG_LABELS_I18N[lang]?.[tag] || TAG_LABELS_I18N.pl[tag] || tag;
+};
+// Legacy alias (used in TAG_CLR)
+const TAG_LABELS = TAG_LABELS_I18N.pl;
+
+// Action labels i18n (for rally headers)
+const ACTION_I18N: Record<Language, Record<string, string>> = {
+ pl: { 'Blad serwisu': 'Błąd serwisu', 'Przyjecie error': 'Błąd przyjęcia', 'Blad ataku': 'Błąd ataku',
+       'As serwisowy': 'As serwisowy', 'Atak': 'Atak', 'Blok': 'Blok', 'Atak skuteczny': 'Atak' },
+ en: { 'Blad serwisu': 'Serve error', 'Przyjecie error': 'Reception error', 'Blad ataku': 'Attack error',
+       'As serwisowy': 'Service ace', 'Atak': 'Attack', 'Blok': 'Block', 'Atak skuteczny': 'Kill' },
+ it: { 'Blad serwisu': 'Errore al servizio', 'Przyjecie error': 'Errore in ricezione', 'Blad ataku': 'Errore in attacco',
+       'As serwisowy': 'Ace', 'Atak': 'Attacco', 'Blok': 'Muro', 'Atak skuteczny': 'Schiacciata' },
+ de: { 'Blad serwisu': 'Aufschlagfehler', 'Przyjecie error': 'Annahmefehler', 'Blad ataku': 'Angriffsfehler',
+       'As serwisowy': 'Aufschlag-Ass', 'Atak': 'Angriff', 'Blok': 'Block', 'Atak skuteczny': 'Angriff' },
+ tr: { 'Blad serwisu': 'Servis hatası', 'Przyjecie error': 'Kabul hatası', 'Blad ataku': 'Hücum hatası',
+       'As serwisowy': 'Servis ace', 'Atak': 'Hücum', 'Blok': 'Blok', 'Atak skuteczny': 'Hücum' },
+ es: { 'Blad serwisu': 'Error en el saque', 'Przyjecie error': 'Error en recepción', 'Blad ataku': 'Error en ataque',
+       'As serwisowy': 'Ace', 'Atak': 'Ataque', 'Blok': 'Bloqueo', 'Atak skuteczny': 'Remate' },
+ pt: { 'Blad serwisu': 'Erro no saque', 'Przyjecie error': 'Erro na recepção', 'Blad ataku': 'Erro no ataque',
+       'As serwisowy': 'Ace', 'Atak': 'Ataque', 'Blok': 'Bloqueio', 'Atak skuteczny': 'Cortada' },
+ jp: { 'Blad serwisu': 'サービスミス', 'Przyjecie error': 'レセプションミス', 'Blad ataku': 'アタックミス',
+       'As serwisowy': 'サービスエース', 'Atak': 'アタック', 'Blok': 'ブロック', 'Atak skuteczny': 'スパイク' },
+};
+const getActionLabel = (action: string, lang: Language): string => {
+ return ACTION_I18N[lang]?.[action] || ACTION_I18N.en[action] || action;
 };
 
 const TEAM_FULL_NAMES: Record<string, string> = {
@@ -2009,7 +2053,7 @@ export default function LiveMatchCommentaryV4() {
        
        const summaryEntry: CommentaryEntry = {
          rallyNumber: -currentSetNumber - 100, // unique negative ID for summaries
-         text: `Koniec ${currentSetNumber}. seta! ${lastRally.score_after.home}:${lastRally.score_after.away}`,
+         text: `${BUDDY_I18N[languageRef.current]?.setEnd || 'Set'} ${currentSetNumber} — ${lastRally.score_after.home}:${lastRally.score_after.away}`,
          originalText: `Koniec ${currentSetNumber}. seta! ${lastRally.score_after.home}:${lastRally.score_after.away}`,
          timestamp: new Date(),
          player: '', team: '', action: '',
@@ -2249,7 +2293,7 @@ export default function LiveMatchCommentaryV4() {
    const homeTeam = getHomeTeamFull(); const awayTeam = getAwayTeamFull();
    const winner = homeSets > awaySets ? homeTeam : awayTeam;
    const matchEntry: CommentaryEntry = {
-     rallyNumber: -9999, text: `${winner} wygrywa mecz ${homeSets}:${awaySets}!`,
+     rallyNumber: -9999, text: `${winner} — ${homeSets}:${awaySets} ${BUDDY_I18N[languageRef.current]?.matchEnd || 'MATCH OVER'}`,
      originalText: `${winner} wygrywa mecz ${homeSets}:${awaySets}!`,
      timestamp: new Date(), player: '', team: '', action: '',
      type: 'match_summary', tags: ['#koniec_meczu'], originalTags: [], milestones: [],
@@ -2768,11 +2812,11 @@ export default function LiveMatchCommentaryV4() {
                      {md.narrative === '...' && <p style={{ fontSize: 11, color: '#a78bfa', margin: '0 0 12px', animation: 'pulse 1.5s infinite' }}>Generowanie podsumowania meczu...</p>}
                      {md.topScorers.length > 0 && (
                        <div style={{ borderTop: '1px solid rgba(167,139,250,.2)', paddingTop: 10, display: 'inline-block', minWidth: 200, textAlign: 'left' }}>
-                         <div style={{ fontSize: 9, fontWeight: 800, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 5 }}>MVP meczu:</div>
+                         <div style={{ fontSize: 9, fontWeight: 800, color: '#a78bfa', textTransform: 'uppercase', letterSpacing: '.1em', marginBottom: 5 }}>{BUDDY_I18N[language]?.mvpTitle || 'MVP'}:</div>
                          {md.topScorers.slice(0,3).map((s, i) => (
                            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, padding: '2px 0' }}>
                              <span style={{ color: s.team === 'home' ? '#93c5fd' : '#fcd34d' }}>{i + 1}. {s.player}</span>
-                             <span style={{ color: '#a78bfa', fontWeight: 700, marginLeft: 16 }}>{s.points} pkt</span>
+                             <span style={{ color: '#a78bfa', fontWeight: 700, marginLeft: 16 }}>{s.points} {BUDDY_I18N[language]?.pts || 'pts'}</span>
                            </div>
                          ))}
                        </div>
@@ -2827,7 +2871,7 @@ export default function LiveMatchCommentaryV4() {
                        <span style={{ fontSize: 13 }}>{icon}</span>
                        {commentary.player && (
                          <span style={{ fontSize: 12, padding: '3px 8px', borderRadius: 99, fontWeight: 500, background: isHome ? 'rgba(59,130,246,.1)' : 'rgba(245,158,11,.1)', color: isHome ? '#93c5fd' : '#fcd34d' }}>
-                           {commentary.player} · {commentary.action}
+                           {commentary.player} · {getActionLabel(commentary.action, language)}
                          </span>
                        )}
                        {/* Tags */}
@@ -2839,12 +2883,12 @@ export default function LiveMatchCommentaryV4() {
                            <div key={ti} style={{ position: 'relative' }}>
                              <button onClick={() => setOpenTagPopup(isOpen ? null : popupId)}
                                style={{ fontSize: 9, padding: '2px 6px', borderRadius: 99, background: tc.bg, color: tc.color, border: 'none', cursor: 'pointer', fontWeight: 600 }}>
-                               {TAG_LABELS[tag] || tag}
+                               {getTagLabel(tag, language)}
                              </button>
                              {isOpen && commentary.tagData?.[tag] && (
                                <div style={{ position: 'absolute', bottom: '100%', left: 0, marginBottom: 6, zIndex: 50, background: '#1a2740', border: '1px solid #1e293b', borderRadius: 10, padding: 12, minWidth: 220, boxShadow: '0 20px 40px rgba(0,0,0,.6)' }}>
                                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                                   <span style={{ fontSize: 11, fontWeight: 700, color: '#fff' }}>{TAG_LABELS[tag] || tag}</span>
+                                   <span style={{ fontSize: 11, fontWeight: 700, color: '#fff' }}>{getTagLabel(tag, language)}</span>
                                    <button onClick={() => setOpenTagPopup(null)} style={{ fontSize: 10, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
                                  </div>
                                  <div style={{ fontSize: 10, color: '#94a3b8' }}>
