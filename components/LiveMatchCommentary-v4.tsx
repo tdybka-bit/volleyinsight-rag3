@@ -2458,7 +2458,7 @@ export default function LiveMatchCommentaryV4() {
    points: s.points, killPct: s.attack.sum > 0 ? Math.round((s.attack.kill / s.attack.sum) * 100) : 0,
    aces: s.serve.ace, blocks: s.block.pts,
    recPct: s.reception.sum >= 3 ? Math.round((s.reception.perfect / s.reception.sum) * 100) : 0,
-   recSum: s.reception.sum, digs: s.dig,
+   recSum: s.reception.sum, recPerfect: s.reception.perfect, digs: s.dig,
    attackSum: s.attack.sum,
  }));
  const topScorersLB  = [...lbEntries].filter(e => e.points > 0).sort((a, b) => b.points - a.points).slice(0, 3);
@@ -2966,8 +2966,8 @@ export default function LiveMatchCommentaryV4() {
                    <RankCard title="Atak K%" icon="💥" data={topAttackLB.map(e => ({ name: e.name, team: e.team, value: e.killPct, num: e.attackSum > 0 ? Math.round(e.killPct * e.attackSum / 100) : 0, den: e.attackSum }))} isPercent={true} barColor="linear-gradient(to right,#7f1d1d,#f87171)" border="rgba(239,68,68,.15)" />
                    <RankCard title="Zagrywka (asy)" icon="🎯" data={topAcesLB.map(e => ({ name: e.name, team: e.team, value: e.aces }))} isPercent={false} barColor="linear-gradient(to right,#3b0764,#c084fc)" border="rgba(139,92,246,.15)" />
                    <RankCard title="Bloki" icon="🧱" data={topBlocksLB.map(e => ({ name: e.name, team: e.team, value: e.blocks }))} isPercent={false} barColor="linear-gradient(to right,#1e3a5f,#60a5fa)" border="rgba(59,130,246,.15)" />
-                   <RankCard title="Przyjęcie %" icon="🛡️" data={topRecLB.map(e => ({ name: e.name, team: e.team, value: e.recPct }))} isPercent={true} barColor="linear-gradient(to right,#713f12,#fbbf24)" border="rgba(234,179,8,.15)" />
-                   <RankCard title="Obrony (digi)" icon="🏊" data={topDigsLB.map(e => ({ name: e.name, team: e.team, value: e.digs }))} isPercent={false} barColor="linear-gradient(to right,#164e63,#22d3ee)" border="rgba(6,182,212,.15)" />
+                   <RankCard title="Przyjęcie %" icon="🛡️" data={topRecLB.map(e => ({ name: e.name, team: e.team, value: e.recPct, num: e.recPerfect, den: e.recSum }))} isPercent={true} barColor="linear-gradient(to right,#713f12,#fbbf24)" border="rgba(234,179,8,.15)" />
+                   <RankCard title="Obrony" icon="🏊" data={topDigsLB.map(e => ({ name: e.name, team: e.team, value: e.digs }))} isPercent={false} barColor="linear-gradient(to right,#164e63,#22d3ee)" border="rgba(6,182,212,.15)" />
                  </>
                )}
              </div>
@@ -3044,54 +3044,135 @@ export default function LiveMatchCommentaryV4() {
            )}
 
            {/* ── SET TAB ─────────────────────────────────────────────────── */}
-           {rightTab === 'set' && (
-             <div>
-               <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 10 }}>⚡ Wynik meczu</div>
-               <div style={{ background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.06)', borderRadius: 14, padding: 12, marginBottom: 12 }}>
-                 {(() => {
-                   const completedSets = Object.entries(setResults).filter(([sn]) => Number(sn) < currentSetNumber);
-                   const hW = completedSets.filter(([, sc]) => sc.home > sc.away).length;
-                   const aW = completedSets.filter(([, sc]) => sc.away > sc.home).length;
-                   return (
-                     <>
-                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                         <span style={{ fontSize: 12, fontWeight: 700, color: '#93c5fd' }}>{getHomeTeamFull().split(' ').slice(-1)[0]}</span>
-                         <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 700, color: '#fff' }}>{hW} : {aW}</span>
-                         <span style={{ fontSize: 12, fontWeight: 700, color: '#fcd34d' }}>{getAwayTeamFull().split(' ').slice(-1)[0]}</span>
-                       </div>
-                       {Object.entries(setResults)
-                         .sort(([a], [b]) => Number(a) - Number(b))
-                         .filter(([sn]) => Number(sn) < currentSetNumber)
-                         .map(([sn, sc]) => {
-                         const hw = sc.home > sc.away;
-                         return (
-                           <div key={sn} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 8px', borderRadius: 8, marginBottom: 4, background: 'rgba(255,255,255,.02)' }}>
-                             <span style={{ fontSize: 10, color: '#94a3b8' }}>Set {sn}</span>
-                             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                               <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: hw ? '#93c5fd' : '#475569' }}>{sc.home}</span>
-                               <span style={{ fontSize: 9, color: '#475569' }}>:</span>
-                               <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: !hw ? '#fcd34d' : '#475569' }}>{sc.away}</span>
-                             </div>
-                             <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 4, background: hw ? 'rgba(59,130,246,.1)' : 'rgba(245,158,11,.1)', color: hw ? '#60a5fa' : '#fbbf24' }}>
-                               {hw ? getHomeTeamFull().split(' ')[0] : getAwayTeamFull().split(' ')[0]}
-                             </span>
+           {rightTab === 'set' && (() => {
+             // ── COMPUTE SET KPIs from rallies ──────────────────────────────
+             const computeSetKPI = (setNum: number) => {
+               const setRallies = rallies.filter((r: any) => r.set_number === setNum);
+               let hAtk = 0, hKill = 0, hPipe = 0;
+               let aAtk = 0, aKill = 0, aPipe = 0;
+               let hRec = 0, hRecPos = 0, aRec = 0, aRecPos = 0;
+               const hScorers: Record<string,number> = {};
+               const aScorers: Record<string,number> = {};
+
+               for (const r of setRallies) {
+                 // top scorer
+                 if (r.team_scored === 'home' && r.final_action?.player) hScorers[r.final_action.player] = (hScorers[r.final_action.player]||0)+1;
+                 if (r.team_scored === 'away' && r.final_action?.player) aScorers[r.final_action.player] = (aScorers[r.final_action.player]||0)+1;
+
+                 for (const t of (r.touches || [])) {
+                   const team = t.team;
+                   const at = (t.actionType||'').toLowerCase();
+                   const loc = t.attackLocation || '';
+                   const grade = t.grade || '';
+
+                   if (at === 'attack') {
+                     const isKill = grade === 'Perfect';
+                     const isPipe = loc === 'Pipe' || loc === 'Right Side Back';
+                     if (team === 'home') { hAtk++; if (isKill) hKill++; if (isPipe) hPipe++; }
+                     else { aAtk++; if (isKill) aKill++; if (isPipe) aPipe++; }
+                   }
+                   if (at === 'receive') {
+                     const isPos = grade === 'Perfect' || grade === 'Positive' || grade === 'Average';
+                     if (team === 'home') { hRec++; if (isPos) hRecPos++; }
+                     else { aRec++; if (isPos) aRecPos++; }
+                   }
+                 }
+               }
+               const hMvp = Object.entries(hScorers).sort(([,a],[,b])=>b-a)[0];
+               const aMvp = Object.entries(aScorers).sort(([,a],[,b])=>b-a)[0];
+               return {
+                 hKillPct: hAtk > 0 ? Math.round(hKill/hAtk*100) : 0,
+                 aKillPct: aAtk > 0 ? Math.round(aKill/aAtk*100) : 0,
+                 hPipePct: hAtk > 0 ? Math.round(hPipe/hAtk*100) : 0,
+                 aPipePct: aAtk > 0 ? Math.round(aPipe/aAtk*100) : 0,
+                 hRecPct:  hRec > 0 ? Math.round(hRecPos/hRec*100) : 0,
+                 aRecPct:  aRec > 0 ? Math.round(aRecPos/aRec*100) : 0,
+                 hMvp: hMvp ? `${hMvp[0]} ${hMvp[1]}pkt` : '—',
+                 aMvp: aMvp ? `${aMvp[0]} ${aMvp[1]}pkt` : '—',
+               };
+             };
+
+             const hShort = getHomeTeamFull().split(' ').slice(-1)[0];
+             const aShort = getAwayTeamFull().split(' ').slice(-1)[0];
+
+             // mini KPI row helper
+             const KpiRow = ({ label, hVal, aVal, hBetter }: { label: string; hVal: string; aVal: string; hBetter: boolean }) => (
+               <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 3 }}>
+                 <span style={{ fontSize: 11, color: hBetter ? '#93c5fd' : '#cbd5e1', fontFamily: "'JetBrains Mono',monospace", fontWeight: 800, width: 30, textAlign: 'right' }}>{hVal}</span>
+                 <span style={{ fontSize: 9, color: '#94a3b8', flex: 1, textAlign: 'center' }}>{label}</span>
+                 <span style={{ fontSize: 11, color: !hBetter ? '#fcd34d' : '#cbd5e1', fontFamily: "'JetBrains Mono',monospace", fontWeight: 800, width: 30 }}>{aVal}</span>
+               </div>
+             );
+
+             const completedSets = Object.entries(setResults).filter(([sn]) => Number(sn) < currentSetNumber);
+             const hW = completedSets.filter(([, sc]) => sc.home > sc.away).length;
+             const aW = completedSets.filter(([, sc]) => sc.away > sc.home).length;
+
+             return (
+               <div>
+                 {/* Match score header */}
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                   <span style={{ fontSize: 11, fontWeight: 700, color: '#93c5fd' }}>{hShort}</span>
+                   <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 20, fontWeight: 800, color: '#fff' }}>{hW} : {aW}</span>
+                   <span style={{ fontSize: 11, fontWeight: 700, color: '#fcd34d' }}>{aShort}</span>
+                 </div>
+
+                 {/* Per-set cards */}
+                 {completedSets
+                   .sort(([a], [b]) => Number(a) - Number(b))
+                   .map(([sn, sc]) => {
+                     const hw = sc.home > sc.away;
+                     const kpi = computeSetKPI(Number(sn));
+                     return (
+                       <div key={sn} style={{ background: 'rgba(255,255,255,.02)', border: `1px solid ${hw ? 'rgba(59,130,246,.12)' : 'rgba(245,158,11,.12)'}`, borderRadius: 10, padding: '8px 10px', marginBottom: 8 }}>
+                         {/* Set header */}
+                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                           <span style={{ fontSize: 8, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '.1em' }}>Set {sn}</span>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                             <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: hw ? '#93c5fd' : '#475569' }}>{sc.home}</span>
+                             <span style={{ fontSize: 9, color: '#1e293b' }}>:</span>
+                             <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 13, fontWeight: 700, color: !hw ? '#fcd34d' : '#475569' }}>{sc.away}</span>
                            </div>
-                         );
-                       })}
-                     </>
+                           <span style={{ fontSize: 8, padding: '1px 5px', borderRadius: 3, background: hw ? 'rgba(59,130,246,.1)' : 'rgba(245,158,11,.1)', color: hw ? '#60a5fa' : '#fbbf24', fontWeight: 700 }}>
+                             {hw ? hShort : aShort}
+                           </span>
+                         </div>
+                         {/* KPIs */}
+                         <KpiRow label="Atak K%" hVal={`${kpi.hKillPct}%`} aVal={`${kpi.aKillPct}%`} hBetter={kpi.hKillPct >= kpi.aKillPct} />
+                         <KpiRow label="Pipe%" hVal={`${kpi.hPipePct}%`} aVal={`${kpi.aPipePct}%`} hBetter={kpi.hPipePct >= kpi.aPipePct} />
+                         <KpiRow label="Przyjęcie%" hVal={`${kpi.hRecPct}%`} aVal={`${kpi.aRecPct}%`} hBetter={kpi.hRecPct >= kpi.aRecPct} />
+                         {/* MVPs */}
+                         <div style={{ marginTop: 5, paddingTop: 5, borderTop: '1px solid rgba(255,255,255,.04)' }}>
+                           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                             <span style={{ fontSize: 8, color: '#60a5fa', maxWidth: 70, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>⭐ {kpi.hMvp}</span>
+                             <span style={{ fontSize: 8, color: '#fbbf24', maxWidth: 70, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'right' }}>{kpi.aMvp} ⭐</span>
+                           </div>
+                         </div>
+                       </div>
+                     );
+                 })}
+
+                 {/* Live current set */}
+                 {currentSetNumber > 0 && (() => {
+                   const kpi = computeSetKPI(currentSetNumber);
+                   const s = rallies.filter((r: any) => r.set_number === currentSetNumber);
+                   const hPts = s.filter((r: any) => r.team_scored === 'home').length;
+                   const aPts = s.filter((r: any) => r.team_scored === 'away').length;
+                   return (
+                     <div style={{ background: 'rgba(59,130,246,.04)', border: '1px solid rgba(59,130,246,.15)', borderRadius: 10, padding: '8px 10px' }}>
+                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                         <span style={{ fontSize: 8, fontWeight: 800, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '.1em' }}>● Set {currentSetNumber} live</span>
+                         <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 700, color: '#fff' }}>{hPts}:{aPts}</span>
+                       </div>
+                       <KpiRow label="Atak K%" hVal={`${kpi.hKillPct}%`} aVal={`${kpi.aKillPct}%`} hBetter={kpi.hKillPct >= kpi.aKillPct} />
+                       <KpiRow label="Pipe%" hVal={`${kpi.hPipePct}%`} aVal={`${kpi.aPipePct}%`} hBetter={kpi.hPipePct >= kpi.aPipePct} />
+                       <KpiRow label="Przyjęcie%" hVal={`${kpi.hRecPct}%`} aVal={`${kpi.aRecPct}%`} hBetter={kpi.hRecPct >= kpi.aRecPct} />
+                     </div>
                    );
                  })()}
                </div>
-               {/* Show ranking below set results */}
-               {Object.keys(playerStats).length > 0 && (
-                 <>
-                   <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 10 }}>Statystyki meczu</div>
-                   <RankCard title="Punkty" icon="🏆" data={topScorersLB.map(e => ({ name: e.name, team: e.team, value: e.points }))} isPercent={false} barColor="linear-gradient(to right,#065f46,#34d399)" border="rgba(16,185,129,.15)" />
-                   <RankCard title="Atak K%" icon="💥" data={topAttackLB.map(e => ({ name: e.name, team: e.team, value: e.killPct }))} isPercent={true} barColor="linear-gradient(to right,#7f1d1d,#f87171)" border="rgba(239,68,68,.15)" />
-                 </>
-               )}
-             </div>
-           )}
+             );
+           })()}
          </div>
        </div>
      </div>
