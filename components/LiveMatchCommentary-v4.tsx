@@ -2679,73 +2679,72 @@ export default function LiveMatchCommentaryV4() {
                      )}
                    </div>
 
-                   {/* Active players — on court NOW */}
-                   {activePlayers.map(name => {
-                     const p = startingPlayers.find(sp => sp.name === name);
+                   {/* Starting lineup — each player with inline sub underneath */}
+                   {startingPlayers.map(sp => {
+                     const name = sp.name;
                      const pos = matchData?.playerPositions?.[name] || '';
                      const isBuddy = favPlayer === name;
-                     const isSub = isSubstitute[name];
-                     return (
-                       <button key={name} onClick={() => { setFavPlayer(isBuddy ? null : name); if (!isBuddy) setRightTab('buddy'); }}
-                         style={{ display: 'flex', alignItems: 'center', gap: 5, width: '100%', padding: '4px 7px', borderRadius: 8, border: 'none', textAlign: 'left', marginBottom: 2, cursor: 'pointer',
-                           background: isBuddy ? 'rgba(234,179,8,.1)' : isSub ? 'rgba(16,185,129,.05)' : 'transparent',
-                           outline: isBuddy ? '1px solid rgba(234,179,8,.3)' : isSub ? '1px solid rgba(16,185,129,.15)' : 'none' }}>
-                         <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: '#94a3b8', width: 18, textAlign: 'right', flexShrink: 0 }}>
-                           {p ? `#${p.jersey}` : ''}
-                         </span>
-                         {isSub && <span style={{ fontSize: 9, color: '#34d399', flexShrink: 0 }}>↑</span>}
-                         <span style={{ fontSize: 12, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                           color: isBuddy ? '#fde047' : isSub ? '#86efac' : '#cbd5e1', fontWeight: isBuddy ? 600 : 400 }}>
-                           {name}
-                         </span>
-                         {pos && <span style={{ fontSize: 10, fontWeight: 700, color: POS_CLR[pos] || '#94a3b8', flexShrink: 0 }}>{pos === 'rozgrywający' ? 'S' : pos === 'przyjmujący' ? 'OH' : pos === 'atakujący' ? 'OP' : pos === 'środkowy' ? 'MB' : pos === 'libero' ? 'L' : ''}</span>}
-                         <span style={{ color: isBuddy ? '#facc15' : '#4b6080', fontSize: 13, flexShrink: 0 }}>{isBuddy ? '★' : '☆'}</span>
-                       </button>
-                     );
-                   })}
+                     const subInName = replacedBy[name]; // who replaced this player
+                     const subInfo = replacedAt[name];   // at what score
+                     const isOnCourt = activePlayers.includes(name); // still playing?
+                     const subReturned = subInName && isOnCourt; // original is back
 
-                   {/* Subbed-out players — greyed, with ↓ and score */}
-                   {subbedOut.map(name => {
-                     const p = startingPlayers.find(sp => sp.name === name);
-                     const pos = matchData?.playerPositions?.[name] || '';
-                     const isBuddy = favPlayer === name;
-                     const subInfo = replacedAt[name];
+                     // sub who came in — are they still on court?
+                     const subIsActive = subInName && activePlayers.includes(subInName);
+                     const subIsBuddy = subInName ? favPlayer === subInName : false;
+
+                     const posLabel = pos === 'rozgrywający' ? 'S' : pos === 'przyjmujący' ? 'OH' : pos === 'atakujący' ? 'OP' : pos === 'środkowy' ? 'MB' : pos === 'libero' ? 'L' : '';
+
                      return (
-                       <button key={name} onClick={() => { setFavPlayer(isBuddy ? null : name); if (!isBuddy) setRightTab('buddy'); }}
-                         style={{ display: 'flex', alignItems: 'center', gap: 5, width: '100%', padding: '3px 7px', borderRadius: 8, border: 'none', textAlign: 'left', marginBottom: 2, cursor: 'pointer', background: 'transparent', opacity: 0.4 }}>
-                         <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color: '#64748b', width: 18, textAlign: 'right', flexShrink: 0 }}>
-                           {p ? `#${p.jersey}` : ''}
-                         </span>
-                         <span style={{ fontSize: 9, color: '#f87171', flexShrink: 0 }}>↓</span>
-                         <span style={{ fontSize: 11, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#64748b', textDecoration: 'line-through' }}>
-                           {name}
-                         </span>
-                         {subInfo && <span style={{ fontSize: 8, color: '#64748b', flexShrink: 0 }}>{subInfo.scoreHome}:{subInfo.scoreAway}</span>}
-                       </button>
+                       <div key={name} style={{ marginBottom: subInName ? 1 : 2 }}>
+                         {/* Original player row */}
+                         <button onClick={() => { setFavPlayer(isBuddy ? null : name); if (!isBuddy) setRightTab('buddy'); }}
+                           style={{ display: 'flex', alignItems: 'center', gap: 5, width: '100%', padding: '4px 7px', borderRadius: 8, border: 'none', textAlign: 'left', cursor: 'pointer',
+                             background: isBuddy ? 'rgba(234,179,8,.1)' : 'transparent',
+                             outline: isBuddy ? '1px solid rgba(234,179,8,.3)' : 'none',
+                             opacity: !isOnCourt ? 0.4 : 1 }}>
+                           <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: '#94a3b8', width: 18, textAlign: 'right', flexShrink: 0 }}>
+                             {`#${sp.jersey}`}
+                           </span>
+                           {/* status arrow */}
+                           {subReturned && <span style={{ fontSize: 9, color: '#a78bfa', flexShrink: 0 }} title="wrócił na boisko">⇄</span>}
+                           {!isOnCourt && subInName && <span style={{ fontSize: 9, color: '#f87171', flexShrink: 0 }}>↓</span>}
+                           <span style={{ fontSize: 12, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                             color: isBuddy ? '#fde047' : !isOnCourt ? '#64748b' : '#cbd5e1',
+                             fontWeight: isBuddy ? 600 : 400,
+                             textDecoration: !isOnCourt ? 'line-through' : 'none' }}>
+                             {name}
+                           </span>
+                           {posLabel && <span style={{ fontSize: 10, fontWeight: 700, color: POS_CLR[pos] || '#94a3b8', flexShrink: 0 }}>{posLabel}</span>}
+                           <span style={{ color: isBuddy ? '#facc15' : '#4b6080', fontSize: 13, flexShrink: 0 }}>{isBuddy ? '★' : '☆'}</span>
+                         </button>
+
+                         {/* Sub row — indented, shown only when substitution happened */}
+                         {subInName && (
+                           <button onClick={() => { setFavPlayer(subIsBuddy ? null : subInName); if (!subIsBuddy) setRightTab('buddy'); }}
+                             style={{ display: 'flex', alignItems: 'center', gap: 5, width: '100%', padding: '3px 7px 3px 22px', borderRadius: 8, border: 'none', textAlign: 'left', cursor: 'pointer', marginBottom: 2,
+                               background: subIsBuddy ? 'rgba(234,179,8,.1)' : subIsActive ? 'rgba(16,185,129,.06)' : 'transparent',
+                               outline: subIsBuddy ? '1px solid rgba(234,179,8,.3)' : subIsActive ? '1px solid rgba(16,185,129,.12)' : 'none',
+                               opacity: subIsActive ? 1 : 0.45 }}>
+                             <span style={{ fontSize: 9, color: subIsActive ? '#34d399' : '#64748b', flexShrink: 0 }}>
+                               {subIsActive ? '↑' : '↕'}
+                             </span>
+                             <span style={{ fontSize: 11, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                               color: subIsBuddy ? '#fde047' : subIsActive ? '#86efac' : '#64748b' }}>
+                               {subInName}
+                             </span>
+                             {subInfo && <span style={{ fontSize: 8, color: '#475569', flexShrink: 0 }}>{subInfo.scoreHome}:{subInfo.scoreAway}</span>}
+                             <span style={{ color: subIsBuddy ? '#facc15' : '#4b6080', fontSize: 13, flexShrink: 0 }}>{subIsBuddy ? '★' : '☆'}</span>
+                           </button>
+                         )}
+                       </div>
                      );
                    })}
                  </div>
                );
              })}
 
-             {/* Sub history log */}
-             {subHistory.length > 0 && (
-               <div style={{ borderTop: '1px solid #0f172a', paddingTop: 8, marginTop: 4 }}>
-                 <div style={{ fontSize: 8, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 5 }}>⇄ Zmiany</div>
-                 {subHistory.map((s, i) => (
-                   <div key={i} style={{ fontSize: 9, color: '#64748b', marginBottom: 3, lineHeight: 1.4 }}>
-                     <span style={{ color: s.team === 'home' ? '#60a5fa' : '#fbbf24', fontWeight: 700 }}>
-                       {s.team === 'home' ? matchData?.teams?.home : matchData?.teams?.away}
-                     </span>
-                     {' · '}
-                     <span style={{ color: '#f87171' }}>{s.playerOut}</span>
-                     <span style={{ color: '#475569' }}> → </span>
-                     <span style={{ color: '#34d399' }}>{s.playerIn}</span>
-                     <span style={{ color: '#334155', marginLeft: 4 }}>{s.scoreHome}:{s.scoreAway}</span>
-                   </div>
-                 ))}
-               </div>
-             )}
+
            </>
          ) : (
            <div style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center', marginTop: 40 }}>Naciśnij ▶ żeby rozpocząć</div>
