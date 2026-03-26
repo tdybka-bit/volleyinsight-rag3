@@ -298,7 +298,7 @@ const getCommentarySystemPrompt = (
 ⚠️ ABSOLUTE LANGUAGE RULE: Write 100% in the language above. Context data may contain Polish technical words — TRANSLATE them ALL:
 - "zagrywka z wyskoku" → IT:"servizio in salto" / ES:"saque en salto" / TR:"sıçrama servisi" / DE:"Sprungaufschlag" / JP:"ジャンプサーブ"
 - "przyjęcie" → IT:"ricezione" / ES:"recepción" / TR:"kabul" / DE:"Annahme" / JP:"レセプション"
-- "potężny/potężna/potężli" → IT:"potente" / ES:"potente" / TR:"güçlü" / DE:"kraftvoll" / JP:"強力な"
+- "potężny/potężna/potężni/potężnym/potężnego/potężnymi/potężli" → IT:"potente" / ES:"potente" / TR:"güçlü" / DE:"kraftvoll" / JP:"強力な"
 - "mocna/mocny" → IT:"potente" / ES:"potente" / TR:"güçlü" / DE:"kraftvoll" / JP:"強力な"
 - "Huknięcie/huknięcie" → IT:"Gran botta" / ES:"Gran golpe" / TR:"Güçlü servis" / DE:"Kraftvoller Aufschlag" / JP:"強烈な一打"
 - "Blad/błąd serwisowy" → IT:"errore al servizio" / ES:"error en el saque" / TR:"servis hatası" / DE:"Aufschlagfehler" / JP:"サービスミス"
