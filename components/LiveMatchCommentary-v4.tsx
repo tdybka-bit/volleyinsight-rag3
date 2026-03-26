@@ -894,14 +894,14 @@ export default function LiveMatchCommentaryV4() {
        let nameRaw = labels[nameKey] || '';
        let jerseyRaw = labels[jerseyKey] || '';
        
-       // Substitution events have [playerOut, playerIn] as arrays ΓÇö add BOTH
+       // Substitution events: add ONLY player_out (they are the starter leaving)
+       // player_in is a substitute — do NOT add them to starting lineup
        if (isSubstitution && Array.isArray(nameRaw)) {
          const jerseys = Array.isArray(jerseyRaw) ? jerseyRaw : [jerseyRaw, ''];
-         nameRaw.forEach((n: string, idx: number) => {
-           if (n && !map.has(n) && map.size < 14) {
-             map.set(n, String(jerseys[idx] || ''));
-           }
-         });
+         const playerOut = nameRaw[0]; // index 0 = OUT = original starter
+         if (playerOut && !map.has(playerOut) && map.size < 14) {
+           map.set(playerOut, String(jerseys[0] || ''));
+         }
          continue;
        }
        
