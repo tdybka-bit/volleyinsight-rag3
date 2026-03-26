@@ -642,7 +642,7 @@ export default function LiveMatchCommentaryV4() {
  const teamCode = code.split(' ')[0]; // ZAW, LBN, PGE, etc.
  const playerNames = labels[`${teamCode} Player Name`] || labels['Player Name'] || [];
  if (Array.isArray(playerNames) && playerNames.length >= 2) {
- const cleanSubName = (n: string) => normalizePlayerName(n.split(',').reverse().map(s => s.trim()).join(' '));
+ const cleanSubName = (n: string) => normalizePlayerName(n); // normalizePlayerName takes first part before comma → matches lineup names
  events.substitutions.push({
  player_out: cleanSubName(playerNames[0]),
  player_in: cleanSubName(playerNames[1]),
@@ -1106,7 +1106,7 @@ export default function LiveMatchCommentaryV4() {
  const teamCode = code.split(' ')[0]; // ZAW, LBN, PGE, etc.
  const playerNames = labels[`${teamCode} Player Name`] || labels['Player Name'] || [];
  if (Array.isArray(playerNames) && playerNames.length >= 2) {
- const cleanSubName = (n: string) => normalizePlayerName(n.split(',').reverse().map(s => s.trim()).join(' '));
+ const cleanSubName = (n: string) => normalizePlayerName(n); // normalizePlayerName takes first part before comma → matches lineup names
  events.substitutions.push({
  player_out: cleanSubName(playerNames[0]),
  player_in: cleanSubName(playerNames[1]),
