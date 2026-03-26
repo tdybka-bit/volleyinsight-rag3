@@ -41,7 +41,7 @@ function getRuleBasedInsights(tabKey: string, homeData: Record<string, number>, 
 
 const getInsightPrompt = (language: string) => {
   const prompts: Record<string, string> = {
-    pl: 'Jesteś ekspertem taktycznym siatkówki. Napisz krótką, konkretną interpretację danych statystycznych po polsku. 2-3 zdania, styl analityczny.',
+    pl: 'Jesteś ekspertem taktycznym siatkówki. Napisz konkretną interpretację danych statystycznych po polsku. 3-4 zdania, styl analityczny. Pisz pełne zdania — nie ucinaj w połowie.',
     en: 'You are a volleyball tactical expert. Write a brief, specific tactical interpretation in ENGLISH. 2-3 sentences, analytical style.',
     it: 'Sei un esperto tattico di pallavolo. Scrivi una breve interpretazione tattica in ITALIANO. 2-3 frasi, stile analitico.',
     de: 'Du bist ein Volleyball-Taktikexperte. Schreibe eine kurze taktische Interpretation auf DEUTSCH. 2-3 Sätze, analytischer Stil.',
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
         { role: 'user', content: `Zinterpretuj te dane taktycznie:\n\n${statsSummary}\n\nCo wynika z tych liczb dla obu drużyn? Który aspekt jest kluczowy?` },
       ],
       temperature: 0.4,
-      max_tokens: 150,
+      max_tokens: 400,
     });
 
     const insight = completion.choices[0].message.content?.trim() || ruleInsight || '';

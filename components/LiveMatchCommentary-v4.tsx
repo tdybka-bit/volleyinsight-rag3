@@ -2702,7 +2702,7 @@ export default function LiveMatchCommentaryV4() {
                            style={{ display: 'flex', alignItems: 'center', gap: 5, width: '100%', padding: '4px 7px', borderRadius: 8, border: 'none', textAlign: 'left', cursor: 'pointer',
                              background: isBuddy ? 'rgba(234,179,8,.1)' : 'transparent',
                              outline: isBuddy ? '1px solid rgba(234,179,8,.3)' : 'none',
-                             opacity: !isOnCourt ? 0.4 : 1 }}>
+                             opacity: !isOnCourt ? 0.75 : 1 }}>
                            <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: '#94a3b8', width: 18, textAlign: 'right', flexShrink: 0 }}>
                              {`#${sp.jersey}`}
                            </span>
@@ -2710,9 +2710,9 @@ export default function LiveMatchCommentaryV4() {
                            {subReturned && <span style={{ fontSize: 9, color: '#a78bfa', flexShrink: 0 }} title="wrócił na boisko">⇄</span>}
                            {!isOnCourt && subInName && <span style={{ fontSize: 9, color: '#f87171', flexShrink: 0 }}>↓</span>}
                            <span style={{ fontSize: 12, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                             color: isBuddy ? '#fde047' : !isOnCourt ? '#64748b' : '#cbd5e1',
+                             color: isBuddy ? '#fde047' : !isOnCourt ? '#94a3b8' : '#cbd5e1',
                              fontWeight: isBuddy ? 600 : 400,
-                             textDecoration: !isOnCourt ? 'line-through' : 'none' }}>
+                             textDecoration: 'none' }}>
                              {name}
                            </span>
                            {posLabel && <span style={{ fontSize: 10, fontWeight: 700, color: POS_CLR[pos] || '#94a3b8', flexShrink: 0 }}>{posLabel}</span>}
