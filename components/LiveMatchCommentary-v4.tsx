@@ -2962,12 +2962,27 @@ export default function LiveMatchCommentaryV4() {
                  <div style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center', marginTop: 40 }}>Naciśnij ▶ żeby zobaczyć ranking</div>
                ) : (
                  <>
-                   <RankCard title="Punkty" icon="🏆" data={topScorersLB.map(e => ({ name: e.name, team: e.team, value: e.points }))} isPercent={false} barColor="linear-gradient(to right,#065f46,#34d399)" border="rgba(16,185,129,.15)" />
-                   <RankCard title="Atak K%" icon="💥" data={topAttackLB.map(e => ({ name: e.name, team: e.team, value: e.killPct, num: e.attackSum > 0 ? Math.round(e.killPct * e.attackSum / 100) : 0, den: e.attackSum }))} isPercent={true} barColor="linear-gradient(to right,#7f1d1d,#f87171)" border="rgba(239,68,68,.15)" />
-                   <RankCard title="Zagrywka (asy)" icon="🎯" data={topAcesLB.map(e => ({ name: e.name, team: e.team, value: e.aces }))} isPercent={false} barColor="linear-gradient(to right,#3b0764,#c084fc)" border="rgba(139,92,246,.15)" />
-                   <RankCard title="Bloki" icon="🧱" data={topBlocksLB.map(e => ({ name: e.name, team: e.team, value: e.blocks }))} isPercent={false} barColor="linear-gradient(to right,#1e3a5f,#60a5fa)" border="rgba(59,130,246,.15)" />
-                   <RankCard title="Przyjęcie %" icon="🛡️" data={topRecLB.map(e => ({ name: e.name, team: e.team, value: e.recPct, num: e.recPerfect, den: e.recSum }))} isPercent={true} barColor="linear-gradient(to right,#713f12,#fbbf24)" border="rgba(234,179,8,.15)" />
-                   <RankCard title="Obrony" icon="🏊" data={topDigsLB.map(e => ({ name: e.name, team: e.team, value: e.digs }))} isPercent={false} barColor="linear-gradient(to right,#164e63,#22d3ee)" border="rgba(6,182,212,.15)" />
+                   {(() => {
+                     const rk = {
+                       pl: { pts: 'Punkty', atk: 'Atak K%', srv: 'Zagrywka (asy)', blk: 'Bloki', rec: 'Przyjęcie %', dig: 'Obrony' },
+                       en: { pts: 'Points', atk: 'Attack K%', srv: 'Serve (aces)', blk: 'Blocks', rec: 'Reception %', dig: 'Digs' },
+                       it: { pts: 'Punti', atk: 'Attacco K%', srv: 'Battuta (ace)', blk: 'Muri', rec: 'Ricezione %', dig: 'Difesa' },
+                       de: { pts: 'Punkte', atk: 'Angriff K%', srv: 'Aufschlag (Ass)', blk: 'Blocks', rec: 'Annahme %', dig: 'Abwehr' },
+                       tr: { pts: 'Sayılar', atk: 'Hücum K%', srv: 'Servis (ace)', blk: 'Bloklar', rec: 'Kabul %', dig: 'Savunma' },
+                       es: { pts: 'Puntos', atk: 'Ataque K%', srv: 'Saque (aces)', blk: 'Bloqueos', rec: 'Recepción %', dig: 'Defensa' },
+                       pt: { pts: 'Pontos', atk: 'Ataque K%', srv: 'Saque (aces)', blk: 'Bloqueios', rec: 'Recepção %', dig: 'Defesa' },
+                       jp: { pts: '得点', atk: 'アタックK%', srv: 'サーブ(エース)', blk: 'ブロック', rec: 'レセプション%', dig: 'ディグ' },
+                     };
+                     const r = rk[language as keyof typeof rk] || rk.pl;
+                     return (<>
+                       <RankCard title={r.pts} icon="🏆" data={topScorersLB.map(e => ({ name: e.name, team: e.team, value: e.points }))} isPercent={false} barColor="linear-gradient(to right,#065f46,#34d399)" border="rgba(16,185,129,.15)" />
+                       <RankCard title={r.atk} icon="💥" data={topAttackLB.map(e => ({ name: e.name, team: e.team, value: e.killPct, num: e.attackSum > 0 ? Math.round(e.killPct * e.attackSum / 100) : 0, den: e.attackSum }))} isPercent={true} barColor="linear-gradient(to right,#7f1d1d,#f87171)" border="rgba(239,68,68,.15)" />
+                       <RankCard title={r.srv} icon="🎯" data={topAcesLB.map(e => ({ name: e.name, team: e.team, value: e.aces }))} isPercent={false} barColor="linear-gradient(to right,#3b0764,#c084fc)" border="rgba(139,92,246,.15)" />
+                       <RankCard title={r.blk} icon="🧱" data={topBlocksLB.map(e => ({ name: e.name, team: e.team, value: e.blocks }))} isPercent={false} barColor="linear-gradient(to right,#1e3a5f,#60a5fa)" border="rgba(59,130,246,.15)" />
+                       <RankCard title={r.rec} icon="🛡️" data={topRecLB.map(e => ({ name: e.name, team: e.team, value: e.recPct, num: e.recPerfect, den: e.recSum }))} isPercent={true} barColor="linear-gradient(to right,#713f12,#fbbf24)" border="rgba(234,179,8,.15)" />
+                       <RankCard title={r.dig} icon="🏊" data={topDigsLB.map(e => ({ name: e.name, team: e.team, value: e.digs }))} isPercent={false} barColor="linear-gradient(to right,#164e63,#22d3ee)" border="rgba(6,182,212,.15)" />
+                     </>);
+                   })()}
                  </>
                )}
              </div>
@@ -3048,28 +3063,37 @@ export default function LiveMatchCommentaryV4() {
              // ── COMPUTE SET KPIs from rallies ──────────────────────────────
              const computeSetKPI = (setNum: number) => {
                const setRallies = rallies.filter((r: any) => r.set_number === setNum);
-               let hAtk = 0, hKill = 0, hPipe = 0;
-               let aAtk = 0, aKill = 0, aPipe = 0;
+               let hAtk = 0, hKill = 0, hAce = 0, hBlk = 0, hErr = 0;
+               let aAtk = 0, aKill = 0, aAce = 0, aBlk = 0, aErr = 0;
                let hRec = 0, hRecPos = 0, aRec = 0, aRecPos = 0;
                const hScorers: Record<string,number> = {};
                const aScorers: Record<string,number> = {};
 
                for (const r of setRallies) {
-                 // top scorer
                  if (r.team_scored === 'home' && r.final_action?.player) hScorers[r.final_action.player] = (hScorers[r.final_action.player]||0)+1;
                  if (r.team_scored === 'away' && r.final_action?.player) aScorers[r.final_action.player] = (aScorers[r.final_action.player]||0)+1;
 
                  for (const t of (r.touches || [])) {
                    const team = t.team;
                    const at = (t.actionType||'').toLowerCase();
-                   const loc = t.attackLocation || '';
                    const grade = t.grade || '';
+                   const action = (t.action||'').toLowerCase();
 
                    if (at === 'attack') {
                      const isKill = grade === 'Perfect';
-                     const isPipe = loc === 'Pipe' || loc === 'Right Side Back';
-                     if (team === 'home') { hAtk++; if (isKill) hKill++; if (isPipe) hPipe++; }
-                     else { aAtk++; if (isKill) aKill++; if (isPipe) aPipe++; }
+                     if (team === 'home') { hAtk++; if (isKill) hKill++; }
+                     else { aAtk++; if (isKill) aKill++; }
+                   }
+                   if (at === 'serve') {
+                     const isAce = grade === 'Ace' || grade === 'Perfect' || action.includes('ace') || action.includes('as serwis');
+                     const isErr = grade === 'Fail' || grade === 'Error';
+                     if (team === 'home') { if (isAce) hAce++; if (isErr) hErr++; }
+                     else { if (isAce) aAce++; if (isErr) aErr++; }
+                   }
+                   if (at === 'block') {
+                     const isBlkPt = grade === 'Perfect' || grade === 'Positive';
+                     if (team === 'home') { if (isBlkPt) hBlk++; }
+                     else { if (isBlkPt) aBlk++; }
                    }
                    if (at === 'receive') {
                      const isPos = grade === 'Perfect' || grade === 'Positive' || grade === 'Average';
@@ -3080,15 +3104,17 @@ export default function LiveMatchCommentaryV4() {
                }
                const hMvp = Object.entries(hScorers).sort(([,a],[,b])=>b-a)[0];
                const aMvp = Object.entries(aScorers).sort(([,a],[,b])=>b-a)[0];
+               const hTotal = setRallies.filter((r:any) => r.team_scored === 'home').length;
+               const aTotal = setRallies.filter((r:any) => r.team_scored === 'away').length;
                return {
+                 hTotal, aTotal,
+                 hKill, aKill, hAce, aAce, hBlk, aBlk, hErr, aErr,
                  hKillPct: hAtk > 0 ? Math.round(hKill/hAtk*100) : 0,
                  aKillPct: aAtk > 0 ? Math.round(aKill/aAtk*100) : 0,
-                 hPipePct: hAtk > 0 ? Math.round(hPipe/hAtk*100) : 0,
-                 aPipePct: aAtk > 0 ? Math.round(aPipe/aAtk*100) : 0,
                  hRecPct:  hRec > 0 ? Math.round(hRecPos/hRec*100) : 0,
                  aRecPct:  aRec > 0 ? Math.round(aRecPos/aRec*100) : 0,
-                 hMvp: hMvp ? `${hMvp[0]} ${hMvp[1]}pkt` : '—',
-                 aMvp: aMvp ? `${aMvp[0]} ${aMvp[1]}pkt` : '—',
+                 hMvp: hMvp ? `${hMvp[0].split(' ').slice(-1)[0]} ${hMvp[1]}` : '—',
+                 aMvp: aMvp ? `${aMvp[0].split(' ').slice(-1)[0]} ${aMvp[1]}` : '—',
                };
              };
 
@@ -3138,8 +3164,12 @@ export default function LiveMatchCommentaryV4() {
                            </span>
                          </div>
                          {/* KPIs */}
+                         <KpiRow label="Ataki" hVal={String(kpi.hKill)} aVal={String(kpi.aKill)} hBetter={kpi.hKill >= kpi.aKill} />
+                         <KpiRow label="Bloki" hVal={String(kpi.hBlk)} aVal={String(kpi.aBlk)} hBetter={kpi.hBlk >= kpi.aBlk} />
+                         <KpiRow label="Asy" hVal={String(kpi.hAce)} aVal={String(kpi.aAce)} hBetter={kpi.hAce >= kpi.aAce} />
+                         <KpiRow label="Błędy rywal" hVal={String(kpi.aErr)} aVal={String(kpi.hErr)} hBetter={kpi.aErr >= kpi.hErr} />
+                         <div style={{ marginTop: 3, marginBottom: 2, borderTop: '1px solid rgba(255,255,255,.04)', paddingTop: 3 }} />
                          <KpiRow label="Atak K%" hVal={`${kpi.hKillPct}%`} aVal={`${kpi.aKillPct}%`} hBetter={kpi.hKillPct >= kpi.aKillPct} />
-                         <KpiRow label="Pipe%" hVal={`${kpi.hPipePct}%`} aVal={`${kpi.aPipePct}%`} hBetter={kpi.hPipePct >= kpi.aPipePct} />
                          <KpiRow label="Przyjęcie%" hVal={`${kpi.hRecPct}%`} aVal={`${kpi.aRecPct}%`} hBetter={kpi.hRecPct >= kpi.aRecPct} />
                          {/* MVPs */}
                          <div style={{ marginTop: 5, paddingTop: 5, borderTop: '1px solid rgba(255,255,255,.04)' }}>
@@ -3164,8 +3194,12 @@ export default function LiveMatchCommentaryV4() {
                          <span style={{ fontSize: 8, fontWeight: 800, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '.1em' }}>● Set {currentSetNumber} live</span>
                          <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 12, fontWeight: 700, color: '#fff' }}>{hPts}:{aPts}</span>
                        </div>
+                       <KpiRow label="Ataki" hVal={String(kpi.hKill)} aVal={String(kpi.aKill)} hBetter={kpi.hKill >= kpi.aKill} />
+                       <KpiRow label="Bloki" hVal={String(kpi.hBlk)} aVal={String(kpi.aBlk)} hBetter={kpi.hBlk >= kpi.aBlk} />
+                       <KpiRow label="Asy" hVal={String(kpi.hAce)} aVal={String(kpi.aAce)} hBetter={kpi.hAce >= kpi.aAce} />
+                       <KpiRow label="Błędy rywal" hVal={String(kpi.aErr)} aVal={String(kpi.hErr)} hBetter={kpi.aErr >= kpi.hErr} />
+                       <div style={{ marginTop: 3, marginBottom: 2, borderTop: '1px solid rgba(255,255,255,.04)', paddingTop: 3 }} />
                        <KpiRow label="Atak K%" hVal={`${kpi.hKillPct}%`} aVal={`${kpi.aKillPct}%`} hBetter={kpi.hKillPct >= kpi.aKillPct} />
-                       <KpiRow label="Pipe%" hVal={`${kpi.hPipePct}%`} aVal={`${kpi.aPipePct}%`} hBetter={kpi.hPipePct >= kpi.aPipePct} />
                        <KpiRow label="Przyjęcie%" hVal={`${kpi.hRecPct}%`} aVal={`${kpi.aRecPct}%`} hBetter={kpi.hRecPct >= kpi.aRecPct} />
                      </div>
                    );
