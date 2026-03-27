@@ -483,6 +483,8 @@ function parseInstances(
   maxSet: number,
   liveScoreHome: number,
   liveScoreAway: number,
+  homeName?: string,
+  awayName?: string,
 ): MatchStats {
   const SETS = ['1', '2', '3', '4', '5'];
   const setStats: Record<string, SetStats | null> = {};
@@ -584,8 +586,8 @@ function parseInstances(
 
   return {
     sets: setStats,
-    teamHome: meta.homeName,
-    teamAway: meta.awayName,
+    teamHome: homeName || teamHomeFull,
+    teamAway: awayName || teamAwayFull,
     shortHome: shortName(teamHomeFull),
     shortAway: shortName(teamAwayFull),
     matchScore: { home: matchHome, away: matchAway },
@@ -893,7 +895,8 @@ export default function CockpitPage() {
   useEffect(() => {
     if (!rawInstances) return;
     const { instances, hp, ap } = rawInstances;
-    setStats(parseInstances(instances, hp, ap, currentSet, liveScoreHome, liveScoreAway));
+    const fileMeta = MATCH_META[matchFile];
+    setStats(parseInstances(instances, hp, ap, currentSet, liveScoreHome, liveScoreAway, fileMeta?.homeName, fileMeta?.awayName));
   }, [rawInstances, currentSet, liveScoreHome, liveScoreAway]);
 
   const tab  = TABS[activeTab];
