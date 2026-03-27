@@ -981,8 +981,18 @@ export default function CockpitPage() {
 
   // Auto-fetch insight when tab changes, data loads, or every 15 rallies
   useEffect(() => {
-    if (allData && isLive) fetchInsight(activeTab, allData);
-  }, [activeTab, allData, isLive, refreshMilestone]);
+    if (!isLive || !stats) return;
+    if (activeTab === 'serve_zone' && allZones) {
+      // Convert zone data to flat totals for insights
+      const homeFlat: Record<string,number> = {};
+      const awayFlat: Record<string,number> = {};
+      Object.entries(allZones.home).forEach(([z, d]) => { if (d.total > 0) homeFlat[`Zone ${z}`] = d.total; });
+      Object.entries(allZones.away).forEach(([z, d]) => { if (d.total > 0) awayFlat[`Zone ${z}`] = d.total; });
+      fetchInsight(activeTab, { home: homeFlat, away: awayFlat });
+    } else if (allData) {
+      fetchInsight(activeTab, allData);
+    }
+  }, [activeTab, allData, allZones, isLive, refreshMilestone]);
 
   // ── HELPER: render grid content for a given tab key ──────────────────────
   const renderPanelContent = (tabKey: TabKey, mergedData: { home: Record<string, number>; away: Record<string, number> } | null) => {
