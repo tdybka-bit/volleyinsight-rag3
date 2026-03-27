@@ -1002,6 +1002,7 @@ export default function CockpitPage() {
 
     // Serve zone — court heatmap (unchanged)
     if (tabKey === 'serve_zone' && allZones) {
+      const cacheKey = `${matchFile}-${tabKey}-${refreshMilestone}`;
       return (
         <div style={{ padding: '12px 16px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
@@ -1021,6 +1022,32 @@ export default function CockpitPage() {
               <div style={{ fontSize: 9, fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '.12em' }}>{(COCKPIT_I18N[language] || COCKPIT_I18N.pl).match}</div>
               {stats && <><CourtZoneMap zones={allZones.home} teamColor="#60a5fa" teamLabel={sHome} maxTotal={maxZoneTotal} /><CourtZoneMap zones={allZones.away} teamColor="#fbbf24" teamLabel={sAway} maxTotal={maxZoneTotal} /></>}
             </div>
+          </div>
+          {/* Insights panel for serve_zone */}
+          <div style={{ marginTop: 10, padding: '12px 16px', background: 'rgba(6,78,59,.1)', borderRadius: 8, border: '1px solid rgba(16,185,129,.15)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <span style={{ fontSize: 9, fontWeight: 800, color: '#10b981', textTransform: 'uppercase', letterSpacing: '.15em' }}>⚡ Insights</span>
+              {insightLoading[cacheKey] && <span style={{ fontSize: 8, color: '#34d399', animation: 'pulse 1.5s infinite' }}>Analizuję...</span>}
+              {!insights[cacheKey] && !insightLoading[cacheKey] && isLive && (
+                <button onClick={() => {
+                  const homeFlat: Record<string,number> = {};
+                  const awayFlat: Record<string,number> = {};
+                  Object.entries(allZones.home).forEach(([z, d]) => { if (d.total > 0) homeFlat[`Zone ${z}`] = d.total; });
+                  Object.entries(allZones.away).forEach(([z, d]) => { if (d.total > 0) awayFlat[`Zone ${z}`] = d.total; });
+                  fetchInsight(tabKey, { home: homeFlat, away: awayFlat }, true);
+                }}
+                  style={{ fontSize: 8, padding: '2px 8px', borderRadius: 4, background: 'rgba(16,185,129,.15)', border: '1px solid rgba(16,185,129,.3)', color: '#34d399', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700 }}>
+                  Generuj
+                </button>
+              )}
+            </div>
+            {insights[cacheKey] ? (
+              <p style={{ fontSize: 13, color: '#a7f3d0', lineHeight: 1.75, margin: 0 }}>{insights[cacheKey]}</p>
+            ) : !insightLoading[cacheKey] ? (
+              <p style={{ fontSize: 11, color: '#065f46', margin: 0, fontStyle: 'italic' }}>
+                {isLive ? 'Kliknij "Generuj" aby uzyskać interpretację taktyczną' : 'Uruchom komentarz aby aktywować Insights'}
+              </p>
+            ) : null}
           </div>
         </div>
       );
