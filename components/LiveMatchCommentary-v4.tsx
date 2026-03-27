@@ -3123,10 +3123,16 @@ export default function LiveMatchCommentaryV4() {
 
              // mini KPI row helper
              const KpiRow = ({ label, hVal, aVal, hBetter }: { label: string; hVal: string; aVal: string; hBetter: boolean }) => (
-               <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 3 }}>
-                 <span style={{ fontSize: 11, color: hBetter ? '#93c5fd' : '#cbd5e1', fontFamily: "'JetBrains Mono',monospace", fontWeight: 800, width: 30, textAlign: 'right' }}>{hVal}</span>
-                 <span style={{ fontSize: 9, color: '#94a3b8', flex: 1, textAlign: 'center' }}>{label}</span>
-                 <span style={{ fontSize: 11, color: !hBetter ? '#fcd34d' : '#cbd5e1', fontFamily: "'JetBrains Mono',monospace", fontWeight: 800, width: 30 }}>{aVal}</span>
+               <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 3, borderRadius: 4, padding: '1px 0' }}>
+                 <div style={{ width: 30, textAlign: 'right', display: 'flex', justifyContent: 'flex-end' }}>
+                   <span style={{ fontSize: 11, color: hBetter ? '#93c5fd' : '#cbd5e1', fontFamily: "'JetBrains Mono',monospace", fontWeight: 800,
+                     background: hBetter ? 'rgba(147,197,253,.12)' : 'transparent', borderRadius: 3, padding: '0 3px' }}>{hVal}</span>
+                 </div>
+                 <span style={{ fontSize: 9, color: '#64748b', flex: 1, textAlign: 'center' }}>{label}</span>
+                 <div style={{ width: 30 }}>
+                   <span style={{ fontSize: 11, color: !hBetter ? '#fcd34d' : '#cbd5e1', fontFamily: "'JetBrains Mono',monospace", fontWeight: 800,
+                     background: !hBetter ? 'rgba(252,211,77,.12)' : 'transparent', borderRadius: 3, padding: '0 3px' }}>{aVal}</span>
+                 </div>
                </div>
              );
 
@@ -3167,7 +3173,7 @@ export default function LiveMatchCommentaryV4() {
                          <KpiRow label="Ataki" hVal={String(kpi.hKill)} aVal={String(kpi.aKill)} hBetter={kpi.hKill >= kpi.aKill} />
                          <KpiRow label="Bloki" hVal={String(kpi.hBlk)} aVal={String(kpi.aBlk)} hBetter={kpi.hBlk >= kpi.aBlk} />
                          <KpiRow label="Asy" hVal={String(kpi.hAce)} aVal={String(kpi.aAce)} hBetter={kpi.hAce >= kpi.aAce} />
-                         <KpiRow label="Błędy rywal" hVal={String(kpi.aErr)} aVal={String(kpi.hErr)} hBetter={kpi.aErr >= kpi.hErr} />
+                         <KpiRow label="Błędy rywali" hVal={String(kpi.aErr)} aVal={String(kpi.hErr)} hBetter={kpi.aErr >= kpi.hErr} />
                          <div style={{ marginTop: 3, marginBottom: 2, borderTop: '1px solid rgba(255,255,255,.04)', paddingTop: 3 }} />
                          <KpiRow label="Atak K%" hVal={`${kpi.hKillPct}%`} aVal={`${kpi.aKillPct}%`} hBetter={kpi.hKillPct >= kpi.aKillPct} />
                          <KpiRow label="Przyjęcie%" hVal={`${kpi.hRecPct}%`} aVal={`${kpi.aRecPct}%`} hBetter={kpi.hRecPct >= kpi.aRecPct} />
@@ -3197,7 +3203,7 @@ export default function LiveMatchCommentaryV4() {
                        <KpiRow label="Ataki" hVal={String(kpi.hKill)} aVal={String(kpi.aKill)} hBetter={kpi.hKill >= kpi.aKill} />
                        <KpiRow label="Bloki" hVal={String(kpi.hBlk)} aVal={String(kpi.aBlk)} hBetter={kpi.hBlk >= kpi.aBlk} />
                        <KpiRow label="Asy" hVal={String(kpi.hAce)} aVal={String(kpi.aAce)} hBetter={kpi.hAce >= kpi.aAce} />
-                       <KpiRow label="Błędy rywal" hVal={String(kpi.aErr)} aVal={String(kpi.hErr)} hBetter={kpi.aErr >= kpi.hErr} />
+                       <KpiRow label="Błędy rywali" hVal={String(kpi.aErr)} aVal={String(kpi.hErr)} hBetter={kpi.aErr >= kpi.hErr} />
                        <div style={{ marginTop: 3, marginBottom: 2, borderTop: '1px solid rgba(255,255,255,.04)', paddingTop: 3 }} />
                        <KpiRow label="Atak K%" hVal={`${kpi.hKillPct}%`} aVal={`${kpi.aKillPct}%`} hBetter={kpi.hKillPct >= kpi.aKillPct} />
                        <KpiRow label="Przyjęcie%" hVal={`${kpi.hRecPct}%`} aVal={`${kpi.aRecPct}%`} hBetter={kpi.hRecPct >= kpi.aRecPct} />
