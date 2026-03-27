@@ -40,10 +40,10 @@ interface MatchStats {
 
 // ─── MATCH METADATA ──────────────────────────────────────────────────────────
 
-const MATCH_META: Record<string, { label: string; homePrefix: string; awayPrefix: string }> = {
-  '2025-11-12_ZAW-LBN.json': { label: 'Zawiercie vs Lublin · 12.11', homePrefix: 'ZAW', awayPrefix: 'LBN' },
-  '2025-11-26_PGE-Ind.json':  { label: 'Projekt vs Olsztyn · 26.11',  homePrefix: 'PGE', awayPrefix: 'IND' },
-  '2025-12-06_JSW-Ass.json':  { label: 'Jastrzębski vs Asseco · 06.12', homePrefix: 'JSW', awayPrefix: 'ASS' },
+const MATCH_META: Record<string, { label: string; homePrefix: string; awayPrefix: string; homeName: string; awayName: string }> = {
+  '2025-11-12_ZAW-LBN.json': { label: 'Zawiercie vs Lublin · 12.11', homePrefix: 'ZAW', awayPrefix: 'LBN', homeName: 'Aluron Zawiercie', awayName: 'Bogdanka Lublin' },
+  '2025-11-26_PGE-Ind.json':  { label: 'Projekt vs Olsztyn · 26.11',  homePrefix: 'PGE', awayPrefix: 'IND', homeName: 'Projekt Warszawa', awayName: 'Indykpol Olsztyn' },
+  '2025-12-06_JSW-Ass.json':  { label: 'Jastrzębski vs Asseco · 06.12', homePrefix: 'JSW', awayPrefix: 'ASS', homeName: 'Jastrzębski Węgiel', awayName: 'Asseco Rzeszów' },
 };
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
@@ -584,8 +584,8 @@ function parseInstances(
 
   return {
     sets: setStats,
-    teamHome: teamHomeFull,
-    teamAway: teamAwayFull,
+    teamHome: meta.homeName,
+    teamAway: meta.awayName,
     shortHome: shortName(teamHomeFull),
     shortAway: shortName(teamAwayFull),
     matchScore: { home: matchHome, away: matchAway },
