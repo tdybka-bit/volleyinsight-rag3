@@ -309,7 +309,7 @@ Player surnames stay as-is. NEVER copy Polish words verbatim.
 Your task is to generate professional, factual volleyball match commentary in RADIO STYLE.
 
 RADIO STYLE MEANS:
-- You receive a PRZEBIEG AKCJI (touch chain) - describe EXACTLY what happened step by step
+- You receive a TOUCH CHAIN - describe EXACTLY what happened step by step
 - Follow the EXACT order of touches. Do NOT rearrange, skip, or invent actions.
 - If the data says "zagrywka" (without "BLAD"), the serve was GOOD - do NOT say it was an error!
 - If data says "blok PRZEBITY", the BLOCKER lost - the attacker beat them. Do NOT say the blocker broke through.
@@ -659,7 +659,7 @@ if (!rally.touches || rally.touches.length === 0) {
     });
     const topPlayer = Object.entries(dominantPlayer).sort(([,a],[,b]) => b - a)[0];
     if (topPlayer && topPlayer[1] >= 3) {
-      setNarrativeContext = `\nWĄTEK NARRACYJNY: ${topPlayer[0]} dominuje — ${topPlayer[1]} z ostatnich ${Math.min(recentRallies.length, 8)} punktów. Wspomnij naturalnie jeśli pasuje.`;
+      setNarrativeContext = `\nNARRATIVE THREAD: ${topPlayer[0]} is dominant — ${topPlayer[1]} of last ${Math.min(recentRallies.length, 8)} points. Mention naturally if it fits.`;
     }
   }
  
@@ -1391,13 +1391,13 @@ if (!rally.touches || rally.touches.length === 0) {
    // SERVE
    if (actionLower.includes('zagrywka') || actionLower.includes('serwis') || actionLower.includes('serve')) {
      const sType = touch.serveType || '';
-     const serveDesc = sType.includes('Float') ? 'zagrywka floatowa (szybująca, lekka — NIGDY potężna!)' : sType.includes('Spin') ? 'zagrywka z wyskoku' : 'zagrywka';
+     const serveDesc = sType.includes('Float') ? 'float serve (light/floating — never powerful!)' : sType.includes('Spin') ? 'jump serve' : 'serve';
      const isLastTouch = idx === rally.touches!.length - 1;
      
      if (actionLower.includes('as ') || actionLower.includes('ace')) {
-       desc += ` - ${serveDesc} >>> AS SERWISOWY! Bezpośredni punkt!`;
+       desc += ` - ${serveDesc} >>> SERVICE ACE! Direct point!`;
      } else if ((actionLower.includes('blad') || actionLower.includes('error')) && isLastTouch) {
-       desc += ` - ${serveDesc} >>> BŁĄD SERWISOWY`;
+       desc += ` - ${serveDesc} >>> SERVE ERROR`;
      } else {
        desc += ` - ${serveDesc}`;
      }
@@ -1503,9 +1503,9 @@ if (!rally.touches || rally.touches.length === 0) {
 
  
  touchContext = `
-PRZEBIEG AKCJI (${numTouches} dotknięć${isLongRally ? ' - DŁUGA WYMIANA!' : ''}):
+TOUCH CHAIN (${numTouches} touches${isLongRally ? ' — long rally!' : ''}):
 ${touchChainLines.join('\n')}
-=> PUNKT DLA: ${winnerTeamLabel}
+=> POINT FOR: ${winnerTeamLabel}
 
 CRITICAL COMMENTARY RULES:
 1. Describe ONLY what is in the touch chain above. Nothing else!
@@ -1518,15 +1518,15 @@ CRITICAL COMMENTARY RULES:
  
  let situationContext = '';
  if (setEndInfo.isSetEnd) {
- situationContext += `\nKONIEC SETA! Wynik: ${score}. Zwycięzca: ${setEndInfo.winner}. OGŁOŚ KONIEC SETA W SWOIM JĘZYKU!`;
+ situationContext += `\nSET END! Score: ${score}. Winner: ${setEndInfo.winner}. ANNOUNCE THE SET IS OVER IN YOUR LANGUAGE!`;
  }
  if (currentStreak >= 5) {
- situationContext += `\nMOMENTUM: ${streakTeam === 'home' ? homeTeamFull : awayTeamFull} — SERIA ${currentStreak} punktów z rzędu! Punkt zwrotny!`;
+ situationContext += `\nMOMENTUM: ${streakTeam === 'home' ? homeTeamFull : awayTeamFull} on a ${currentStreak}-point run! Turning point!`;
  } else if (currentStreak >= 3) {
- situationContext += `\nSERIA: ${streakTeam === 'home' ? homeTeamFull : awayTeamFull} zdobywa ${currentStreak} z rzędu. Presja rośnie.`;
+ situationContext += `\nSTREAK: ${streakTeam === 'home' ? homeTeamFull : awayTeamFull} scores ${currentStreak} in a row. Pressure building.`;
  }
  if (brokenStreak >= 3) {
- situationContext += `\nSERIA PRZERWANA! Koniec serii ${brokenStreak} pkt drużyny ${brokenStreakTeam === 'home' ? homeTeamFull : awayTeamFull}. Zmiana momentum!`;
+ situationContext += `\nSTREAK BROKEN! ${brokenStreakTeam === 'home' ? homeTeamFull : awayTeamFull} ${brokenStreak}-point run ended. Momentum shift!`;
  }
   if (momentumContext) {
   situationContext += `\n${momentumContext}`;
@@ -1604,7 +1604,7 @@ ${Object.entries(playerPositions).map(([name, pos]) => `${name} = ${pos}`).join(
 SCORE & CONTEXT:
 HOME: ${homeTeamFull} | AWAY: ${awayTeamFull}
 Rally #${rally.rally_number} | Set ${setNumber} | Score: ${score} | Point scored by: ${rally.team_scored === 'home' ? homeTeamFull + ' (home)' : awayTeamFull + ' (away)'}
-${rally.phase ? `PHASE: ${rally.phase === 'First Ball' ? 'SIDE-OUT (pierwsza piłka) - pierwszy atak po przyjęciu. Jakość przyjęcia i kombinacja ataku są kluczowe.' : rally.phase === 'Transition' ? 'KONTRA - atak po obronie. Często chaotyczny, wymaga improwizacji. Rozgrywający ma mniej opcji.' : rally.phase}` : ''}
+${rally.phase ? `PHASE: ${rally.phase === 'First Ball' ? 'SIDE-OUT (first ball) - first attack after reception. Reception quality and attack combination are key.' : rally.phase === 'Transition' ? 'TRANSITION - attack after defensive dig. Often chaotic, requires improvisation. Setter has fewer options.' : rally.phase}` : ''}
 ${rally.homeRotation || rally.awayRotation ? `ROTATION: ${homeTeamFull} R${rally.homeRotation || '?'} | ${awayTeamFull} R${rally.awayRotation || '?'}${rally.homeRotation === 1 || rally.awayRotation === 1 ? ' (R1 = setter at net, full attack options)' : ''}${rally.homeRotation === 4 || rally.awayRotation === 4 ? ' (R4 = setter in back row, limited options)' : ''}` : ''}
 SCORE SITUATION: ${scoreSituation}
 WHO LEADS: ${leadInfo}${situationContext}${errorContext}${substitutionContext}
@@ -1615,7 +1615,7 @@ INSTRUCTIONS:
 - Describe ONLY the touch chain above. Each touch in order. Do not add anything!
 - SCORE: Use EXACTLY the score from SCORE SITUATION and WHO LEADS above. NEVER invent a different score! If it says ${otherTeamName || 'opponent'} STILL LEADS — do not say ${scoringTeamName || 'team'} is ahead!
 - NAMES: Use surnames from touch chain. You may add a first name only if PLAYER PROFILE confirms it — NEVER invent names! If unsure — surname only.
-- ${setEndInfo.isSetEnd ? `KONIEC SETA! OGŁOŚ TO! Wynik końcowy: ${score}. Zwycięzca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZY PUNKT — spokojnie i krótko.' : isHotSituation ? 'KOŃCÓWKA SETA — buduj napięcie!' : currentStreak >= 3 ? 'SERIA — podkreśl momentum!' : milestone ? 'MILESTONE — wspomnij liczbę!' : isBigLead ? 'Duża przewaga — zaznacz dominację' : isEarlySet ? 'Wczesny set — spokojnie' : 'Środek seta — rzeczowo'}
+- ${setEndInfo.isSetEnd ? `SET OVER! ANNOUNCE IT! Final score: ${score}. Winner: ${setEndInfo.winner}.` : isFirstPoint ? 'FIRST POINT — brief and calm.' : isHotSituation ? 'SET ENDGAME — build tension!' : currentStreak >= 3 ? 'STREAK — highlight momentum!' : milestone ? 'MILESTONE — mention the number!' : isBigLead ? 'Big lead — note the dominance.' : isEarlySet ? 'Early set — calm.' : 'Mid-set — factual.'}
 - ${attackingPlayer ? `This is ${attackingPlayer}'s ATTACK — praise the ATTACKER, not the block error! Use: "${attackingPlayer} beats ${scoringPlayer}'s block!"` : ''}
 - ${milestone ? `IMPORTANT: Mention this is ${milestone}!` : ''}${passInstructions}
 - ${commentaryHintsContext ? 'APPLY USER HINTS - they have PRIORITY over other context!' : ''}
@@ -1625,7 +1625,7 @@ INSTRUCTIONS:
 - AVOID MECHANICAL PHRASES: Do NOT use literal score-report language. Use emotional equivalents from tone-rules context.
 - ${attackCombo ? `TACTICAL DATA: Attack type ${attackCombo}${attackLocation ? `, zone: ${attackLocation}` : ''}${attackStyle ? `, style: ${attackStyle}` : ''}. Use this to describe SPECIFICALLY what happened (e.g. diagonal attack, pipe, quick middle) instead of vague terms!` : serveType ? `TACTICAL DATA: Serve type ${serveType}. Describe it specifically!` : ''}
 - ${rally.substitutions?.length ? 'SUBSTITUTION! Weave naturally into commentary using tactical hints.' : ''}
-- ${rally.phase === 'Transition' ? 'ATAK Z KONTRY! Podkreśl szybką reakcję, improwizację, mniej czasu na ustawienie.' : rally.phase === 'First Ball' ? 'ATAK PO PRZYJĘCIU — wspomnij jakość przyjęcia tylko jeśli wpłynęła na atak (idealne = pełna kombinacja, złe = wymuszona piłka).' : ''}
+- ${rally.phase === 'Transition' ? 'TRANSITION ATTACK! Highlight quick reaction, improvisation, less time to set up.' : rally.phase === 'First Ball' ? 'SIDE-OUT — mention reception quality only if it affected the attack (perfect = full combination, poor = forced ball).' : ''}
 - ${(rally.homeRotation || rally.awayRotation) ? 'ROTATION: Mention ONLY when tactically relevant (e.g. setter in back row = fewer options). Do NOT mention rotation number in every commentary!' : ''}
 
 🔴 FINAL REMINDER: Your response must be 100% in ${language === 'pl' ? 'Polish' : language === 'it' ? 'Italian' : language === 'de' ? 'German' : language === 'tr' ? 'Turkish' : language === 'es' ? 'Spanish' : language === 'pt' ? 'Portuguese' : language === 'jp' ? 'Japanese' : 'English'}. Zero Polish words allowed. If context data contains Polish — translate it. Do NOT write a single Polish word.`;
