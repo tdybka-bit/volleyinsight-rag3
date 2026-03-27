@@ -58,9 +58,9 @@ export async function POST(request: NextRequest) {
         .join(', ');
     };
 
-    // Use last word of team name for brevity (e.g. "Zawiercie" from "Aluron CMC Warta Zawiercie")
-    const shortHome = homeTeam.split(' ').slice(-1)[0];
-    const shortAway = awayTeam.split(' ').slice(-1)[0];
+    // Use last 2 words of team name (e.g. "Projekt Warszawa" from "PGE Projekt Warszawa")
+    const shortHome = homeTeam.split(' ').slice(-2).join(' ');
+    const shortAway = awayTeam.split(' ').slice(-2).join(' ');
     const statsSummary = `${fmt(homeData, shortHome)}\n${fmt(awayData, shortAway)}`;
     const question = TAB_QUESTIONS[tabKey] || 'Co wynika z tych danych?';
 
