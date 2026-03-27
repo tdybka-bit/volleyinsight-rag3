@@ -644,49 +644,72 @@ function WaffleChart({ data, cats, colors, label, labelColor }: {
   while (cells.length < 100) cells.push(cats.length - 1);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
-      <span style={{ fontSize: 9, fontWeight: 800, color: labelColor, letterSpacing: '.1em', fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 11px)', gridTemplateRows: 'repeat(10, 11px)', gap: 1 }}>
-        {cells.slice(0, 100).map((ci, idx) => (
-          <div key={idx} style={{ width: 11, height: 11, borderRadius: 2, background: colors[ci] || '#1e293b' }} />
-        ))}
+      <span style={{ fontSize: 11, fontWeight: 800, color: labelColor, letterSpacing: '.1em', fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 11px)', gridTemplateRows: 'repeat(10, 11px)', gap: 1 }}>
+          {cells.slice(0, 100).map((ci, idx) => (
+            <div key={idx} style={{ width: 11, height: 11, borderRadius: 2, background: colors[ci] || '#1e293b' }} />
+          ))}
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+          {cats.map((cat, i) => {
+            const pct = total > 0 ? Math.round((data[cat] || 0) / total * 100) : 0;
+            if (pct === 0) return null;
+            return (
+              <div key={cat} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <div style={{ width: 8, height: 8, borderRadius: 2, background: colors[i], flexShrink: 0 }} />
+                <span style={{ fontSize: 10, fontWeight: 700, color: colors[i], fontFamily: 'JetBrains Mono, monospace' }}>{pct}%</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
 }
 
-// ─── RADIAL BAR ──────────────────────────────────────────────────────────────
+// ─── RADIAL BAR → Donut chart ────────────────────────────────────────────────
 function RadialBar({ data, cats, colors, label, labelColor }: {
   data: Record<string, number>; cats: string[]; colors: string[];
   label: string; labelColor: string;
 }) {
   const total = cats.reduce((s, c) => s + (data[c] || 0), 0);
-  const cx = 65; const cy = 65;
-  const trackW = 9; const gap = 3;
-  const maxR = 56; 
-  if (total === 0) return <div style={{ width: 130, height: 130, background: '#0a1020', borderRadius: '50%', opacity: .3 }} />;
+  if (total === 0) return <div style={{ width: 140, height: 140, background: '#0a1020', borderRadius: '50%', opacity: .3 }} />;
+  const cx = 70; const cy = 70; const r = 52; const strokeW = 16;
+  const circumference = 2 * Math.PI * r;
+  let offset = 0;
+  const slices = cats.map((cat, i) => {
+    const pct = (data[cat] || 0) / total;
+    const len = pct * circumference;
+    const slice = { cat, color: colors[i], pct, len, offset };
+    offset += len;
+    return slice;
+  });
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
-      <span style={{ fontSize: 9, fontWeight: 800, color: labelColor, letterSpacing: '.1em', fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
-      <svg width={130} height={130}>
-        {cats.map((cat, i) => {
-          const r = maxR - i * (trackW + gap);
-          const pct = (data[cat] || 0) / total;
-          const startAngle = -Math.PI / 2;
-          const endAngle = startAngle + pct * 2 * Math.PI;
-          const x1 = cx + r * Math.cos(startAngle);
-          const y1 = cy + r * Math.sin(startAngle);
-          const x2 = cx + r * Math.cos(endAngle);
-          const y2 = cy + r * Math.sin(endAngle);
-          const large = pct > 0.5 ? 1 : 0;
-          return (
-            <g key={cat}>
-              <circle cx={cx} cy={cy} r={r} fill="none" stroke="#0f172a" strokeWidth={trackW} />
-              {pct > 0 && <path d={`M${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2}`} fill="none" stroke={colors[i]} strokeWidth={trackW} strokeLinecap="round" />}
-              <text x={cx + r + 4} y={cy - r + trackW / 2 + 3} style={{ fontSize: 8, fill: colors[i], fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>{Math.round(pct * 100)}%</text>
-            </g>
-          );
-        })}
-      </svg>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+      <span style={{ fontSize: 11, fontWeight: 800, color: labelColor, letterSpacing: '.1em', fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+        <svg width={140} height={140} style={{ transform: 'rotate(-90deg)' }}>
+          <circle cx={cx} cy={cy} r={r} fill="none" stroke="#0f172a" strokeWidth={strokeW} />
+          {slices.map(s => s.pct > 0 && (
+            <circle key={s.cat} cx={cx} cy={cy} r={r} fill="none"
+              stroke={s.color} strokeWidth={strokeW}
+              strokeDasharray={`${s.len} ${circumference - s.len}`}
+              strokeDashoffset={-s.offset}
+              strokeLinecap="butt" />
+          ))}
+        </svg>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          {slices.map(s => s.pct > 0 && (
+            <div key={s.cat} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <div style={{ width: 10, height: 10, borderRadius: 2, background: s.color, flexShrink: 0 }} />
+              <div style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                <span style={{ fontSize: 12, fontWeight: 800, color: s.color }}>{Math.round(s.pct * 100)}%</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -701,7 +724,7 @@ function Treemap({ data, cats, colors, label, labelColor }: {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
       <span style={{ fontSize: 9, fontWeight: 800, color: labelColor, letterSpacing: '.1em', fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
-      <div style={{ width: 140, height: 90, display: 'flex', gap: 2, alignItems: 'stretch' }}>
+      <div style={{ width: 160, height: 110, display: 'flex', gap: 2, alignItems: 'stretch' }}>
         {cats.map((cat, i) => {
           const pct = (data[cat] || 0) / total;
           if (pct === 0) return null;
@@ -710,10 +733,10 @@ function Treemap({ data, cats, colors, label, labelColor }: {
               flex: pct, background: colors[i], borderRadius: 4, display: 'flex',
               flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minWidth: 20,
             }}>
-              <div style={{ fontSize: 8, fontWeight: 800, color: 'rgba(255,255,255,.9)', fontFamily: 'JetBrains Mono, monospace', textAlign: 'center', padding: '0 2px', lineHeight: 1.3 }}>
-                {pct >= 0.15 ? cat.substring(0, 6) : ''}
+              <div style={{ fontSize: 10, fontWeight: 800, color: 'rgba(255,255,255,.9)', fontFamily: 'JetBrains Mono, monospace', textAlign: 'center', padding: '0 2px', lineHeight: 1.3 }}>
+                {pct >= 0.15 ? cat.substring(0, 8) : ''}
               </div>
-              <div style={{ fontSize: 10, fontWeight: 800, color: '#fff', fontFamily: 'JetBrains Mono, monospace' }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#fff', fontFamily: 'JetBrains Mono, monospace' }}>
                 {Math.round(pct * 100)}%
               </div>
             </div>
@@ -735,14 +758,14 @@ function StackedBar({ homeData, awayData, cats, colors, homeLabel, awayLabel, ho
   if (hTotal === 0 && aTotal === 0) return <div style={{ height: 60, background: '#0a1020', borderRadius: 6, opacity: .3 }} />;
   const Bar = ({ data, total, label, color }: { data: Record<string,number>; total: number; label: string; color: string }) => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <span style={{ fontSize: 9, fontWeight: 800, color, fontFamily: 'JetBrains Mono, monospace', letterSpacing: '.08em' }}>{label}</span>
-      <div style={{ display: 'flex', height: 22, borderRadius: 4, overflow: 'hidden', width: '100%' }}>
+      <span style={{ fontSize: 11, fontWeight: 800, color, fontFamily: 'JetBrains Mono, monospace', letterSpacing: '.08em' }}>{label}</span>
+      <div style={{ display: 'flex', height: 28, borderRadius: 4, overflow: 'hidden', width: '100%' }}>
         {total === 0 ? <div style={{ flex: 1, background: '#0f172a' }} /> :
           cats.map((cat, i) => {
             const pct = (data[cat] || 0) / total;
             if (pct === 0) return null;
             return <div key={cat} style={{ flex: pct, background: colors[i], display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {pct >= 0.12 && <span style={{ fontSize: 8, fontWeight: 800, color: '#fff', fontFamily: 'JetBrains Mono, monospace' }}>{Math.round(pct*100)}%</span>}
+              {pct >= 0.10 && <span style={{ fontSize: 11, fontWeight: 800, color: '#fff', fontFamily: 'JetBrains Mono, monospace' }}>{Math.round(pct*100)}%</span>}
             </div>;
           })
         }
@@ -774,24 +797,24 @@ function Lollipop({ homeData, awayData, cats, homeLabel, awayLabel, homeColor, a
         const aPct = av / maxVal;
         return (
           <div key={cat} style={{ marginBottom: 10 }}>
-            <div style={{ fontSize: 8, color: '#475569', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, marginBottom: 3 }}>{cat}</div>
+            <div style={{ fontSize: 10, color: '#94a3b8', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, marginBottom: 4 }}>{cat}</div>
             {/* Home */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-              <span style={{ fontSize: 8, color: homeColor, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', width: 28 }}>{homeLabel}</span>
-              <div style={{ flex: 1, position: 'relative', height: 12 }}>
-                <div style={{ position: 'absolute', top: 5, left: 0, width: `${hPct * 100}%`, height: 2, background: `${homeColor}40`, borderRadius: 1 }} />
-                <div style={{ position: 'absolute', top: 1, left: `calc(${hPct * 100}% - 5px)`, width: 10, height: 10, borderRadius: '50%', background: homeColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: 6, fontWeight: 800, color: '#0a0e17', fontFamily: 'JetBrains Mono, monospace' }}>{hv}</span>
+              <span style={{ fontSize: 10, color: homeColor, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', width: 32 }}>{homeLabel}</span>
+              <div style={{ flex: 1, position: 'relative', height: 16 }}>
+                <div style={{ position: 'absolute', top: 7, left: 0, width: `${hPct * 100}%`, height: 2, background: `${homeColor}40`, borderRadius: 1 }} />
+                <div style={{ position: 'absolute', top: 0, left: `calc(${hPct * 100}% - 8px)`, width: 16, height: 16, borderRadius: '50%', background: homeColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: 9, fontWeight: 800, color: '#0a0e17', fontFamily: 'JetBrains Mono, monospace' }}>{hv}</span>
                 </div>
               </div>
             </div>
             {/* Away */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ fontSize: 8, color: awayColor, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', width: 28 }}>{awayLabel}</span>
-              <div style={{ flex: 1, position: 'relative', height: 12 }}>
-                <div style={{ position: 'absolute', top: 5, left: 0, width: `${aPct * 100}%`, height: 2, background: `${awayColor}40`, borderRadius: 1 }} />
-                <div style={{ position: 'absolute', top: 1, left: `calc(${aPct * 100}% - 5px)`, width: 10, height: 10, borderRadius: '50%', background: awayColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: 6, fontWeight: 800, color: '#0a0e17', fontFamily: 'JetBrains Mono, monospace' }}>{av}</span>
+              <span style={{ fontSize: 10, color: awayColor, fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', width: 32 }}>{awayLabel}</span>
+              <div style={{ flex: 1, position: 'relative', height: 16 }}>
+                <div style={{ position: 'absolute', top: 7, left: 0, width: `${aPct * 100}%`, height: 2, background: `${awayColor}40`, borderRadius: 1 }} />
+                <div style={{ position: 'absolute', top: 0, left: `calc(${aPct * 100}% - 8px)`, width: 16, height: 16, borderRadius: '50%', background: awayColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: 9, fontWeight: 800, color: '#0a0e17', fontFamily: 'JetBrains Mono, monospace' }}>{av}</span>
                 </div>
               </div>
             </div>
@@ -1017,10 +1040,10 @@ export default function CockpitPage() {
               return (
                 <div key={c} style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(255,255,255,.03)', borderRadius: 4, padding: '2px 7px' }}>
                   <div style={{ width: 7, height: 7, borderRadius: 2, background: t.colors[i], flexShrink: 0 }} />
-                  <span style={{ fontSize: 9, color: '#cbd5e1' }}>{c}</span>
-                  <span style={{ fontSize: 8, color: '#60a5fa', fontWeight: 700 }}>{pH}%</span>
-                  <span style={{ fontSize: 8, color: '#334155' }}>/</span>
-                  <span style={{ fontSize: 8, color: '#fbbf24', fontWeight: 700 }}>{pA}%</span>
+                  <span style={{ fontSize: 11, color: '#cbd5e1' }}>{c}</span>
+                  <span style={{ fontSize: 11, color: '#60a5fa', fontWeight: 700 }}>{pH}%</span>
+                  <span style={{ fontSize: 9, color: '#334155' }}>/</span>
+                  <span style={{ fontSize: 11, color: '#fbbf24', fontWeight: 700 }}>{pA}%</span>
                 </div>
               );
             })}
