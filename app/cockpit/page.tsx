@@ -716,35 +716,67 @@ function RadialBar({ data, cats, colors, label, labelColor }: {
   );
 }
 
-// ─── TREEMAP ─────────────────────────────────────────────────────────────────
+// ─── TREEMAP → ATTACK COURT MAP ──────────────────────────────────────────────
+//
+//  Attack zones on attack court (from attacker's perspective):
+//
+//   Net ──────────────────────────
+//   │  Left Side │ Middle │ Right │  front row (Z4/Z3/Z2)
+//   │  Pipe/Back │        │ RS Bk │  back row  (Z5/Z6/Z1)
+//   ──────────────────────────────
+//
 function Treemap({ data, cats, colors, label, labelColor }: {
   data: Record<string, number>; cats: string[]; colors: string[];
   label: string; labelColor: string;
 }) {
   const total = cats.reduce((s, c) => s + (data[c] || 0), 0);
-  if (total === 0) return <div style={{ width: 140, height: 90, background: '#0a1020', borderRadius: 6, opacity: .3 }} />;
+  if (total === 0) return <div style={{ width: '100%', height: 120, background: '#0a1020', borderRadius: 6, opacity: .3 }} />;
+
+  // Map attack location names to court zones
+  const ATTACK_ZONES: Record<string, { x: number; y: number; w: number; h: number; label: string }> = {
+    'Left Side':        { x: 2,  y: 2,  w: 38, h: 96,  label: 'Left' },
+    'Middle':           { x: 42, y: 2,  w: 36, h: 96,  label: 'Mid' },
+    'Right Side':       { x: 80, y: 2,  w: 38, h: 48,  label: 'Right' },
+    'Right Side Back':  { x: 80, y: 52, w: 38, h: 46,  label: 'RS Bk' },
+    'Pipe':             { x: 2,  y: 52, w: 76, h: 46,  label: 'Pipe' },
+  };
+
+  const maxVal = Math.max(...cats.map(c => data[c] || 0), 1);
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
-      <span style={{ fontSize: 9, fontWeight: 800, color: labelColor, letterSpacing: '.1em', fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
-      <div style={{ width: 160, height: 110, display: 'flex', gap: 2, alignItems: 'stretch' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+      <span style={{ fontSize: 11, fontWeight: 800, color: labelColor, letterSpacing: '.1em', fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
+      <svg width={120} height={100} style={{ borderRadius: 6, overflow: 'visible' }}>
+        {/* Court background */}
+        <rect x={0} y={0} width={120} height={100} fill="#0a1628" rx={4} />
+        {/* Net line */}
+        <line x1={0} y1={2} x2={120} y2={2} stroke="#3b82f6" strokeWidth={2} />
+
         {cats.map((cat, i) => {
-          const pct = (data[cat] || 0) / total;
+          const zone = ATTACK_ZONES[cat];
+          if (!zone) return null;
+          const val = data[cat] || 0;
+          const pct = total > 0 ? Math.round(val / total * 100) : 0;
           if (pct === 0) return null;
+          const intensity = val / maxVal;
+          const color = colors[i] || '#64748b';
           return (
-            <div key={cat} style={{
-              flex: pct, background: colors[i], borderRadius: 4, display: 'flex',
-              flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minWidth: 20,
-            }}>
-              <div style={{ fontSize: 10, fontWeight: 800, color: 'rgba(255,255,255,.9)', fontFamily: 'JetBrains Mono, monospace', textAlign: 'center', padding: '0 2px', lineHeight: 1.3 }}>
-                {pct >= 0.15 ? cat.substring(0, 8) : ''}
-              </div>
-              <div style={{ fontSize: 13, fontWeight: 800, color: '#fff', fontFamily: 'JetBrains Mono, monospace' }}>
-                {Math.round(pct * 100)}%
-              </div>
-            </div>
+            <g key={cat}>
+              <rect x={zone.x} y={zone.y} width={zone.w} height={zone.h} rx={3}
+                fill={color} fillOpacity={0.15 + intensity * 0.55}
+                stroke={color} strokeOpacity={0.4} strokeWidth={1} />
+              <text x={zone.x + zone.w / 2} y={zone.y + zone.h / 2 - 6} textAnchor="middle"
+                style={{ fontSize: 9, fill: '#fff', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
+                {zone.label}
+              </text>
+              <text x={zone.x + zone.w / 2} y={zone.y + zone.h / 2 + 8} textAnchor="middle"
+                style={{ fontSize: 11, fill: '#fff', fontFamily: 'JetBrains Mono, monospace', fontWeight: 800 }}>
+                {pct}%
+              </text>
+            </g>
           );
         })}
-      </div>
+      </svg>
     </div>
   );
 }
@@ -1010,7 +1042,7 @@ export default function CockpitPage() {
                   <>
                     {useWaffle  && <><WaffleChart data={hData} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><WaffleChart data={aData} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
                     {useRadial  && <><RadialBar   data={hData} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><RadialBar   data={aData} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
-                    {useTreemap && <><Treemap     data={hData} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><Treemap     data={aData} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
+                    {useTreemap && <><Treemap data={hData} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><Treemap data={aData} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
                     {useStacked && <StackedBar homeData={hData} awayData={aData} cats={t.cats} colors={t.colors} homeLabel={sHome} awayLabel={sAway} homeColor="#60a5fa" awayColor="#fbbf24" />}
                     {useLollipop && <Lollipop homeData={hData} awayData={aData} cats={t.cats} homeLabel={sHome} awayLabel={sAway} homeColor="#60a5fa" awayColor="#fbbf24" />}
                   </>
@@ -1024,7 +1056,7 @@ export default function CockpitPage() {
               <div style={{ fontSize: 9, fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '.15em' }}>{(COCKPIT_I18N[language] || COCKPIT_I18N.pl).match}</div>
               {useWaffle  && <><WaffleChart data={mergedData.home} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><WaffleChart data={mergedData.away} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
               {useRadial  && <><RadialBar   data={mergedData.home} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><RadialBar   data={mergedData.away} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
-              {useTreemap && <><Treemap     data={mergedData.home} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><Treemap     data={mergedData.away} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
+              {useTreemap && <><Treemap data={mergedData.home} cats={t.cats} colors={t.colors} label={sHome} labelColor="#60a5fa" /><Treemap data={mergedData.away} cats={t.cats} colors={t.colors} label={sAway} labelColor="#fbbf24" /></>}
               {useStacked && <StackedBar homeData={mergedData.home} awayData={mergedData.away} cats={t.cats} colors={t.colors} homeLabel={sHome} awayLabel={sAway} homeColor="#60a5fa" awayColor="#fbbf24" />}
               {useLollipop && <Lollipop homeData={mergedData.home} awayData={mergedData.away} cats={t.cats} homeLabel={sHome} awayLabel={sAway} homeColor="#60a5fa" awayColor="#fbbf24" />}
             </div>
@@ -1053,7 +1085,7 @@ export default function CockpitPage() {
           </div>
         )}
         {/* ── INSIGHTS PANEL ── */}
-        {tabKey !== 'serve_zone' && (
+        {tabKey !== 'serve_zone_disabled' && (
           <div style={{ marginTop: 10, padding: '12px 16px', background: 'rgba(6,78,59,.1)', borderRadius: 8, border: '1px solid rgba(16,185,129,.15)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <span style={{ fontSize: 9, fontWeight: 800, color: '#10b981', textTransform: 'uppercase', letterSpacing: '.15em' }}>⚡ Insights</span>
