@@ -58,7 +58,10 @@ export async function POST(request: NextRequest) {
         .join(', ');
     };
 
-    const statsSummary = `${fmt(homeData, homeTeam)}\n${fmt(awayData, awayTeam)}`;
+    // Use last word of team name for brevity (e.g. "Zawiercie" from "Aluron CMC Warta Zawiercie")
+    const shortHome = homeTeam.split(' ').slice(-1)[0];
+    const shortAway = awayTeam.split(' ').slice(-1)[0];
+    const statsSummary = `${fmt(homeData, shortHome)}\n${fmt(awayData, shortAway)}`;
     const question = TAB_QUESTIONS[tabKey] || 'Co wynika z tych danych?';
 
     const langNote = language !== 'pl'
