@@ -3061,8 +3061,12 @@ export default function LiveMatchCommentaryV4() {
            {/* ── SET TAB ─────────────────────────────────────────────────── */}
            {rightTab === 'set' && (() => {
              // ── COMPUTE SET KPIs from rallies ──────────────────────────────
-             const computeSetKPI = (setNum: number) => {
-               const setRallies = rallies.filter((r: any) => r.set_number === setNum);
+             const computeSetKPI = (setNum: number, upToIndex?: number) => {
+               const allSetRallies = rallies.filter((r: any) => r.set_number === setNum);
+               // For live set: only count rallies up to currentRallyIndex
+               const setRallies = upToIndex !== undefined
+                 ? rallies.slice(0, upToIndex).filter((r: any) => r.set_number === setNum)
+                 : allSetRallies;
                let hAtk = 0, hKill = 0, hAce = 0, hBlk = 0, hErr = 0;
                let aAtk = 0, aKill = 0, aAce = 0, aBlk = 0, aErr = 0;
                let hRec = 0, hRecPos = 0, aRec = 0, aRecPos = 0;
@@ -3188,12 +3192,15 @@ export default function LiveMatchCommentaryV4() {
                      );
                  })}
 
-                 {/* Live current set */}
+                 {/* Live current set — only if not yet finished */}
                  {currentSetNumber > 0 && (() => {
-                   const kpi = computeSetKPI(currentSetNumber);
-                   const s = rallies.filter((r: any) => r.set_number === currentSetNumber);
+                   const s = rallies.slice(0, currentRallyIndex).filter((r: any) => r.set_number === currentSetNumber);
                    const hPts = s.filter((r: any) => r.team_scored === 'home').length;
                    const aPts = s.filter((r: any) => r.team_scored === 'away').length;
+                   // Don't show as live if set is clearly finished (25+ points)
+                   if (Math.max(hPts, aPts) >= 25) return null;
+                   if (hPts === 0 && aPts === 0) return null;
+                   const kpi = computeSetKPI(currentSetNumber, currentRallyIndex);
                    return (
                      <div style={{ background: 'rgba(59,130,246,.04)', border: '1px solid rgba(59,130,246,.15)', borderRadius: 10, padding: '8px 10px' }}>
                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
