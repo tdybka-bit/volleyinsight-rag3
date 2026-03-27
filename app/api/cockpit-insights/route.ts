@@ -58,9 +58,18 @@ export async function POST(request: NextRequest) {
         .join(', ');
     };
 
-    // Use last 2 words of team name (e.g. "Projekt Warszawa" from "PGE Projekt Warszawa")
-    const shortHome = homeTeam.split(' ').slice(-2).join(' ');
-    const shortAway = awayTeam.split(' ').slice(-2).join(' ');
+    // Smart team name: if >3 words use last 2, if 2+ words use as-is, skip generic prefixes
+    const cleanTeam = (name: string) => {
+      const words = name.split(' ');
+      // Skip 2-3 letter ALL CAPS prefixes (JSW, ASS, PGE, IND, ZAW, LBN)
+      const skipPrefixes = new Set(['JSW','ASS','PGE','IND','ZAW','LBN','CMC','AZS','LUK']);
+      const filtered = words.filter(w => !skipPrefixes.has(w));
+      if (filtered.length === 0) return name; // fallback
+      if (filtered.length <= 2) return filtered.join(' ');
+      return filtered.slice(-2).join(' '); // last 2 meaningful words
+    };
+    const shortHome = cleanTeam(homeTeam);
+    const shortAway = cleanTeam(awayTeam);
     const statsSummary = `${fmt(homeData, shortHome)}\n${fmt(awayData, shortAway)}`;
     const question = TAB_QUESTIONS[tabKey] || 'Co wynika z tych danych?';
 
