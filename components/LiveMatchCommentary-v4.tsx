@@ -3139,16 +3139,16 @@ export default function LiveMatchCommentaryV4() {
                            {/* Last 5 sparkline */}
                            {last5.length > 0 && (
                              <div>
-                               <div style={{ fontSize: 9, color: '#475569', marginBottom: 4 }}>ostatnie 5 meczów</div>
-                               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 28 }}>
+                               <div style={{ fontSize: 9, color: '#64748b', marginBottom: 6 }}>punkty w ostatnich 5 meczach sezonu</div>
+                               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 36 }}>
                                  {last5.map((v, idx) => (
-                                   <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                                   <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
                                      <div style={{
                                        width: '100%', borderRadius: 2,
-                                       height: `${Math.max(3, Math.round((v / maxL5) * 24))}px`,
-                                       background: idx === last5.length - 1 ? nameColor : 'rgba(255,255,255,.15)',
+                                       height: `${Math.max(3, Math.round((v / maxL5) * 28))}px`,
+                                       background: idx === last5.length - 1 ? nameColor : 'rgba(255,255,255,.2)',
                                      }} />
-                                     <span style={{ fontSize: 8, color: idx === last5.length - 1 ? nameColor : '#334155', fontFamily: "'JetBrains Mono',monospace", fontWeight: 700 }}>{v}</span>
+                                     <span style={{ fontSize: 10, color: idx === last5.length - 1 ? nameColor : '#94a3b8', fontFamily: "'JetBrains Mono',monospace", fontWeight: 700 }}>{v}</span>
                                    </div>
                                  ))}
                                </div>
