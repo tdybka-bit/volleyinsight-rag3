@@ -3098,6 +3098,74 @@ export default function LiveMatchCommentaryV4() {
                          </div>
                        </div>
                      ))}
+                     {/* Season vs match comparison */}
+                     {(() => {
+                       const ss = seasonStats[favPlayer];
+                       if (!ss?.found || ss.avgPoints == null) return null;
+                       const matchPts = s.points;
+                       const avgPts   = ss.avgPoints;
+                       const diff     = matchPts - avgPts;
+                       const diffPct  = avgPts > 0 ? Math.round((diff / avgPts) * 100) : 0;
+                       const isAbove  = diff > 1;
+                       const isBelow  = diff < -1;
+                       const last5    = ss.last5 || [];
+                       const maxL5    = Math.max(...last5, 1);
+                       const nameColor = isHomePlayer ? '#93c5fd' : '#fcd34d';
+                       return (
+                         <div style={{ marginTop: 8, marginBottom: 8, borderRadius: 10, padding: '10px 12px', background: 'rgba(255,255,255,.025)', border: `1px solid ${isAbove ? 'rgba(52,211,153,.2)' : isBelow ? 'rgba(248,113,113,.2)' : 'rgba(255,255,255,.06)'}` }}>
+                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                             <span style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.1em' }}>Ten mecz vs sezon</span>
+                             <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 7px', borderRadius: 4,
+                               background: isAbove ? 'rgba(52,211,153,.15)' : isBelow ? 'rgba(248,113,113,.15)' : 'rgba(255,255,255,.06)',
+                               color: isAbove ? '#34d399' : isBelow ? '#f87171' : '#94a3b8' }}>
+                               {isAbove ? `+${diffPct}%` : isBelow ? `${diffPct}%` : 'w normie'}
+                             </span>
+                           </div>
+                           {/* Points comparison */}
+                           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                             <div style={{ textAlign: 'center', minWidth: 40 }}>
+                               <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 800, color: isAbove ? '#34d399' : isBelow ? '#f87171' : '#cbd5e1' }}>{matchPts}</div>
+                               <div style={{ fontSize: 9, color: '#64748b' }}>ten mecz</div>
+                             </div>
+                             <div style={{ flex: 1, textAlign: 'center' }}>
+                               <div style={{ fontSize: 9, color: '#334155', marginBottom: 2 }}>vs</div>
+                               <div style={{ height: 1, background: 'rgba(255,255,255,.06)' }} />
+                             </div>
+                             <div style={{ textAlign: 'center', minWidth: 40 }}>
+                               <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 800, color: '#64748b' }}>{avgPts}</div>
+                               <div style={{ fontSize: 9, color: '#64748b' }}>śr. sezonu</div>
+                             </div>
+                           </div>
+                           {/* Last 5 sparkline */}
+                           {last5.length > 0 && (
+                             <div>
+                               <div style={{ fontSize: 9, color: '#475569', marginBottom: 4 }}>ostatnie 5 meczów</div>
+                               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 28 }}>
+                                 {last5.map((v, idx) => (
+                                   <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                                     <div style={{
+                                       width: '100%', borderRadius: 2,
+                                       height: `${Math.max(3, Math.round((v / maxL5) * 24))}px`,
+                                       background: idx === last5.length - 1 ? nameColor : 'rgba(255,255,255,.15)',
+                                     }} />
+                                     <span style={{ fontSize: 8, color: idx === last5.length - 1 ? nameColor : '#334155', fontFamily: "'JetBrains Mono',monospace", fontWeight: 700 }}>{v}</span>
+                                   </div>
+                                 ))}
+                               </div>
+                             </div>
+                           )}
+                           {/* Profile link */}
+                           {ss.id && (
+                             <div style={{ marginTop: 8, textAlign: 'right' }}>
+                               <a href={`/players/${ss.id}`} target="_blank" rel="noopener noreferrer"
+                                 style={{ fontSize: 10, color: '#3b82f6', textDecoration: 'none', fontWeight: 600 }}>
+                                 pełny profil sezonu →
+                               </a>
+                             </div>
+                           )}
+                         </div>
+                       );
+                     })()}
                      {/* Expert knowledge */}
                      <div style={{ marginTop: 4, background: 'rgba(255,255,255,.02)', border: '1px solid #0f172a', borderRadius: 10, padding: '10px 12px' }}>
                        <div style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 6 }}>{BUDDY_I18N[language].expertTitle}</div>
