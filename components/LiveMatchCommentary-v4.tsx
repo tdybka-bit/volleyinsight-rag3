@@ -1483,20 +1483,22 @@ export default function LiveMatchCommentaryV4() {
 
  // ── FETCH SEASON STATS for leaderboard players ───────────────────────────
  useEffect(() => {
-   if (allLBNames.length === 0) return;
-   // Only fetch names we don't have yet
-   const missing = allLBNames.filter(n => !seasonStats[n]);
+   if (Object.keys(playerStats).length === 0) return;
+   // Take top 10 by points from lbEntries - covers all LB categories
+   const topNames = Object.entries(playerStats)
+     .map(([name, s]) => ({ name, pts: s.points }))
+     .sort((a, b) => b.pts - a.pts)
+     .slice(0, 10)
+     .map(e => e.name);
+   const missing = topNames.filter(n => !seasonStats[n]);
    if (missing.length === 0) return;
-   const namesParam = missing.join(',');
-   fetch(`/api/player-season-stats?names=${encodeURIComponent(namesParam)}`)
+   fetch(`/api/player-season-stats?names=${encodeURIComponent(missing.join(','))}`)
      .then(r => r.json())
      .then(data => {
-       if (data.players) {
-         setSeasonStats(prev => ({ ...prev, ...data.players }));
-       }
+       if (data.players) setSeasonStats(prev => ({ ...prev, ...data.players }));
      })
      .catch(() => {});
- }, [allLBNames.join(',')]);
+ }, [Object.keys(playerStats).length, Object.keys(seasonStats).length]);
 
  const retranslateCommentaries = async () => {
  if (commentaries.length === 0 || isRetranslating) return;
@@ -2490,15 +2492,6 @@ export default function LiveMatchCommentaryV4() {
  const topBlocksLB   = enrichLB([...lbEntries].filter(e => e.blocks > 0).sort((a, b) => b.blocks - a.blocks).slice(0, 3));
  const topRecLB      = enrichLB([...lbEntries].filter(e => e.recSum >= 3).sort((a, b) => b.recPct - a.recPct).slice(0, 3));
  const topDigsLB     = enrichLB([...lbEntries].filter(e => e.digs > 0).sort((a, b) => b.digs - a.digs).slice(0, 3));
-
- // ── SEASON STATS FETCH ─────────────────────────────────────────────────────
- // Collect unique top scorers across all leaderboards and fetch season stats
- const allLBNames = [...new Set([
-   ...topScorersLB.map(e => e.name),
-   ...topAttackLB.map(e => e.name),
-   ...topAcesLB.map(e => e.name),
-   ...topBlocksLB.map(e => e.name),
- ])];
 
  // ─── RIGHT-TAB STATE ─────────────────────────────────────────────────────────
  // (stored as local const since we already have tab state from v3's right side)
