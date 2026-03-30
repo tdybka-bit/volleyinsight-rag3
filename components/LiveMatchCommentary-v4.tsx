@@ -2511,60 +2511,54 @@ export default function LiveMatchCommentaryV4() {
          <span style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.08em' }}>{title}</span>
        </div>
        {data.map((d, i) => {
-         const pct = Math.min((d.value / mx) * 100, 100);
-         const lbl = isPercent && d.num != null ? `${d.value}% (${d.num}/${d.den})` : `${d.value}${isPercent ? '%' : ''}`;
-         const ss = seasonStats[d.name];
+         const pct   = Math.min((d.value / mx) * 100, 100);
+         const lbl   = isPercent && d.num != null ? `${d.value}% (${d.num}/${d.den})` : `${d.value}${isPercent ? '%' : ''}`;
+         const ss    = seasonStats[d.name];
          const last5 = ss?.last5 || [];
          const maxL5 = Math.max(...last5, 1);
          const trend = ss?.trend;
-         const trendColor = trend === 'up' ? '#34d399' : trend === 'down' ? '#f87171' : '#64748b';
-         const trendArrow = trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→';
+         const trendColor  = trend === 'up' ? '#34d399' : trend === 'down' ? '#f87171' : '#94a3b8';
+         const trendArrow  = trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→';
+         const nameColor   = d.team === 'home' ? '#93c5fd' : '#fcd34d';
          return (
-           <div key={d.name} style={{ marginBottom: 8 }}>
-             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
-               <div style={{ width: 100, display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
-                 <span style={{ width: 12, fontSize: 9, fontWeight: 700, color: i === 0 ? '#facc15' : '#64748b' }}>{i + 1}</span>
-                 <span style={{ fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: d.team === 'home' ? '#93c5fd' : '#fcd34d' }} title={d.name}>
-                   {d.name.split(' ').slice(-1)[0]}
+           <div key={d.name} style={{ marginBottom: 10 }}>
+             {/* Row 1: rank · name · trend · avg · value */}
+             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+               <span style={{ width: 12, fontSize: 9, fontWeight: 700, color: i === 0 ? '#facc15' : '#64748b', flexShrink: 0 }}>{i + 1}</span>
+               <span style={{ fontSize: 12, fontWeight: 700, color: nameColor, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={d.name}>
+                 {d.name.split(' ').slice(-1)[0]}
+               </span>
+               {ss?.avgPoints != null && (
+                 <span style={{ fontSize: 10, color: '#94a3b8', fontFamily: "'JetBrains Mono',monospace", flexShrink: 0 }}>
+                   śr.{' '}<span style={{ color: '#cbd5e1', fontWeight: 700 }}>{ss.avgPoints}</span>
                  </span>
-               </div>
-               <div style={{ flex: 1, height: 10, borderRadius: 99, overflow: 'hidden', background: 'rgba(255,255,255,.06)' }}>
-                 <div style={{ width: `${pct}%`, height: '100%', borderRadius: 99, background: barColor, transition: 'width .7s' }} />
-               </div>
-               <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color: '#cbd5e1', width: 60, textAlign: 'right' }}>{lbl}</span>
+               )}
+               {trend && <span style={{ fontSize: 11, color: trendColor, fontWeight: 800, flexShrink: 0 }}>{trendArrow}</span>}
+               <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 11, color: '#e2e8f0', fontWeight: 700, flexShrink: 0, minWidth: 44, textAlign: 'right' }}>{lbl}</span>
              </div>
-             {/* Season form row */}
-             {last5.length > 0 && (
-               <div style={{ display: 'flex', alignItems: 'center', gap: 5, paddingLeft: 17, marginTop: 2 }}>
-                 {/* Sparkline */}
-                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 14 }}>
+             {/* Row 2: sparkline bar + progress bar */}
+             <div style={{ display: 'flex', alignItems: 'center', gap: 6, paddingLeft: 18 }}>
+               {last5.length > 0 && (
+                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 16, flexShrink: 0 }}>
                    {last5.map((v, idx) => (
                      <div key={idx} style={{
-                       width: 5, borderRadius: 1,
-                       height: `${Math.max(2, Math.round((v / maxL5) * 14))}px`,
-                       background: idx === last5.length - 1
-                         ? (d.team === 'home' ? '#93c5fd' : '#fcd34d')
-                         : 'rgba(255,255,255,.2)',
+                       width: 6, borderRadius: 2,
+                       height: `${Math.max(3, Math.round((v / maxL5) * 16))}px`,
+                       background: idx === last5.length - 1 ? nameColor : 'rgba(255,255,255,.25)',
                      }} />
                    ))}
                  </div>
-                 {/* Trend arrow */}
-                 <span style={{ fontSize: 9, color: trendColor, fontWeight: 700 }}>{trendArrow}</span>
-                 {/* Season avg */}
-                 {ss?.avgPoints != null && (
-                   <span style={{ fontSize: 9, color: '#475569', fontFamily: "'JetBrains Mono',monospace" }}>
-                     śr. {ss.avgPoints}
-                   </span>
-                 )}
-                 {/* Profile link */}
-                 {ss?.id && (
-                   <a href={`/players/${ss.id}`} target="_blank" rel="noopener noreferrer"
-                     style={{ fontSize: 8, color: '#3b82f6', textDecoration: 'none', marginLeft: 'auto', opacity: .7 }}>
-                     profil →
-                   </a>
-                 )}
+               )}
+               <div style={{ flex: 1, height: 6, borderRadius: 99, overflow: 'hidden', background: 'rgba(255,255,255,.06)' }}>
+                 <div style={{ width: `${pct}%`, height: '100%', borderRadius: 99, background: barColor, transition: 'width .7s' }} />
                </div>
-             )}
+               {ss?.id && (
+                 <a href={`/players/${ss.id}`} target="_blank" rel="noopener noreferrer"
+                   style={{ fontSize: 9, color: '#3b82f6', textDecoration: 'none', flexShrink: 0, opacity: .8 }}>
+                   profil →
+                 </a>
+               )}
+             </div>
            </div>
          );
        })}
