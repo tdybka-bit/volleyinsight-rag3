@@ -455,6 +455,8 @@ export default function LiveMatchCommentaryV4() {
  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
  const [translatedProfileSummary, setTranslatedProfileSummary] = useState<string | null>(null);
 
+ const [seasonStats, setSeasonStats] = useState<Record<string, { found: boolean; avgPoints?: number; last5?: number[]; trend?: string; id?: string }>>({});
+
  const [playerStats, setPlayerStats] = useState<Record<string, {
  // Legacy fields (for route.ts compatibility)
  blocks: number;
@@ -1479,6 +1481,23 @@ export default function LiveMatchCommentaryV4() {
    fetchProfile();
  }, [favPlayer]);
 
+ // ── FETCH SEASON STATS for leaderboard players ───────────────────────────
+ useEffect(() => {
+   if (allLBNames.length === 0) return;
+   // Only fetch names we don't have yet
+   const missing = allLBNames.filter(n => !seasonStats[n]);
+   if (missing.length === 0) return;
+   const namesParam = missing.join(',');
+   fetch(`/api/player-season-stats?names=${encodeURIComponent(namesParam)}`)
+     .then(r => r.json())
+     .then(data => {
+       if (data.players) {
+         setSeasonStats(prev => ({ ...prev, ...data.players }));
+       }
+     })
+     .catch(() => {});
+ }, [allLBNames.join(',')]);
+
  const retranslateCommentaries = async () => {
  if (commentaries.length === 0 || isRetranslating) return;
  
@@ -2461,19 +2480,32 @@ export default function LiveMatchCommentaryV4() {
    recSum: s.reception.sum, recPerfect: s.reception.perfect, digs: s.dig,
    attackSum: s.attack.sum,
  }));
- const topScorersLB  = [...lbEntries].filter(e => e.points > 0).sort((a, b) => b.points - a.points).slice(0, 3);
- const topAttackLB   = [...lbEntries].filter(e => e.attackSum >= 3).sort((a, b) => b.killPct - a.killPct).slice(0, 3);
- const topAcesLB     = [...lbEntries].filter(e => e.aces > 0).sort((a, b) => b.aces - a.aces).slice(0, 3);
- const topBlocksLB   = [...lbEntries].filter(e => e.blocks > 0).sort((a, b) => b.blocks - a.blocks).slice(0, 3);
- const topRecLB      = [...lbEntries].filter(e => e.recSum >= 3).sort((a, b) => b.recPct - a.recPct).slice(0, 3);
- const topDigsLB     = [...lbEntries].filter(e => e.digs > 0).sort((a, b) => b.digs - a.digs).slice(0, 3);
+ const enrichLB = (entries: typeof lbEntries) => entries.map(e => {
+   const ss = seasonStats[e.name];
+   return { ...e, seasonAvg: ss?.avgPoints, last5: ss?.last5, trend: ss?.trend as any, playerId: ss?.id };
+ });
+ const topScorersLB  = enrichLB([...lbEntries].filter(e => e.points > 0).sort((a, b) => b.points - a.points).slice(0, 3));
+ const topAttackLB   = enrichLB([...lbEntries].filter(e => e.attackSum >= 3).sort((a, b) => b.killPct - a.killPct).slice(0, 3));
+ const topAcesLB     = enrichLB([...lbEntries].filter(e => e.aces > 0).sort((a, b) => b.aces - a.aces).slice(0, 3));
+ const topBlocksLB   = enrichLB([...lbEntries].filter(e => e.blocks > 0).sort((a, b) => b.blocks - a.blocks).slice(0, 3));
+ const topRecLB      = enrichLB([...lbEntries].filter(e => e.recSum >= 3).sort((a, b) => b.recPct - a.recPct).slice(0, 3));
+ const topDigsLB     = enrichLB([...lbEntries].filter(e => e.digs > 0).sort((a, b) => b.digs - a.digs).slice(0, 3));
+
+ // ── SEASON STATS FETCH ─────────────────────────────────────────────────────
+ // Collect unique top scorers across all leaderboards and fetch season stats
+ const allLBNames = [...new Set([
+   ...topScorersLB.map(e => e.name),
+   ...topAttackLB.map(e => e.name),
+   ...topAcesLB.map(e => e.name),
+   ...topBlocksLB.map(e => e.name),
+ ])];
 
  // ─── RIGHT-TAB STATE ─────────────────────────────────────────────────────────
  // (stored as local const since we already have tab state from v3's right side)
  const [rightTab, setRightTab] = useState<'ranking' | 'buddy' | 'set'>('ranking');
 
  // ─── RANK CARD COMPONENT ─────────────────────────────────────────────────────
- type RankRow = { name: string; team: string; value: number; num?: number; den?: number };
+ type RankRow = { name: string; team: string; value: number; num?: number; den?: number; seasonAvg?: number; last5?: number[]; trend?: 'up' | 'down' | 'stable'; playerId?: string; };
  const RankCard = ({ title, icon, data, isPercent, barColor, border }: {
    title: string; icon: string; data: RankRow[]; isPercent: boolean; barColor: string; border: string;
  }) => {
@@ -2488,18 +2520,58 @@ export default function LiveMatchCommentaryV4() {
        {data.map((d, i) => {
          const pct = Math.min((d.value / mx) * 100, 100);
          const lbl = isPercent && d.num != null ? `${d.value}% (${d.num}/${d.den})` : `${d.value}${isPercent ? '%' : ''}`;
+         const ss = seasonStats[d.name];
+         const last5 = ss?.last5 || [];
+         const maxL5 = Math.max(...last5, 1);
+         const trend = ss?.trend;
+         const trendColor = trend === 'up' ? '#34d399' : trend === 'down' ? '#f87171' : '#64748b';
+         const trendArrow = trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→';
          return (
-           <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-             <div style={{ width: 100, display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
-               <span style={{ width: 12, fontSize: 9, fontWeight: 700, color: i === 0 ? '#facc15' : '#64748b' }}>{i + 1}</span>
-               <span style={{ fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: d.team === 'home' ? '#93c5fd' : '#fcd34d' }} title={d.name}>
-                 {d.name.split(' ').slice(-1)[0]}
-               </span>
+           <div key={d.name} style={{ marginBottom: 8 }}>
+             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+               <div style={{ width: 100, display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
+                 <span style={{ width: 12, fontSize: 9, fontWeight: 700, color: i === 0 ? '#facc15' : '#64748b' }}>{i + 1}</span>
+                 <span style={{ fontSize: 11, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: d.team === 'home' ? '#93c5fd' : '#fcd34d' }} title={d.name}>
+                   {d.name.split(' ').slice(-1)[0]}
+                 </span>
+               </div>
+               <div style={{ flex: 1, height: 10, borderRadius: 99, overflow: 'hidden', background: 'rgba(255,255,255,.06)' }}>
+                 <div style={{ width: `${pct}%`, height: '100%', borderRadius: 99, background: barColor, transition: 'width .7s' }} />
+               </div>
+               <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color: '#cbd5e1', width: 60, textAlign: 'right' }}>{lbl}</span>
              </div>
-             <div style={{ flex: 1, height: 10, borderRadius: 99, overflow: 'hidden', background: 'rgba(255,255,255,.06)' }}>
-               <div style={{ width: `${pct}%`, height: '100%', borderRadius: 99, background: barColor, transition: 'width .7s' }} />
-             </div>
-             <span style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 10, color: '#cbd5e1', width: 60, textAlign: 'right' }}>{lbl}</span>
+             {/* Season form row */}
+             {last5.length > 0 && (
+               <div style={{ display: 'flex', alignItems: 'center', gap: 5, paddingLeft: 17, marginTop: 2 }}>
+                 {/* Sparkline */}
+                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 14 }}>
+                   {last5.map((v, idx) => (
+                     <div key={idx} style={{
+                       width: 5, borderRadius: 1,
+                       height: `${Math.max(2, Math.round((v / maxL5) * 14))}px`,
+                       background: idx === last5.length - 1
+                         ? (d.team === 'home' ? '#93c5fd' : '#fcd34d')
+                         : 'rgba(255,255,255,.2)',
+                     }} />
+                   ))}
+                 </div>
+                 {/* Trend arrow */}
+                 <span style={{ fontSize: 9, color: trendColor, fontWeight: 700 }}>{trendArrow}</span>
+                 {/* Season avg */}
+                 {ss?.avgPoints != null && (
+                   <span style={{ fontSize: 9, color: '#475569', fontFamily: "'JetBrains Mono',monospace" }}>
+                     śr. {ss.avgPoints}
+                   </span>
+                 )}
+                 {/* Profile link */}
+                 {ss?.id && (
+                   <a href={`/players/${ss.id}`} target="_blank" rel="noopener noreferrer"
+                     style={{ fontSize: 8, color: '#3b82f6', textDecoration: 'none', marginLeft: 'auto', opacity: .7 }}>
+                     profil →
+                   </a>
+                 )}
+               </div>
+             )}
            </div>
          );
        })}
