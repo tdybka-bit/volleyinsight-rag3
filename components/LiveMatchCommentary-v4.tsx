@@ -455,7 +455,7 @@ export default function LiveMatchCommentaryV4() {
  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
  const [translatedProfileSummary, setTranslatedProfileSummary] = useState<string | null>(null);
 
- const [seasonStats, setSeasonStats] = useState<Record<string, { found: boolean; avgPoints?: number; avgBlocks?: number; avgAces?: number; avgAttackPct?: number; last5?: number[]; trend?: string; id?: string }>>({});
+ const [seasonStats, setSeasonStats] = useState<Record<string, { found: boolean; avgPoints?: number; avgBlocks?: number; avgAces?: number; avgAttackPct?: number; avgRecPct?: number; avgDigs?: number; last5?: number[]; trend?: string; id?: string }>>({});
 
  const [playerStats, setPlayerStats] = useState<Record<string, {
  // Legacy fields (for route.ts compatibility)
@@ -2500,7 +2500,7 @@ export default function LiveMatchCommentaryV4() {
  // ─── RANK CARD COMPONENT ─────────────────────────────────────────────────────
  type RankRow = { name: string; team: string; value: number; num?: number; den?: number; seasonAvg?: number; last5?: number[]; trend?: 'up' | 'down' | 'stable'; playerId?: string; };
  const RankCard = ({ title, icon, data, isPercent, barColor, border, avgField }: {
-   title: string; icon: string; data: RankRow[]; isPercent: boolean; barColor: string; border: string; avgField?: 'avgPoints' | 'avgAces' | 'avgBlocks' | 'avgAttackPct';
+   title: string; icon: string; data: RankRow[]; isPercent: boolean; barColor: string; border: string; avgField?: 'avgPoints' | 'avgAces' | 'avgBlocks' | 'avgAttackPct' | 'avgRecPct' | 'avgDigs';
  }) => {
    if (!data.length) return null;
    const mx = isPercent ? 100 : Math.max(...data.map(d => d.value), 1) + 2;
@@ -2530,7 +2530,7 @@ export default function LiveMatchCommentaryV4() {
                </span>
                {avgField && ss?.[avgField] != null && (
                  <span style={{ fontSize: 10, color: '#94a3b8', fontFamily: "'JetBrains Mono',monospace", flexShrink: 0 }}>
-                   śr.{' '}<span style={{ color: '#cbd5e1', fontWeight: 700 }}>{ss[avgField]}{avgField === 'avgAttackPct' ? '%' : ''}</span>
+                   śr.{' '}<span style={{ color: '#cbd5e1', fontWeight: 700 }}>{ss[avgField]}{(avgField === 'avgAttackPct' || avgField === 'avgRecPct') ? '%' : ''}</span>
                  </span>
                )}
                {trend && <span style={{ fontSize: 11, color: trendColor, fontWeight: 800, flexShrink: 0 }}>{trendArrow}</span>}
@@ -3038,8 +3038,8 @@ export default function LiveMatchCommentaryV4() {
                        <RankCard title={r.atk} icon="💥" data={topAttackLB.map(e => ({ name: e.name, team: e.team, value: e.killPct, num: e.attackSum > 0 ? Math.round(e.killPct * e.attackSum / 100) : 0, den: e.attackSum }))} isPercent={true} barColor="linear-gradient(to right,#7f1d1d,#f87171)" border="rgba(239,68,68,.15)" avgField="avgAttackPct" />
                        <RankCard title={r.srv} icon="🎯" data={topAcesLB.map(e => ({ name: e.name, team: e.team, value: e.aces }))} isPercent={false} barColor="linear-gradient(to right,#3b0764,#c084fc)" border="rgba(139,92,246,.15)" avgField="avgAces" />
                        <RankCard title={r.blk} icon="🧱" data={topBlocksLB.map(e => ({ name: e.name, team: e.team, value: e.blocks }))} isPercent={false} barColor="linear-gradient(to right,#1e3a5f,#60a5fa)" border="rgba(59,130,246,.15)" avgField="avgBlocks" />
-                       <RankCard title={r.rec} icon="🛡️" data={topRecLB.map(e => ({ name: e.name, team: e.team, value: e.recPct, num: e.recPerfect, den: e.recSum }))} isPercent={true} barColor="linear-gradient(to right,#713f12,#fbbf24)" border="rgba(234,179,8,.15)" />
-                       <RankCard title={r.dig} icon="🏊" data={topDigsLB.map(e => ({ name: e.name, team: e.team, value: e.digs }))} isPercent={false} barColor="linear-gradient(to right,#164e63,#22d3ee)" border="rgba(6,182,212,.15)" />
+                       <RankCard title={r.rec} icon="🛡️" data={topRecLB.map(e => ({ name: e.name, team: e.team, value: e.recPct, num: e.recPerfect, den: e.recSum }))} isPercent={true} barColor="linear-gradient(to right,#713f12,#fbbf24)" border="rgba(234,179,8,.15)" avgField="avgRecPct" />
+                       <RankCard title={r.dig} icon="🏊" data={topDigsLB.map(e => ({ name: e.name, team: e.team, value: e.digs }))} isPercent={false} barColor="linear-gradient(to right,#164e63,#22d3ee)" border="rgba(6,182,212,.15)" avgField="avgDigs" />
                      </>);
                    })()}
                  </>
