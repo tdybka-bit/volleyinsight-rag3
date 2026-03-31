@@ -455,7 +455,7 @@ export default function LiveMatchCommentaryV4() {
  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
  const [translatedProfileSummary, setTranslatedProfileSummary] = useState<string | null>(null);
 
- const [seasonStats, setSeasonStats] = useState<Record<string, { found: boolean; avgPoints?: number; last5?: number[]; trend?: string; id?: string }>>({});
+ const [seasonStats, setSeasonStats] = useState<Record<string, { found: boolean; avgPoints?: number; avgBlocks?: number; avgAces?: number; avgAttackPct?: number; last5?: number[]; trend?: string; id?: string }>>({});
 
  const [playerStats, setPlayerStats] = useState<Record<string, {
  // Legacy fields (for route.ts compatibility)
@@ -2499,8 +2499,8 @@ export default function LiveMatchCommentaryV4() {
 
  // ─── RANK CARD COMPONENT ─────────────────────────────────────────────────────
  type RankRow = { name: string; team: string; value: number; num?: number; den?: number; seasonAvg?: number; last5?: number[]; trend?: 'up' | 'down' | 'stable'; playerId?: string; };
- const RankCard = ({ title, icon, data, isPercent, barColor, border, showSeasonAvg = false }: {
-   title: string; icon: string; data: RankRow[]; isPercent: boolean; barColor: string; border: string; showSeasonAvg?: boolean;
+ const RankCard = ({ title, icon, data, isPercent, barColor, border, avgField }: {
+   title: string; icon: string; data: RankRow[]; isPercent: boolean; barColor: string; border: string; avgField?: 'avgPoints' | 'avgAces' | 'avgBlocks' | 'avgAttackPct';
  }) => {
    if (!data.length) return null;
    const mx = isPercent ? 100 : Math.max(...data.map(d => d.value), 1) + 2;
@@ -2528,9 +2528,9 @@ export default function LiveMatchCommentaryV4() {
                <span style={{ fontSize: 12, fontWeight: 700, color: nameColor, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={d.name}>
                  {d.name.split(' ').slice(-1)[0]}
                </span>
-               {showSeasonAvg && ss?.avgPoints != null && (
+               {avgField && ss?.[avgField] != null && (
                  <span style={{ fontSize: 10, color: '#94a3b8', fontFamily: "'JetBrains Mono',monospace", flexShrink: 0 }}>
-                   śr.{' '}<span style={{ color: '#cbd5e1', fontWeight: 700 }}>{ss.avgPoints}</span>
+                   śr.{' '}<span style={{ color: '#cbd5e1', fontWeight: 700 }}>{ss[avgField]}{avgField === 'avgAttackPct' ? '%' : ''}</span>
                  </span>
                )}
                {trend && <span style={{ fontSize: 11, color: trendColor, fontWeight: 800, flexShrink: 0 }}>{trendArrow}</span>}
@@ -3034,10 +3034,10 @@ export default function LiveMatchCommentaryV4() {
                      };
                      const r = rk[language as keyof typeof rk] || rk.pl;
                      return (<>
-                       <RankCard title={r.pts} icon="🏆" data={topScorersLB.map(e => ({ name: e.name, team: e.team, value: e.points }))} isPercent={false} barColor="linear-gradient(to right,#065f46,#34d399)" border="rgba(16,185,129,.15)" showSeasonAvg={true} />
-                       <RankCard title={r.atk} icon="💥" data={topAttackLB.map(e => ({ name: e.name, team: e.team, value: e.killPct, num: e.attackSum > 0 ? Math.round(e.killPct * e.attackSum / 100) : 0, den: e.attackSum }))} isPercent={true} barColor="linear-gradient(to right,#7f1d1d,#f87171)" border="rgba(239,68,68,.15)" />
-                       <RankCard title={r.srv} icon="🎯" data={topAcesLB.map(e => ({ name: e.name, team: e.team, value: e.aces }))} isPercent={false} barColor="linear-gradient(to right,#3b0764,#c084fc)" border="rgba(139,92,246,.15)" />
-                       <RankCard title={r.blk} icon="🧱" data={topBlocksLB.map(e => ({ name: e.name, team: e.team, value: e.blocks }))} isPercent={false} barColor="linear-gradient(to right,#1e3a5f,#60a5fa)" border="rgba(59,130,246,.15)" />
+                       <RankCard title={r.pts} icon="🏆" data={topScorersLB.map(e => ({ name: e.name, team: e.team, value: e.points }))} isPercent={false} barColor="linear-gradient(to right,#065f46,#34d399)" border="rgba(16,185,129,.15)" avgField="avgPoints" />
+                       <RankCard title={r.atk} icon="💥" data={topAttackLB.map(e => ({ name: e.name, team: e.team, value: e.killPct, num: e.attackSum > 0 ? Math.round(e.killPct * e.attackSum / 100) : 0, den: e.attackSum }))} isPercent={true} barColor="linear-gradient(to right,#7f1d1d,#f87171)" border="rgba(239,68,68,.15)" avgField="avgAttackPct" />
+                       <RankCard title={r.srv} icon="🎯" data={topAcesLB.map(e => ({ name: e.name, team: e.team, value: e.aces }))} isPercent={false} barColor="linear-gradient(to right,#3b0764,#c084fc)" border="rgba(139,92,246,.15)" avgField="avgAces" />
+                       <RankCard title={r.blk} icon="🧱" data={topBlocksLB.map(e => ({ name: e.name, team: e.team, value: e.blocks }))} isPercent={false} barColor="linear-gradient(to right,#1e3a5f,#60a5fa)" border="rgba(59,130,246,.15)" avgField="avgBlocks" />
                        <RankCard title={r.rec} icon="🛡️" data={topRecLB.map(e => ({ name: e.name, team: e.team, value: e.recPct, num: e.recPerfect, den: e.recSum }))} isPercent={true} barColor="linear-gradient(to right,#713f12,#fbbf24)" border="rgba(234,179,8,.15)" />
                        <RankCard title={r.dig} icon="🏊" data={topDigsLB.map(e => ({ name: e.name, team: e.team, value: e.digs }))} isPercent={false} barColor="linear-gradient(to right,#164e63,#22d3ee)" border="rgba(6,182,212,.15)" />
                      </>);
@@ -3125,21 +3125,21 @@ export default function LiveMatchCommentaryV4() {
                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                              <div style={{ textAlign: 'center', minWidth: 40 }}>
                                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 800, color: isAbove ? '#34d399' : isBelow ? '#f87171' : '#cbd5e1' }}>{matchPts}</div>
-                               <div style={{ fontSize: 9, color: '#64748b' }}>ten mecz</div>
+                               <div style={{ fontSize: 9, color: '#94a3b8' }}>ten mecz</div>
                              </div>
                              <div style={{ flex: 1, textAlign: 'center' }}>
-                               <div style={{ fontSize: 9, color: '#334155', marginBottom: 2 }}>vs</div>
+                               <div style={{ fontSize: 9, color: '#475569', marginBottom: 2 }}>vs</div>
                                <div style={{ height: 1, background: 'rgba(255,255,255,.06)' }} />
                              </div>
                              <div style={{ textAlign: 'center', minWidth: 40 }}>
-                               <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 800, color: '#64748b' }}>{avgPts}</div>
-                               <div style={{ fontSize: 9, color: '#64748b' }}>śr. sezonu</div>
+                               <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 800, color: '#94a3b8' }}>{avgPts}</div>
+                               <div style={{ fontSize: 9, color: '#94a3b8' }}>śr. sezonu</div>
                              </div>
                            </div>
                            {/* Last 5 sparkline */}
                            {last5.length > 0 && (
                              <div>
-                               <div style={{ fontSize: 9, color: '#64748b', marginBottom: 6 }}>punkty w ostatnich 5 meczach sezonu</div>
+                               <div style={{ fontSize: 9, color: '#94a3b8', marginBottom: 6 }}>punkty w ostatnich 5 meczach sezonu</div>
                                <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 36 }}>
                                  {last5.map((v, idx) => (
                                    <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
