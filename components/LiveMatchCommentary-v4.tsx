@@ -2553,7 +2553,7 @@ export default function LiveMatchCommentaryV4() {
                  <div style={{ width: `${pct}%`, height: '100%', borderRadius: 99, background: barColor, transition: 'width .7s' }} />
                </div>
                {ss?.id && (
-                 <a href={`/players/${ss.id}`} target="_blank" rel="noopener noreferrer"
+                 <a href={`/player/${ss.id}`} target="_blank" rel="noopener noreferrer"
                    style={{ fontSize: 9, color: '#3b82f6', textDecoration: 'none', flexShrink: 0, opacity: .8 }}>
                    profil →
                  </a>
@@ -3157,7 +3157,7 @@ export default function LiveMatchCommentaryV4() {
                            {/* Profile link */}
                            {ss.id && (
                              <div style={{ marginTop: 8, textAlign: 'right' }}>
-                               <a href={`/players/${ss.id}`} target="_blank" rel="noopener noreferrer"
+                               <a href={`/player/${ss.id}`} target="_blank" rel="noopener noreferrer"
                                  style={{ fontSize: 10, color: '#3b82f6', textDecoration: 'none', fontWeight: 600 }}>
                                  pełny profil sezonu →
                                </a>
