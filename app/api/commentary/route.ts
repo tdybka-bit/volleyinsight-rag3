@@ -1580,7 +1580,7 @@ CRITICAL COMMENTARY RULES:
  errorContext = `\nATTACK BEAT BLOCK: ${attackingPlayer} (${attackingTeamName}) beat ${scoringPlayer}'s block!
 Praise ${attackingPlayer}'s ATTACK, not the blocker's mistake!
 Example: "${attackingPlayer} beats ${scoringPlayer}'s block! Powerful attack!"
-Player surnames are invariable — do NOT add Polish endings!`;
+${language === 'pl' ? 'PL: Odmieniaj nazwiska! Kaczmarek→Kaczmareka, itp.' : 'Surnames invariable — base form only.'}`;
  } else if (scoringAction.toLowerCase().includes('error')) {
  errorContext = `\nNOTE: This was an ERROR by ${scoringPlayer}. Do not overdramatize — just describe the mistake.`;
  }
@@ -1654,7 +1654,7 @@ INSTRUCTIONS:
 - ${milestone ? `IMPORTANT: Mention this is ${milestone}!` : ''}${passInstructions}
 - ${commentaryHintsContext ? 'APPLY USER HINTS - they have PRIORITY over other context!' : ''}
 - ${isFirstPoint ? 'Do NOT use "increases/reduces lead" — this is the FIRST point!' : ''}
-- Player surnames are invariable — do NOT add Polish declension endings
+- ${language === 'pl' ? 'ODMIANA PL: Odmieniaj nazwiska przez przypadki — Kaczmarek→Kaczmareka, Szalpuk→Szalpuka, Butryn→Butryna, Toniutti→Toniuttiego, Shoji→Shojiego. Dopasuj przypadek do kontekstu zdania!' : 'NAMES: Surnames invariable — use BASE FORM only. NOT Kaczmarka but Kaczmarek.'}
 - DO NOT REPEAT INFORMATION! Score, who scored, who leads — mention ONCE. Do not add another sentence saying the same thing.
 - AVOID MECHANICAL PHRASES: Do NOT use literal score-report language. Use emotional equivalents from tone-rules context.
 - ${attackCombo ? `TACTICAL DATA: Attack type ${attackCombo}${attackLocation ? `, zone: ${attackLocation}` : ''}${attackStyle ? `, style: ${attackStyle}` : ''}. Use this to describe SPECIFICALLY what happened (e.g. diagonal attack, pipe, quick middle) instead of vague terms!` : serveType ? `TACTICAL DATA: Serve type ${serveType}. Describe it specifically!` : ''}
