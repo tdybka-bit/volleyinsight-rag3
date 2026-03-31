@@ -96,6 +96,11 @@ export async function GET(request: NextRequest) {
       const avgPts  = st.matches > 0 ? Math.round((st.points / st.matches) * 10) / 10 : 0;
 
       const m = st.matches || 1;
+      // avgDigs: compute from match_by_match
+      const digVals = (p.match_by_match || [])
+        .map((mx: any) => mx.defense)
+        .filter((v: any) => typeof v === 'number' && Number.isInteger(v) && v >= 0 && v < 50);
+      const avgDigs = digVals.length > 0 ? Math.round((digVals.reduce((a: number, b: number) => a + b, 0) / digVals.length) * 10) / 10 : 0;
       results[surname] = {
         found:        true,
         id:           p.id,
@@ -105,6 +110,8 @@ export async function GET(request: NextRequest) {
         avgAces:      st.matches > 0 ? Math.round((st.aces / m) * 10) / 10 : 0,
         avgBlocks:    st.matches > 0 ? Math.round(((st.block_points || 0) / m) * 10) / 10 : 0,
         avgAttackPct: Math.round(st.attack_perfect_percent || 0),
+        avgRecPct:    Math.round(st.reception_perfect_percent || 0),
+        avgDigs:      avgDigs,
         last5,
         trend:        getTrend(last5),
         season: {
@@ -131,6 +138,10 @@ export async function GET(request: NextRequest) {
   const last5   = cleanLast5(matches);
 
   const m = st.matches || 1;
+  const digVals = (p.match_by_match || [])
+    .map((mx: any) => mx.defense)
+    .filter((v: any) => typeof v === 'number' && Number.isInteger(v) && v >= 0 && v < 50);
+  const avgDigs = digVals.length > 0 ? Math.round((digVals.reduce((a: number, b: number) => a + b, 0) / digVals.length) * 10) / 10 : 0;
   return Response.json({
     found:        true,
     id:           p.id,
@@ -140,6 +151,8 @@ export async function GET(request: NextRequest) {
     avgAces:      st.matches > 0 ? Math.round((st.aces      / m) * 10) / 10 : 0,
     avgBlocks:    st.matches > 0 ? Math.round(((st.block_points || 0) / m) * 10) / 10 : 0,
     avgAttackPct: Math.round(st.attack_perfect_percent || 0),
+    avgRecPct:    Math.round(st.reception_perfect_percent || 0),
+    avgDigs:      avgDigs,
     last5,
     trend:        getTrend(last5),
     season: {
