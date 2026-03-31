@@ -174,7 +174,20 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
   console.log('📋 First 5 phases:', spcTotal.data.slice(0, 5).map(d => d.phase));
   console.log('📋 Last 5 phases:', spcTotal.data.slice(-5).map(d => d.phase));
 
-  const stats = player.currentSeasonStats;
+  // Compute stats directly from filtered matches to stay consistent with table
+  const stats = matches.length > 0 ? {
+    matches:         matches.length,
+    sets:            matches.reduce((s: number, m: any) => s + (parseInt(m.sets) || 0), 0),
+    points:          matches.reduce((s: number, m: any) => s + (parseInt(m.points_total) || 0), 0),
+    attacks:         matches.reduce((s: number, m: any) => s + (parseInt(m.attack_total) || 0), 0),
+    attackEfficiency: player.currentSeasonStats?.attackEfficiency || 0,
+    blocks:          matches.reduce((s: number, m: any) => s + (parseInt(m.block_points) || 0), 0),
+    aces:            matches.reduce((s: number, m: any) => s + (parseInt(m.serve_aces) || 0), 0),
+    serves:          matches.reduce((s: number, m: any) => s + (parseInt(m.serve_total) || 0), 0),
+    serveEfficiency: 0,
+    reception:       matches.reduce((s: number, m: any) => s + (parseInt(m.reception_total) || 0), 0),
+    receptionEfficiency: player.currentSeasonStats?.receptionEfficiency || 0,
+  } : player.currentSeasonStats;
   const career = player.careerTotals;
 
   // Dane porównawcze z innego sezonu
@@ -612,7 +625,7 @@ const CustomDot = (props: any) => {
             if (totalSets === 3)      resultDisplay = won ? '3:0' : '0:3';
             else if (totalSets === 4) resultDisplay = won ? '3:1' : '1:3';
             else if (totalSets === 5) resultDisplay = won ? '3:2' : '2:3';
-            else resultDisplay = `${totalSets}S`;
+            else resultDisplay = '–';  // partial match (bench entry)
           }
           
           return (
