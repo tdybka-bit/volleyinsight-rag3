@@ -126,12 +126,15 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
     const matches = (player.matchByMatch || []).filter((m: any) => {
       const giornata = m.giornata || '';
       const opponent = m.opponent || '';
+      const pts = m.points_total;
       return !giornata.match(/^\d+$/) && 
              !giornata.includes('Media') && 
              !giornata.includes('Totale') && 
-             !opponent.includes('Średnia') &&  // 🔧 NOWE!
-             !opponent.includes('średnia') &&  // 🔧 NOWE!
-             m.points_total !== undefined;
+             !opponent.includes('Średnia') &&
+             !opponent.includes('średnia') &&
+             pts !== undefined &&
+             Number.isInteger(Number(pts)) &&  // ← odfiltruj float averages
+             Number(pts) < 60;                 // ← odfiltruj absurdalne sumy
     });
   
     console.log('📊 Filtered matches count:', matches.length);
@@ -187,15 +190,18 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
       const compareMatches = comparePlayer.matchByMatch
         .filter((m: any) => {
           const giornata = m.giornata || '';
+          const pts = m.points_total;
           return !giornata.match(/^\d+$/) && 
                  !giornata.includes('Media') && 
                  !giornata.includes('Totale') && 
-                 m.points_total !== undefined;
-        })
-        .slice(0, matches.length);
+                 pts !== undefined &&
+                 Number.isInteger(Number(pts)) &&
+                 Number(pts) < 60;
+        });
       
+      // Full previous season as line (not truncated to current season length)
       compareData = compareMatches.map((m, idx) => ({
-        match: idx + 1,
+        match: `M${idx + 1}`,
         value: parseInt(m.points_total) || 0
       }));
     }
@@ -325,8 +331,8 @@ const CustomDot = (props: any) => {
             <div className="bg-yellow-500/20 backdrop-blur-lg rounded-xl p-5 border border-yellow-500/30">
               <div className="text-yellow-200 text-sm font-medium mb-1">{t.points}</div>
               <div className="text-white text-3xl font-bold">
-                {stats.points}
-                <span className="text-xl text-gray-400 ml-2">({career?.points || 0})</span>
+                {Math.round(stats.points)}
+                <span className="text-xl text-gray-400 ml-2">({Math.round(career?.points || 0)})</span>
               </div>
               <div className="text-yellow-300 text-sm mt-1">{(stats.points / (stats.sets || 1)).toFixed(2)} / set</div>
             </div>
@@ -337,14 +343,14 @@ const CustomDot = (props: any) => {
                 {Math.round(stats.attackEfficiency || 0)}%
                 <span className="text-xl text-gray-400 ml-2">({Math.round(career?.attackEfficiency || 0)}%)</span>
               </div>
-              <div className="text-blue-300 text-sm mt-1">{stats.attacks} ataków</div>
+              <div className="text-blue-300 text-sm mt-1">{Math.round(stats.attacks)} ataków</div>
             </div>
 
             <div className="bg-green-500/20 backdrop-blur-lg rounded-xl p-5 border border-green-500/30">
               <div className="text-green-200 text-sm font-medium mb-1">{t.aces}</div>
               <div className="text-white text-3xl font-bold">
-                {stats.aces}
-                <span className="text-xl text-gray-400 ml-2">({career?.aces || 0})</span>
+                {Math.round(stats.aces)}
+                <span className="text-xl text-gray-400 ml-2">({Math.round(career?.aces || 0)})</span>
               </div>
               <div className="text-green-300 text-sm mt-1">{(stats.aces / (stats.sets || 1)).toFixed(2)} / set</div>
             </div>
@@ -352,8 +358,8 @@ const CustomDot = (props: any) => {
             <div className="bg-purple-500/20 backdrop-blur-lg rounded-xl p-5 border border-purple-500/30">
               <div className="text-purple-200 text-sm font-medium mb-1">{t.blocks}</div>
               <div className="text-white text-3xl font-bold">
-                {stats.blocks}
-                <span className="text-xl text-gray-400 ml-2">({career?.blocks || 0})</span>
+                {Math.round(stats.blocks)}
+                <span className="text-xl text-gray-400 ml-2">({Math.round(career?.blocks || 0)})</span>
               </div>
               <div className="text-purple-300 text-sm mt-1">{(stats.blocks / (stats.sets || 1)).toFixed(2)} / set</div>
             </div>
@@ -364,7 +370,7 @@ const CustomDot = (props: any) => {
                 {stats.matches}
                 <span className="text-xl text-gray-400 ml-2">({career?.matches || 0})</span>
               </div>
-              <div className="text-slate-300 text-sm mt-1">{stats.sets} setów</div>
+              <div className="text-slate-300 text-sm mt-1">{Math.round(stats.sets)} setów</div>
             </div>
 
             <div className="bg-orange-500/20 backdrop-blur-lg rounded-xl p-5 border border-orange-500/30">
@@ -456,8 +462,36 @@ const CustomDot = (props: any) => {
               </div>
               
               <ResponsiveContainer width="100%" height={350}>
+                {(() => {
+                  // Merge current + compare into single dataset for X axis
+                  const compareLen = compareData ? compareData.length : 0;
+                  const currentLen = spcTotal.data.length;
+                  const totalLen = Math.max(currentLen, compareLen);
+                  
+                  const mergedData = Array.from({ length: totalLen }, (_, i) => {
+                    const cur = spcTotal.data[i];
+                    const cmp = compareData?.[i];
+                    return {
+                      match: `M${i + 1}`,
+                      // current season bars — undefined beyond current length (no bar drawn)
+                      attack:    i < currentLen ? (cur?.attack ?? 0)  : undefined,
+                      block:     i < currentLen ? (cur?.block  ?? 0)  : undefined,
+                      ace:       i < currentLen ? (cur?.ace    ?? 0)  : undefined,
+                      value:     i < currentLen ? (cur?.value  ?? 0)  : undefined,
+                      phase:     cur?.phase,
+                      isOutlier: cur?.isOutlier,
+                      uclLine:   cur?.uclLine,
+                      lclLine:   cur?.lclLine,
+                      opponent:  cur?.opponent ?? '',
+                      date:      cur?.date ?? '',
+                      // compare line — goes full length
+                      compareValue: cmp?.value ?? null,
+                    };
+                  });
+
+                  return (
                 <ComposedChart
-                  data={spcTotal.data}
+                  data={mergedData}
                   barCategoryGap="28%"
                   barGap={0}
                   margin={{ top: 20, right: 0, bottom: 0, left: CHART_LEFT_MARGIN }}
@@ -470,48 +504,24 @@ const CustomDot = (props: any) => {
                     tick={{ fill: '#94a3b8', fontSize: CHART_AXIS_FONT_SIZE }}
                   />
                   <YAxis stroke="#94a3b8" tick={{ fill: '#94a3b8', fontSize: CHART_AXIS_FONT_SIZE }} />
-                  <Tooltip content={<CustomTooltip mean={spcTotal.mean}  />} />
+                  <Tooltip content={<CustomTooltip mean={spcTotal.mean} />} />
                   <Legend />
                   
-                  {/* Stacked Bars */}
-                  <Bar
-                    dataKey="attack"
-                    stackId="points"
-                    fill="#3B82F6"
-                    name="Punkty atakiem"
-                    barSize={BAR_SIZE}
-                    maxBarSize={BAR_SIZE}
-                    minPointSize={BAR_MIN_POINT_SIZE}
-                  />
-                  <Bar
-                    dataKey="block"
-                    stackId="points"
-                    fill="#FCB07C"
-                    name="Punkty blokiem"
-                    barSize={BAR_SIZE}
-                    maxBarSize={BAR_SIZE}
-                    minPointSize={BAR_MIN_POINT_SIZE}
-                  />
-                  <Bar
-                    dataKey="ace"
-                    stackId="points"
-                    fill="#10b981"
-                    name="Punkty asami"
-                    barSize={BAR_SIZE}
-                    maxBarSize={BAR_SIZE}
-                    minPointSize={BAR_MIN_POINT_SIZE}
-                  />
+                  {/* Stacked Bars — only current season */}
+                  <Bar dataKey="attack" stackId="points" fill="#3B82F6" name="Punkty atakiem" barSize={BAR_SIZE} maxBarSize={BAR_SIZE} minPointSize={BAR_MIN_POINT_SIZE} />
+                  <Bar dataKey="block"  stackId="points" fill="#FCB07C" name="Punkty blokiem" barSize={BAR_SIZE} maxBarSize={BAR_SIZE} minPointSize={BAR_MIN_POINT_SIZE} />
+                  <Bar dataKey="ace"    stackId="points" fill="#10b981" name="Punkty asami"   barSize={BAR_SIZE} maxBarSize={BAR_SIZE} minPointSize={BAR_MIN_POINT_SIZE} />
                   
-                  {/* Overlay */}
+                  {/* Compare line — full previous season */}
                   {compareData && (
-                    <Line 
-                      type="monotone" 
-                      data={compareData}
-                      dataKey="value" 
-                      stroke="#8b5cf6" 
+                    <Line
+                      type="monotone"
+                      dataKey="compareValue"
+                      stroke="#8b5cf6"
                       strokeWidth={2}
                       strokeDasharray="5 5"
                       dot={false}
+                      connectNulls={false}
                       name={`Sezon ${compareWith}`}
                     />
                   )}
@@ -549,6 +559,8 @@ const CustomDot = (props: any) => {
                     return null;
                   })()}
                 </ComposedChart>
+                  );
+                })()}
               </ResponsiveContainer>
             </div>
 
