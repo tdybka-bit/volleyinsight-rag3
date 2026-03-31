@@ -100,14 +100,41 @@ const getLanguagePrompt = (lang: string) => {
  const prompts: Record<string, string> = {
 
  // ── PL ──────────────────────────────────────────────────────────────────
+ // ── PL ──────────────────────────────────────────────────────────────────
  pl: `Jestes doswiadczonym komentarorem meczow siatkarskich w Polsce — jak Tomasz Swędrowski lub Wojciech Drzyzga na zywo w radiu lub TV.
 
 STYL PL — RADIO NA ZYWO:
 - Prowadz narracje z EMOCJA proporcjonalna do sytuacji. Serve error = krotko i zwiezle. Koniec seta = wybuch emocji!
-- UNIKAJ mechanicznych zwrotow: zamiast "zwieksza przewage" uzyj "odskoczy", "dokrecil srube", "nie odpuszcza". Zamiast "zmniejsza strate" uzyj "wraca do gry!", "nie daje sie!", "zapala iskre!".
+- UNIKAJ mechanicznych zwrotow: zamiast "zwieksza przewage" uzyj "odskoczyc", "dokrecil srube", "nie odpuszcza". Zamiast "zmniejsza strate" uzyj "wraca do gry!", "nie daje sie!", "zapala iskre!".
 - UNIKAJ "gra trwa" — uzyj "akcja trwa!", "wymiana!", "pilka zyje!", "nie daja sie!".
-- Przeplataj krotkie zdania uderzajace z dluzszymi opisowymi. Czasem zacznij od akcji: "Mocna zagrywka!", "Swietna obrona!".
-- Przynajmniej JEDNO zdanie z wykrzyknikiem na komentarz (chyba ze to blad serwisowy — wtedy wystarczy jedno krotkie).`,
+- Przeplataj krotkie zdania uderzajace z dluzszymi opisowymi. Czasem zacznij od akcji: "Mocna zagrywka!", "Kapitalny blok!".
+- Przynajmniej JEDNO zdanie z wykrzyknikiem na komentarz (chyba ze to blad serwisowy — wtedy wystarczy jedno krotkie).
+
+OBOWIAZKOWE SLOWNICTWO PL:
+- Wystawienie: "wystawia do [nazwisko]" LUB "wystawia na lewe/prawe skrzydlo" LUB "szybka pilka do srodka" — NIGDY "wystawia w prawo/lewo", NIGDY "ustawia do ataku", NIGDY "przygotowuje akcje"
+- Blok punkt: "BLOK!", "zatrzymany blokiem!", "mur przy siatce!" — NIGDY "broni blokiem" (blok to NIE obrona!)
+- Wyblok (blok niekonczacy rally): "pilka po bloku", "wyblok — pilka zyje!", "zablokowany ale akcja trwa!"
+- Obrona/dig: "kapitalnie obroniony!", "wyciagnal z podlogi!", "fenomenalna obrona!" — NIGDY angielskie "dig"
+- Float serve: "zagrywka szybujaca", "float" — ZAWSZE lekka/szybujaca, NIGDY "mocna zagrywka" przy float
+- Przyjecie perfekcyjne: "kapitalnie przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!"
+- Przyjecie zle: "trudne przyjecie", "pilka daleko od siatki", "nieidealne przyjecie" — NIGDY "nieporadnie"
+
+ABSOLUTNY ZAKAZ — te slowa/zwroty sa ZABRONIONE w PL:
+- "nieporadnie" — ZASTAP: "nieprecyzyjnie", "daleko od siatki", "z trudem"
+- "dig" (angielskie) — ZASTAP: "obrona", "wybroniony", "wyciagnal"
+- "ustawia do ataku" — ZASTAP: "wystawia do [nazwisko]"
+- "przygotowuje akcje" / "przygotowuje pilke" — za ogolne, opisz konkretnie
+- "broni poteznym blokiem" — ZASTAP: "potezny blok [nazwisko]!" (blok to blok, nie obrona)
+- "znowu" / "ponownie" — TYLKO jesli dane jawnie pokazuja powtorzenie przez tego samego zawodnika
+- "Hoss" — ten zawodnik nie istnieje
+- "potezna zagrywka floatowa" — float jest zawsze lekka/szybujaca, NIGDY potezna
+
+LOGIKA BLOK vs OBRONA — KRYTYCZNE dla poprawnosci:
+- BLOK KONCZACY rally = "[Nazwisko] blokuje! Punkt dla [Druzyna]!"
+- WYBLOK (blok niekonczacy, akcja trwa) = "pilka po bloku wraca w pole!" / "wyblok, pilka zyje!"
+- OBRONA (dig, nie blok) = "kapitalnie obroniony!", "wyciagnal z podlogi!"
+- Jesli po bloku akcja TRWA → to byl WYBLOK, nie blok punkt. Nie mow "blokuje" jezeli akcja trwa dalej.`,
+
 
  // ── EN ──────────────────────────────────────────────────────────────────
  en: `You are a professional volleyball commentator for Sky Sports / NBC Sports / ESPN. Comment in ENGLISH.
@@ -1423,9 +1450,9 @@ if (!rally.touches || rally.touches.length === 0) {
      const combo = touch.attackCombination || '';
      const loc = touch.attackLocation || '';
      let setDesc = 'sets the ball';
-     if (loc.includes('Left')) setDesc = 'sets left';
-     else if (loc.includes('Right')) setDesc = 'sets right';
-     else if (loc.includes('Middle') || combo.includes('K1') || combo.includes('K2') || combo.includes('K7')) setDesc = 'quick set middle';
+     if (loc.includes('Left')) setDesc = 'sets to left wing';
+     else if (loc.includes('Right')) setDesc = 'sets to right wing';
+     else if (loc.includes('Middle') || combo.includes('K1') || combo.includes('K2') || combo.includes('K7')) setDesc = 'quick set to middle';
      else if (combo.toLowerCase().includes('pipe')) setDesc = 'sets pipe';
      desc += ` - ${setDesc}`;
    // ATTACK
@@ -1474,21 +1501,25 @@ if (!rally.touches || rally.touches.length === 0) {
      const isLastTouch = idx === rally.touches!.length - 1;
      if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) {
        const blockSynonyms = [
-         ' - block attempt failed, attacker won the point',
-         ' - attacker beat the block',
-         ' - found a gap in the block',
-         ' - block touched, ball into the court',
-         ' - late block, attacker scores',
+         ' - attacker beat the block (wyblok — attacker scores)',
+         ' - found a gap in the block (wyblok)',
+         ' - block touched but attacker wins',
+         ' - late block, attacker scores through',
        ];
        desc += blockSynonyms[Math.floor(Math.random() * blockSynonyms.length)];
      } else if (isLastTouch) {
-       desc += ' - BLOCK POINT!';
+       desc += ' - BLOCK POINT! (blok kończący — bloker zdobywa punkt)';
      } else {
-       desc += ' - block (ball in play)';
+       desc += ' - block touch, ball rebounds into play (WYBLOK — akcja trwa, nie mow "blokuje" bo punkt nie padl)';
      }
-   // DIG
+   // DIG / DEFENSE
    } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
-     desc += ' - defensive dig';
+     const isLastTouch = idx === rally.touches!.length - 1;
+     if (isLastTouch) {
+       desc += ' - defensive dig (ball out — point to other team)';
+     } else {
+       desc += ' - defensive dig (ball kept in play — obrona, nie blok!)';
+     }
    // FREE
    } else if (actionLower.includes('wolna') || actionLower.includes('free')) {
      desc += ' - free ball';
@@ -1508,12 +1539,15 @@ ${touchChainLines.join('\n')}
 => POINT FOR: ${winnerTeamLabel}
 
 CRITICAL COMMENTARY RULES:
-1. Describe ONLY what is in the touch chain above. Nothing else!
-2. CLIMAX FIRST — describe who scored and how. Earlier touches = brief context only.
-3. SERVE: Error only when ">>> SERVE ERROR" is written. Otherwise the serve was good and play continues.
-4. BLOCK: "attacker beat the block" = ATTACKER scored. Do NOT describe the blocker as the scorer.
-5. If serve is good → reception follows logically. If serve error → rally ends there.
-6. 2-3 touches = 1 short sentence. 5+ touches = fuller description.`;
+1. "POINT FOR: ${winnerTeamLabel}" = ONLY this team scored. NEVER say the other team scored!
+2. Describe ONLY what is in the touch chain above. Nothing invented!
+3. CLIMAX FIRST — who scored and how. Earlier touches = brief context only.
+4. SERVE: Error only when ">>> SERVE ERROR" is written. Otherwise serve was good.
+5. BLOCK POINT vs WYBLOK: "BLOCK POINT!" = blocker scores the point. "block touch, ball rebounds" = wyblok (akcja trwa) — say "wyblok" in PL, NEVER "blokuje" if play continued.
+6. DIG ≠ BLOCK: "defensive dig" = obrona (not blok). Never call a dig a "blok".
+7. PL ONLY: "sets to left/right wing" → "wystawia na lewe/prawe skrzydlo" — NEVER "wystawia w prawo"
+8. 2-3 touches = 1 short sentence. 5+ touches = max 3 sentences with climax at end.
+9. NEVER add "znowu/ponownie" — only if touch chain explicitly shows same player twice.`;
  }
  
  let situationContext = '';
