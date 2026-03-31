@@ -95,20 +95,24 @@ export async function GET(request: NextRequest) {
       const last5   = cleanLast5(matches);
       const avgPts  = st.matches > 0 ? Math.round((st.points / st.matches) * 10) / 10 : 0;
 
+      const m = st.matches || 1;
       results[surname] = {
-        found:       true,
-        id:          p.id,
-        fullName:    p.name,
-        team:        p.team,
-        avgPoints:   avgPts,
+        found:        true,
+        id:           p.id,
+        fullName:     p.name,
+        team:         p.team,
+        avgPoints:    avgPts,
+        avgAces:      st.matches > 0 ? Math.round((st.aces / m) * 10) / 10 : 0,
+        avgBlocks:    st.matches > 0 ? Math.round(((st.block_points || 0) / m) * 10) / 10 : 0,
+        avgAttackPct: Math.round(st.attack_perfect_percent || 0),
         last5,
-        trend:       getTrend(last5),
+        trend:        getTrend(last5),
         season: {
-          matches:      st.matches      || 0,
-          points:       st.points       || 0,
-          aces:         st.aces         || 0,
-          blocks:       st.block_points || 0,
-          attackPct:    st.attack_perfect_percent || 0,
+          matches:   st.matches      || 0,
+          points:    st.points       || 0,
+          aces:      st.aces         || 0,
+          blocks:    st.block_points || 0,
+          attackPct: st.attack_perfect_percent || 0,
         },
       };
     }
@@ -126,14 +130,18 @@ export async function GET(request: NextRequest) {
   const matches = p.match_by_match || [];
   const last5   = cleanLast5(matches);
 
+  const m = st.matches || 1;
   return Response.json({
-    found:     true,
-    id:        p.id,
-    fullName:  p.name,
-    team:      p.team,
-    avgPoints: st.matches > 0 ? Math.round((st.points / st.matches) * 10) / 10 : 0,
+    found:        true,
+    id:           p.id,
+    fullName:     p.name,
+    team:         p.team,
+    avgPoints:    st.matches > 0 ? Math.round((st.points    / m) * 10) / 10 : 0,
+    avgAces:      st.matches > 0 ? Math.round((st.aces      / m) * 10) / 10 : 0,
+    avgBlocks:    st.matches > 0 ? Math.round(((st.block_points || 0) / m) * 10) / 10 : 0,
+    avgAttackPct: Math.round(st.attack_perfect_percent || 0),
     last5,
-    trend:     getTrend(last5),
+    trend:        getTrend(last5),
     season: {
       matches:   st.matches      || 0,
       points:    st.points       || 0,
