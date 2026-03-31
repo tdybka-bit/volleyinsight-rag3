@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
+import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, ReferenceArea, PieChart, Pie, Cell } from 'recharts';
 
 interface PlayerData {
   id: string;
@@ -58,8 +58,18 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ id: st
   const [allPlayers, setAllPlayers] = useState<PlayerData[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerData | null>(null);
   const [compareWith, setCompareWith] = useState<string | null>(null);
-  const [selectedSeason, setSelectedSeason] = useState<string>('2024-2025');
+  const [selectedSeason, setSelectedSeason] = useState<string>('2025-2026');
   const [loading, setLoading] = useState(true);
+  const [language, setLanguage] = useState('pl');
+
+  useEffect(() => {
+    const stored = localStorage.getItem('vi_language');
+    if (stored) setLanguage(stored);
+    // sync when Live Commentary changes language
+    const onStorage = (e: StorageEvent) => { if (e.key === 'vi_language' && e.newValue) setLanguage(e.newValue); };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
 
   useEffect(() => {
     params.then(async (p) => {
@@ -260,12 +270,23 @@ const CustomDot = (props: any) => {
     );
   }
 
+  // Language labels
+  const L = {
+    pl: { back: '← Powrót do komentarza', points: 'Punkty', attack: 'Atak K%', aces: 'Asy', blocks: 'Bloki', matches: 'Mecze', position: 'Pozycja', breakdown: 'Rozkład punktów', spc: 'Wszystkie punkty per mecz (SPC)', avg: 'Średnia', season: 'Sezon', compare: 'Porównaj z:', noCompare: 'Brak porównania', details: 'Mecze szczegółowo', date: 'Data', match: 'Mecz', result: 'Wynik', total: 'Pkt', attack2: 'Atak', block: 'Blok', ace: 'As' },
+    en: { back: '← Back to commentary', points: 'Points', attack: 'Attack K%', aces: 'Aces', blocks: 'Blocks', matches: 'Matches', position: 'Position', breakdown: 'Points breakdown', spc: 'Points per match (SPC)', avg: 'Average', season: 'Season', compare: 'Compare with:', noCompare: 'No comparison', details: 'Match details', date: 'Date', match: 'Match', result: 'Result', total: 'Pts', attack2: 'Attack', block: 'Block', ace: 'Ace' },
+    de: { back: '← Zurück zum Kommentar', points: 'Punkte', attack: 'Angriff K%', aces: 'Asse', blocks: 'Blocks', matches: 'Spiele', position: 'Position', breakdown: 'Punkteverteilung', spc: 'Punkte pro Spiel (SPC)', avg: 'Ø', season: 'Saison', compare: 'Vergleichen mit:', noCompare: 'Kein Vergleich', details: 'Spieldetails', date: 'Datum', match: 'Spiel', result: 'Ergebnis', total: 'Pkt', attack2: 'Angriff', block: 'Block', ace: 'Ass' },
+    it: { back: '← Torna al commento', points: 'Punti', attack: 'Attacco K%', aces: 'Ace', blocks: 'Muri', matches: 'Partite', position: 'Ruolo', breakdown: 'Distribuzione punti', spc: 'Punti a partita (SPC)', avg: 'Media', season: 'Stagione', compare: 'Confronta con:', noCompare: 'Nessun confronto', details: 'Dettagli partite', date: 'Data', match: 'Partita', result: 'Risultato', total: 'Pti', attack2: 'Attacco', block: 'Muro', ace: 'Ace' },
+    es: { back: '← Volver al comentario', points: 'Puntos', attack: 'Ataque K%', aces: 'Aces', blocks: 'Bloqueos', matches: 'Partidos', position: 'Posición', breakdown: 'Distribución puntos', spc: 'Puntos por partido (SPC)', avg: 'Prom.', season: 'Temporada', compare: 'Comparar con:', noCompare: 'Sin comparación', details: 'Detalles', date: 'Fecha', match: 'Partido', result: 'Result.', total: 'Pts', attack2: 'Ataque', block: 'Bloqueo', ace: 'Ace' },
+    tr: { back: '← Yoruma dön', points: 'Sayılar', attack: 'Hücum K%', aces: 'Ace', blocks: 'Blok', matches: 'Maçlar', position: 'Pozisyon', breakdown: 'Puan dağılımı', spc: 'Maç başı puan (SPC)', avg: 'Ort.', season: 'Sezon', compare: 'Karşılaştır:', noCompare: 'Karşılaştırma yok', details: 'Maç detayları', date: 'Tarih', match: 'Maç', result: 'Sonuç', total: 'Puan', attack2: 'Hücum', block: 'Blok', ace: 'Ace' },
+  };
+  const t = L[language as keyof typeof L] || L.pl;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <Link href="/stats" className="text-orange-400 hover:text-orange-300 mb-4 inline-block">
-            ← Powrót do dashboardu
+          <Link href="/live-commentary" className="text-orange-400 hover:text-orange-300 mb-4 inline-block">
+            {t.back}
           </Link>
           <h1 className="text-5xl font-bold text-white mb-2">{player.name}</h1>
           <div className="flex items-center gap-4">
@@ -298,48 +319,96 @@ const CustomDot = (props: any) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-yellow-500/20 backdrop-blur-lg rounded-xl p-6 border border-yellow-500/30">
-            <div className="text-yellow-200 text-sm font-medium mb-1">Punkty</div>
-            <div className="text-white text-3xl font-bold">
-              {stats.points}
-              <span className="text-xl text-gray-400 ml-2">({career?.points || 0})</span>
+        {/* ── STAT CARDS + PIE ─────────────────────────────────────────── */}
+        <div className="flex gap-4 mb-8 items-stretch">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 flex-1">
+            <div className="bg-yellow-500/20 backdrop-blur-lg rounded-xl p-5 border border-yellow-500/30">
+              <div className="text-yellow-200 text-sm font-medium mb-1">{t.points}</div>
+              <div className="text-white text-3xl font-bold">
+                {stats.points}
+                <span className="text-xl text-gray-400 ml-2">({career?.points || 0})</span>
+              </div>
+              <div className="text-yellow-300 text-sm mt-1">{(stats.points / (stats.sets || 1)).toFixed(2)} / set</div>
             </div>
-            <div className="text-yellow-300 text-sm mt-1">
-              {(stats.points / stats.sets || 0).toFixed(2)} / set
+
+            <div className="bg-blue-500/20 backdrop-blur-lg rounded-xl p-5 border border-blue-500/30">
+              <div className="text-blue-200 text-sm font-medium mb-1">{t.attack}</div>
+              <div className="text-white text-3xl font-bold">
+                {Math.round(stats.attackEfficiency || 0)}%
+                <span className="text-xl text-gray-400 ml-2">({Math.round(career?.attackEfficiency || 0)}%)</span>
+              </div>
+              <div className="text-blue-300 text-sm mt-1">{stats.attacks} ataków</div>
+            </div>
+
+            <div className="bg-green-500/20 backdrop-blur-lg rounded-xl p-5 border border-green-500/30">
+              <div className="text-green-200 text-sm font-medium mb-1">{t.aces}</div>
+              <div className="text-white text-3xl font-bold">
+                {stats.aces}
+                <span className="text-xl text-gray-400 ml-2">({career?.aces || 0})</span>
+              </div>
+              <div className="text-green-300 text-sm mt-1">{(stats.aces / (stats.sets || 1)).toFixed(2)} / set</div>
+            </div>
+
+            <div className="bg-purple-500/20 backdrop-blur-lg rounded-xl p-5 border border-purple-500/30">
+              <div className="text-purple-200 text-sm font-medium mb-1">{t.blocks}</div>
+              <div className="text-white text-3xl font-bold">
+                {stats.blocks}
+                <span className="text-xl text-gray-400 ml-2">({career?.blocks || 0})</span>
+              </div>
+              <div className="text-purple-300 text-sm mt-1">{(stats.blocks / (stats.sets || 1)).toFixed(2)} / set</div>
+            </div>
+
+            <div className="bg-slate-500/20 backdrop-blur-lg rounded-xl p-5 border border-slate-500/30">
+              <div className="text-slate-200 text-sm font-medium mb-1">{t.matches}</div>
+              <div className="text-white text-3xl font-bold">
+                {stats.matches}
+                <span className="text-xl text-gray-400 ml-2">({career?.matches || 0})</span>
+              </div>
+              <div className="text-slate-300 text-sm mt-1">{stats.sets} setów</div>
+            </div>
+
+            <div className="bg-orange-500/20 backdrop-blur-lg rounded-xl p-5 border border-orange-500/30">
+              <div className="text-orange-200 text-sm font-medium mb-1">{t.position}</div>
+              <div className="text-white text-2xl font-bold mt-1">{player.position || '—'}</div>
+              <div className="text-orange-300 text-sm mt-1">{player.league?.toUpperCase()}</div>
             </div>
           </div>
 
-          <div className="bg-green-500/20 backdrop-blur-lg rounded-xl p-6 border border-green-500/30">
-            <div className="text-green-200 text-sm font-medium mb-1">Asy</div>
-            <div className="text-white text-3xl font-bold">
-              {stats.aces}
-              <span className="text-xl text-gray-400 ml-2">({career?.aces || 0})</span>
-            </div>
-            <div className="text-green-300 text-sm mt-1">
-              {(stats.aces / stats.sets || 0).toFixed(2)} / set
-            </div>
-          </div>
-
-          <div className="bg-purple-500/20 backdrop-blur-lg rounded-xl p-6 border border-purple-500/30">
-            <div className="text-purple-200 text-sm font-medium mb-1">Bloki</div>
-            <div className="text-white text-3xl font-bold">
-              {stats.blocks}
-              <span className="text-xl text-gray-400 ml-2">({career?.blocks || 0})</span>
-            </div>
-            <div className="text-purple-300 text-sm mt-1">
-              {(stats.blocks / stats.sets || 0).toFixed(2)} / set
-            </div>
-          </div>
-
-          <div className="bg-blue-500/20 backdrop-blur-lg rounded-xl p-6 border border-blue-500/30">
-            <div className="text-blue-200 text-sm font-medium mb-1">Mecze</div>
-            <div className="text-white text-3xl font-bold">
-              {stats.matches}
-              <span className="text-xl text-gray-400 ml-2">({career?.matches || 0})</span>
-            </div>
-            <div className="text-blue-300 text-sm mt-1">{stats.sets} setów</div>
-          </div>
+          {/* Pie chart — rozkład punktów */}
+          {(() => {
+            const atkPts  = matches.reduce((s: number, m: any) => s + (parseInt(m.attack_points) || parseInt(m.attack_winning) || 0), 0);
+            const blkPts  = matches.reduce((s: number, m: any) => s + (parseInt(m.block_points)  || 0), 0);
+            const acePts  = matches.reduce((s: number, m: any) => s + (parseInt(m.serve_aces)    || 0), 0);
+            const total   = atkPts + blkPts + acePts;
+            if (total === 0) return null;
+            const pieData = [
+              { name: 'Atak',  value: atkPts, pct: Math.round(atkPts / total * 100), color: '#3B82F6' },
+              { name: 'Blok',  value: blkPts, pct: Math.round(blkPts / total * 100), color: '#F97316' },
+              { name: 'Serwis', value: acePts, pct: Math.round(acePts / total * 100), color: '#10b981' },
+            ];
+            return (
+              <div className="bg-white/10 backdrop-blur-lg rounded-xl p-5 border border-white/20 flex flex-col items-center justify-center min-w-[200px]">
+                <div className="text-white text-sm font-medium mb-3">{t.breakdown}</div>
+                <PieChart width={150} height={150}>
+                  <Pie data={pieData} cx={70} cy={70} innerRadius={45} outerRadius={70} dataKey="value" strokeWidth={0}>
+                    {pieData.map((entry, idx) => <Cell key={idx} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip formatter={(v: any, n: any) => [`${v} pkt`, n]} />
+                </PieChart>
+                <div className="mt-2 space-y-1 w-full">
+                  {pieData.map(d => (
+                    <div key={d.name} className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-sm" style={{ background: d.color }} />
+                        <span className="text-gray-300">{d.name}</span>
+                      </div>
+                      <span className="text-white font-bold">{d.pct}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         {matches.length > 0 ? (
@@ -348,7 +417,7 @@ const CustomDot = (props: any) => {
               {/* Nagłówek z wyborem sezonu */}
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-white">
-                  📊 Wszystkie punkty per mecz (SPC)
+                  📊 {t.spc}
                 </h2>
                 
                 <select 
@@ -356,6 +425,7 @@ const CustomDot = (props: any) => {
                   onChange={(e) => setSelectedSeason(e.target.value)}
                   className="bg-slate-700 text-white px-4 py-2 rounded-lg text-sm border border-slate-600 hover:bg-slate-600"
                 >
+                  <option value="2025-2026">Sezon 2025-2026</option>
                   <option value="2024-2025">Sezon 2024-2025</option>
                   <option value="2023-2024">Sezon 2023-2024</option>
                   <option value="2022-2023">Sezon 2022-2023</option>
@@ -372,13 +442,14 @@ const CustomDot = (props: any) => {
 
               {/* Porównanie z innym sezonem */}
               <div className="mb-4 flex items-center gap-4">
-                <label className="text-gray-300 text-sm">Porównaj z:</label>
+                <label className="text-gray-300 text-sm">{t.compare}</label>
                 <select 
                   value={compareWith || ''} 
                   onChange={(e) => setCompareWith(e.target.value || null)}
                   className="bg-slate-700 text-white px-3 py-2 rounded-lg text-sm"
                 >
-                  <option value="">Brak porównania</option>
+                  <option value="">{t.noCompare}</option>
+                  <option value="2024-2025">Sezon 2024-2025</option>
                   <option value="2023-2024">Sezon 2023-2024</option>
                   <option value="2022-2023">Sezon 2022-2023</option>
                 </select>
@@ -484,20 +555,20 @@ const CustomDot = (props: any) => {
             {/* TABELA MECZ PO MECZU */}
 <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 mt-6">
   <h2 className="text-xl font-bold text-white mb-4">
-    📋 Mecze szczegółowo ({matches.length})
+    📋 {t.details} ({matches.length})
   </h2>
   <div className="overflow-x-auto">
     <table className="w-full text-sm">
       <thead>
         <tr className="border-b border-white/20">
           <th className="text-left p-2 text-gray-300">#</th>
-          <th className="text-left p-2 text-gray-300">Data</th>
-          <th className="text-left p-2 text-gray-300">Mecz</th>
-          <th className="text-center p-2 text-gray-300">Wynik</th>
-          <th className="text-center p-2 text-gray-300">Pkt</th>
-          <th className="text-center p-2 text-gray-300">Atak</th>
-          <th className="text-center p-2 text-gray-300">Blok</th>
-          <th className="text-center p-2 text-gray-300">Asy</th>
+          <th className="text-left p-2 text-gray-300">{t.date}</th>
+          <th className="text-left p-2 text-gray-300">{t.match}</th>
+          <th className="text-center p-2 text-gray-300">{t.result}</th>
+          <th className="text-center p-2 text-gray-300">{t.total}</th>
+          <th className="text-center p-2 text-gray-300">{t.attack2}</th>
+          <th className="text-center p-2 text-gray-300">{t.block}</th>
+          <th className="text-center p-2 text-gray-300">{t.ace}</th>
         </tr>
       </thead>
       <tbody>
