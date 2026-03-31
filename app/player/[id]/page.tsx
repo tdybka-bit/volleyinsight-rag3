@@ -602,15 +602,25 @@ const CustomDot = (props: any) => {
           const matchDisplay = (homeTeam && awayTeam) 
             ? `${homeTeam} - ${awayTeam}` 
             : match.opponent || '-';
-          
-          const resultDisplay = `${playerSets}:${opponentSets}`;
+
+          // For 2025-2026: derive result from sets + points_balance
+          let resultDisplay = `${playerSets}:${opponentSets}`;
+          if (playerSets === 0 && opponentSets === 0 && match.sets) {
+            const totalSets = parseInt(match.sets) || 0;
+            const balance = match.points_balance ?? 0;
+            const won = balance > 0;
+            if (totalSets === 3)      resultDisplay = won ? '3:0' : '0:3';
+            else if (totalSets === 4) resultDisplay = won ? '3:1' : '1:3';
+            else if (totalSets === 5) resultDisplay = won ? '3:2' : '2:3';
+            else resultDisplay = `${totalSets}S`;
+          }
           
           return (
             <tr key={idx} className="border-b border-white/10 hover:bg-white/5">
               <td className="p-2 text-gray-400">{idx + 1}</td>
               <td className="p-2 text-white text-xs">{match.date}</td>
               <td className="p-2 text-white text-sm">{matchDisplay}</td>
-              <td className="p-2 text-center text-gray-300 font-mono">{resultDisplay}</td>
+              <td className="p-2 text-center font-mono" style={{ color: resultDisplay.startsWith('3') ? '#34d399' : '#f87171' }}>{resultDisplay}</td>
               <td className="p-2 text-center text-yellow-300 font-bold">{match.points_total || 0}</td>
               <td className="p-2 text-center" style={{ color: '#3B82F6' }}>{match.attack_points || match.attack_winning || 0}</td>
               <td className="p-2 text-center" style={{ color: '#F97316' }}>{match.block_points || 0}</td>
