@@ -207,6 +207,8 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    sources: 'zrodel w bazie wiedzy', source1: 'zrodlo w bazie wiedzy', sources24: 'zrodla w bazie wiedzy',
    highRelevance: 'wysoka trafnosc', medRelevance: 'srednia trafnosc',
    setEnd: 'Koniec seta', setWinner: 'Wygrywa', topScorers: 'TOP punktujący', pts: 'pkt', matchEnd: 'KONIEC MECZU', matchWinner: 'Zwycięzca', mvpTitle: 'MVP meczu',
+ 
+   homeLabel: 'GOSPODARZE', awayLabel: 'GOŚCIE', liveStream: 'TRANSMISJA NA ŻYWO', commentaryCount: 'komentarzy', newest: '↓ Najnowsze', chronological: '↑ Chronologicznie', seasonVsMatch: 'Ten mecz vs sezon', thisMatch: 'ten mecz', seasonAvg: 'śr. sezonu', last5: 'punkty w ostatnich 5 meczach sezonu', fullProfile: 'pełny profil sezonu →', singleView: 'Jeden', splitView: 'Podzielony', legend: 'Legenda',
  },
  en: {
    statsTitle: 'Match Statistics', points: 'Points', serve: 'Serve',
@@ -219,6 +221,8 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    sources: 'sources in knowledge base', source1: 'source in knowledge base', sources24: 'sources in knowledge base',
    highRelevance: 'high relevance', medRelevance: 'medium relevance',
    setEnd: 'End of set', setWinner: 'Winner', topScorers: 'TOP scorers', pts: 'pts', matchEnd: 'MATCH OVER', matchWinner: 'Winner', mvpTitle: 'Match MVP',
+ 
+   homeLabel: 'HOME', awayLabel: 'AWAY', liveStream: 'LIVE BROADCAST', commentaryCount: 'comments', newest: '↓ Latest', chronological: '↑ Chronological', seasonVsMatch: 'This match vs season', thisMatch: 'this match', seasonAvg: 'season avg.', last5: 'points in last 5 matches', fullProfile: 'full season profile →', singleView: 'Single', splitView: 'Split', legend: 'Legend',
  },
  it: {
    statsTitle: 'Statistiche partita', points: 'Punti', serve: 'Battuta',
@@ -231,6 +235,8 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    sources: 'fonti nella base dati', source1: 'fonte nella base dati', sources24: 'fonti nella base dati',
    highRelevance: 'alta rilevanza', medRelevance: 'media rilevanza',
    setEnd: 'Fine del set', setWinner: 'Vince', topScorers: 'TOP marcatori', pts: 'pt', matchEnd: 'FINE PARTITA', matchWinner: 'Vincitore', mvpTitle: 'MVP della partita',
+ 
+   homeLabel: 'CASA', awayLabel: 'OSPITI', liveStream: 'DIRETTA', commentaryCount: 'commenti', newest: '↓ Recenti', chronological: '↑ Cronologico', seasonVsMatch: 'Questa partita vs stagione', thisMatch: 'questa partita', seasonAvg: 'media stag.', last5: 'punti nelle ultime 5 partite', fullProfile: 'profilo stagione →', singleView: 'Singolo', splitView: 'Diviso', legend: 'Legenda',
  },
  de: {
    statsTitle: 'Spielstatistiken', points: 'Punkte', serve: 'Aufschlag',
@@ -243,6 +249,8 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    sources: 'Quellen in der Wissensdatenbank', source1: 'Quelle in der Wissensdatenbank', sources24: 'Quellen in der Wissensdatenbank',
    highRelevance: 'hohe Relevanz', medRelevance: 'mittlere Relevanz',
    setEnd: 'Satzende', setWinner: 'Sieger', topScorers: 'TOP Scorer', pts: 'Pkt', matchEnd: 'SPIELENDE', matchWinner: 'Sieger', mvpTitle: 'Spieler des Spiels',
+ 
+   homeLabel: 'HEIM', awayLabel: 'GAST', liveStream: 'LIVE-ÜBERTRAGUNG', commentaryCount: 'Kommentare', newest: '↓ Neueste', chronological: '↑ Chronologisch', seasonVsMatch: 'Dieses Spiel vs Saison', thisMatch: 'dieses Spiel', seasonAvg: 'Saison-Ø', last5: 'Punkte in letzten 5 Spielen', fullProfile: 'vollst. Saisonprofil →', singleView: 'Einzeln', splitView: 'Geteilt', legend: 'Legende',
  },
  tr: {
    statsTitle: 'Mac Istatistikleri', points: 'Sayilar', serve: 'Servis',
@@ -255,6 +263,8 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    sources: 'kaynak', source1: 'kaynak', sources24: 'kaynak',
    highRelevance: 'yuksek uyum', medRelevance: 'orta uyum',
    setEnd: 'Set sonu', setWinner: 'Kazanan', topScorers: 'En iyi skorer', pts: 'puan', matchEnd: 'MAÇ SONU', matchWinner: 'Kazanan', mvpTitle: 'Maçın MVP\'si',
+ 
+   homeLabel: 'EV SAHİBİ', awayLabel: 'MİSAFİR', liveStream: 'CANLI YAYIN', commentaryCount: 'yorum', newest: '↓ En yeni', chronological: '↑ Kronolojik', seasonVsMatch: 'Bu maç vs sezon', thisMatch: 'bu maç', seasonAvg: 'sezon ort.', last5: 'son 5 maçta puan', fullProfile: 'tam sezon profili →', singleView: 'Tekli', splitView: 'Bölünmüş', legend: 'Açıklama',
  },
  es: {
    statsTitle: 'Estadisticas del partido', points: 'Puntos', serve: 'Saque',
@@ -267,6 +277,8 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    sources: 'fuentes en la base', source1: 'fuente en la base', sources24: 'fuentes en la base',
    highRelevance: 'alta relevancia', medRelevance: 'relevancia media',
    setEnd: 'Fin del set', setWinner: 'Gana', topScorers: 'TOP anotadores', pts: 'pts', matchEnd: 'FIN DEL PARTIDO', matchWinner: 'Ganador', mvpTitle: 'MVP del partido',
+ 
+   homeLabel: 'LOCAL', awayLabel: 'VISITANTE', liveStream: 'EN VIVO', commentaryCount: 'comentarios', newest: '↓ Más reciente', chronological: '↑ Cronológico', seasonVsMatch: 'Este partido vs temporada', thisMatch: 'este partido', seasonAvg: 'prom. temp.', last5: 'puntos en los últimos 5 partidos', fullProfile: 'perfil completo →', singleView: 'Único', splitView: 'Dividido', legend: 'Leyenda',
  },
  pt: {
    statsTitle: 'Estatisticas do jogo', points: 'Pontos', serve: 'Saque',
@@ -279,6 +291,8 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    sources: 'fontes na base', source1: 'fonte na base', sources24: 'fontes na base',
    highRelevance: 'alta relevancia', medRelevance: 'relevancia media',
    setEnd: 'Fim do set', setWinner: 'Vence', topScorers: 'TOP pontuadores', pts: 'pts', matchEnd: 'FIM DO JOGO', matchWinner: 'Vencedor', mvpTitle: 'MVP da partida',
+ 
+   homeLabel: 'MANDANTE', awayLabel: 'VISITANTE', liveStream: 'AO VIVO', commentaryCount: 'comentários', newest: '↓ Mais recente', chronological: '↑ Cronológico', seasonVsMatch: 'Este jogo vs temporada', thisMatch: 'este jogo', seasonAvg: 'méd. temp.', last5: 'pontos nos últimos 5 jogos', fullProfile: 'perfil completo →', singleView: 'Único', splitView: 'Dividido', legend: 'Legenda',
  },
  jp: {
    statsTitle: '試合統計', points: 'ポイント', serve: 'サーブ',
@@ -291,6 +305,8 @@ const BUDDY_I18N: Record<Language, Record<string, string>> = {
    sources: 'ソース', source1: 'ソース', sources24: 'ソース',
    highRelevance: '高関連性', medRelevance: '中関連性',
    setEnd: 'セット終了', setWinner: '勝者', topScorers: 'TOP得点者', pts: '点', matchEnd: '試合終了', matchWinner: '優勝', mvpTitle: '試合のMVP',
+ 
+   homeLabel: 'ホーム', awayLabel: 'アウェイ', liveStream: 'ライブ配信', commentaryCount: 'コメント', newest: '↓ 最新', chronological: '↑ 時系列', seasonVsMatch: '今試合 vs シーズン', thisMatch: '今試合', seasonAvg: 'シーズン平均', last5: '直近5試合の得点', fullProfile: 'フルプロフィール →', singleView: '単一', splitView: '分割', legend: '凡例',
  },
 };
 
@@ -2622,7 +2638,7 @@ export default function LiveMatchCommentaryV4() {
            <img src={getTeamLogo(matchData?.teams?.home || '')} alt="" style={{ width: 32, height: 32, objectFit: 'contain', flexShrink: 0 }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
            <div>
              <div style={{ fontSize: 14, fontWeight: 700 }}>{getHomeTeamFull()}</div>
-             <div style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em' }}>Gospodarze</div>
+             <div style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em' }}>{BUDDY_I18N[language]?.homeLabel || 'GOSPODARZE'}</div>
            </div>
          </div>
          {/* Center: score + controls */}
@@ -2671,7 +2687,7 @@ export default function LiveMatchCommentaryV4() {
          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, justifyContent: 'flex-end' }}>
            <div style={{ textAlign: 'right' }}>
              <div style={{ fontSize: 14, fontWeight: 700 }}>{getAwayTeamFull()}</div>
-             <div style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em' }}>Goście</div>
+             <div style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em' }}>{BUDDY_I18N[language]?.awayLabel || 'GOŚCIE'}</div>
            </div>
            <img src={getTeamLogo(matchData?.teams?.away || '')} alt="" style={{ width: 32, height: 32, objectFit: 'contain', flexShrink: 0 }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
            <div style={{ width: 5, height: 32, borderRadius: 99, background: '#f59e0b' }} />
@@ -2822,10 +2838,10 @@ export default function LiveMatchCommentaryV4() {
            <div ref={commentaryRef} style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px' }}>
              {/* Sort toggle */}
              <div style={{ position: 'sticky', top: 0, background: '#162032', padding: '6px 0 4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 5, borderBottom: '1px solid #1a2332', marginBottom: 6 }}>
-               <span style={{ fontSize: 11, color: '#475569' }}>{commentaries.length} komentarzy</span>
+               <span style={{ fontSize: 11, color: '#475569' }}>{commentaries.length} {BUDDY_I18N[language]?.commentaryCount || 'komentarzy'}</span>
                <button onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
                  style={{ padding: '3px 10px', borderRadius: 6, fontSize: 10, fontWeight: 700, border: '1px solid #1a2332', background: 'transparent', color: '#64748b', cursor: 'pointer' }}>
-                 {sortOrder === 'desc' ? '↓ Najnowsze' : '↑ Chronologicznie'}
+                 {sortOrder === 'desc' ? (BUDDY_I18N[language]?.newest || '↓ Najnowsze') : (BUDDY_I18N[language]?.chronological || '↑ Chronologicznie')}
                </button>
              </div>
              {(sortOrder === 'desc' ? [...commentaries].reverse() : commentaries).map((commentary, index) => {
@@ -2839,7 +2855,7 @@ export default function LiveMatchCommentaryV4() {
                if (commentary.type === 'intro') {
                  return (
                    <div key={index} style={{ background: 'rgba(99,102,241,.1)', border: '1px solid rgba(99,102,241,.2)', borderRadius: 12, padding: '12px 16px', marginBottom: 6 }}>
-                     <div style={{ fontSize: 9, fontWeight: 700, color: '#818cf8', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 4 }}>🎙️ Transmisja na żywo</div>
+                     <div style={{ fontSize: 9, fontWeight: 700, color: '#818cf8', textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 4 }}>{`🎙️ ${BUDDY_I18N[language]?.liveStream || 'TRANSMISJA NA ŻYWO'}`}</div>
                      <p style={{ fontSize: 13, color: commentary.text === '...' ? '#818cf8' : '#c7d2fe', lineHeight: 1.6, margin: 0, fontStyle: 'italic', animation: commentary.text === '...' ? 'pulse 1.5s infinite' : 'none' }}>{commentary.text}</p>
                    </div>
                  );
@@ -3114,7 +3130,7 @@ export default function LiveMatchCommentaryV4() {
                        return (
                          <div style={{ marginTop: 8, marginBottom: 8, borderRadius: 10, padding: '10px 12px', background: 'rgba(255,255,255,.025)', border: `1px solid ${isAbove ? 'rgba(52,211,153,.2)' : isBelow ? 'rgba(248,113,113,.2)' : 'rgba(255,255,255,.06)'}` }}>
                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                             <span style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.1em' }}>Ten mecz vs sezon</span>
+                             <span style={{ fontSize: 9, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.1em' }}>{BUDDY_I18N[language]?.seasonVsMatch || 'Ten mecz vs sezon'}</span>
                              <span style={{ fontSize: 10, fontWeight: 700, padding: '1px 7px', borderRadius: 4,
                                background: isAbove ? 'rgba(52,211,153,.15)' : isBelow ? 'rgba(248,113,113,.15)' : 'rgba(255,255,255,.06)',
                                color: isAbove ? '#34d399' : isBelow ? '#f87171' : '#94a3b8' }}>
@@ -3125,7 +3141,7 @@ export default function LiveMatchCommentaryV4() {
                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                              <div style={{ textAlign: 'center', minWidth: 40 }}>
                                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 800, color: isAbove ? '#34d399' : isBelow ? '#f87171' : '#cbd5e1' }}>{matchPts}</div>
-                               <div style={{ fontSize: 9, color: '#94a3b8' }}>ten mecz</div>
+                               <div style={{ fontSize: 9, color: '#94a3b8' }}>{BUDDY_I18N[language]?.thisMatch || 'ten mecz'}</div>
                              </div>
                              <div style={{ flex: 1, textAlign: 'center' }}>
                                <div style={{ fontSize: 9, color: '#475569', marginBottom: 2 }}>vs</div>
@@ -3133,13 +3149,13 @@ export default function LiveMatchCommentaryV4() {
                              </div>
                              <div style={{ textAlign: 'center', minWidth: 40 }}>
                                <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: 22, fontWeight: 800, color: '#94a3b8' }}>{avgPts}</div>
-                               <div style={{ fontSize: 9, color: '#94a3b8' }}>śr. sezonu</div>
+                               <div style={{ fontSize: 9, color: '#94a3b8' }}>{BUDDY_I18N[language]?.seasonAvg || 'śr. sezonu'}</div>
                              </div>
                            </div>
                            {/* Last 5 sparkline */}
                            {last5.length > 0 && (
                              <div>
-                               <div style={{ fontSize: 9, color: '#94a3b8', marginBottom: 6 }}>punkty w ostatnich 5 meczach sezonu</div>
+                               <div style={{ fontSize: 9, color: '#94a3b8', marginBottom: 6 }}>{BUDDY_I18N[language]?.last5 || 'ostatnich 5 meczów'}</div>
                                <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 36 }}>
                                  {last5.map((v, idx) => (
                                    <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
@@ -3159,7 +3175,7 @@ export default function LiveMatchCommentaryV4() {
                              <div style={{ marginTop: 8, textAlign: 'right' }}>
                                <a href={`/player/${ss.id}`} target="_blank" rel="noopener noreferrer"
                                  style={{ fontSize: 10, color: '#3b82f6', textDecoration: 'none', fontWeight: 600 }}>
-                                 pełny profil sezonu →
+                                 {BUDDY_I18N[language]?.fullProfile || 'pełny profil sezonu →'}
                                </a>
                              </div>
                            )}
