@@ -1436,7 +1436,7 @@ if (!rally.touches || rally.touches.length === 0) {
    // SERVE
    if (actionLower.includes('zagrywka') || actionLower.includes('serwis') || actionLower.includes('serve')) {
      const sType = touch.serveType || '';
-     const serveDesc = sType.includes('Float') ? 'float serve (light/floating — never powerful!)' : sType.includes('Spin') ? 'jump serve' : 'serve';
+     const serveDesc = sType.includes('Float') ? 'zagrywka szybujaca/float (lekka, szybujaca — NIGDY mocna! PL: "szybujaca", IT: "flottante", DE: "Floater", TR: "float servis", ES: "flotante", PT: "flutuante", JP: "フローター")' : sType.includes('Spin') ? 'jump serve (PL: z wyskoku, IT: in salto, DE: Sprungaufschlag, TR: sıçrama, ES: en salto, PT: em salto, JP: ジャンプ)' : 'serve';
      const isLastTouch = idx === rally.touches!.length - 1;
      
      if (actionLower.includes('as ') || actionLower.includes('ace')) {
@@ -1554,10 +1554,12 @@ if (!rally.touches || rally.touches.length === 0) {
  touchContext = `
 TOUCH CHAIN (${numTouches} touches${isLongRally ? ' — long rally!' : ''}):
 ${touchChainLines.join('\n')}
+=> SERVED BY: ${rally.touches[0]?.player || '?'} — this player SERVED, scorer is ${scoringPlayer}. NEVER confuse them!
 => POINT FOR: ${winnerTeamLabel}
 
 CRITICAL COMMENTARY RULES:
-1. "POINT FOR: ${winnerTeamLabel}" = ONLY this team scored. NEVER say the other team scored!
+1. "SERVED BY" ≠ scorer! If "SERVED BY" shows X and scorer is Y — X served, Y finished. NEVER say Y served!
+1b. "POINT FOR: ${winnerTeamLabel}" = ONLY this team scored. NEVER say the other team scored!
 2. Describe ONLY what is in the touch chain above. Nothing invented!
 3. LENGTH LIMIT (MANDATORY): 2-3 touches = MAX 2 sentences. 4-6 touches = MAX 3 sentences. 7+ touches = MAX 3 sentences. NEVER more than 3 sentences!
 4. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
@@ -1814,6 +1816,9 @@ INSTRUCTIONS:
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
      t = t.replace(/\bustawia do ataku\b/gi, 'wystawia do ataku');
      t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     t = t.replace(/\bżywa zagrywka\b/gi, 'zagrywka szybująca');
+     t = t.replace(/\bżywą zagrywką\b/gi, 'zagrywką szybującą');
+     t = t.replace(/\bżywej zagrywki\b/gi, 'zagrywki szybującej');
      t = t.replace(/\bbroni potężnym blokiem\b/gi, 'potężny blok');
      t = t.replace(/\bbroni mocnym blokiem\b/gi, 'mocny blok');
    }
@@ -1862,14 +1867,22 @@ INSTRUCTIONS:
      t = t.replace(/(leads?|führt|mène|lidera|lidera|führen|mène|portant)\s+\d{1,2}[:\-]\d{1,2}/gi, (m) => m.split(/\s+/)[0]);
      t = t.replace(/(prowadz[ąią\w]*|remis|wyrównu\w*|führt|lidera|vantaggio|avance|öne geçiyor)\s+\d{1,2}[:\-]\d{1,2}/gi,
        (m) => m.split(/\s+/)[0]);
-     // Standalone "X:Y" not at end of sentence (not set score)
-     t = t.replace(/,?\s*(\d{1,2}[:\-]\d{1,2})(?![^.!?]*$)/g, '');
-     // "now X:Y" patterns
-     t = t.replace(/(now|jetzt|ahora|ora|şimdi|maintenant|agora)\s+\d{1,2}[:\-]\d{1,2}/gi, '');
-     // "score stands at X:Y" / "score is X:Y"
-     t = t.replace(/(score\s+(stands?\s+at|is|at)|Spielstand|marcador|punteggio|skor)\s+\d{1,2}[:\-]\d{1,2}/gi, '');
-     // "X:Y in set/secie/im Satz" → keep only if it IS a set score at end
-     t = t.replace(/\d{1,2}[:\-]\d{1,2}\s+(in|im|nel|en|no|で)\s+(set|Satz|sette|cuarto)/gi, '');
+          // Remove ALL X:Y scores from rally commentary — score is in UI
+     // "Remis 11:11" → "Remis!" / "remis" (keep word, remove number)
+     t = t.replace(/\b(Remis|remis)\s+\d{1,2}:\d{1,2}[!.]?/g, '$1!');
+     // "prowadzą 14:11" → "prowadzą"
+     t = t.replace(/\b(prowadz[ąiąę\w]*)\s+\d{1,2}:\d{1,2}/g, '$1');
+     // "leads 14:11", "führt 14:11", etc
+     t = t.replace(/\b(leads?|führt|führen|lidera|vantaggio|öne geçiyor)\s+\d{1,2}[:\-]\d{1,2}/gi, '$1');
+     // "now X:Y" / "score X:Y"
+     t = t.replace(/\b(now|jetzt|ahora|ora|şimdi|maintenant|agora|aktuell)\s+\d{1,2}[:\-]\d{1,2}/gi, '');
+     t = t.replace(/\b(score|Spielstand|marcador|punteggio|skor|wynik)[^\d]*\d{1,2}[:\-]\d{1,2}/gi, '');
+     // Standalone X:Y after comma or space in middle of sentence
+     t = t.replace(/,\s*\d{1,2}:\d{1,2}[!,.]?/g, ',');
+     // X:Y followed by space/punctuation (not at very end which could be set score)
+     t = t.replace(/\s\d{1,2}:\d{1,2}(?=[\s,!])/g, '');
+     // "1:0!" at end of sentence mid-commentary (not set final)
+     t = t.replace(/\s+\d{1,2}:\d{1,2}!(?!\s*(SET|set|seta|Satz|セット|FIN|END))/g, '!');
    }
 
    // ── All languages: clean up ─────────────────────────────────────────────
