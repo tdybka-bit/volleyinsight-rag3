@@ -125,9 +125,19 @@ ABSOLUTNY ZAKAZ — te slowa/zwroty sa ZABRONIONE w PL:
 - "ustawia do ataku" — ZASTAP: "wystawia do [nazwisko]"
 - "przygotowuje akcje" / "przygotowuje pilke" — za ogolne, opisz konkretnie
 - "broni poteznym blokiem" — ZASTAP: "potezny blok [nazwisko]!" (blok to blok, nie obrona)
-- "znowu" / "ponownie" — TYLKO jesli dane jawnie pokazuja powtorzenie przez tego samego zawodnika
-- "Hoss" — ten zawodnik nie istnieje
-- "potezna zagrywka floatowa" — float jest zawsze lekka/szybujaca, NIGDY potezna
+- "znowu" / "ponownie" — TYLKO jesli dotychczasowy touch chain pokazuje TEN SAM ZAWODNIK dzialal juz wczesniej w tej samej akcji
+- "Hoss" — TEN ZAWODNIK NIE ISTNIEJE. To jest Thales. Uzywaj: "Thales"
+- "potezna zagrywka floatowa" — float jest ZAWSZE lekka/szybujaca, NIGDY potezna
+- "SERVICE ACE" — ZAKAZANE po angielsku! ZASTAP: "as serwisowy!", "bezposredni punkt!", "prosto w boisko!"
+- "SET OVER" — ZAKAZANE! Dla PL: "Koniec seta!", "SET dla [druzyna]!", "[wynik] — seta!"
+- "momentum" — ANGIELSKI! ZASTAP: "impet", "seria punktow", "dynamika", "nie do zatrzymania"
+- "float serve" — ANGIELSKI! ZASTAP: "zagrywka szybujaca", "float"
+- "Punkt dla [druzyna]" — MECHANICZNE i NUDNE. ZASTAP kreatywnymi zakonczeniami:
+  DOBRE: "[Nazwisko] konczy!", "Punkt!", "[Druzyna] bierze!", "Niesamowite!", 
+         "Wbija w boisko!", "Zdobywa!", "Zamkniety!", "I to jest punkt!"
+  ZLE: "Punkt dla JSW Jastrzebski Wegiel!" — brzmi jak automat, nie komentator!
+- Wynik liczbowy w tekście (np. "prowadza 14:11") — ZAKAZANE poza koncem seta!
+  Wynik jest widoczny w UI. Uzyj: "prowadza", "remis", "odskoczyc", "wyrownuja".
 
 LOGIKA BLOK vs OBRONA — KRYTYCZNE dla poprawnosci:
 - BLOK KONCZACY rally = "[Nazwisko] blokuje! Punkt dla [Druzyna]!"
@@ -1056,12 +1066,20 @@ if (!rally.touches || rally.touches.length === 0) {
     // NOTE: Parser now normalizes names (Leon Venero → Leon, Tavares Rodrigues → Tavares)
     // These fallbacks catch edge cases where RAG naming-rules namespace has no match
     const getGPTNamingFallback = (player: string): string => {
+      // Special cases hardcoded (not in Pinecone or ignored)
+      if (player === 'Hoss' || player === 'Thales') {
+        return 'NAMING: Ten zawodnik to Thales (pelne nazwisko: Thales). Odmiana: Thales/Thalesa/Thalesowi/Thalesa/Thalesem/Thalesie. NIGDY nie pisz "Hoss"!';
+      }
       return `NAMING: Odmien nazwisko "${player}" wg zasad jezyka polskiego (mianownik, dopelniacz, biernik).`;
     };
 
  try {
  // Query with all player name variants
- const namingQuery = `${scoringPlayer} naming rule declension odmiana`;
+ // Query naming for ALL players in touch chain, not just scorer
+ const touchPlayers = rally.touches 
+   ? [...new Set(rally.touches.map((t: any) => t.player).filter(Boolean))].slice(0, 4).join(' ')
+   : '';
+ const namingQuery = `${scoringPlayer} ${touchPlayers} naming rule odmiana`.trim();
  
  console.log('Naming rules query:', namingQuery);
  
@@ -1163,7 +1181,7 @@ if (!rally.touches || rally.touches.length === 0) {
  .filter(Boolean);
  
  if (phrases.length > 0) {
- commentaryPhrasesContext = `VARIACJE ZWROTOW (uzywaj zamiennie):\n${phrases.join(' / ')}`;
+ commentaryPhrasesContext = `VARIACJE ZWROTOW — OBOWIAZKOWE! Zamiast mechanicznego "Punkt dla X" uzyj JEDNEGO z tych zwrotow:\n${phrases.join(' / ')}\nJezeli masz te warianty — MUSISZ uzyc jednego zamiast "Punkt dla"!`;
  console.log('Commentary phrases found:', phrases.length, 'variants');
  console.log('[RAG-DEBUG] Phrases scores:', phrasesResults.matches.map(m => m.score?.toFixed(3)).join(', '));
  }
@@ -1541,13 +1559,15 @@ ${touchChainLines.join('\n')}
 CRITICAL COMMENTARY RULES:
 1. "POINT FOR: ${winnerTeamLabel}" = ONLY this team scored. NEVER say the other team scored!
 2. Describe ONLY what is in the touch chain above. Nothing invented!
-3. CLIMAX FIRST — who scored and how. Earlier touches = brief context only.
-4. SERVE: Error only when ">>> SERVE ERROR" is written. Otherwise serve was good.
-5. BLOCK POINT vs WYBLOK: "BLOCK POINT!" = blocker scores the point. "block touch, ball rebounds" = wyblok (akcja trwa) — say "wyblok" in PL, NEVER "blokuje" if play continued.
-6. DIG ≠ BLOCK: "defensive dig" = obrona (not blok). Never call a dig a "blok".
-7. PL ONLY: "sets to left/right wing" → "wystawia na lewe/prawe skrzydlo" — NEVER "wystawia w prawo"
-8. 2-3 touches = 1 short sentence. 5+ touches = max 3 sentences with climax at end.
-9. NEVER add "znowu/ponownie" — only if touch chain explicitly shows same player twice.`;
+3. LENGTH LIMIT (MANDATORY): 2-3 touches = MAX 2 sentences. 4-6 touches = MAX 3 sentences. 7+ touches = MAX 3 sentences. NEVER more than 3 sentences!
+4. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
+5. NO "PUNKT DLA X": Banned! Use: "[Nazwisko] konczy!", "Punkt!", "I to punkt!", "[Druzyna] bierze!" or emotional equivalent.
+6. SERVE: Error only when ">>> SERVE ERROR". Otherwise serve was good.
+7. BLOCK POINT vs WYBLOK: "BLOCK POINT!" = blocker scores. "block touch, ball rebounds" = wyblok — say "wyblok" in PL, NEVER "blokuje" if play continued.
+8. DIG ≠ BLOCK: "defensive dig" = obrona (not blok).
+9. PL: "sets to left/right wing" → "wystawia na lewe/prawe skrzydlo".
+10. NEVER "znowu/ponownie" — only if same player appears TWICE in this touch chain.
+11. PL: "Thales" not "Hoss". "as serwisowy" not "SERVICE ACE". "Koniec seta!" not "SET OVER".`;
  }
  
  let situationContext = '';
@@ -1712,11 +1732,11 @@ INSTRUCTIONS:
  } else if (isServeError || isAcePoint) {
    dynamicMaxTokens = 80; // 1-2 touch: quick & punchy
  } else if (numTouches <= 3) {
-   dynamicMaxTokens = 120; // short rally
+   dynamicMaxTokens = 100; // short rally — max 2 zdania
  } else if (numTouches >= 8) {
-   dynamicMaxTokens = 250; // long rally: needs space for drama
+   dynamicMaxTokens = 200; // long rally: max 3 zdania z kulminacja
  } else if (numTouches >= 5) {
-   dynamicMaxTokens = 200; // medium-long rally
+   dynamicMaxTokens = 150; // medium rally — 2-3 zdania
  }
  // Modifiers
  if (hasSubstitution) dynamicMaxTokens += 40;
