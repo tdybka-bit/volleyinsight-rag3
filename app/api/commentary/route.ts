@@ -1764,6 +1764,24 @@ INSTRUCTIONS:
  const postProcess = (text: string, lang: string): string => {
    let t = text;
 
+   // ── UNIVERSAL: Polish leaks that can appear in ANY language ────────────
+   // These are input data words that GPT sometimes copies verbatim
+   const polishLeaks: [RegExp, string][] = [
+     [/\bzagrywka\b/gi, lang === 'it' ? 'battuta' : lang === 'de' ? 'Aufschlag' : lang === 'tr' ? 'servis' : lang === 'es' ? 'saque' : lang === 'pt' ? 'saque' : lang === 'jp' ? 'サーブ' : 'serve'],
+     [/\bprzyjęcie\b/gi, lang === 'it' ? 'ricezione' : lang === 'de' ? 'Annahme' : lang === 'tr' ? 'kabul' : lang === 'es' ? 'recepción' : lang === 'pt' ? 'recepção' : lang === 'jp' ? 'レセプション' : 'reception'],
+     [/\bpotężn\w*/gi, lang === 'it' ? 'potente' : lang === 'de' ? 'kraftvoll' : lang === 'tr' ? 'güçlü' : lang === 'es' ? 'potente' : lang === 'pt' ? 'poderoso' : lang === 'jp' ? '強力な' : 'powerful'],
+     [/\bHuknięcie\b/gi, lang === 'it' ? 'Gran botta' : lang === 'de' ? 'Knaller' : lang === 'tr' ? 'Güçlü servis' : lang === 'es' ? 'Gran golpe' : lang === 'pt' ? 'Grande tacada' : lang === 'jp' ? '強烈な一打' : 'Big shot'],
+     [/\bHoss\b/g, 'Thales'],
+   ];
+
+   if (lang !== 'pl') {
+     polishLeaks.forEach(([pattern, replacement]) => {
+       t = t.replace(pattern, replacement);
+     });
+     // "Punkt dla X" in non-PL (Turkish had this leak)
+     t = t.replace(/Punkt dla [^!.]+[!.]/g, '');
+   }
+
    if (lang === 'pl') {
      // ── English leaks → Polish ──────────────────────────────────────────
      t = t.replace(/\bSERVICE ACE\b/g, 'as serwisowy');
@@ -1775,26 +1793,20 @@ INSTRUCTIONS:
      t = t.replace(/\bHoss\b/g, 'Thales');
 
      // ── "Punkt dla X" → neutral ending ─────────────────────────────────
-     // Replace "Punkt dla [Drużyna]!" with shorter, livelier alternatives
      const punktDlaVariants = [
        'Punkt!', 'I to jest punkt!', 'Zdobyte!', 'Piękny punkt!',
        'Niesamowite!', 'Kapitalnie!', 'Fantastyczny punkt!', 'Genialne!'
      ];
-     t = t.replace(/Punkt dla [^!.]+[!.]/g, (match) => {
-       // Keep if it's part of a longer phrase like "To jest punkt dla..."
-       const variant = punktDlaVariants[Math.floor(Math.random() * punktDlaVariants.length)];
-       return variant;
+     t = t.replace(/Punkt dla [^!.]+[!.]/g, () => {
+       return punktDlaVariants[Math.floor(Math.random() * punktDlaVariants.length)];
      });
 
      // ── Score in text → remove explicit numbers ─────────────────────────
-     // "prowadzą 14:11" → "prowadzą" / "remis 11:11" → "remis"
-     // Only outside SET end context
      if (!setEndInfo.isSetEnd) {
        t = t.replace(/prowadz[ąią]\s+\d{1,2}:\d{1,2}/g, 'prowadzą');
        t = t.replace(/prowadzi\s+\d{1,2}:\d{1,2}/g, 'prowadzi');
        t = t.replace(/remis\s+\d{1,2}:\d{1,2}/g, 'remis');
        t = t.replace(/wyrównu[ją]+\s+\d{1,2}:\d{1,2}/g, 'wyrównują');
-       // "X:Y" standalone in middle of sentence → remove
        t = t.replace(/\b(\d{1,2}:\d{1,2})\b(?!\s*[!.]?\s*$)/g, '');
      }
 
@@ -1806,7 +1818,44 @@ INSTRUCTIONS:
      t = t.replace(/\bbroni mocnym blokiem\b/gi, 'mocny blok');
    }
 
-   // ── All languages: clean up doubled spaces/punctuation ─────────────────
+   if (lang === 'it') {
+     t = t.replace(/\bSERVICE ACE\b/gi, 'ace');
+     t = t.replace(/\bSET OVER\b/gi, 'SET!');
+     t = t.replace(/\bHoss\b/g, 'Thales');
+   }
+
+   if (lang === 'de') {
+     t = t.replace(/\bSERVICE ACE\b/gi, 'Aufschlag-Ass');
+     t = t.replace(/\bSET OVER\b/gi, 'SATZGEWINN!');
+     t = t.replace(/\bHoss\b/g, 'Thales');
+   }
+
+   if (lang === 'tr') {
+     t = t.replace(/\bSERVICE ACE\b/gi, 'servis ace');
+     t = t.replace(/\bSET OVER\b/gi, 'SET BİTTİ!');
+     t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/\bPunkt dla [^!.]+[!.]/g, 'Sayı!');
+   }
+
+   if (lang === 'es') {
+     t = t.replace(/\bSERVICE ACE\b/gi, 'ace de saque');
+     t = t.replace(/\bSET OVER\b/gi, '¡SET!');
+     t = t.replace(/\bHoss\b/g, 'Thales');
+   }
+
+   if (lang === 'pt') {
+     t = t.replace(/\bSERVICE ACE\b/gi, 'ace no saque');
+     t = t.replace(/\bSET OVER\b/gi, 'SET!');
+     t = t.replace(/\bHoss\b/g, 'Thales');
+   }
+
+   if (lang === 'jp') {
+     t = t.replace(/SERVICE ACE/gi, 'サービスエース');
+     t = t.replace(/SET OVER/gi, 'セット終了！');
+     t = t.replace(/Hoss/g, 'タレス');
+   }
+
+   // ── All languages: clean up ─────────────────────────────────────────────
    t = t.replace(/  +/g, ' ').replace(/!!/g, '!').trim();
 
    return t;
