@@ -1728,15 +1728,15 @@ INSTRUCTIONS:
  
  let dynamicMaxTokens = 150; // default: normal rally
  if (setEndInfo.isSetEnd) {
-   dynamicMaxTokens = 300; // set end: celebratory
+   dynamicMaxTokens = 220; // set end: celebratory but concise
  } else if (isServeError || isAcePoint) {
-   dynamicMaxTokens = 80; // 1-2 touch: quick & punchy
+   dynamicMaxTokens = 60;  // 1-2 touch: 1 punchy sentence MAX
  } else if (numTouches <= 3) {
-   dynamicMaxTokens = 100; // short rally — max 2 zdania
+   dynamicMaxTokens = 80;  // short: 1-2 sentences MAX
  } else if (numTouches >= 8) {
-   dynamicMaxTokens = 200; // long rally: max 3 zdania z kulminacja
+   dynamicMaxTokens = 160; // long rally: 3 sentences MAX
  } else if (numTouches >= 5) {
-   dynamicMaxTokens = 150; // medium rally — 2-3 zdania
+   dynamicMaxTokens = 120; // medium: 2-3 sentences MAX
  }
  // Modifiers
  if (hasSubstitution) dynamicMaxTokens += 40;
@@ -1855,8 +1855,25 @@ INSTRUCTIONS:
      t = t.replace(/Hoss/g, 'タレス');
    }
 
+   // ── All languages: remove score from text ────────────────────────────────
+   // Score is shown in UI — never in commentary (except SET end)
+   if (!setEndInfo.isSetEnd) {
+     // "leads 14:11", "14:11", "14-11" patterns across all languages
+     t = t.replace(/(leads?|führt|mène|lidera|lidera|führen|mène|portant)\s+\d{1,2}[:\-]\d{1,2}/gi, (m) => m.split(/\s+/)[0]);
+     t = t.replace(/(prowadz[ąią\w]*|remis|wyrównu\w*|führt|lidera|vantaggio|avance|öne geçiyor)\s+\d{1,2}[:\-]\d{1,2}/gi,
+       (m) => m.split(/\s+/)[0]);
+     // Standalone "X:Y" not at end of sentence (not set score)
+     t = t.replace(/,?\s*(\d{1,2}[:\-]\d{1,2})(?![^.!?]*$)/g, '');
+     // "now X:Y" patterns
+     t = t.replace(/(now|jetzt|ahora|ora|şimdi|maintenant|agora)\s+\d{1,2}[:\-]\d{1,2}/gi, '');
+     // "score stands at X:Y" / "score is X:Y"
+     t = t.replace(/(score\s+(stands?\s+at|is|at)|Spielstand|marcador|punteggio|skor)\s+\d{1,2}[:\-]\d{1,2}/gi, '');
+     // "X:Y in set/secie/im Satz" → keep only if it IS a set score at end
+     t = t.replace(/\d{1,2}[:\-]\d{1,2}\s+(in|im|nel|en|no|で)\s+(set|Satz|sette|cuarto)/gi, '');
+   }
+
    // ── All languages: clean up ─────────────────────────────────────────────
-   t = t.replace(/  +/g, ' ').replace(/!!/g, '!').trim();
+   t = t.replace(/  +/g, ' ').replace(/!!/g, '!').replace(/\s+([.,!?])/g, '$1').trim();
 
    return t;
  };
