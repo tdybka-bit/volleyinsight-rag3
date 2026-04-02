@@ -1777,14 +1777,9 @@ INSTRUCTIONS:
    scoringAction.toLowerCase().includes('as serw') ||
    finalActionType.includes('ace') ||
    finalActionType.includes('as serw') ||
-   // Reception error after serve = ace
-   // Server's team === team that scored (NOT !==)
-   (firstTouchIsServe && numTouches <= 2 &&
-    rally.team_scored === (rally.touches?.[0]?.team || '') &&
-    (scoringAction.toLowerCase().includes('blad przyjec') ||
-     scoringAction.toLowerCase().includes('reception error') ||
-     finalActionType.includes('reception error') ||
-     finalActionType.includes('blad przyjec')))
+   // Reception error after ace: serve is touch[0], numTouches<=2, server's team scored
+   // No string matching needed — short rally + server's team won = ace
+   (firstTouchIsServe && rally.team_scored === (rally.touches?.[0]?.team || ''))
  );
 
 
@@ -1862,6 +1857,7 @@ if (language === 'pl' && PHRASES_ENABLED) {
  if (milestone) dynamicMaxTokens += 30;
  
  console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
+console.log(`[ACE-DEBUG] scoringAction='${scoringAction}' finalActionType='${finalActionType}' firstTouchAction='${(rally.touches?.[0]?.action||'')}' firstTouchIsServe=${(rally.touches?.[0]?.action||'').toLowerCase().includes('zagrywka')||(rally.touches?.[0]?.action||'').toLowerCase().includes('serve')} team_scored='${rally.team_scored}' touch0_team='${rally.touches?.[0]?.team||''}'`);
 
  const completion = await openai.chat.completions.create({
  model: 'gpt-4o-mini',
@@ -1931,10 +1927,19 @@ if (language === 'pl' && PHRASES_ENABLED) {
      // ── Forbidden words ─────────────────────────────────────────────────
      // Remove GPT's own enthusiastic exclamations if we'll append a phrase
      if (phraseToAppend) {
-       t = t.replace(/\s*(Niesamowite|Genialne|Kapitalnie|Fantastyczne|Fantastyczny punkt|Piękny punkt|I to jest punkt|Zdobyte|Punkt)!\s*$/gi, '');
-       // Also strip if it appears mid-text before serve error phrase
+       // Strip at end of text
+       t = t.replace(/\s*(Niesamowite|Genialne|Kapitalnie|Fantastyczne|Fantastyczny punkt|Piękny punkt|I to jest punkt|Zdobyte|Punkt|I to wystarczyło)!\s*$/gi, '');
+       // Also strip "Zdobyte!" anywhere in text (GPT adds it for errors)
+       t = t.replace(/\bZdobyte!\s*/gi, '');
+       t = t.replace(/\bI to jest punkt!\s*/g, '');
+       // Strip enthusiastic exclamations that don't fit error context
        if (isError) {
          t = t.replace(/\b(Niesamowite|Genialne|Kapitalnie|Fantastyczny punkt|Piękny punkt)!\s*/gi, '');
+       }
+     } else {
+       // Even without phrase, remove "Zdobyte!" after errors
+       if (isError) {
+         t = t.replace(/\bZdobyte!\s*/gi, '');
        }
      }
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
