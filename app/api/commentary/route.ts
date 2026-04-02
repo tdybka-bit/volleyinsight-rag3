@@ -1788,20 +1788,24 @@ if (language === 'pl' && PHRASES_ENABLED) {
     isEarlySet: _maxScore < 10, isEarlyOrMid: _maxScore < 18, numDigs: _numDigs,
   };
   const _sa = (scoringAction || '').toLowerCase();
-  const _isBlock   = _sa.includes('blok')  && !_sa.includes('blad');
-  const _isAttack  = _sa.includes('atak')  && !_sa.includes('blad');
-  const _isErrAtk  = _sa.includes('atak')  &&  _sa.includes('blad');
-  const _isErrRec  = _sa.includes('przyjec') && _sa.includes('blad');
+  // Support both Polish (Blok/Atak) and English (block/attack) action names from VolleyStation
+  const _isBlock  = (_sa.includes('blok') || _sa.includes('block'))
+                    && !_sa.includes('blad') && !_sa.includes('error')
+                    && !_sa.includes('atak') && !_sa.includes('attack');
+  const _isAttack = (_sa.includes('atak') || _sa.includes('attack') || _sa.includes('kill') || _sa.includes('skuteczn'))
+                    && !_sa.includes('blad') && !_sa.includes('error');
+  const _isErrAtk = (_sa.includes('atak') || _sa.includes('attack'))
+                    && (_sa.includes('blad') || _sa.includes('error'));
+  const _isErrRec = (_sa.includes('przyjec') || _sa.includes('receive') || _sa.includes('reception'))
+                    && (_sa.includes('blad') || _sa.includes('error'));
 
-  if      (isAcePoint)                          injectedPhrase = pickPhrase('ace', _ctx);
-  else if (isServeError)                        injectedPhrase = pickPhrase('serve_error', _ctx);
-  else if (_isBlock)                            injectedPhrase = pickPhrase('block', _ctx);
-  else if (_isErrAtk || _isErrRec)             injectedPhrase = pickPhrase('attack_error', _ctx);
-  else if (numTouches >= 15)                    injectedPhrase = pickPhrase('long_rally', _ctx);
-  else if (currentStreak >= 5)                  injectedPhrase = pickPhrase('momentum', _ctx);
-  else if (numTouches <= 4 && _isAttack)        injectedPhrase = pickPhrase('quick_attack', _ctx);
-  else if (numTouches > 4  && numTouches < 15 && _isAttack)
-                                                injectedPhrase = pickPhrase('quick_attack', _ctx);
+  if      (isAcePoint)           injectedPhrase = pickPhrase('ace', _ctx);
+  else if (isServeError)         injectedPhrase = pickPhrase('serve_error', _ctx);
+  else if (_isBlock)             injectedPhrase = pickPhrase('block', _ctx);
+  else if (_isErrAtk || _isErrRec) injectedPhrase = pickPhrase('attack_error', _ctx);
+  else if (numTouches >= 15)     injectedPhrase = pickPhrase('long_rally', _ctx);
+  else if (currentStreak >= 5)   injectedPhrase = pickPhrase('momentum', _ctx);
+  else                           injectedPhrase = pickPhrase('quick_attack', _ctx);
   if (injectedPhrase) console.log('[PHRASE]', injectedPhrase);
 }
 // ─────────────────────────────────────────────────────────────────────────────
