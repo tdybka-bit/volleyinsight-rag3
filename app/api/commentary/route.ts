@@ -1787,13 +1787,21 @@ if (language === 'pl' && PHRASES_ENABLED) {
     isPassPerfect: _isPassPerfect, noBlock: !_hasBlock, hasLead: _hasLead,
     isEarlySet: _maxScore < 10, isEarlyOrMid: _maxScore < 18, numDigs: _numDigs,
   };
-  if (isAcePoint)          injectedPhrase = pickPhrase('ace', _ctx);
-  else if (isServeError)   injectedPhrase = pickPhrase('serve_error', _ctx);
-  else if ((scoringAction || '').toLowerCase().includes('blok') && !(scoringAction || '').toLowerCase().includes('blad'))
-                           injectedPhrase = pickPhrase('block', _ctx);
-  else if (numTouches >= 15) injectedPhrase = pickPhrase('long_rally', _ctx);
-  else if (currentStreak >= 5) injectedPhrase = pickPhrase('momentum', _ctx);
-  else if (numTouches <= 4)  injectedPhrase = pickPhrase('quick_attack', _ctx);
+  const _sa = (scoringAction || '').toLowerCase();
+  const _isBlock   = _sa.includes('blok')  && !_sa.includes('blad');
+  const _isAttack  = _sa.includes('atak')  && !_sa.includes('blad');
+  const _isErrAtk  = _sa.includes('atak')  &&  _sa.includes('blad');
+  const _isErrRec  = _sa.includes('przyjec') && _sa.includes('blad');
+
+  if      (isAcePoint)                          injectedPhrase = pickPhrase('ace', _ctx);
+  else if (isServeError)                        injectedPhrase = pickPhrase('serve_error', _ctx);
+  else if (_isBlock)                            injectedPhrase = pickPhrase('block', _ctx);
+  else if (_isErrAtk || _isErrRec)             injectedPhrase = pickPhrase('attack_error', _ctx);
+  else if (numTouches >= 15)                    injectedPhrase = pickPhrase('long_rally', _ctx);
+  else if (currentStreak >= 5)                  injectedPhrase = pickPhrase('momentum', _ctx);
+  else if (numTouches <= 4 && _isAttack)        injectedPhrase = pickPhrase('quick_attack', _ctx);
+  else if (numTouches > 4  && numTouches < 15 && _isAttack)
+                                                injectedPhrase = pickPhrase('quick_attack', _ctx);
   if (injectedPhrase) console.log('[PHRASE]', injectedPhrase);
 }
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1884,6 +1892,10 @@ if (language === 'pl' && PHRASES_ENABLED) {
      }
 
      // ── Forbidden words ─────────────────────────────────────────────────
+     // Remove GPT's own enthusiastic exclamations if we'll append a phrase
+     if (phraseToAppend) {
+       t = t.replace(/\s*(Niesamowite|Genialne|Kapitalnie|Fantastyczne|Piękny punkt|I to jest punkt|Zdobyte)!\s*$/gi, '');
+     }
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
      t = t.replace(/\bustawia do ataku\b/gi, 'wystawia do ataku');
      t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
