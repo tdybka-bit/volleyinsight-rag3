@@ -1769,17 +1769,24 @@ INSTRUCTIONS:
    finalActionType.includes('serve error') ||
    finalActionType.includes('blad serw')
  );
+ const firstTouchAction = (rally.touches?.[0]?.action || '').toLowerCase();
+ const firstTouchIsServe = firstTouchAction.includes('zagrywka') ||
+   firstTouchAction.includes('serwis') || firstTouchAction.includes('serve');
  const isAcePoint = numTouches <= 2 && (
    scoringAction.toLowerCase().includes('ace') ||
    scoringAction.toLowerCase().includes('as serw') ||
    finalActionType.includes('ace') ||
    finalActionType.includes('as serw') ||
-   // Reception error after serve = ace (server's team scored via opponent error)
-   (numTouches <= 2 && rally.team_scored !== (rally.touches?.[0]?.team || '') && 
-    (scoringAction.toLowerCase().includes('blad przyjec') || 
+   // Reception error after serve = ace
+   // Server's team === team that scored (NOT !==)
+   (firstTouchIsServe && numTouches <= 2 &&
+    rally.team_scored === (rally.touches?.[0]?.team || '') &&
+    (scoringAction.toLowerCase().includes('blad przyjec') ||
      scoringAction.toLowerCase().includes('reception error') ||
-     finalActionType.includes('reception error')))
+     finalActionType.includes('reception error') ||
+     finalActionType.includes('blad przyjec')))
  );
+
 
 // ── PHRASE INJECTION (PL only) ───────────────────────────────────────────────
 let injectedPhrase: string | null = null;
