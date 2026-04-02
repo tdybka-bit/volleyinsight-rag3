@@ -365,6 +365,45 @@
       "conditions": {
         "isSetEnd": true
       }
+    },
+    {
+      "text": "I to wystarczyło — punkt!",
+      "conditions": {}
+    },
+    {
+      "text": "Akcja jak z podręcznika.",
+      "conditions": {
+        "isPassPerfect": true
+      }
+    },
+    {
+      "text": "Nie dał żadnych szans rywalowi.",
+      "conditions": {}
+    },
+    {
+      "text": "Prosto i skutecznie — tak to się robi.",
+      "conditions": {}
+    },
+    {
+      "text": "Żadnych zbędnych ruchów — punkt!",
+      "conditions": {}
+    },
+    {
+      "text": "Czysto, sprawnie i po sprawie.",
+      "conditions": {}
+    },
+    {
+      "text": "Precyzja i skuteczność — nic więcej nie potrzeba.",
+      "conditions": {
+        "isPassPerfect": true
+      }
+    },
+    {
+      "text": "To jest siatkówka w najczystszej formie!",
+      "conditions": {
+        "isPassPerfect": true,
+        "noBlock": true
+      }
     }
   ],
   "serve_error": [
