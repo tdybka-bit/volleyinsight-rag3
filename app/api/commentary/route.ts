@@ -1492,7 +1492,7 @@ if (!rally.touches || rally.touches.length === 0) {
      else if (isBackRow) atkDesc = 'back-row attack';
      else atkDesc = 'attack';
      
-     if (style === 'Tip') atkDesc += ', tip shot';
+     if (style === 'Tip') atkDesc += ', tip/kiwka (PL: kiwka, IT: tocco, DE: Fingertipp, TR: tık, ES: finta, PT: tchau-tchau, EN: tip shot)';
      else if (style === 'Tool') atkDesc += ', tool off block';
      
      const isLastTouch = idx === rally.touches!.length - 1;
@@ -1564,11 +1564,13 @@ CRITICAL COMMENTARY RULES:
 3. LENGTH LIMIT (MANDATORY): 2-3 touches = MAX 2 sentences. 4-6 touches = MAX 3 sentences. 7+ touches = MAX 3 sentences. NEVER more than 3 sentences!
 4. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
 5. NO "PUNKT DLA X": Banned! Use: "[Nazwisko] konczy!", "Punkt!", "I to punkt!", "[Druzyna] bierze!" or emotional equivalent.
-6. SERVE: Error only when ">>> SERVE ERROR". Otherwise serve was good.
+6. SERVE ERROR rule: When ">>> SERVE ERROR" → the serve ITSELF scored the point for opponent. Say: "błąd serwisowy!" / "piłka w siatkę!" / "piłka za linię!" — NEVER "otwiera drogę", NEVER enthusiastic exclamation like "Kapitalnie!" after an error!
 7. BLOCK POINT vs WYBLOK: "BLOCK POINT!" = blocker scores. "block touch, ball rebounds" = wyblok — say "wyblok" in PL, NEVER "blokuje" if play continued.
 8. DIG ≠ BLOCK: "defensive dig" = obrona (not blok).
 9. PL: "sets to left/right wing" → "wystawia na lewe/prawe skrzydlo".
 10. NEVER "znowu/ponownie" — only if same player appears TWICE in this touch chain.
+11. NO CONTRADICTIONS: If you say a player defended brilliantly, you CANNOT say the ball went out. Pick ONE narrative. Either: great defense (ball stays in) OR ball went out (no comment on quality of defense).
+12. TEAM LOGIC: Every player in touch chain has a [TEAM] label. NEVER say a player from [TEAM_A] made a great play that scores a point for [TEAM_B]. Check the team labels.
 11. PL: "Thales" not "Hoss". "as serwisowy" not "SERVICE ACE". "Koniec seta!" not "SET OVER".`;
  }
  
@@ -1763,7 +1765,7 @@ INSTRUCTIONS:
  // POST-PROCESSING FILTER — deterministic cleanup, runs after every GPT call
  // These fixes are 100% reliable regardless of what GPT does
  // ========================================================================
- const postProcess = (text: string, lang: string): string => {
+ const postProcess = (text: string, lang: string, isError: boolean = false): string => {
    let t = text;
 
    // ── UNIVERSAL: Polish leaks that can appear in ANY language ────────────
@@ -1774,6 +1776,8 @@ INSTRUCTIONS:
      [/\bpotężn\w*/gi, lang === 'it' ? 'potente' : lang === 'de' ? 'kraftvoll' : lang === 'tr' ? 'güçlü' : lang === 'es' ? 'potente' : lang === 'pt' ? 'poderoso' : lang === 'jp' ? '強力な' : 'powerful'],
      [/\bHuknięcie\b/gi, lang === 'it' ? 'Gran botta' : lang === 'de' ? 'Knaller' : lang === 'tr' ? 'Güçlü servis' : lang === 'es' ? 'Gran golpe' : lang === 'pt' ? 'Grande tacada' : lang === 'jp' ? '強烈な一打' : 'Big shot'],
      [/\bHoss\b/g, 'Thales'],
+     [/\bpiłka\b/gi, lang === 'it' ? 'palla' : lang === 'de' ? 'Ball' : lang === 'tr' ? 'top' : lang === 'es' ? 'balón' : lang === 'pt' ? 'bola' : lang === 'jp' ? 'ボール' : 'ball'],
+     [/\bkapitalnie\b/gi, lang === 'it' ? 'magnificamente' : lang === 'de' ? 'hervorragend' : lang === 'tr' ? 'harika şekilde' : lang === 'es' ? 'magistralmente' : lang === 'pt' ? 'magistralmente' : lang === 'jp' ? '見事に' : 'brilliantly'],
    ];
 
    if (lang !== 'pl') {
@@ -1795,12 +1799,15 @@ INSTRUCTIONS:
      t = t.replace(/\bHoss\b/g, 'Thales');
 
      // ── "Punkt dla X" → neutral ending ─────────────────────────────────
-     const punktDlaVariants = [
+     // For errors (serve/reception): neutral. For attack/block: varied.
+     const punktDlaError = ['Punkt!', 'I to jest punkt!', 'Koniec!'];
+     const punktDlaAttack = [
        'Punkt!', 'I to jest punkt!', 'Zdobyte!', 'Piękny punkt!',
        'Niesamowite!', 'Kapitalnie!', 'Fantastyczny punkt!', 'Genialne!'
      ];
+     const variants = isError ? punktDlaError : punktDlaAttack;
      t = t.replace(/Punkt dla [^!.]+[!.]/g, () => {
-       return punktDlaVariants[Math.floor(Math.random() * punktDlaVariants.length)];
+       return variants[Math.floor(Math.random() * variants.length)];
      });
 
      // ── Score in text → remove explicit numbers ─────────────────────────
@@ -1814,6 +1821,19 @@ INSTRUCTIONS:
 
      // ── Forbidden words ─────────────────────────────────────────────────
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
+     t = t.replace(/otwiera drogę do zdobycia punktu/gi, 'daje punkt');
+     t = t.replace(/otwiera drogę do punktu/gi, 'daje punkt');
+     t = t.replace(/delikatny tip/gi, 'kiwka');
+     t = t.replace(/\btip shot\b/gi, 'kiwka');
+     t = t.replace(/\btip\b(?!\s*[a-z])/gi, 'kiwka');
+     t = t.replace(/szybuącą/g, 'szybującą');
+     t = t.replace(/leży na \w+ punktach? przewagi/gi, 'goni rywali');
+     // Contradiction: great defense + ball out → remove the "great" part
+     t = t.replace(/(kapitalnie|fenomenalnie|świetnie|doskonale)\s+(wyciąga|broni|obron\w+)[^!.]*!([^!.]*poza boiskiem)/gi,
+       'piłka$3');
+     // "otwiera drogę" variants
+     t = t.replace(/otwiera (drogę|możliwość) do (zdobycia )?punktu/gi, 'daje punkt');
+     t = t.replace(/co daje (szansę|możliwość) na (zdobycie )?punktu/gi, 'punkt');
      t = t.replace(/\bustawia do ataku\b/gi, 'wystawia do ataku');
      t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
      t = t.replace(/\bżywa zagrywka\b/gi, 'zagrywka szybująca');
@@ -1827,31 +1847,64 @@ INSTRUCTIONS:
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace');
      t = t.replace(/\bSET OVER\b/gi, 'SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     if (!setEndInfo.isSetEnd) {
+       t = t.replace(/\b(conduce|guida|è avanti|portano)\s+\d{1,2}[:\-]\d{1,2}/gi, '$1');
+       t = t.replace(/\b(pareggio|pari)\s+(sul\s+)?\d{1,2}[:\-]\d{1,2}/gi, 'pareggio!');
+       t = t.replace(/[,\s]+\d{1,2}[:\-]\d{1,2}\s*[!.]/g, '!');
+       t = t.replace(/[,\s]+\d{1,2}[:\-]\d{1,2}/g, '');
+       t = t.replace(/sul\s+\d{1,2}[:\-]\d{1,2}/gi, '');
+     }
    }
 
    if (lang === 'de') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'Aufschlag-Ass');
      t = t.replace(/\bSET OVER\b/gi, 'SATZGEWINN!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     // DE-specific score patterns (very common in German)
+     if (!setEndInfo.isSetEnd) {
+       t = t.replace(/\b(führt|führen|liegt vorn|vorne)\s+\d{1,2}[:\-]\d{1,2}/gi, '$1');
+       t = t.replace(/\b(Gleichstand|Ausgleich|Unentschieden)\s+(bei\s+)?\d{1,2}[:\-]\d{1,2}/gi, '$1!');
+       t = t.replace(/\b(steht|liegt)\s+(es\s+)?\d{1,2}[:\-]\d{1,2}/gi, '');
+       t = t.replace(/\b(zum|auf)\s+\d{1,2}[:\-]\d{1,2}/gi, '');
+       t = t.replace(/\d{1,2}[:\-]\d{1,2}\s+(für|zugunsten)/gi, '');
+       t = t.replace(/[,\s]+\d{1,2}[:\-]\d{1,2}\s*[!.]/g, '!');
+       t = t.replace(/[,\s]+\d{1,2}[:\-]\d{1,2}/g, '');
+     }
    }
 
    if (lang === 'tr') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'servis ace');
+     t = t.replace(/\bAS SERVİS\b/gi, 'servis ace');
      t = t.replace(/\bSET OVER\b/gi, 'SET BİTTİ!');
      t = t.replace(/\bHoss\b/g, 'Thales');
-     t = t.replace(/\bPunkt dla [^!.]+[!.]/g, 'Sayı!');
+     t = t.replace(/Punkt dla [^!.]+[!.]/g, 'Sayı!');
+     if (!setEndInfo.isSetEnd) {
+       t = t.replace(/\b(öne geçiyor|lider|önde)\s+\d{1,2}[:\-]\d{1,2}/gi, '$1');
+       t = t.replace(/\b(beraberlik|eşitlik)\s+\d{1,2}[:\-]\d{1,2}/gi, 'beraberlik!');
+       t = t.replace(/[,\s]+\d{1,2}[:\-]\d{1,2}/g, '');
+     }
    }
 
    if (lang === 'es') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace de saque');
      t = t.replace(/\bSET OVER\b/gi, '¡SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     if (!setEndInfo.isSetEnd) {
+       t = t.replace(/\b(lidera|gana|ventaja)\s+\d{1,2}[:\-]\d{1,2}/gi, '$1');
+       t = t.replace(/\b(empate|iguales?)\s+(a\s+)?\d{1,2}[:\-]\d{1,2}/gi, '¡empate!');
+       t = t.replace(/[,\s]+\d{1,2}[:\-]\d{1,2}/g, '');
+     }
    }
 
    if (lang === 'pt') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace no saque');
      t = t.replace(/\bSET OVER\b/gi, 'SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     if (!setEndInfo.isSetEnd) {
+       t = t.replace(/\b(lidera|vence|vantagem)\s+\d{1,2}[:\-]\d{1,2}/gi, '$1');
+       t = t.replace(/\b(empate|iguais?)\s+(em\s+)?\d{1,2}[:\-]\d{1,2}/gi, 'empate!');
+       t = t.replace(/[,\s]+\d{1,2}[:\-]\d{1,2}/g, '');
+     }
    }
 
    if (lang === 'jp') {
@@ -1870,10 +1923,16 @@ INSTRUCTIONS:
           // Remove ALL X:Y scores from rally commentary — score is in UI
      // "Remis 11:11" → "Remis!" / "remis" (keep word, remove number)
      t = t.replace(/\b(Remis|remis)\s+\d{1,2}:\d{1,2}[!.]?/g, '$1!');
-     // "prowadzą 14:11" → "prowadzą"
-     t = t.replace(/\b(prowadz[ąiąę\w]*)\s+\d{1,2}:\d{1,2}/g, '$1');
-     // "leads 14:11", "führt 14:11", etc
+     // "prowadzą 14:11" / "wyrównuje na 14:11" / "odskakuje na 14:11" → remove "na X:Y" entirely
+     t = t.replace(/\b(prowadz[ąiąę\w]*)\s+(na\s+)?\d{1,2}:\d{1,2}/g, '$1');
+     t = t.replace(/\b(wyrównu[ją\w]*)\s+(na\s+)?\d{1,2}:\d{1,2}/g, '$1');
+     t = t.replace(/\b(odskok[uią\w]*)\s+(na\s+)?\d{1,2}:\d{1,2}/g, '$1');
+     t = t.replace(/\b(remis)\s+(na\s+)?\d{1,2}:\d{1,2}/gi, 'remis!');
+     // "leads 14:11" etc
      t = t.replace(/\b(leads?|führt|führen|lidera|vantaggio|öne geçiyor)\s+\d{1,2}[:\-]\d{1,2}/gi, '$1');
+     // Dangling "na!" / "na," at end after score removal
+     t = t.replace(/\bna[!,.]\s*$/g, '!');
+     t = t.replace(/\bna\s+a\s+to/g, 'a to');
      // "now X:Y" / "score X:Y"
      t = t.replace(/\b(now|jetzt|ahora|ora|şimdi|maintenant|agora|aktuell)\s+\d{1,2}[:\-]\d{1,2}/gi, '');
      t = t.replace(/\b(score|Spielstand|marcador|punteggio|skor|wynik)[^\d]*\d{1,2}[:\-]\d{1,2}/gi, '');
@@ -1885,13 +1944,42 @@ INSTRUCTIONS:
      t = t.replace(/\s+\d{1,2}:\d{1,2}!(?!\s*(SET|set|seta|Satz|セット|FIN|END))/g, '!');
    }
 
+   // ── All languages: hard sentence limit ────────────────────────────────────
+   // Max 3 sentences for normal rallies, 5 for set end
+   const maxSentences = setEndInfo.isSetEnd ? 5 : 3;
+   const sentenceEnds = /[!?.]+/g;
+   let sentCount = 0;
+   let cutIdx = -1;
+   let match;
+   // Reset regex
+   sentenceEnds.lastIndex = 0;
+   while ((match = sentenceEnds.exec(t)) !== null) {
+     sentCount++;
+     if (sentCount === maxSentences) {
+       cutIdx = match.index + match[0].length;
+       break;
+     }
+   }
+   if (cutIdx > 0 && cutIdx < t.length - 5) {
+     t = t.slice(0, cutIdx).trim();
+   }
+
+   // ── All languages: fix truncated endings ───────────────────────────────
+   // Remove dangling prepositions/conjunctions at end caused by score removal
+   t = t.replace(/\s+(na|at|à|a|auf|sur|en|em|に|で)[!,.]?\s*$/gi, '!');
+   t = t.replace(/,\s*$/, '!');
+
    // ── All languages: clean up ─────────────────────────────────────────────
    t = t.replace(/  +/g, ' ').replace(/!!/g, '!').replace(/\s+([.,!?])/g, '$1').trim();
 
    return t;
  };
 
- const commentary = postProcess(rawCommentary, language);
+ const isErrorAction = isServeError || 
+  (scoringAction && (scoringAction.toLowerCase().includes('blad') || 
+   scoringAction.toLowerCase().includes('error') ||
+   scoringAction.toLowerCase().includes('błąd')));
+const commentary = postProcess(rawCommentary, language, isErrorAction);
 
  // ========================================================================
  // STEP 9: GENERATE TAGS, MILESTONES, ICONS, SCORES
