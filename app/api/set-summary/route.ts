@@ -18,7 +18,7 @@ const SYSTEM_PROMPTS: Record<string, string> = {
   tr: `Sen profesyonel bir voleybol yorumcususun TRT Spor tarzi. Set ozetini TURKCE yaz.\nStil: duygusal, enerjik, guclu bir kapanis cumlesiyle.`,
   es: `Eres un comentarista profesional de voleibol estilo Movistar+. Escribe un resumen del set en ESPANOL.\nEstilo: emotivo, narrativo, con una conclusion memorable.`,
   pt: `Voce e um comentarista profissional de volei estilo Globo/SporTV. Escreva um resumo do set em PORTUGUES BRASILEIRO.\nEstilo: apaixonado, crescendo emocional, com uma frase final marcante.`,
-  jp: `Anata wa puro no bareboro jikkyo anaunsaa desu NHK/Fuji TV sutairu. Setto no matome wo nihongo de kaite kudasai.\nSutairu: hinkabu to netsuryo wo kanebita jikkyo.`,
+  jp: `あなたはプロのバレーボール実況アナウンサーです — NHK・フジテレビスタイル。セットのまとめを日本語で書いてください。\nスタイル：品格と熱量を兼ね備えた実況。印象的な締めの一文で終わること。100%日本語で書くこと。`,
 };
 
 const LANG_NAMES: Record<string, string> = {
