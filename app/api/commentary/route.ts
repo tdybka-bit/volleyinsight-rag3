@@ -1822,7 +1822,7 @@ if (language === 'pl' && PHRASES_ENABLED) {
  model: 'gpt-4o-mini',
  messages: [
  { role: 'system', content: systemPrompt },
- { role: 'user', content: injectedPhrase ? commentaryPrompt + '\n\n[!!] NAKAZ — OSTATNIE ZDANIE: Zakoncz komentarz dokladnie tym zdaniem: "' + injectedPhrase + '"' : commentaryPrompt },
+    { role: 'user', content: commentaryPrompt },
  ],
  temperature: setEndInfo.isSetEnd ? 0.95 : isHotSituation ? 0.9 : currentStreak >= 3 ? 0.85 : isBigLead ? 0.8 : 0.7,
  max_tokens: dynamicMaxTokens,
@@ -1834,7 +1834,7 @@ if (language === 'pl' && PHRASES_ENABLED) {
  // POST-PROCESSING FILTER — deterministic cleanup, runs after every GPT call
  // These fixes are 100% reliable regardless of what GPT does
  // ========================================================================
- const postProcess = (text: string, lang: string): string => {
+ const postProcess = (text: string, lang: string, isError: boolean = false, phraseToAppend: string | null = null): string => {
    let t = text;
 
    // ── UNIVERSAL: Polish leaks that can appear in ANY language ────────────
@@ -1956,13 +1956,47 @@ if (language === 'pl' && PHRASES_ENABLED) {
      t = t.replace(/\s+\d{1,2}:\d{1,2}!(?!\s*(SET|set|seta|Satz|セット|FIN|END))/g, '!');
    }
 
+   // ── All languages: hard sentence limit (3 sentences for normal, 5 for set end) ──
+   if (!phraseToAppend) {
+     // Only cut if no phrase to append — phrase counts as final sentence
+     const maxSent = setEndInfo.isSetEnd ? 5 : 3;
+     const sentRe = /[!?.]+/g;
+     let sc = 0, cutAt = -1, m;
+     sentRe.lastIndex = 0;
+     while ((m = sentRe.exec(t)) !== null) {
+       sc++;
+       if (sc === maxSent) { cutAt = m.index + m[0].length; break; }
+     }
+     if (cutAt > 0 && cutAt < t.length - 5) t = t.slice(0, cutAt).trim();
+   } else {
+     // Strip GPT's own closing sentence (last ! or .) and replace with our phrase
+     // This prevents "Genialne! Zamknął drogę do parkietu." double-ending
+     const maxSent = setEndInfo.isSetEnd ? 4 : 2;
+     const sentRe2 = /[!?.]+/g;
+     let sc2 = 0, cutAt2 = -1, m2;
+     sentRe2.lastIndex = 0;
+     while ((m2 = sentRe2.exec(t)) !== null) {
+       sc2++;
+       if (sc2 === maxSent) { cutAt2 = m2.index + m2[0].length; break; }
+     }
+     if (cutAt2 > 0 && cutAt2 < t.length - 5) t = t.slice(0, cutAt2).trim();
+     t = t + ' ' + phraseToAppend;
+   }
+
+   // ── Fix dangling prepositions from score removal ────────────────────────
+   t = t.replace(/\s+(na|at|à|a|auf|sur|en|em)[!,.]?\s*$/gi, '!');
+
    // ── All languages: clean up ─────────────────────────────────────────────
    t = t.replace(/  +/g, ' ').replace(/!!/g, '!').replace(/\s+([.,!?])/g, '$1').trim();
 
    return t;
  };
 
- const commentary = postProcess(rawCommentary, language);
+ const _isErrorAction = isServeError ||
+  (scoringAction && (scoringAction.toLowerCase().includes('blad') ||
+   scoringAction.toLowerCase().includes('error') ||
+   scoringAction.toLowerCase().includes('błąd')));
+const commentary = postProcess(rawCommentary, language, _isErrorAction, language === 'pl' ? injectedPhrase : null);
 
  // ========================================================================
  // STEP 9: GENERATE TAGS, MILESTONES, ICONS, SCORES
