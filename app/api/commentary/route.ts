@@ -1761,8 +1761,25 @@ INSTRUCTIONS:
  console.log('[PRE-GPT] prompt first 400 chars:', commentaryPrompt.substring(0, 400));
  
  // B1: Dynamic token limits based on rally complexity
- const isServeError = numTouches <= 2 && scoringAction.toLowerCase().includes('blad serw');
- const isAcePoint = numTouches <= 2 && (scoringAction.toLowerCase().includes('ace') || scoringAction.toLowerCase().includes('as serw'));
+ // Check final_action.type for definitive action classification
+ const finalActionType = (rally.final_action?.type || '').toLowerCase();
+ const isServeError = numTouches <= 2 && (
+   scoringAction.toLowerCase().includes('blad serw') ||
+   scoringAction.toLowerCase().includes('serve error') ||
+   finalActionType.includes('serve error') ||
+   finalActionType.includes('blad serw')
+ );
+ const isAcePoint = numTouches <= 2 && (
+   scoringAction.toLowerCase().includes('ace') ||
+   scoringAction.toLowerCase().includes('as serw') ||
+   finalActionType.includes('ace') ||
+   finalActionType.includes('as serw') ||
+   // Reception error after serve = ace (server's team scored via opponent error)
+   (numTouches <= 2 && rally.team_scored !== (rally.touches?.[0]?.team || '') && 
+    (scoringAction.toLowerCase().includes('blad przyjec') || 
+     scoringAction.toLowerCase().includes('reception error') ||
+     finalActionType.includes('reception error')))
+ );
 
 // ── PHRASE INJECTION (PL only) ───────────────────────────────────────────────
 let injectedPhrase: string | null = null;
@@ -1789,15 +1806,24 @@ if (language === 'pl' && PHRASES_ENABLED) {
   };
   const _sa = (scoringAction || '').toLowerCase();
   // Support both Polish (Blok/Atak) and English (block/attack) action names from VolleyStation
-  const _isBlock  = (_sa.includes('blok') || _sa.includes('block'))
-                    && !_sa.includes('blad') && !_sa.includes('error')
-                    && !_sa.includes('atak') && !_sa.includes('attack');
-  const _isAttack = (_sa.includes('atak') || _sa.includes('attack') || _sa.includes('kill') || _sa.includes('skuteczn'))
-                    && !_sa.includes('blad') && !_sa.includes('error');
-  const _isErrAtk = (_sa.includes('atak') || _sa.includes('attack'))
-                    && (_sa.includes('blad') || _sa.includes('error'));
-  const _isErrRec = (_sa.includes('przyjec') || _sa.includes('receive') || _sa.includes('reception'))
-                    && (_sa.includes('blad') || _sa.includes('error'));
+  // Use final_action.type for reliable category detection
+  const _fat = (rally.final_action?.type || '').toLowerCase();
+  // Pure block = final action IS a block (not attack through block, not block error)
+  const _isBlock  = ((_sa === 'blok' || _sa === 'block' || _fat === 'block' || _fat === 'blok') ||
+                     (_sa.startsWith('blok') || _sa.startsWith('block')) &&
+                     !_sa.includes('error') && !_sa.includes('blad') &&
+                     !_sa.includes('atak') && !_sa.includes('attack') &&
+                     !_sa.includes('przez') && !_sa.includes('through') && !_sa.includes('touch'));
+  const _isAttack = ((_sa.includes('atak') || _sa.includes('attack') || _sa.includes('kill') ||
+                      _sa.includes('skuteczn') || _fat.includes('attack') || _fat.includes('kill')) &&
+                     !_sa.includes('blad') && !_sa.includes('error')) ||
+                    (_isBlock === false && !isAcePoint && !isServeError &&
+                     (rally.team_scored === (rally.touches?.[rally.touches.length-1]?.team || '')));
+  const _isErrAtk = (_sa.includes('atak') || _sa.includes('attack') || _fat.includes('attack'))
+                    && (_sa.includes('blad') || _sa.includes('error') || _fat.includes('error'));
+  const _isErrRec = (_sa.includes('przyjec') || _sa.includes('receive') || _sa.includes('reception') ||
+                     _fat.includes('reception'))
+                    && (_sa.includes('blad') || _sa.includes('error') || _fat.includes('error'));
 
   if      (isAcePoint)           injectedPhrase = pickPhrase('ace', _ctx);
   else if (isServeError)         injectedPhrase = pickPhrase('serve_error', _ctx);
@@ -1898,7 +1924,11 @@ if (language === 'pl' && PHRASES_ENABLED) {
      // ── Forbidden words ─────────────────────────────────────────────────
      // Remove GPT's own enthusiastic exclamations if we'll append a phrase
      if (phraseToAppend) {
-       t = t.replace(/\s*(Niesamowite|Genialne|Kapitalnie|Fantastyczne|Piękny punkt|I to jest punkt|Zdobyte)!\s*$/gi, '');
+       t = t.replace(/\s*(Niesamowite|Genialne|Kapitalnie|Fantastyczne|Fantastyczny punkt|Piękny punkt|I to jest punkt|Zdobyte|Punkt)!\s*$/gi, '');
+       // Also strip if it appears mid-text before serve error phrase
+       if (isError) {
+         t = t.replace(/\b(Niesamowite|Genialne|Kapitalnie|Fantastyczny punkt|Piękny punkt)!\s*/gi, '');
+       }
      }
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
      t = t.replace(/\bustawia do ataku\b/gi, 'wystawia do ataku');
