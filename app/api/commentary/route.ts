@@ -1,8 +1,74 @@
 import { NextRequest } from 'next/server';
+import * as fs from 'fs';
+import * as path from 'path';
 import OpenAI from 'openai';
 import { Pinecone } from '@pinecone-database/pinecone';
 
 // Initialize clients
+// ============================================================================
+// PHRASE LIBRARY — deterministic endings from user-curated phrases.json
+// Set PHRASES_ENABLED = false to revert to pure GPT generation instantly
+// ============================================================================
+const PHRASES_ENABLED = true;
+
+let _phrasesLib: Record<string, any[]> | null = null;
+function getPhrasesLib(): Record<string, any[]> {
+  if (!_phrasesLib) {
+    try {
+      const p = path.join(process.cwd(), 'data', 'phrases.json');
+      _phrasesLib = JSON.parse(fs.readFileSync(p, 'utf-8'));
+    } catch {
+      _phrasesLib = {};
+    }
+  }
+  return _phrasesLib!;
+}
+
+interface PhraseConditions {
+  isHome?: boolean;
+  isSetEnd?: boolean;
+  isJumpServe?: boolean;
+  isFloatServe?: boolean;
+  isPassPerfect?: boolean;
+  noBlock?: boolean;
+  hasLead?: boolean;
+  isEarlySet?: boolean;
+  isEarlyOrMid?: boolean;
+  minDigs?: number;
+  nthAceByPlayer?: number;
+  isLongestRally?: boolean;
+}
+
+function pickPhrase(
+  category: string,
+  ctx: PhraseConditions & { numDigs?: number; aceCount?: number }
+): string | null {
+  if (!PHRASES_ENABLED) return null;
+  const lib = getPhrasesLib();
+  const candidates = (lib[category] || []).filter((p: any) => {
+    const c: PhraseConditions = p.conditions || {};
+    if (c.isHome !== undefined && c.isHome !== ctx.isHome) return false;
+    if (c.isSetEnd !== undefined && c.isSetEnd !== ctx.isSetEnd) return false;
+    if (c.isJumpServe !== undefined && c.isJumpServe !== ctx.isJumpServe) return false;
+    if (c.isFloatServe !== undefined && c.isFloatServe !== ctx.isFloatServe) return false;
+    if (c.isPassPerfect !== undefined && c.isPassPerfect !== ctx.isPassPerfect) return false;
+    if (c.noBlock !== undefined && c.noBlock !== ctx.noBlock) return false;
+    if (c.hasLead !== undefined && c.hasLead !== ctx.hasLead) return false;
+    if (c.isEarlySet !== undefined && c.isEarlySet !== ctx.isEarlySet) return false;
+    if (c.isEarlyOrMid !== undefined && c.isEarlyOrMid !== ctx.isEarlyOrMid) return false;
+    if (c.minDigs !== undefined && (ctx.numDigs || 0) < c.minDigs) return false;
+    if (c.nthAceByPlayer !== undefined && (ctx.aceCount || 0) < c.nthAceByPlayer) return false;
+    return true;
+  });
+  if (!candidates.length) {
+    // Fallback: any phrase in category without conditions
+    const fallback = (lib[category] || []).filter((p: any) => !Object.keys(p.conditions || {}).length);
+    if (!fallback.length) return null;
+    return fallback[Math.floor(Math.random() * fallback.length)].text;
+  }
+  return candidates[Math.floor(Math.random() * candidates.length)].text;
+}
+
 const openai = new OpenAI({
  apiKey: process.env.OPENAI_API_KEY,
 });
@@ -1667,7 +1733,7 @@ ${rally.homeRotation || rally.awayRotation ? `ROTATION: ${homeTeamFull} R${rally
 SCORE SITUATION: ${scoreSituation}
 WHO LEADS: ${leadInfo}${situationContext}${errorContext}${substitutionContext}
 
-${tacticsContext ? `TACTICAL CONTEXT:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `GOOD COMMENTARY EXAMPLES:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `[!!] USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `PHRASE VARIATIONS:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `PLAYER PROFILE:\n${playerContext}` : ''}
+${tacticsContext ? `TACTICAL CONTEXT:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `GOOD COMMENTARY EXAMPLES:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `[!!] USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `PHRASE VARIATIONS:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `PLAYER PROFILE:\n${playerContext}` : ''}${injectedPhrase ? `\n\n[!!] NAKAZ: Zakoncz komentarz DOKLADNIE tym zdaniem (mozesz dostosowac nazwisko jesli trzeba, ale zachowaj sens): "${injectedPhrase}"` : ''}
 
 INSTRUCTIONS:
 - Describe ONLY the touch chain above. Each touch in order. Do not add anything!
@@ -1748,6 +1814,55 @@ INSTRUCTIONS:
  if (milestone) dynamicMaxTokens += 30;
  
  console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
+
+  // ── PHRASE INJECTION ─────────────────────────────────────────────────────
+  // Pick a user-curated phrase and inject as mandatory ending (PL only)
+  let injectedPhrase: string | null = null;
+  if (language === 'pl' && PHRASES_ENABLED) {
+    const scorerTeam  = rally.team_scored;
+    const isHome      = scorerTeam === 'home';
+    const hasLead     = isHome
+      ? (rally.score_after?.home || 0) > (rally.score_after?.away || 0)
+      : (rally.score_after?.away || 0) > (rally.score_after?.home || 0);
+    const homeScore   = rally.score_after?.home || 0;
+    const awayScore   = rally.score_after?.away || 0;
+    const maxScore    = Math.max(homeScore, awayScore);
+    const isEarlySet  = maxScore < 10;
+    const isEarlyOrMid = maxScore < 18;
+    const numDigs     = (rally.touches || []).filter((t: any) =>
+      (t.action || '').toLowerCase().includes('obrona') ||
+      (t.action || '').toLowerCase().includes('dig')).length;
+    const isJumpServe  = (rally.touches?.[0]?.serveType || '').includes('Spin');
+    const isFloatServe = (rally.touches?.[0]?.serveType || '').includes('Float');
+    const hasBlock     = (rally.touches || []).some((t: any) =>
+      (t.action || '').toLowerCase().includes('blok') &&
+      t.team !== scorerTeam);
+    const isPassPerfect = (rally.touches || []).some((t: any) =>
+      (t.action || '').toLowerCase().includes('perfect') &&
+      (t.action || '').toLowerCase().includes('przyjec'));
+    const ctx = { isHome, isSetEnd: setEndInfo.isSetEnd, isJumpServe, isFloatServe,
+                  isPassPerfect, noBlock: !hasBlock, hasLead, isEarlySet, isEarlyOrMid,
+                  numDigs };
+
+    if (isAcePoint) {
+      injectedPhrase = pickPhrase('ace', ctx);
+    } else if (isServeError) {
+      injectedPhrase = pickPhrase('serve_error', ctx);
+    } else if (scoringAction?.toLowerCase().includes('blok') && !scoringAction?.toLowerCase().includes('blad')) {
+      injectedPhrase = pickPhrase('block', ctx);
+    } else if (numTouches >= 15) {
+      injectedPhrase = pickPhrase('long_rally', ctx);
+    } else if (currentStreak >= 5) {
+      injectedPhrase = pickPhrase('momentum', ctx);
+    } else if (numTouches <= 4) {
+      injectedPhrase = pickPhrase('quick_attack', ctx);
+    }
+
+    if (injectedPhrase) {
+      console.log('[PHRASE] Injected:', injectedPhrase);
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 
  const completion = await openai.chat.completions.create({
  model: 'gpt-4o-mini',
