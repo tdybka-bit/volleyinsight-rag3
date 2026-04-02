@@ -476,15 +476,15 @@
       }
     },
     {
-      "text": "To może odbić się na końcówce seta.",
+      "text": "Postawił wszystko na jedną kartę, ale niestety mamy błąd w polu serwisowym.",
       "conditions": {
+        "isJumpServe": true,
         "isSetEnd": true
       }
     },
     {
-      "text": "Postawił wszystko na jedną kartę, ale niestety mamy błąd w polu serwisowym.",
+      "text": "W takiej chwili taki błąd boli podwójnie.",
       "conditions": {
-        "isJumpServe": true,
         "isSetEnd": true
       }
     }
