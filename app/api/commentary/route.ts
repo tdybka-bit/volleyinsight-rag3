@@ -1564,7 +1564,7 @@ if (!rally.touches || rally.touches.length === 0) {
      } else if (isLastTouch) {
        desc += ' - BLOCK POINT! (blok kończący — bloker zdobywa punkt)';
      } else {
-       desc += ' - block touch, ball rebounds into play (WYBLOK — akcja trwa, nie mow "blokuje" bo punkt nie padl)';
+       desc += ` - WYBLOK (piłka musnęła blok i żyje! ${player} przebił przez blok — punkt dla ${player}, NIE dla blokera)`;
      }
    // DIG / DEFENSE
    } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
@@ -1572,7 +1572,7 @@ if (!rally.touches || rally.touches.length === 0) {
      if (isLastTouch) {
        desc += ' - defensive dig (ball out — point to other team)';
      } else {
-       desc += ' - defensive dig (ball kept in play — obrona, nie blok!)';
+       desc += ` - obrona (dig) przez ${player} — piłka żyje, akcja trwa! NIE pisz tu że obrona była fenomenalna — to jeszcze nie koniec`;
      }
    // FREE
    } else if (actionLower.includes('wolna') || actionLower.includes('free')) {
@@ -1590,14 +1590,17 @@ if (!rally.touches || rally.touches.length === 0) {
  touchContext = `
 TOUCH CHAIN (${numTouches} touches${isLongRally ? ' — long rally!' : ''}):
 ${touchChainLines.join('\n')}
-=> SERVED BY: ${rally.touches[0]?.player || '?'} — this player SERVED, scorer is ${scoringPlayer}. NEVER confuse them!
+=> SERVED BY: ${rally.touches[0]?.player || '?'}
 => POINT FOR: ${winnerTeamLabel}
+=> ⚡ SCORING PLAYER: ${scoringPlayer} — MUST appear in your text!
+=> ⚡ ACTION DESCRIPTION ONLY — describe: WHO served → WHO received → WHO set (where?) → WHO attacked (which wing/position). Do NOT write a conclusion — the system adds it automatically. Stop after describing the attack.
 
 CRITICAL COMMENTARY RULES:
 1. "SERVED BY" ≠ scorer! If "SERVED BY" shows X and scorer is Y — X served, Y finished. NEVER say Y served!
 1b. "POINT FOR: ${winnerTeamLabel}" = ONLY this team scored. NEVER say the other team scored!
 2. Describe ONLY what is in the touch chain above. Nothing invented!
 3. LENGTH LIMIT (MANDATORY): 2-3 touches = MAX 2 sentences. 4-6 touches = MAX 3 sentences. 7+ touches = MAX 3 sentences. NEVER more than 3 sentences!
+3b. PRIORITY ORDER: serve/reception = context (skip if needed), ${scoringPlayer}'s attack = CLIMAX (MUST mention). Your last sentence before the system phrase must reference ${scoringPlayer}.
 4. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
 5. NO "PUNKT DLA X": Banned! Use: "[Nazwisko] konczy!", "Punkt!", "I to punkt!", "[Druzyna] bierze!" or emotional equivalent.
 6. SERVE: Error only when ">>> SERVE ERROR". Otherwise serve was good.
@@ -1875,7 +1878,7 @@ console.log(`[ACE-DEBUG] scoringAction='${scoringAction}' finalActionType='${fin
  // POST-PROCESSING FILTER — deterministic cleanup, runs after every GPT call
  // These fixes are 100% reliable regardless of what GPT does
  // ========================================================================
- const postProcess = (text: string, lang: string, isError: boolean = false, phraseToAppend: string | null = null): string => {
+ const postProcess = (text: string, lang: string, isError: boolean = false, phraseToAppend: string | null = null, scoringPlayer: string = ''): string => {
    let t = text;
 
    // ── UNIVERSAL: Polish leaks that can appear in ANY language ────────────
@@ -1943,6 +1946,27 @@ console.log(`[ACE-DEBUG] scoringAction='${scoringAction}' finalActionType='${fin
        }
      }
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
+     // Serve error: remove GPT hallucinations about ball landing in field or being received
+     if (isError) {
+       t = t.replace(/[^!.]*piłka ląduje w boisku rywali[^!.]*[!.]/gi, '');
+       t = t.replace(/[^!.]*przejmuje piłkę[^!.]*[!.]/gi, '');
+       t = t.replace(/[^!.]*akcja się rozkręca[^!.]*[!.]/gi, '');
+       t = t.replace(/[^!.]*przyjmuje piłkę[^!.]*[!.]/gi, '');
+       t = t.replace(/  +/g, ' ').trim();
+     }
+     // Fix nonsense wyblok descriptions
+     t = t.replace(/piłka broni się w bloku/gi, 'piłka mija blok');
+     t = t.replace(/piłka broni się na siatce/gi, 'piłka mija blok');
+     t = t.replace(/piłka (\w+ )?broni się/gi, 'piłka żyje');
+     // Replace anonymous "atakujący zdobywa/kończy" with scorer name
+     if (scoringPlayer) {
+       t = t.replace(/\batakujący\s+(zdobywa|kończy|bierze|wygrywa)/gi, `${scoringPlayer} $1`);
+       t = t.replace(/\batakujący\b(?!\s+broni)/gi, scoringPlayer);
+     }
+     // Remove vague "prowadzą/prowadzi" without named subject — score shown in UI
+     t = t.replace(/[,!]?\s*[Tt]eraz prowadz[ąaią]+[^!.]*[!.]?/g, '');
+     t = t.replace(/[,!]?\s*[Ii] prowadz[ąaią]+ (w (pierwszym|drugim|trzecim|czwartym|piątym) secie|teraz|nadal)[^!.]*[!.]?/gi, '');
+     t = t.replace(/,\s*prowadząc[^!.,]*/gi, '');
      t = t.replace(/\bustawia do ataku\b/gi, 'wystawia do ataku');
      t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
      t = t.replace(/\bżywa zagrywka\b/gi, 'zagrywka szybująca');
@@ -2027,9 +2051,9 @@ console.log(`[ACE-DEBUG] scoringAction='${scoringAction}' finalActionType='${fin
      }
      if (cutAt > 0 && cutAt < t.length - 5) t = t.slice(0, cutAt).trim();
    } else {
-     // Strip GPT's own closing sentence (last ! or .) and replace with our phrase
-     // This prevents "Genialne! Zamknął drogę do parkietu." double-ending
-     const maxSent = setEndInfo.isSetEnd ? 4 : 2;
+     // Strip GPT's own closing sentence and replace with our phrase
+     // Allow 3 sentences so full action is described (serve→reception→attack) + phrase as 4th
+     const maxSent = setEndInfo.isSetEnd ? 5 : (numTouches >= 6 ? 4 : 3);
      const sentRe2 = /[!?.]+/g;
      let sc2 = 0, cutAt2 = -1, m2;
      sentRe2.lastIndex = 0;
@@ -2054,7 +2078,7 @@ console.log(`[ACE-DEBUG] scoringAction='${scoringAction}' finalActionType='${fin
   (scoringAction && (scoringAction.toLowerCase().includes('blad') ||
    scoringAction.toLowerCase().includes('error') ||
    scoringAction.toLowerCase().includes('błąd')));
-const commentary = postProcess(rawCommentary, language, _isErrorAction, language === 'pl' ? injectedPhrase : null);
+const commentary = postProcess(rawCommentary, language, _isErrorAction, language === 'pl' ? injectedPhrase : null, scoringPlayer);
 
  // ========================================================================
  // STEP 9: GENERATE TAGS, MILESTONES, ICONS, SCORES
