@@ -47,12 +47,31 @@ function getTrend(last5: number[]): 'up' | 'down' | 'stable' {
 
 function lookupPlayer(surname: string, teamHint?: string, players: any[] = []) {
   const s = surname.toLowerCase().trim();
-  const candidates = players.filter(p => {
+
+  // 1. Match by last part of name (standard: "Kowalski" matches "Jan Kowalski")
+  let candidates = players.filter(p => {
     const parts = p.name.split(' ');
     return parts[parts.length - 1].toLowerCase() === s;
   });
+
+  // 2. Fallback: match by FIRST part (e.g. "Leon" matches "Leon Venero")
+  if (candidates.length === 0) {
+    candidates = players.filter(p => {
+      const parts = p.name.split(' ');
+      return parts[0].toLowerCase() === s;
+    });
+  }
+
+  // 3. Fallback: match by any part (e.g. "Tavares" in "Miguel Tavares Rodrigues")
+  if (candidates.length === 0) {
+    candidates = players.filter(p =>
+      p.name.toLowerCase().split(' ').includes(s)
+    );
+  }
+
   if (candidates.length === 0) return null;
   if (candidates.length === 1) return candidates[0];
+
   // Conflict — resolve via team hint
   if (teamHint) {
     const th = teamHint.toLowerCase();
@@ -93,7 +112,14 @@ export async function GET(request: NextRequest) {
       const st      = p.season_totals || {};
       const matches = p.match_by_match || [];
       const last5   = cleanLast5(matches);
-      const avgPts  = st.matches > 0 ? Math.round((st.points / st.matches) * 10) / 10 : 0;
+
+      // Use match_by_match for avgPoints — same source as Player Profile page
+      const mbmPoints = matches
+        .map((mx: any) => mx.points_total)
+        .filter((v: any) => typeof v === 'number' && Number.isInteger(v) && v >= 0 && v < 60);
+      const avgPts = mbmPoints.length > 0
+        ? Math.round((mbmPoints.reduce((a: number, b: number) => a + b, 0) / mbmPoints.length) * 10) / 10
+        : (st.matches > 0 ? Math.round((st.points / st.matches) * 10) / 10 : 0);
 
       const m = st.matches || 1;
       // avgDigs: compute from match_by_match
@@ -137,6 +163,14 @@ export async function GET(request: NextRequest) {
   const matches = p.match_by_match || [];
   const last5   = cleanLast5(matches);
 
+  // Use match_by_match for avgPoints — same source as Player Profile page
+  const mbmPoints = matches
+    .map((mx: any) => mx.points_total)
+    .filter((v: any) => typeof v === 'number' && Number.isInteger(v) && v >= 0 && v < 60);
+  const avgPtsSingle = mbmPoints.length > 0
+    ? Math.round((mbmPoints.reduce((a: number, b: number) => a + b, 0) / mbmPoints.length) * 10) / 10
+    : (st.matches > 0 ? Math.round((st.points / (st.matches || 1)) * 10) / 10 : 0);
+
   const m = st.matches || 1;
   const digVals = (p.match_by_match || [])
     .map((mx: any) => mx.defense)
@@ -147,7 +181,7 @@ export async function GET(request: NextRequest) {
     id:           p.id,
     fullName:     p.name,
     team:         p.team,
-    avgPoints:    st.matches > 0 ? Math.round((st.points    / m) * 10) / 10 : 0,
+    avgPoints:    avgPtsSingle,
     avgAces:      st.matches > 0 ? Math.round((st.aces      / m) * 10) / 10 : 0,
     avgBlocks:    st.matches > 0 ? Math.round(((st.block_points || 0) / m) * 10) / 10 : 0,
     avgAttackPct: Math.round(st.attack_perfect_percent || 0),
