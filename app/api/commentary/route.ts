@@ -3,42 +3,6 @@ import OpenAI from 'openai';
 import { Pinecone } from '@pinecone-database/pinecone';
 
 // Initialize clients
-// ── PHRASE LIBRARY ───────────────────────────────────────────────────────────
-// Set false to revert instantly to pure GPT — no other changes needed
-const PHRASES_ENABLED = true;
-
-let _phrasesCache: Record<string, any[]> | null = null;
-function getPhrasesLib() {
-  if (!_phrasesCache) {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      _phrasesCache = require('fs').existsSync(require('path').join(process.cwd(), 'data', 'phrases.json'))
-        ? JSON.parse(require('fs').readFileSync(require('path').join(process.cwd(), 'data', 'phrases.json'), 'utf-8'))
-        : {};
-    } catch { _phrasesCache = {}; }
-  }
-  return _phrasesCache!;
-}
-
-function pickPhrase(category: string, ctx: Record<string, any>): string | null {
-  if (!PHRASES_ENABLED) return null;
-  const lib = getPhrasesLib() as Record<string, Array<{text: string; conditions: Record<string, any>}>>;
-  const all = lib[category] || [];
-  const matching = all.filter(p => {
-    const c = p.conditions || {};
-    for (const [k, v] of Object.entries(c)) {
-      if (k === 'minDigs' && (ctx.numDigs || 0) < (v as number)) return false;
-      if (k === 'nthAceByPlayer' && (ctx.aceCount || 0) < (v as number)) return false;
-      if (typeof v === 'boolean' && ctx[k] !== v) return false;
-    }
-    return true;
-  });
-  const pool = matching.length ? matching : all.filter(p => !Object.keys(p.conditions || {}).length);
-  if (!pool.length) return null;
-  return pool[Math.floor(Math.random() * pool.length)].text;
-}
-// ─────────────────────────────────────────────────────────────────────────────
-
 const openai = new OpenAI({
  apiKey: process.env.OPENAI_API_KEY,
 });
@@ -1554,17 +1518,13 @@ if (!rally.touches || rally.touches.length === 0) {
    } else if (actionLower.includes('blok') || actionLower.includes('block')) {
      const isLastTouch = idx === rally.touches!.length - 1;
      if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) {
-       const blockSynonyms = [
-         ' - attacker beat the block (wyblok — attacker scores)',
-         ' - found a gap in the block (wyblok)',
-         ' - block touched but attacker wins',
-         ' - late block, attacker scores through',
-       ];
-       desc += blockSynonyms[Math.floor(Math.random() * blockSynonyms.length)];
+       // wyblok: blocker touched ball but SCORING PLAYER wins
+       // Make crystal clear who is the blocker vs who scored
+       desc += ` - WYBLOK! ${player} jest BLOKEREM który dotknął piłki, ale atak przebił blok. ${player} NIE zdobył punktu — punkt zdobył atakujący (SCORING PLAYER)!`;
      } else if (isLastTouch) {
        desc += ' - BLOCK POINT! (blok kończący — bloker zdobywa punkt)';
      } else {
-       desc += ` - WYBLOK (piłka musnęła blok i żyje! ${player} przebił przez blok — punkt dla ${player}, NIE dla blokera)`;
+       desc += ` - WYBLOK przez ${player}: ${player} dotknął piłki ale jej NIE zablokował — piłka żyje, akcja TRWA! ${player} to BLOKER, nie atakujący!`;
      }
    // DIG / DEFENSE
    } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
@@ -1572,7 +1532,7 @@ if (!rally.touches || rally.touches.length === 0) {
      if (isLastTouch) {
        desc += ' - defensive dig (ball out — point to other team)';
      } else {
-       desc += ` - obrona (dig) przez ${player} — piłka żyje, akcja trwa! NIE pisz tu że obrona była fenomenalna — to jeszcze nie koniec`;
+       desc += ' - defensive dig (ball kept in play — obrona, nie blok!)';
      }
    // FREE
    } else if (actionLower.includes('wolna') || actionLower.includes('free')) {
@@ -1590,17 +1550,14 @@ if (!rally.touches || rally.touches.length === 0) {
  touchContext = `
 TOUCH CHAIN (${numTouches} touches${isLongRally ? ' — long rally!' : ''}):
 ${touchChainLines.join('\n')}
-=> SERVED BY: ${rally.touches[0]?.player || '?'}
+=> SERVED BY: ${rally.touches[0]?.player || '?'} — this player SERVED, scorer is ${scoringPlayer}. NEVER confuse them!
 => POINT FOR: ${winnerTeamLabel}
-=> ⚡ SCORING PLAYER: ${scoringPlayer} — MUST appear in your text!
-=> ⚡ ACTION DESCRIPTION ONLY — describe: WHO served → WHO received → WHO set (where?) → WHO attacked (which wing/position). Do NOT write a conclusion — the system adds it automatically. Stop after describing the attack.
 
 CRITICAL COMMENTARY RULES:
 1. "SERVED BY" ≠ scorer! If "SERVED BY" shows X and scorer is Y — X served, Y finished. NEVER say Y served!
 1b. "POINT FOR: ${winnerTeamLabel}" = ONLY this team scored. NEVER say the other team scored!
 2. Describe ONLY what is in the touch chain above. Nothing invented!
 3. LENGTH LIMIT (MANDATORY): 2-3 touches = MAX 2 sentences. 4-6 touches = MAX 3 sentences. 7+ touches = MAX 3 sentences. NEVER more than 3 sentences!
-3b. PRIORITY ORDER: serve/reception = context (skip if needed), ${scoringPlayer}'s attack = CLIMAX (MUST mention). Your last sentence before the system phrase must reference ${scoringPlayer}.
 4. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
 5. NO "PUNKT DLA X": Banned! Use: "[Nazwisko] konczy!", "Punkt!", "I to punkt!", "[Druzyna] bierze!" or emotional equivalent.
 6. SERVE: Error only when ">>> SERVE ERROR". Otherwise serve was good.
@@ -1725,7 +1682,6 @@ INSTRUCTIONS:
 
 🔴 FINAL REMINDER: Your response must be 100% in ${language === 'pl' ? 'Polish' : language === 'it' ? 'Italian' : language === 'de' ? 'German' : language === 'tr' ? 'Turkish' : language === 'es' ? 'Spanish' : language === 'pt' ? 'Portuguese' : language === 'jp' ? 'Japanese' : 'English'}. Zero Polish words allowed. If context data contains Polish — translate it. Do NOT write a single Polish word.`;
 
-
  
  // DEBUG: Check if naming rules are in prompt
  if (namingRulesContext) {
@@ -1764,82 +1720,8 @@ INSTRUCTIONS:
  console.log('[PRE-GPT] prompt first 400 chars:', commentaryPrompt.substring(0, 400));
  
  // B1: Dynamic token limits based on rally complexity
- // Check final_action.type for definitive action classification
- const finalActionType = (rally.final_action?.type || '').toLowerCase();
- const isServeError = numTouches <= 2 && (
-   scoringAction.toLowerCase().includes('blad serw') ||
-   scoringAction.toLowerCase().includes('serve error') ||
-   finalActionType.includes('serve error') ||
-   finalActionType.includes('blad serw')
- );
- const firstTouchAction = (rally.touches?.[0]?.action || '').toLowerCase();
- const firstTouchIsServe = firstTouchAction.includes('zagrywka') ||
-   firstTouchAction.includes('serwis') || firstTouchAction.includes('serve');
- const isAcePoint = numTouches <= 2 && (
-   scoringAction.toLowerCase().includes('ace') ||
-   scoringAction.toLowerCase().includes('as serw') ||
-   finalActionType.includes('ace') ||
-   finalActionType.includes('as serw') ||
-   // Reception error after ace: serve is touch[0], numTouches<=2, server's team scored
-   // No string matching needed — short rally + server's team won = ace
-   (firstTouchIsServe && rally.team_scored === (rally.touches?.[0]?.team || ''))
- );
-
-
-// ── PHRASE INJECTION (PL only) ───────────────────────────────────────────────
-let injectedPhrase: string | null = null;
-if (language === 'pl' && PHRASES_ENABLED) {
-  const _scorerTeam = rally.team_scored;
-  const _isHome = _scorerTeam === 'home';
-  const _hasLead = _isHome
-    ? (rally.score_after?.home || 0) > (rally.score_after?.away || 0)
-    : (rally.score_after?.away || 0) > (rally.score_after?.home || 0);
-  const _maxScore = Math.max(rally.score_after?.home || 0, rally.score_after?.away || 0);
-  const _numDigs = (rally.touches || []).filter((t: any) =>
-    (t.action || '').toLowerCase().includes('obrona') || (t.action || '').toLowerCase().includes('dig')).length;
-  const _isJumpServe = (rally.touches?.[0]?.serveType || '').includes('Spin');
-  const _isFloatServe = (rally.touches?.[0]?.serveType || '').includes('Float');
-  const _hasBlock = (rally.touches || []).some((t: any) =>
-    (t.action || '').toLowerCase().includes('blok') && t.team !== _scorerTeam);
-  const _isPassPerfect = (rally.touches || []).some((t: any) =>
-    (t.action || '').toLowerCase().includes('perfect') && (t.action || '').toLowerCase().includes('przyjec'));
-  const _ctx = {
-    isHome: _isHome, isSetEnd: setEndInfo.isSetEnd,
-    isJumpServe: _isJumpServe, isFloatServe: _isFloatServe,
-    isPassPerfect: _isPassPerfect, noBlock: !_hasBlock, hasLead: _hasLead,
-    isEarlySet: _maxScore < 10, isEarlyOrMid: _maxScore < 18, numDigs: _numDigs,
-  };
-  const _sa = (scoringAction || '').toLowerCase();
-  // Support both Polish (Blok/Atak) and English (block/attack) action names from VolleyStation
-  // Use final_action.type for reliable category detection
-  const _fat = (rally.final_action?.type || '').toLowerCase();
-  // Pure block = final action IS a block (not attack through block, not block error)
-  const _isBlock  = ((_sa === 'blok' || _sa === 'block' || _fat === 'block' || _fat === 'blok') ||
-                     (_sa.startsWith('blok') || _sa.startsWith('block')) &&
-                     !_sa.includes('error') && !_sa.includes('blad') &&
-                     !_sa.includes('atak') && !_sa.includes('attack') &&
-                     !_sa.includes('przez') && !_sa.includes('through') && !_sa.includes('touch'));
-  const _isAttack = ((_sa.includes('atak') || _sa.includes('attack') || _sa.includes('kill') ||
-                      _sa.includes('skuteczn') || _fat.includes('attack') || _fat.includes('kill')) &&
-                     !_sa.includes('blad') && !_sa.includes('error')) ||
-                    (_isBlock === false && !isAcePoint && !isServeError &&
-                     (rally.team_scored === (rally.touches?.[rally.touches.length-1]?.team || '')));
-  const _isErrAtk = (_sa.includes('atak') || _sa.includes('attack') || _fat.includes('attack'))
-                    && (_sa.includes('blad') || _sa.includes('error') || _fat.includes('error'));
-  const _isErrRec = (_sa.includes('przyjec') || _sa.includes('receive') || _sa.includes('reception') ||
-                     _fat.includes('reception'))
-                    && (_sa.includes('blad') || _sa.includes('error') || _fat.includes('error'));
-
-  if      (isAcePoint)           injectedPhrase = pickPhrase('ace', _ctx);
-  else if (isServeError)         injectedPhrase = pickPhrase('serve_error', _ctx);
-  else if (_isBlock)             injectedPhrase = pickPhrase('block', _ctx);
-  else if (_isErrAtk || _isErrRec) injectedPhrase = pickPhrase('attack_error', _ctx);
-  else if (numTouches >= 15)     injectedPhrase = pickPhrase('long_rally', _ctx);
-  else if (currentStreak >= 5)   injectedPhrase = pickPhrase('momentum', _ctx);
-  else                           injectedPhrase = pickPhrase('quick_attack', _ctx);
-  if (injectedPhrase) console.log('[PHRASE]', injectedPhrase);
-}
-// ─────────────────────────────────────────────────────────────────────────────
+ const isServeError = numTouches <= 2 && scoringAction.toLowerCase().includes('blad serw');
+ const isAcePoint = numTouches <= 2 && (scoringAction.toLowerCase().includes('ace') || scoringAction.toLowerCase().includes('as serw'));
  const hasSubstitution = rally.substitutions?.length > 0;
  
  let dynamicMaxTokens = 150; // default: normal rally
@@ -1860,13 +1742,12 @@ if (language === 'pl' && PHRASES_ENABLED) {
  if (milestone) dynamicMaxTokens += 30;
  
  console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
-console.log(`[ACE-DEBUG] scoringAction='${scoringAction}' finalActionType='${finalActionType}' firstTouchAction='${(rally.touches?.[0]?.action||'')}' firstTouchIsServe=${(rally.touches?.[0]?.action||'').toLowerCase().includes('zagrywka')||(rally.touches?.[0]?.action||'').toLowerCase().includes('serve')} team_scored='${rally.team_scored}' touch0_team='${rally.touches?.[0]?.team||''}'`);
 
  const completion = await openai.chat.completions.create({
- model: 'gpt-4o-mini',
+ model: 'gpt-4.1-mini',
  messages: [
  { role: 'system', content: systemPrompt },
-    { role: 'user', content: commentaryPrompt },
+ { role: 'user', content: commentaryPrompt },
  ],
  temperature: setEndInfo.isSetEnd ? 0.95 : isHotSituation ? 0.9 : currentStreak >= 3 ? 0.85 : isBigLead ? 0.8 : 0.7,
  max_tokens: dynamicMaxTokens,
@@ -1878,7 +1759,7 @@ console.log(`[ACE-DEBUG] scoringAction='${scoringAction}' finalActionType='${fin
  // POST-PROCESSING FILTER — deterministic cleanup, runs after every GPT call
  // These fixes are 100% reliable regardless of what GPT does
  // ========================================================================
- const postProcess = (text: string, lang: string, isError: boolean = false, phraseToAppend: string | null = null, scoringPlayer: string = ''): string => {
+ const postProcess = (text: string, lang: string): string => {
    let t = text;
 
    // ── UNIVERSAL: Polish leaks that can appear in ANY language ────────────
@@ -1928,45 +1809,10 @@ console.log(`[ACE-DEBUG] scoringAction='${scoringAction}' finalActionType='${fin
      }
 
      // ── Forbidden words ─────────────────────────────────────────────────
-     // Remove GPT's own enthusiastic exclamations if we'll append a phrase
-     if (phraseToAppend) {
-       // Strip at end of text
-       t = t.replace(/\s*(Niesamowite|Genialne|Kapitalnie|Fantastyczne|Fantastyczny punkt|Piękny punkt|I to jest punkt|Zdobyte|Punkt|I to wystarczyło)!\s*$/gi, '');
-       // Also strip "Zdobyte!" anywhere in text (GPT adds it for errors)
-       t = t.replace(/\bZdobyte!\s*/gi, '');
-       t = t.replace(/\bI to jest punkt!\s*/g, '');
-       // Strip enthusiastic exclamations that don't fit error context
-       if (isError) {
-         t = t.replace(/\b(Niesamowite|Genialne|Kapitalnie|Fantastyczny punkt|Piękny punkt)!\s*/gi, '');
-       }
-     } else {
-       // Even without phrase, remove "Zdobyte!" after errors
-       if (isError) {
-         t = t.replace(/\bZdobyte!\s*/gi, '');
-       }
-     }
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
-     // Serve error: remove GPT hallucinations about ball landing in field or being received
-     if (isError) {
-       t = t.replace(/[^!.]*piłka ląduje w boisku rywali[^!.]*[!.]/gi, '');
-       t = t.replace(/[^!.]*przejmuje piłkę[^!.]*[!.]/gi, '');
-       t = t.replace(/[^!.]*akcja się rozkręca[^!.]*[!.]/gi, '');
-       t = t.replace(/[^!.]*przyjmuje piłkę[^!.]*[!.]/gi, '');
-       t = t.replace(/  +/g, ' ').trim();
-     }
-     // Fix nonsense wyblok descriptions
-     t = t.replace(/piłka broni się w bloku/gi, 'piłka mija blok');
-     t = t.replace(/piłka broni się na siatce/gi, 'piłka mija blok');
-     t = t.replace(/piłka (\w+ )?broni się/gi, 'piłka żyje');
-     // Replace anonymous "atakujący zdobywa/kończy" with scorer name
-     if (scoringPlayer) {
-       t = t.replace(/\batakujący\s+(zdobywa|kończy|bierze|wygrywa)/gi, `${scoringPlayer} $1`);
-       t = t.replace(/\batakujący\b(?!\s+broni)/gi, scoringPlayer);
-     }
-     // Remove vague "prowadzą/prowadzi" without named subject — score shown in UI
-     t = t.replace(/[,!]?\s*[Tt]eraz prowadz[ąaią]+[^!.]*[!.]?/g, '');
-     t = t.replace(/[,!]?\s*[Ii] prowadz[ąaią]+ (w (pierwszym|drugim|trzecim|czwartym|piątym) secie|teraz|nadal)[^!.]*[!.]?/gi, '');
-     t = t.replace(/,\s*prowadząc[^!.,]*/gi, '');
+     t = t.replace(/\bbierze!$/gi, 'zdobywa punkt!');
+     t = t.replace(/\s+bierze!/g, ' zdobywa punkt!');
+     t = t.replace(/\s+bierze\./g, ' zdobywa punkt.');
      t = t.replace(/\bustawia do ataku\b/gi, 'wystawia do ataku');
      t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
      t = t.replace(/\bżywa zagrywka\b/gi, 'zagrywka szybująca');
@@ -2038,47 +1884,13 @@ console.log(`[ACE-DEBUG] scoringAction='${scoringAction}' finalActionType='${fin
      t = t.replace(/\s+\d{1,2}:\d{1,2}!(?!\s*(SET|set|seta|Satz|セット|FIN|END))/g, '!');
    }
 
-   // ── All languages: hard sentence limit (3 sentences for normal, 5 for set end) ──
-   if (!phraseToAppend) {
-     // Only cut if no phrase to append — phrase counts as final sentence
-     const maxSent = setEndInfo.isSetEnd ? 5 : 3;
-     const sentRe = /[!?.]+/g;
-     let sc = 0, cutAt = -1, m;
-     sentRe.lastIndex = 0;
-     while ((m = sentRe.exec(t)) !== null) {
-       sc++;
-       if (sc === maxSent) { cutAt = m.index + m[0].length; break; }
-     }
-     if (cutAt > 0 && cutAt < t.length - 5) t = t.slice(0, cutAt).trim();
-   } else {
-     // Strip GPT's own closing sentence and replace with our phrase
-     // Allow 3 sentences so full action is described (serve→reception→attack) + phrase as 4th
-     const maxSent = setEndInfo.isSetEnd ? 5 : (numTouches >= 6 ? 4 : 3);
-     const sentRe2 = /[!?.]+/g;
-     let sc2 = 0, cutAt2 = -1, m2;
-     sentRe2.lastIndex = 0;
-     while ((m2 = sentRe2.exec(t)) !== null) {
-       sc2++;
-       if (sc2 === maxSent) { cutAt2 = m2.index + m2[0].length; break; }
-     }
-     if (cutAt2 > 0 && cutAt2 < t.length - 5) t = t.slice(0, cutAt2).trim();
-     t = t + ' ' + phraseToAppend;
-   }
-
-   // ── Fix dangling prepositions from score removal ────────────────────────
-   t = t.replace(/\s+(na|at|à|a|auf|sur|en|em)[!,.]?\s*$/gi, '!');
-
    // ── All languages: clean up ─────────────────────────────────────────────
    t = t.replace(/  +/g, ' ').replace(/!!/g, '!').replace(/\s+([.,!?])/g, '$1').trim();
 
    return t;
  };
 
- const _isErrorAction = isServeError ||
-  (scoringAction && (scoringAction.toLowerCase().includes('blad') ||
-   scoringAction.toLowerCase().includes('error') ||
-   scoringAction.toLowerCase().includes('błąd')));
-const commentary = postProcess(rawCommentary, language, _isErrorAction, language === 'pl' ? injectedPhrase : null, scoringPlayer);
+ const commentary = postProcess(rawCommentary, language);
 
  // ========================================================================
  // STEP 9: GENERATE TAGS, MILESTONES, ICONS, SCORES

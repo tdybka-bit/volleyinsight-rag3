@@ -130,6 +130,52 @@ export async function POST(request: NextRequest) {
     console.log('[PROFILE] Total chunks:', allChunks.length);
 
     if (allChunks.length === 0) {
+      console.log('[PROFILE] No Pinecone data — trying stats fallback from players-all-full.json');
+      
+      // FALLBACK: generate basic profile from season stats JSON
+      try {
+        const { promises: fs } = await import('fs');
+        const path = await import('path');
+        const filePath = path.join(process.cwd(), 'data', 'plusliga-2025-2026', 'players-all-full.json');
+        const raw = await fs.readFile(filePath, 'utf-8');
+        const json = JSON.parse(raw);
+        const players: any[] = json.players || [];
+
+        // Find player by surname match
+        const sNorm = stripDiacritics(playerName).toLowerCase();
+        const found = players.find(p => {
+          const parts = p.name.split(' ');
+          return parts.some((part: string) => stripDiacritics(part).toLowerCase() === sNorm);
+        });
+
+        if (found) {
+          const st = found.season_totals || {};
+          const m = st.matches || 1;
+          const avgPts = st.matches > 0 ? (st.points / m).toFixed(1) : '?';
+          const avgAces = st.matches > 0 ? (st.aces / m).toFixed(2) : '?';
+          const attackPct = st.attack_perfect_percent ? Math.round(st.attack_perfect_percent) + '%' : '?';
+          const blocks = st.block_points || 0;
+
+          const summary = `📊 STATYSTYKI SEZONU 2025-2026 (${found.team})
+🏐 MECZE: ${st.matches || 0} (${st.sets || 0} setów)
+💪 PUNKTY: ${st.points || 0} łącznie · śr. ${avgPts}/mecz
+⚡ ATAK: K% ${attackPct} · ${st.attack_total || 0} ataków
+🎯 ASY: ${st.aces || 0} łącznie · śr. ${avgAces}/mecz
+🧱 BLOKI: ${blocks} pkt blok`;
+
+          console.log('[PROFILE] Stats fallback OK for', found.name);
+          return Response.json({
+            playerName,
+            found: true,
+            profile: { name: found.name, team: found.team, position: '', nationality: '', content: summary },
+            summary,
+            chunks: [{ content: summary, category: 'stats-fallback', score: 1.0 }],
+          });
+        }
+      } catch (e) {
+        console.error('[PROFILE] Stats fallback error:', e);
+      }
+
       console.log('[PROFILE] No data found for', playerName);
       return Response.json({
         playerName,

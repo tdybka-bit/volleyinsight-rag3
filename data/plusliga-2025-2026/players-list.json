@@ -2,8 +2,8 @@
   "meta": {
     "league": "plusliga",
     "season": "2025-2026",
-    "scraped_at": "2025-12-14T21:08:14.849Z",
-    "total_players": 221,
+    "scraped_at": "2026-04-04T20:00:05.245Z",
+    "total_players": 225,
     "source_url": "https://www.plusliga.pl/statsPlayers/tournament_1/52.html"
   },
   "players": [
@@ -643,9 +643,19 @@
       "url": "https://www.plusliga.pl/statsPlayers/id/1713.html"
     },
     {
+      "id": "1721",
+      "name": "Michał Witkoś",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1721.html"
+    },
+    {
       "id": "1728",
       "name": "Miguel Tavares Rodrigues",
       "url": "https://www.plusliga.pl/statsPlayers/id/1728.html"
+    },
+    {
+      "id": "1740",
+      "name": "Mikołaj Sawicki",
+      "url": "https://www.plusliga.pl/statsPlayers/id/1740.html"
     },
     {
       "id": "1745",
@@ -1111,6 +1121,16 @@
       "id": "2869",
       "name": "Jakub Rząca",
       "url": "https://www.plusliga.pl/statsPlayers/id/2869.html"
+    },
+    {
+      "id": "2870",
+      "name": "Bartłomiej Ostój",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2870.html"
+    },
+    {
+      "id": "2878",
+      "name": "Mohammad Javad Manavinezhad",
+      "url": "https://www.plusliga.pl/statsPlayers/id/2878.html"
     }
   ]
 }

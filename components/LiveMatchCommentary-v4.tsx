@@ -1495,6 +1495,16 @@ export default function LiveMatchCommentaryV4() {
    };
 
    fetchProfile();
+
+   // Also fetch season stats for favPlayer if not yet loaded
+   if (favPlayer && !seasonStats[favPlayer]) {
+     fetch(`/api/player-season-stats?names=${encodeURIComponent(favPlayer)}`)
+       .then(r => r.json())
+       .then(data => {
+         if (data.players) setSeasonStats(prev => ({ ...prev, ...data.players }));
+       })
+       .catch(() => {});
+   }
  }, [favPlayer]);
 
  // ── FETCH SEASON STATS for leaderboard players ───────────────────────────
