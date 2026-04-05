@@ -38,7 +38,7 @@ async function findBySemantic(
   const nameParts = getNameParts(playerName);
   console.log(`[PROFILE] Semantic search in ns="${namespace || '(default)'}" for:`, nameParts);
 
-  const query = `${playerName} profil zawodnika charakterystyka styl gry mocne strony`;
+  const query = `${playerName} siatkarz PlusLiga profil`;  // Short query — more specific to player name
   const embedding = await openai.embeddings.create({
     model: 'text-embedding-3-small',
     input: query,
@@ -47,7 +47,7 @@ async function findBySemantic(
 
   const searchResults = await index.namespace(namespace).query({
     vector: embedding.data[0].embedding,
-    topK: 20,
+    topK: 50,
     includeMetadata: true,
   });
 
@@ -62,7 +62,22 @@ async function findBySemantic(
 
   console.log(`[PROFILE] Semantic: ${searchResults.matches.length} total → ${filtered.length} after name filter`);
 
-  if (filtered.length === 0) return [];
+  if (filtered.length === 0) {
+    // Last resort: return top 3 results without name filter
+    // We're in player-profiles namespace so anything returned is a player profile
+    console.log(`[PROFILE] Name filter returned 0 — trying top 3 without filter`);
+    const topResults: Array<{ id: string; text: string }> = [];
+    for (const m of searchResults.matches.slice(0, 3)) {
+      const text = (m.metadata?.text as string) || (m.metadata?.content as string) || '';
+      if (text) topResults.push({ id: m.id, text });
+    }
+    // But only if name appears in text of at least one result
+    const nameInResults = topResults.some(r => 
+      stripDiacritics(r.text).toLowerCase().includes(nameParts[0] || '')
+    );
+    if (!nameInResults) return [];
+    return topResults;
+  }
 
   const seenTexts = new Set<string>();
   const results: Array<{ id: string; text: string }> = [];
