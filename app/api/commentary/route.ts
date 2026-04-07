@@ -1801,12 +1801,22 @@ INSTRUCTIONS:
    if (lang === 'pl') {
      // ── English leaks → Polish ──────────────────────────────────────────
      t = t.replace(/\bSERVICE ACE\b/g, 'as serwisowy');
+     // Angielskie/błędne formy serwisu w wielkich literach
+     t = t.replace(/SERVISIE/gi, 'serwisie');
+     t = t.replace(/SERVIS\b/gi, 'serwis');
+     t = t.replace(/BŁĄD W SERV[A-Z]*/gi, 'błąd serwisowy');
      t = t.replace(/\bSET OVER\b/g, 'Koniec seta!');
      t = t.replace(/\bfloat serve\b/gi, 'zagrywka szybująca');
      t = t.replace(/\bjump serve\b/gi, 'zagrywka z wyskoku');
      t = t.replace(/\bmomentum\b/gi, 'impet');
      t = t.replace(/\bdig\b/gi, 'obrona');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/Hossa/g, 'Thalesa');
+     t = t.replace(/Hossi/g, 'Thalesa');
+     t = t.replace(/Hoss /g, 'Thales ');
+     t = t.replace(/Hoss,/g, 'Thales,');
+     t = t.replace(/Hoss!/g, 'Thales!');
+     t = t.replace(/Hoss\./g, 'Thales.');
 
      // Japońskie znaki wyciekające do PL — zamień na nazwisko
      t = t.replace(/レオン/g, 'Leon');
@@ -1838,6 +1848,9 @@ INSTRUCTIONS:
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
      // "nie daje się" — zły styl PL komentarza siatkówki
      t = t.replace(/nie daje się i wraca do gry/gi, 'walczy dalej');
+     t = t.replace(/nie daja sie i wraca do gry/gi, 'walczy dalej');
+     t = t.replace(/nie daja sie!/gi, 'walczy dalej!');
+     t = t.replace(/nie daja sie\b/gi, 'nie odpuszcza');
      t = t.replace(/nie daje się i odskakuje/gi, 'nie odpuszcza i odskakuje');
      t = t.replace(/nie daje się!/gi, 'walczy dalej!');
      t = t.replace(/nie daje się/gi, 'nie odpuszcza');
@@ -1849,6 +1862,12 @@ INSTRUCTIONS:
      t = t.replace(/\bbroni potężnym blokiem\b/gi, 'potężny blok');
      t = t.replace(/\bbroni mocnym blokiem\b/gi, 'mocny blok');
      t = t.replace(/\bwyblokowuje\b/gi, 'dotyka bloku, wyblok');
+     // GPT tworzy nieprawidłowe skróty/nicknames zawodników
+     t = t.replace(/\bGroza\b/g, 'Grozdanov');
+     t = t.replace(/\bGrozy\b/g, 'Grozdanova');
+     t = t.replace(/\bBień\b/g, 'Bieniek');
+     t = t.replace(/\bBieńk\b/g, 'Bieniek');
+     t = t.replace(/\bBienk\b/g, 'Bieniek');
      t = t.replace(/\bwyblokowują\b/gi, 'dotykają bloku, wyblok');
      t = t.replace(/\bwyblokowuję\b/gi, 'dotykam bloku, wyblok');
 
@@ -1945,13 +1964,16 @@ INSTRUCTIONS:
        t = t.replace(/Wspaniale!\s*/g, '');
        t = t.replace(/Genialne!\s*/g, '');
 
-       // ── "kończy!" przypisane do gracza który popełnił błąd ────────────────
-       // np. "Henno kończy!" gdy Henno zrobił błąd przyjęcia (dig wyszedł w aut)
-       // scoringAction i scoringPlayer są dostępne przez closure
-       if (scoringAction.toLowerCase().includes('error') ||
+       // ── "kończy!" przypisane do gracza który NIE zdobył punktu ─────────────
+       // Warunek: team-mismatch — ostatni touch jest z drużyny która PRZEGRAŁA rally
+       // Łapie: dig out, attack error, block error — każdy przypadek błędu ostatniego dotyknięcia
+       const lastTouchTeam = finalTouch?.team || '';
+       const lastTouchIsLoser = lastTouchTeam !== '' && lastTouchTeam !== rally.team_scored;
+       if (lastTouchIsLoser ||
+           scoringAction.toLowerCase().includes('error') ||
            scoringAction.toLowerCase().includes('błąd') ||
            scoringAction.toLowerCase().includes('blad')) {
-         // Usuń "[errorPlayer] kończy/zamyka" — gracz który popełnił błąd NIE zdobył punktu
+         // Usuń "[loserPlayer] kończy/zamyka" — ten gracz NIE zdobył punktu
          const errorPlayerEsc = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
          // Łapiemy: "kończy!", "kończy akcję", "konczy" (bez ń), "zamyka akcję"
          t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[nń]czy\\b[^.!?]{0,20}[!.]`, 'gi'), '');
@@ -1983,18 +2005,36 @@ INSTRUCTIONS:
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace');
      t = t.replace(/\bSET OVER\b/gi, 'SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/Hossa/g, 'Thalesa');
+     t = t.replace(/Hossi/g, 'Thalesa');
+     t = t.replace(/Hoss /g, 'Thales ');
+     t = t.replace(/Hoss,/g, 'Thales,');
+     t = t.replace(/Hoss!/g, 'Thales!');
+     t = t.replace(/Hoss\./g, 'Thales.');
    }
 
    if (lang === 'de') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'Aufschlag-Ass');
      t = t.replace(/\bSET OVER\b/gi, 'SATZGEWINN!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/Hossa/g, 'Thalesa');
+     t = t.replace(/Hossi/g, 'Thalesa');
+     t = t.replace(/Hoss /g, 'Thales ');
+     t = t.replace(/Hoss,/g, 'Thales,');
+     t = t.replace(/Hoss!/g, 'Thales!');
+     t = t.replace(/Hoss\./g, 'Thales.');
    }
 
    if (lang === 'tr') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'servis ace');
      t = t.replace(/\bSET OVER\b/gi, 'SET BİTTİ!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/Hossa/g, 'Thalesa');
+     t = t.replace(/Hossi/g, 'Thalesa');
+     t = t.replace(/Hoss /g, 'Thales ');
+     t = t.replace(/Hoss,/g, 'Thales,');
+     t = t.replace(/Hoss!/g, 'Thales!');
+     t = t.replace(/Hoss\./g, 'Thales.');
      t = t.replace(/\bPunkt dla [^!.]+[!.]/g, 'Sayı!');
    }
 
@@ -2002,12 +2042,24 @@ INSTRUCTIONS:
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace de saque');
      t = t.replace(/\bSET OVER\b/gi, '¡SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/Hossa/g, 'Thalesa');
+     t = t.replace(/Hossi/g, 'Thalesa');
+     t = t.replace(/Hoss /g, 'Thales ');
+     t = t.replace(/Hoss,/g, 'Thales,');
+     t = t.replace(/Hoss!/g, 'Thales!');
+     t = t.replace(/Hoss\./g, 'Thales.');
    }
 
    if (lang === 'pt') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace no saque');
      t = t.replace(/\bSET OVER\b/gi, 'SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/Hossa/g, 'Thalesa');
+     t = t.replace(/Hossi/g, 'Thalesa');
+     t = t.replace(/Hoss /g, 'Thales ');
+     t = t.replace(/Hoss,/g, 'Thales,');
+     t = t.replace(/Hoss!/g, 'Thales!');
+     t = t.replace(/Hoss\./g, 'Thales.');
    }
 
    if (lang === 'jp') {
