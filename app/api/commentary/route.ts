@@ -1846,6 +1846,9 @@ INSTRUCTIONS:
 
      // ── Forbidden words ─────────────────────────────────────────────────
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
+     // "wbija w boisko" → "wbija piłkę w boisko" (feedback użytkownika)
+     t = t.replace(/wbija w boisko/gi, 'wbija piłkę w boisko');
+     t = t.replace(/wbił w boisko/gi, 'wbił piłkę w boisko');
      // "nie daje się" — zły styl PL komentarza siatkówki
      t = t.replace(/nie daje się i wraca do gry/gi, 'walczy dalej');
      t = t.replace(/nie daja sie i wraca do gry/gi, 'walczy dalej');
@@ -1864,6 +1867,9 @@ INSTRUCTIONS:
      t = t.replace(/\bwyblokowuje\b/gi, 'dotyka bloku, wyblok');
      // GPT tworzy nieprawidłowe skróty/nicknames zawodników
      t = t.replace(/\bGroza\b/g, 'Grozdanov');
+     // Zduplikowane litery w nazwiskach (GPT typos)
+     t = t.replace(/\bBieniekk\b/gi, 'Bieniek');
+     t = t.replace(/\bBieńkk\b/gi, 'Bieniek');
      t = t.replace(/\bGrozy\b/g, 'Grozdanova');
      t = t.replace(/\bBień\b/g, 'Bieniek');
      t = t.replace(/\bBieńk\b/g, 'Bieniek');
@@ -1900,6 +1906,11 @@ INSTRUCTIONS:
        // Gramatyka przyjęcia
        t = t.replace(/receptura/gi, 'przyjęcie');
        t = t.replace(/piłka odbija się daleko od siatki/gi, 'piłka przyjęta daleko od siatki');
+       // konczy/konczac bez polskich znakow
+       t = t.replace(/konczy /g, 'kończy ');
+       t = t.replace(/konczy!/g, 'kończy!');
+       t = t.replace(/zagrwal/g, 'zagrał');
+       t = t.replace(/zagrywal/g, 'zagrywał');
 
        // Okrzyki w złym kontekście
        t = t.replace(/Genialne! /g, '');
@@ -1981,11 +1992,32 @@ INSTRUCTIONS:
          t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[nń]czy\\s+akcj[eę]`, 'gi'), '');
        }
 
+       // ── "[ZłyGracz] przebija blok i kończy" gdy scoring player jest inny ─────
+       // np. "Tavares przebija blok i kończy akcję! BOGDANKA wyrównuje!" gdy Leon strzelił
+       // Przechwytujemy: "[Gracz] przebija blok i kończy [akcję]"
+       // i jeśli Gracz ≠ scoringPlayer → zastępujemy scoringPlayer
+       if (!lastTouchIsLoser && scoringPlayer) {
+         t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+ko[nń]czy\s+akcj[eę]!/gi, (match, player) => {
+           if (player.toLowerCase() !== scoringPlayer.toLowerCase()) {
+             return `${scoringPlayer} przebija blok i kończy!`;
+           }
+           return match;
+         });
+         t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+wbija!/gi, (match, player) => {
+           if (player.toLowerCase() !== scoringPlayer.toLowerCase()) {
+             return `${scoringPlayer} przebija blok i wbija piłkę w boisko!`;
+           }
+           return match;
+         });
+       }
+
        // Podwójne "punkt punkt"
        t = t.replace(/punkt punkt/gi, 'punkt');
        t = t.replace(/zdobywa punkt punkt/gi, 'zdobywa punkt');
        // "zdobywa punkt kolejny punkt" — nowy duplikat
        t = t.replace(/zdobywa punkt kolejny punkt/gi, 'zdobywa kolejny punkt');
+       t = t.replace(/zdobywa punkt ostatni punkt/gi, 'zdobywa ostatni punkt');
+       t = t.replace(/to jego zespół zdobywa punkt ostatni punkt/gi, 'to jego zespół zdobywa ostatni punkt');
        t = t.replace(/punkt kolejny punkt/gi, 'kolejny punkt');
        // "zdobywa punkt ten punkt" — nowy duplikat
        t = t.replace(/zdobywa punkt ten punkt/gi, 'zdobywa punkt');
