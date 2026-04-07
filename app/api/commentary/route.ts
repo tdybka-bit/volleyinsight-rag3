@@ -1836,6 +1836,11 @@ INSTRUCTIONS:
 
      // ── Forbidden words ─────────────────────────────────────────────────
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
+     // "nie daje się" — zły styl PL komentarza siatkówki
+     t = t.replace(/nie daje się i wraca do gry/gi, 'walczy dalej');
+     t = t.replace(/nie daje się i odskakuje/gi, 'nie odpuszcza i odskakuje');
+     t = t.replace(/nie daje się!/gi, 'walczy dalej!');
+     t = t.replace(/nie daje się/gi, 'nie odpuszcza');
      t = t.replace(/\bustawia do ataku\b/gi, 'wystawia do ataku');
      t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
      t = t.replace(/\bżywa zagrywka\b/gi, 'zagrywka szybująca');
@@ -1853,6 +1858,10 @@ INSTRUCTIONS:
        t = t.replace(/atakuje na pierwszym tempie/gi, 'atakuje z pierwszego tempa');
        // Duplikat frazy ataku (GPT powtarza)
        t = t.replace(/z linii drugiej z drugiej linii/gi, 'z drugiej linii');
+       // Duplikat z przerwą: "z linii drugiej [słowa] z drugiej linii"
+       t = t.replace(/z linii drugiej\b([^.!?]{0,30}?)\bz drugiej linii/gi, 'z drugiej linii$1');
+       // "atakuje z linii drugiej z linii"
+       t = t.replace(/z linii drugiej z linii/gi, 'z drugiej linii');
        t = t.replace(/z lewego skrzydła z lewej strony/gi, 'z lewego skrzydła');
        t = t.replace(/z prawego skrzydła z prawej strony/gi, 'z prawego skrzydła');
        t = t.replace(/atakuje na pierwszym tempo/gi, 'atakuje z pierwszego tempa');
@@ -1924,9 +1933,25 @@ INSTRUCTIONS:
        t = t.replace(/Wspaniale!\s*/g, '');
        t = t.replace(/Genialne!\s*/g, '');
 
+       // ── "kończy!" przypisane do gracza który popełnił błąd ────────────────
+       // np. "Henno kończy!" gdy Henno zrobił błąd przyjęcia (dig wyszedł w aut)
+       // scoringAction i scoringPlayer są dostępne przez closure
+       if (scoringAction.toLowerCase().includes('error') ||
+           scoringAction.toLowerCase().includes('błąd') ||
+           scoringAction.toLowerCase().includes('blad')) {
+         // Usuń "[errorPlayer] kończy/zamyka" — gracz który popełnił błąd NIE zdobył punktu
+         const errorPlayerEsc = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+kończy!`, 'gi'), '');
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+zamyka\\s+akcję!`, 'gi'), '');
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+kończy\\s+akcję!`, 'gi'), '');
+       }
+
        // Podwójne "punkt punkt"
        t = t.replace(/punkt punkt/gi, 'punkt');
        t = t.replace(/zdobywa punkt punkt/gi, 'zdobywa punkt');
+       // "zdobywa punkt kolejny punkt" — nowy duplikat
+       t = t.replace(/zdobywa punkt kolejny punkt/gi, 'zdobywa kolejny punkt');
+       t = t.replace(/punkt kolejny punkt/gi, 'kolejny punkt');
 
        // "zdobywa punkt prowadzenie" — score suppression ucięło "i obejmuje"
        t = t.replace(/zdobywa punkt prowadzenie/gi, 'zdobywa punkt i wychodzi na prowadzenie');
