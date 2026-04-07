@@ -1531,9 +1531,9 @@ if (!rally.touches || rally.touches.length === 0) {
        // KEY FIX: WYBLOK — bloker nie zdobywa punktu. Sprawdz czy bloker wygral rally czy nie.
        const blockTeamWon = touch.team === rally.team_scored;
        if (blockTeamWon) {
-         desc += ' - WYBLOK: block touch, ball rebounds into play — this blocking team eventually WINS rally. Say: wyblok, akcja trwa!';
+         desc += ' - WYBLOK: block touch, ball rebounds into play - this blocking team eventually WINS rally. Say: wyblok, akcja trwa!';
        } else {
-         desc += ' - WYBLOK: block touch, ball rebounds into play — WARNING: this blocking team LOSES rally. Do NOT say this player scored!';
+         desc += ' - WYBLOK: block touch, ball rebounds into play - WARNING: this blocking team LOSES rally. Do NOT say this player scored!';
        }
      }
    // DIG / DEFENSE
@@ -1546,9 +1546,9 @@ if (!rally.touches || rally.touches.length === 0) {
        // Prevents GPT from praising a dig + adding Fantastyczny punkt! when team lost
        const digTeamWon = touch.team === rally.team_scored;
        if (digTeamWon) {
-         desc += ' - dig/obrona (ball kept in play — this team eventually WINS rally)';
+         desc += ' - dig/obrona (ball kept in play - this team eventually WINS rally)';
        } else {
-         desc += ' - dig/obrona (ball kept in play — WARNING: this team LOSES rally despite the dig! Do NOT celebrate this as scoring!');
+         desc += ' - dig/obrona (ball kept in play) - WARNING: this team LOSES rally. Do NOT celebrate this as scoring.';
        }
      }
    // FREE
