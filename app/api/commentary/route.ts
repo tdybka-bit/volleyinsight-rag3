@@ -1853,8 +1853,25 @@ INSTRUCTIONS:
        t = t.replace(/ bierze\./g, ' zdobywa punkt.');
        t = t.replace(/ bierze /g, ' zdobywa punkt ');
 
-       // Hoss → Thales (failsafe)
+       // Hoss → Thales (failsafe — wszystkie formy)
        t = t.replace(/Hoss/g, 'Thales');
+       t = t.replace(/Hossa/g, 'Thalesa');
+       t = t.replace(/Hossowi/g, 'Thalesowi');
+
+       // "piłka broni się" → sensowny odpowiednik
+       t = t.replace(/piłka broni się/gi, 'piłka mija blok');
+
+       // Okrzyki w złym kontekście — usuwamy zawsze
+       t = t.replace(/Zdobyte!\s*/g, '');
+       t = t.replace(/Piękny punkt!\s*/g, '');
+       t = t.replace(/Niesamowite!\s*/g, '');
+       t = t.replace(/Fantastyczne!\s*/g, '');
+       t = t.replace(/Wspaniale!\s*/g, '');
+       t = t.replace(/Genialne!\s*/g, '');
+
+       // Podwójne "punkt punkt"
+       t = t.replace(/punkt punkt/gi, 'punkt');
+       t = t.replace(/zdobywa punkt punkt/gi, 'zdobywa punkt');
      }
    }
 
