@@ -1518,13 +1518,17 @@ if (!rally.touches || rally.touches.length === 0) {
    } else if (actionLower.includes('blok') || actionLower.includes('block')) {
      const isLastTouch = idx === rally.touches!.length - 1;
      if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) {
-       // wyblok: blocker touched ball but SCORING PLAYER wins
-       // Make crystal clear who is the blocker vs who scored
-       desc += ` - WYBLOK! ${player} jest BLOKEREM który dotknął piłki, ale atak przebił blok. ${player} NIE zdobył punktu — punkt zdobył atakujący (SCORING PLAYER)!`;
+       const blockSynonyms = [
+         ' - attacker beat the block (wyblok — attacker scores)',
+         ' - found a gap in the block (wyblok)',
+         ' - block touched but attacker wins',
+         ' - late block, attacker scores through',
+       ];
+       desc += blockSynonyms[Math.floor(Math.random() * blockSynonyms.length)];
      } else if (isLastTouch) {
        desc += ' - BLOCK POINT! (blok kończący — bloker zdobywa punkt)';
      } else {
-       desc += ` - WYBLOK przez ${player}: ${player} dotknął piłki ale jej NIE zablokował — piłka żyje, akcja TRWA! ${player} to BLOKER, nie atakujący!`;
+       desc += ' - block touch, ball rebounds into play (WYBLOK — akcja trwa, nie mow "blokuje" bo punkt nie padl)';
      }
    // DIG / DEFENSE
    } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
@@ -1744,7 +1748,7 @@ INSTRUCTIONS:
  console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
 
  const completion = await openai.chat.completions.create({
- model: 'gpt-4.1-mini',
+ model: 'gpt-4o-mini',
  messages: [
  { role: 'system', content: systemPrompt },
  { role: 'user', content: commentaryPrompt },
@@ -1759,7 +1763,7 @@ INSTRUCTIONS:
  // POST-PROCESSING FILTER — deterministic cleanup, runs after every GPT call
  // These fixes are 100% reliable regardless of what GPT does
  // ========================================================================
- const postProcess = (text: string, lang: string): string => {
+ const postProcess = (text: string, lang: string, scoringPlayer: string = ''): string => {
    let t = text;
 
    // ── UNIVERSAL: Polish leaks that can appear in ANY language ────────────
@@ -1810,9 +1814,15 @@ INSTRUCTIONS:
 
      // ── Forbidden words ─────────────────────────────────────────────────
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
-     t = t.replace(/\bbierze!$/gi, 'zdobywa punkt!');
-     t = t.replace(/\s+bierze!/g, ' zdobywa punkt!');
-     t = t.replace(/\s+bierze\./g, ' zdobywa punkt.');
+     // Replace "atakujący" (generic) with scorer name when we know who scored
+     if (scoringPlayer) {
+       t = t.replace(/\batakujący\s+(Aluron|Bogdanka|Jastrzębski|Resovia|Projekt|Indykpol|Skra|Kędzierzyn|Bełchatów|Olsztyn|Lublin|Zawiercie|Warszawa)[^!.]*(?=[!.])/gi, 
+         `${scoringPlayer}`);
+       t = t.replace(/\batakujący\s+zdobyw\w+/gi, `${scoringPlayer} zdobywa punkt`);
+       t = t.replace(/\batakujący\s+kończy\w*/gi, `${scoringPlayer} kończy`);
+       t = t.replace(/\batakujący\s+wbij\w+/gi, `${scoringPlayer} wbija`);
+       t = t.replace(/\batakujący\b/gi, scoringPlayer);
+     }
      t = t.replace(/\bustawia do ataku\b/gi, 'wystawia do ataku');
      t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
      t = t.replace(/\bżywa zagrywka\b/gi, 'zagrywka szybująca');
@@ -1826,12 +1836,18 @@ INSTRUCTIONS:
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace');
      t = t.replace(/\bSET OVER\b/gi, 'SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/\bwyblok\b/gi, 'tocco a muro');
+     t = t.replace(/\bwyblokowuje\b/gi, 'tocca il muro');
+     t = t.replace(/\bpiłka żyje\b/gi, 'palla in gioco');
    }
 
    if (lang === 'de') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'Aufschlag-Ass');
      t = t.replace(/\bSET OVER\b/gi, 'SATZGEWINN!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/\bwyblok\b/gi, 'Blockberührung');
+     t = t.replace(/\bwyblokowuje\b/gi, 'berührt den Block');
+     t = t.replace(/\bpiłka żyje\b/gi, 'Ball im Spiel');
    }
 
    if (lang === 'tr') {
@@ -1839,18 +1855,27 @@ INSTRUCTIONS:
      t = t.replace(/\bSET OVER\b/gi, 'SET BİTTİ!');
      t = t.replace(/\bHoss\b/g, 'Thales');
      t = t.replace(/\bPunkt dla [^!.]+[!.]/g, 'Sayı!');
+     t = t.replace(/\bwyblok\b/gi, 'blok teması');
+     t = t.replace(/\bwyblokowuje\b/gi, 'bloğa değiyor');
+     t = t.replace(/\bpiłka żyje\b/gi, 'top oyunda');
    }
 
    if (lang === 'es') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace de saque');
      t = t.replace(/\bSET OVER\b/gi, '¡SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/\bwyblok\b/gi, 'toque de bloqueo');
+     t = t.replace(/\bwyblokowuje\b/gi, 'toca el bloqueo');
+     t = t.replace(/\bpiłka żyje\b/gi, 'el balón sigue vivo');
    }
 
    if (lang === 'pt') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace no saque');
      t = t.replace(/\bSET OVER\b/gi, 'SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/\bwyblok\b/gi, 'toque no bloqueio');
+     t = t.replace(/\bwyblokowuje\b/gi, 'toca o bloqueio');
+     t = t.replace(/\bpiłka żyje\b/gi, 'bola em jogo');
    }
 
    if (lang === 'jp') {
@@ -1890,7 +1915,7 @@ INSTRUCTIONS:
    return t;
  };
 
- const commentary = postProcess(rawCommentary, language);
+ const commentary = postProcess(rawCommentary, language, scoringPlayer);
 
  // ========================================================================
  // STEP 9: GENERATE TAGS, MILESTONES, ICONS, SCORES
