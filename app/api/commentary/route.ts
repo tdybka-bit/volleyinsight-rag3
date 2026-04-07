@@ -1809,7 +1809,7 @@ INSTRUCTIONS:
  // POST-PROCESSING FILTER — deterministic cleanup, runs after every GPT call
  // These fixes are 100% reliable regardless of what GPT does
  // ========================================================================
- const postProcess = (text: string, lang: string, scoringPlayer: string = ''): string => {
+ const postProcess = (text: string, lang: string, scoringPlayer: string = '', isError: boolean = false): string => {
    let t = text;
 
    // ── UNIVERSAL: Polish leaks that can appear in ANY language ────────────
@@ -1860,6 +1860,61 @@ INSTRUCTIONS:
 
      // ── Forbidden words ─────────────────────────────────────────────────
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
+
+     // ── SŁOWNIK KOREKT PL — deterministyczne poprawki językowe ──────────────
+     if (lang === 'pl') {
+       // Gramatyka ataku
+       t = t.replace(/atakuje na pierwszym tempie/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/atakuje na pierwszym tempo/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/atakuje na 1\. tempie/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/atak na pierwszym tempie/gi, 'atak z pierwszego tempa');
+       t = t.replace(/atak na pierwszym tempo/gi, 'atak z pierwszego tempa');
+       t = t.replace(/pierwszym tempem/gi, 'z pierwszego tempa');
+       t = t.replace(/atakuje pierwszym tempem/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/kończy pierwszym tempem/gi, 'kończy z pierwszego tempa');
+
+       // Gramatyka wystawy
+       t = t.replace(/wystawia dla /gi, 'wystawia do ');
+       t = t.replace(/wystawia piłkę dla /gi, 'wystawia piłkę do ');
+       t = t.replace(/podaje dla /gi, 'podaje do ');
+
+       // Gramatyka przyjęcia
+       t = t.replace(/receptura[^,!.]*[,!.]/gi, 'przyjęcie idealne.');
+       t = t.replace(/\breceptura\b/gi, 'przyjęcie');
+       t = t.replace(/piłka odbija się daleko od siatki/gi, 'piłka przyjęta daleko od siatki');
+       t = t.replace(/pilka odbija sie daleko od siatki/gi, 'piłka przyjęta daleko od siatki');
+
+       // Okrzyki entuzjastyczne w złym kontekście — przy błędach
+       if (isError) {
+         t = t.replace(/\bGenialne!\s*/gi, '');
+         t = t.replace(/\bKapitalnie!\s*/gi, '');
+         t = t.replace(/\bNiesamowite!\s*/gi, '');
+         t = t.replace(/\bFenomenalnie!\s*/gi, '');
+         t = t.replace(/\bPiękny punkt!\s*/gi, '');
+         t = t.replace(/\bFantastyczny punkt!\s*/gi, '');
+         t = t.replace(/\bWspaniale!\s*/gi, '');
+       }
+
+       // "bierze" bez kontekstu
+       t = t.replace(/\s+bierze([!.])/gi, ' zdobywa punkt$1');
+       t = t.replace(/\s+bierze\s/gi, ' zdobywa punkt ');
+
+       // Niestety przy sukcesie atakującego
+       t = t.replace(/Niestety,\s*piłka obroniona,\s*akcja trwa/gi, 'Akcja trwa');
+       t = t.replace(/niestety,\s*piłka obroniona,\s*akcja trwa/gi, 'akcja trwa');
+
+       // "wystawia dla" kierunkowe
+       t = t.replace(/wystawia na lewe skrzydło dla /gi, 'wystawia na lewe skrzydło do ');
+       t = t.replace(/wystawia na prawe skrzydło dla /gi, 'wystawia na prawe skrzydło do ');
+
+       // Hoss → Thales
+       t = t.replace(/\bHoss\b/g, 'Thales');
+
+       // Podwójne opisy trudnego przyjęcia
+       t = t.replace(/nie radzi sobie z przyjęciem[^!.]*bardzo trudne przyjęcie/gi, 'nie radzi sobie z przyjęciem');
+       t = t.replace(/bardzo trudne przyjęcie[^!.]*nie radzi sobie/gi, 'nie radzi sobie z przyjęciem');
+       t = t.replace(/bardzo trudne przyjęcie,?\s*piłka daleko od siatki/gi, 'trudne przyjęcie, piłka daleko od siatki');
+     }
      // If scoring action was a dig error (ball out), remove contradictory praise
      if (isError) {
        t = t.replace(/[^!.]*kapitalnie (obronił|wyciągnął|wybronił)[^!.]*ale (piłka|ball)[^!.]*[!.]/gi, '');
@@ -1966,7 +2021,7 @@ INSTRUCTIONS:
    return t;
  };
 
- const commentary = postProcess(rawCommentary, language, scoringPlayer);
+ const commentary = postProcess(rawCommentary, language, scoringPlayer, _isErrorAction);
 
  // ========================================================================
  // STEP 9: GENERATE TAGS, MILESTONES, ICONS, SCORES
