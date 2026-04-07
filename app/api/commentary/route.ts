@@ -1748,7 +1748,7 @@ INSTRUCTIONS:
  console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
 
  const completion = await openai.chat.completions.create({
- model: 'gpt-4o-mini',
+ model: 'gpt-4.1-mini',
  messages: [
  { role: 'system', content: systemPrompt },
  { role: 'user', content: commentaryPrompt },
@@ -1860,6 +1860,28 @@ INSTRUCTIONS:
 
        // "piłka broni się" → sensowny odpowiednik
        t = t.replace(/piłka broni się/gi, 'piłka mija blok');
+
+       // ── Odmiana nazwisk ───────────────────────────────────────────────────
+       t = t.replace(/\bKwoleka\b/g, 'Kwolka');
+       t = t.replace(/\bKwoleku\b/g, 'Kwolkowi');
+       t = t.replace(/\bKwolekowi\b/g, 'Kwolkowi');
+
+       // ── Urwane frazy po score suppression ────────────────────────────────
+       // Problem: score suppression usuwa liczbe z "odskakuje na 3:1!" → "odskakuje na!"
+       // Fix: przywracamy sensowne zakonczenie zdania
+       t = t.replace(/\bodskakuje na!/g, 'odskakuje na prowadzenie!');
+       t = t.replace(/\bodskakują na!/g, 'odskakują na prowadzenie!');
+       t = t.replace(/\bodskoczyli na!/g, 'odskoczyli na prowadzenie!');
+       t = t.replace(/\bodskaczają na!/g, 'odskakują na prowadzenie!');
+       t = t.replace(/\bodskoczyło na!/g, 'odskoczyło na prowadzenie!');
+       t = t.replace(/\bwyrównując do!/g, 'wyrównując wynik!');
+       t = t.replace(/\bwyrównują do!/g, 'wyrównują wynik!');
+       t = t.replace(/\bwyrównuje do!/g, 'wyrównuje wynik!');
+       t = t.replace(/\bzmniejsza stratę do!/g, 'zmniejsza stratę!');
+       t = t.replace(/\bzmniejszają stratę do!/g, 'zmniejszają stratę!');
+       // "prowadzą na" bez liczby (score suppression ucięło np. "prowadzą na 3")
+       t = t.replace(/\bprowadzą na\b(?!\s+\w)/g, 'prowadzą');
+       t = t.replace(/\bprowadzi na\b(?!\s+\w)/g, 'prowadzi');
 
        // Okrzyki w złym kontekście — usuwamy zawsze
        t = t.replace(/Zdobyte!\s*/g, '');
