@@ -1874,6 +1874,8 @@ INSTRUCTIONS:
        // Gramatyka wystawy
        t = t.replace(/wystawia dla /gi, 'wystawia do ');
        t = t.replace(/wystawia piłkę dla /gi, 'wystawia piłkę do ');
+       t = t.replace(/ustawia piłkę dla /gi, 'ustawia piłkę do ');
+       t = t.replace(/ustawia dla /gi, 'wystawia do ');
        t = t.replace(/podaje dla /gi, 'podaje do ');
 
        // Gramatyka przyjęcia
@@ -1921,9 +1923,19 @@ INSTRUCTIONS:
        t = t.replace(/\bwyrównuje do!/g, 'wyrównuje wynik!');
        t = t.replace(/\bzmniejsza stratę do!/g, 'zmniejsza stratę!');
        t = t.replace(/\bzmniejszają stratę do!/g, 'zmniejszają stratę!');
+       // Score suppression artifacts — urwane zdania z "na" + rzeczownik bez liczby
+       // np. "zdobywa punkt na siebie ciężar" ← score suppression ucięło "10." lub "XV"
+       t = t.replace(/\bzdobywa punkt na siebie\b[^.!?]*/gi, 'zdobywa punkt');
+       t = t.replace(/\bpunkt na siebie\b[^.!?]*/gi, 'punkt');
+
        // "prowadzą na" bez liczby (score suppression ucięło np. "prowadzą na 3")
        t = t.replace(/\bprowadzą na\b(?!\s+\w)/g, 'prowadzą');
        t = t.replace(/\bprowadzi na\b(?!\s+\w)/g, 'prowadzi');
+       // "wychodzi na prowadzenie, prowadzą" — prowadzą jest redundantne po prowadzenie
+       t = t.replace(/wychodzi na prowadzenie,\s*prowadzą[^!.]*[!.]/gi, 'wychodzi na prowadzenie!');
+       t = t.replace(/obejmuje prowadzenie,\s*prowadzą[^!.]*[!.]/gi, 'obejmuje prowadzenie!');
+       // "zdobywa punkt i wychodzi na prowadzenie, prowadzą!"
+       t = t.replace(/,\s*prowadzą!/g, '!');
 
        // Okrzyki w złym kontekście — usuwamy zawsze
        t = t.replace(/Zdobyte!\s*/g, '');
@@ -1941,9 +1953,10 @@ INSTRUCTIONS:
            scoringAction.toLowerCase().includes('blad')) {
          // Usuń "[errorPlayer] kończy/zamyka" — gracz który popełnił błąd NIE zdobył punktu
          const errorPlayerEsc = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+kończy!`, 'gi'), '');
-         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+zamyka\\s+akcję!`, 'gi'), '');
-         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+kończy\\s+akcję!`, 'gi'), '');
+         // Łapiemy: "kończy!", "kończy akcję", "konczy" (bez ń), "zamyka akcję"
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[nń]czy\\b[^.!?]{0,20}[!.]`, 'gi'), '');
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+zamyka\\s+akcj[eę][!.]`, 'gi'), '');
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[nń]czy\\s+akcj[eę]`, 'gi'), '');
        }
 
        // Podwójne "punkt punkt"
@@ -1952,6 +1965,9 @@ INSTRUCTIONS:
        // "zdobywa punkt kolejny punkt" — nowy duplikat
        t = t.replace(/zdobywa punkt kolejny punkt/gi, 'zdobywa kolejny punkt');
        t = t.replace(/punkt kolejny punkt/gi, 'kolejny punkt');
+       // "zdobywa punkt ten punkt" — nowy duplikat
+       t = t.replace(/zdobywa punkt ten punkt/gi, 'zdobywa punkt');
+       t = t.replace(/\bten punkt\b/gi, 'punkt');
 
        // "zdobywa punkt prowadzenie" — score suppression ucięło "i obejmuje"
        t = t.replace(/zdobywa punkt prowadzenie/gi, 'zdobywa punkt i wychodzi na prowadzenie');
