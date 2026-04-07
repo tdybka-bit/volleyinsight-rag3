@@ -1528,7 +1528,13 @@ if (!rally.touches || rally.touches.length === 0) {
      } else if (isLastTouch) {
        desc += ' - BLOCK POINT! (blok kończący — bloker zdobywa punkt)';
      } else {
-       desc += ' - block touch, ball rebounds into play (WYBLOK — akcja trwa, nie mow "blokuje" bo punkt nie padl)';
+       // KEY FIX: WYBLOK — bloker nie zdobywa punktu. Sprawdz czy bloker wygral rally czy nie.
+       const blockTeamWon = touch.team === rally.team_scored;
+       if (blockTeamWon) {
+         desc += ' - WYBLOK: block touch, ball rebounds into play — this blocking team eventually WINS rally. Say: wyblok, akcja trwa!';
+       } else {
+         desc += ' - WYBLOK: block touch, ball rebounds into play — WARNING: this blocking team LOSES rally. Do NOT say this player scored!';
+       }
      }
    // DIG / DEFENSE
    } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
@@ -1536,7 +1542,14 @@ if (!rally.touches || rally.touches.length === 0) {
      if (isLastTouch) {
        desc += ' - defensive dig (ball out — point to other team)';
      } else {
-       desc += ' - defensive dig (ball kept in play — obrona, nie blok!)';
+       // KEY FIX: tell GPT whether digging team won or lost the rally
+       // Prevents GPT from praising a dig + adding Fantastyczny punkt! when team lost
+       const digTeamWon = touch.team === rally.team_scored;
+       if (digTeamWon) {
+         desc += ' - dig/obrona (ball kept in play — this team eventually WINS rally)';
+       } else {
+         desc += ' - dig/obrona (ball kept in play — WARNING: this team LOSES rally despite the dig! Do NOT celebrate this as scoring!');
+       }
      }
    // FREE
    } else if (actionLower.includes('wolna') || actionLower.includes('free')) {
@@ -1554,7 +1567,8 @@ if (!rally.touches || rally.touches.length === 0) {
  touchContext = `
 TOUCH CHAIN (${numTouches} touches${isLongRally ? ' — long rally!' : ''}):
 ${touchChainLines.join('\n')}
-=> SERVED BY: ${rally.touches[0]?.player || '?'} — this player SERVED, scorer is ${scoringPlayer}. NEVER confuse them!
+=> SERVED BY: ${rally.touches[0]?.player || '?'} — this player SERVED. Do NOT say they scored!
+=> FINAL SCORER: ${scoringPlayer} [${winnerTeamLabel}] — ONLY this player/team scored the point!
 => POINT FOR: ${winnerTeamLabel}
 
 CRITICAL COMMENTARY RULES:
