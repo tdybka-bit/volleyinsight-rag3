@@ -1808,6 +1808,14 @@ INSTRUCTIONS:
      t = t.replace(/\bdig\b/gi, 'obrona');
      t = t.replace(/\bHoss\b/g, 'Thales');
 
+     // Japońskie znaki wyciekające do PL — zamień na nazwisko
+     t = t.replace(/レオン/g, 'Leon');
+     t = t.replace(/タレス/g, 'Thales');
+     t = t.replace(/ボワンジ/g, 'Bołądź');
+     t = t.replace(/コメンダ/g, 'Komenda');
+     t = t.replace(/タバレス/g, 'Tavares');
+     t = t.replace(/グロズダノフ/g, 'Grozdanov');
+
      // ── "Punkt dla X" → neutral ending ─────────────────────────────────
      const punktDlaVariants = [
        'Punkt!', 'I to jest punkt!', 'Zdobyte!', 'Piękny punkt!',
@@ -1835,11 +1843,18 @@ INSTRUCTIONS:
      t = t.replace(/\bżywej zagrywki\b/gi, 'zagrywki szybującej');
      t = t.replace(/\bbroni potężnym blokiem\b/gi, 'potężny blok');
      t = t.replace(/\bbroni mocnym blokiem\b/gi, 'mocny blok');
+     t = t.replace(/\bwyblokowuje\b/gi, 'dotyka bloku, wyblok');
+     t = t.replace(/\bwyblokowują\b/gi, 'dotykają bloku, wyblok');
+     t = t.replace(/\bwyblokowuję\b/gi, 'dotykam bloku, wyblok');
 
      // ── SŁOWNIK KOREKT PL ────────────────────────────────────────────────
      if (lang === 'pl') {
        // Gramatyka ataku
        t = t.replace(/atakuje na pierwszym tempie/gi, 'atakuje z pierwszego tempa');
+       // Duplikat frazy ataku (GPT powtarza)
+       t = t.replace(/z linii drugiej z drugiej linii/gi, 'z drugiej linii');
+       t = t.replace(/z lewego skrzydła z lewej strony/gi, 'z lewego skrzydła');
+       t = t.replace(/z prawego skrzydła z prawej strony/gi, 'z prawego skrzydła');
        t = t.replace(/atakuje na pierwszym tempo/gi, 'atakuje z pierwszego tempa');
        t = t.replace(/atakuje pierwszym tempem/gi, 'atakuje z pierwszego tempa');
        t = t.replace(/atakuje pierwszym tempo/gi, 'atakuje z pierwszego tempa');
@@ -1871,6 +1886,10 @@ INSTRUCTIONS:
        t = t.replace(/Hoss/g, 'Thales');
        t = t.replace(/Hossa/g, 'Thalesa');
        t = t.replace(/Hossowi/g, 'Thalesowi');
+
+       // Deduplikacja 'Thales Thales' (efekt podwojnego replace Hoss->Thales)
+       t = t.replace(/Thales Thales/g, 'Thales');
+       t = t.replace(/Thalesa Thalesa/g, 'Thalesa');
 
        // "piłka broni się" → sensowny odpowiednik
        t = t.replace(/piłka broni się/gi, 'piłka mija blok');
@@ -1908,6 +1927,14 @@ INSTRUCTIONS:
        // Podwójne "punkt punkt"
        t = t.replace(/punkt punkt/gi, 'punkt');
        t = t.replace(/zdobywa punkt punkt/gi, 'zdobywa punkt');
+
+       // "zdobywa punkt prowadzenie" — score suppression ucięło "i obejmuje"
+       t = t.replace(/zdobywa punkt prowadzenie/gi, 'zdobywa punkt i wychodzi na prowadzenie');
+       t = t.replace(/zdobywa punkt i prowadzenie/gi, 'zdobywa punkt i wychodzi na prowadzenie');
+       t = t.replace(/zgarnia punkt prowadzenie/gi, 'zgarnia punkt i prowadzi');
+       // Samotne "prowadzenie" jako urwany fragment zdania
+       t = t.replace(/([!.])\s+prowadzenie([!.])/g, '$1');
+       t = t.replace(/\s+prowadzenie$/gm, '!');
      }
    }
 
