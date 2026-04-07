@@ -556,7 +556,6 @@ interface CommentaryRequest {
  language?: string;
  playerStats?: Record<string, PlayerStats>;
  recentRallies?: RallyData[];
- recentCommentaryTexts?: string[];
  rallyAnalysis?: RallyAnalysis;
  homeTeamFullName?: string;
  awayTeamFullName?: string;
@@ -569,7 +568,7 @@ interface CommentaryRequest {
 
 export async function POST(request: NextRequest) {
  try {
- const { rally, language = 'pl', playerStats = {}, recentRallies = [], rallyAnalysis, homeTeamFullName = 'Gospodarze', awayTeamFullName = 'Goscie', playerPositions = {}, recentCommentaryTexts = [] }: CommentaryRequest = await request.json();
+ const { rally, language = 'pl', playerStats = {}, recentRallies = [], rallyAnalysis, homeTeamFullName = 'Gospodarze', awayTeamFullName = 'Goscie', playerPositions = {} }: CommentaryRequest = await request.json();
 
  if (!rally) {
  return new Response('Rally data is required', { status: 400 });
@@ -1420,40 +1419,13 @@ if (!rally.touches || rally.touches.length === 0) {
  // ================================================================
  // FULL TOUCH CHAIN (radio-style) - ALWAYS build from rally.touches
  // ================================================================
-
- // PRE-PROCESS: Merge setter tip (Set→Attack same player = kiwka rozgrywającego)
- // VolleyStation records setter tip as two separate touches: Set + Attack (same player)
- const rawTouches = rally.touches || [];
- const mergedTouches = rawTouches.reduce((acc: any[], touch: any, idx: number) => {
-   const prev = acc[acc.length - 1];
-   const prevAction = (prev?.action || '').toLowerCase();
-   const currAction = (touch.action || '').toLowerCase();
-   const samePlayer = prev?.player === touch.player;
-   const isSetterTip = samePlayer &&
-     (prevAction.includes('rozegranie') || prevAction.includes('setting') || prevAction === 'set') &&
-     (currAction.includes('atak') || currAction.includes('attack'));
-   
-   if (isSetterTip) {
-     // Merge: replace prev Set with a combined "setter tip" touch
-     acc[acc.length - 1] = {
-       ...touch,
-       action: touch.action,
-       _isTip: true,  // flag: kiwka rozgrywającego
-       attackStyle: touch.attackStyle || 'Tip',
-     };
-   } else {
-     acc.push(touch);
-   }
-   return acc;
- }, []);
-
- const numTouches = mergedTouches.length;
+ const numTouches = rally.touches?.length || 0;
  const isLongRally = numTouches >= 8;
  
- if (mergedTouches.length > 0) {
+ if (rally.touches && rally.touches.length > 0) {
  const touchChainLines: string[] = [];
  
- mergedTouches.forEach((touch: any, idx: number) => {
+ rally.touches.forEach((touch, idx) => {
    const action = touch.action || '';
    const player = touch.player || '?';
    const actionLower = action.toLowerCase();
@@ -1465,7 +1437,7 @@ if (!rally.touches || rally.touches.length === 0) {
    if (actionLower.includes('zagrywka') || actionLower.includes('serwis') || actionLower.includes('serve')) {
      const sType = touch.serveType || '';
      const serveDesc = sType.includes('Float') ? 'zagrywka szybujaca/float (lekka, szybujaca — NIGDY mocna! PL: "szybujaca", IT: "flottante", DE: "Floater", TR: "float servis", ES: "flotante", PT: "flutuante", JP: "フローター")' : sType.includes('Spin') ? 'jump serve (PL: z wyskoku, IT: in salto, DE: Sprungaufschlag, TR: sıçrama, ES: en salto, PT: em salto, JP: ジャンプ)' : 'serve';
-     const isLastTouch = idx === mergedTouches.length - 1;
+     const isLastTouch = idx === rally.touches!.length - 1;
      
      if (actionLower.includes('as ') || actionLower.includes('ace')) {
        desc += ` - ${serveDesc} >>> SERVICE ACE! Direct point!`;
@@ -1520,11 +1492,10 @@ if (!rally.touches || rally.touches.length === 0) {
      else if (isBackRow) atkDesc = 'back-row attack';
      else atkDesc = 'attack';
      
-     if (touch._isTip) atkDesc = 'setter TIP (kiwka rozgrywającego — wystawił i sam zakończył akcję delikatnym atakiem!)';
-     else if (style === 'Tip') atkDesc += ', tip shot';
+     if (style === 'Tip') atkDesc += ', tip shot';
      else if (style === 'Tool') atkDesc += ', tool off block';
      
-     const isLastTouch = idx === mergedTouches.length - 1;
+     const isLastTouch = idx === rally.touches!.length - 1;
      
      if (actionLower.includes('blad') || actionLower.includes('error')) {
        if (isLastTouch) {
@@ -1545,7 +1516,7 @@ if (!rally.touches || rally.touches.length === 0) {
      }
    // BLOCK
    } else if (actionLower.includes('blok') || actionLower.includes('block')) {
-     const isLastTouch = idx === mergedTouches.length - 1;
+     const isLastTouch = idx === rally.touches!.length - 1;
      if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) {
        const blockSynonyms = [
          ' - attacker beat the block (wyblok — attacker scores)',
@@ -1561,9 +1532,9 @@ if (!rally.touches || rally.touches.length === 0) {
      }
    // DIG / DEFENSE
    } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
-     const isLastTouch = idx === mergedTouches.length - 1;
+     const isLastTouch = idx === rally.touches!.length - 1;
      if (isLastTouch) {
-       desc += ` - BŁĄD OBRONY: ${player} próbował wybronić ale piłka wyszła poza boisko! Punkt dla przeciwnika. NIE pisz że obrona była dobra — ta obrona zakończyła się błędem!`;
+       desc += ' - defensive dig (ball out — point to other team)';
      } else {
        desc += ' - defensive dig (ball kept in play — obrona, nie blok!)';
      }
@@ -1583,13 +1554,7 @@ if (!rally.touches || rally.touches.length === 0) {
  touchContext = `
 TOUCH CHAIN (${numTouches} touches${isLongRally ? ' — long rally!' : ''}):
 ${touchChainLines.join('\n')}
-=> SERVED BY: ${rally.touches[0]?.player || '?'}${recentCommentaryTexts.length > 0 ? `
-=> ANTI-REPETITION: NIGDY nie używaj tych fraz z ostatnich komentarzy:
-${recentCommentaryTexts.flatMap(t => {
-  const phrases = t.match(/(?:wyciąga[ł]? z podłogi|kapitalnie broni[ł]?|fenomenalnie wybron\w*|kapitalnie wybron\w*|spektakularna obrona|niesamowita obrona)/gi) || [];
-  return phrases;
-}).filter((p, i, arr) => arr.indexOf(p) === i).slice(0, 5).map(p => `- "${p}"`).join('\n')}
-Użyj innych słów!` : ''} — this player SERVED, scorer is ${scoringPlayer}. NEVER confuse them!
+=> SERVED BY: ${rally.touches[0]?.player || '?'} — this player SERVED, scorer is ${scoringPlayer}. NEVER confuse them!
 => POINT FOR: ${winnerTeamLabel}
 
 CRITICAL COMMENTARY RULES:
@@ -1798,7 +1763,7 @@ INSTRUCTIONS:
  // POST-PROCESSING FILTER — deterministic cleanup, runs after every GPT call
  // These fixes are 100% reliable regardless of what GPT does
  // ========================================================================
- const postProcess = (text: string, lang: string, scoringPlayer: string = ''): string => {
+ const postProcess = (text: string, lang: string): string => {
    let t = text;
 
    // ── UNIVERSAL: Polish leaks that can appear in ANY language ────────────
@@ -1849,20 +1814,6 @@ INSTRUCTIONS:
 
      // ── Forbidden words ─────────────────────────────────────────────────
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
-     // If scoring action was a dig error (ball out), remove contradictory praise
-     if (isError) {
-       t = t.replace(/[^!.]*kapitalnie (obronił|wyciągnął|wybronił)[^!.]*ale (piłka|ball)[^!.]*[!.]/gi, '');
-       t = t.replace(/kapitalnie (obronił|wyciągnął|wybronił)([^!.]*)(piłka wychodzi|ball out)/gi, '$3');
-     }
-     // Replace "atakujący" (generic) with scorer name when we know who scored
-     if (scoringPlayer) {
-       t = t.replace(/\batakujący\s+(Aluron|Bogdanka|Jastrzębski|Resovia|Projekt|Indykpol|Skra|Kędzierzyn|Bełchatów|Olsztyn|Lublin|Zawiercie|Warszawa)[^!.]*(?=[!.])/gi, 
-         `${scoringPlayer}`);
-       t = t.replace(/\batakujący\s+zdobyw\w+/gi, `${scoringPlayer} zdobywa punkt`);
-       t = t.replace(/\batakujący\s+kończy\w*/gi, `${scoringPlayer} kończy`);
-       t = t.replace(/\batakujący\s+wbij\w+/gi, `${scoringPlayer} wbija`);
-       t = t.replace(/\batakujący\b/gi, scoringPlayer);
-     }
      t = t.replace(/\bustawia do ataku\b/gi, 'wystawia do ataku');
      t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
      t = t.replace(/\bżywa zagrywka\b/gi, 'zagrywka szybująca');
@@ -1870,24 +1821,53 @@ INSTRUCTIONS:
      t = t.replace(/\bżywej zagrywki\b/gi, 'zagrywki szybującej');
      t = t.replace(/\bbroni potężnym blokiem\b/gi, 'potężny blok');
      t = t.replace(/\bbroni mocnym blokiem\b/gi, 'mocny blok');
+
+     // ── SŁOWNIK KOREKT PL ────────────────────────────────────────────────
+     if (lang === 'pl') {
+       // Gramatyka ataku
+       t = t.replace(/atakuje na pierwszym tempie/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/atakuje na pierwszym tempo/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/atakuje pierwszym tempem/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/atakuje pierwszym tempo/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/atak na pierwszym temp/gi, 'atak z pierwszego tempa');
+       t = t.replace(/kończy pierwszym tempem/gi, 'kończy z pierwszego tempa');
+       t = t.replace(/pierwszym tempem/gi, 'z pierwszego tempa');
+
+       // Gramatyka wystawy
+       t = t.replace(/wystawia dla /gi, 'wystawia do ');
+       t = t.replace(/wystawia piłkę dla /gi, 'wystawia piłkę do ');
+       t = t.replace(/podaje dla /gi, 'podaje do ');
+
+       // Gramatyka przyjęcia
+       t = t.replace(/receptura/gi, 'przyjęcie');
+       t = t.replace(/piłka odbija się daleko od siatki/gi, 'piłka przyjęta daleko od siatki');
+
+       // Okrzyki w złym kontekście
+       t = t.replace(/Genialne! /g, '');
+       t = t.replace(/Genialne!$/g, '');
+       t = t.replace(/Kapitalnie! /g, '');
+       t = t.replace(/Kapitalnie!$/g, '');
+
+       // "bierze" bez podmiotu → zdobywa punkt
+       t = t.replace(/ bierze!/g, ' zdobywa punkt!');
+       t = t.replace(/ bierze\./g, ' zdobywa punkt.');
+       t = t.replace(/ bierze /g, ' zdobywa punkt ');
+
+       // Hoss → Thales (failsafe)
+       t = t.replace(/Hoss/g, 'Thales');
+     }
    }
 
    if (lang === 'it') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace');
      t = t.replace(/\bSET OVER\b/gi, 'SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
-     t = t.replace(/\bwyblok\b/gi, 'tocco a muro');
-     t = t.replace(/\bwyblokowuje\b/gi, 'tocca il muro');
-     t = t.replace(/\bpiłka żyje\b/gi, 'palla in gioco');
    }
 
    if (lang === 'de') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'Aufschlag-Ass');
      t = t.replace(/\bSET OVER\b/gi, 'SATZGEWINN!');
      t = t.replace(/\bHoss\b/g, 'Thales');
-     t = t.replace(/\bwyblok\b/gi, 'Blockberührung');
-     t = t.replace(/\bwyblokowuje\b/gi, 'berührt den Block');
-     t = t.replace(/\bpiłka żyje\b/gi, 'Ball im Spiel');
    }
 
    if (lang === 'tr') {
@@ -1895,27 +1875,18 @@ INSTRUCTIONS:
      t = t.replace(/\bSET OVER\b/gi, 'SET BİTTİ!');
      t = t.replace(/\bHoss\b/g, 'Thales');
      t = t.replace(/\bPunkt dla [^!.]+[!.]/g, 'Sayı!');
-     t = t.replace(/\bwyblok\b/gi, 'blok teması');
-     t = t.replace(/\bwyblokowuje\b/gi, 'bloğa değiyor');
-     t = t.replace(/\bpiłka żyje\b/gi, 'top oyunda');
    }
 
    if (lang === 'es') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace de saque');
      t = t.replace(/\bSET OVER\b/gi, '¡SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
-     t = t.replace(/\bwyblok\b/gi, 'toque de bloqueo');
-     t = t.replace(/\bwyblokowuje\b/gi, 'toca el bloqueo');
-     t = t.replace(/\bpiłka żyje\b/gi, 'el balón sigue vivo');
    }
 
    if (lang === 'pt') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace no saque');
      t = t.replace(/\bSET OVER\b/gi, 'SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
-     t = t.replace(/\bwyblok\b/gi, 'toque no bloqueio');
-     t = t.replace(/\bwyblokowuje\b/gi, 'toca o bloqueio');
-     t = t.replace(/\bpiłka żyje\b/gi, 'bola em jogo');
    }
 
    if (lang === 'jp') {
@@ -1955,7 +1926,7 @@ INSTRUCTIONS:
    return t;
  };
 
- const commentary = postProcess(rawCommentary, language, scoringPlayer);
+ const commentary = postProcess(rawCommentary, language);
 
  // ========================================================================
  // STEP 9: GENERATE TAGS, MILESTONES, ICONS, SCORES
