@@ -556,6 +556,7 @@ interface CommentaryRequest {
  language?: string;
  playerStats?: Record<string, PlayerStats>;
  recentRallies?: RallyData[];
+ recentCommentaryTexts?: string[];
  rallyAnalysis?: RallyAnalysis;
  homeTeamFullName?: string;
  awayTeamFullName?: string;
@@ -568,7 +569,7 @@ interface CommentaryRequest {
 
 export async function POST(request: NextRequest) {
  try {
- const { rally, language = 'pl', playerStats = {}, recentRallies = [], rallyAnalysis, homeTeamFullName = 'Gospodarze', awayTeamFullName = 'Goscie', playerPositions = {} }: CommentaryRequest = await request.json();
+ const { rally, language = 'pl', playerStats = {}, recentRallies = [], rallyAnalysis, homeTeamFullName = 'Gospodarze', awayTeamFullName = 'Goscie', playerPositions = {}, recentCommentaryTexts = [] }: CommentaryRequest = await request.json();
 
  if (!rally) {
  return new Response('Rally data is required', { status: 400 });
@@ -1582,7 +1583,13 @@ if (!rally.touches || rally.touches.length === 0) {
  touchContext = `
 TOUCH CHAIN (${numTouches} touches${isLongRally ? ' — long rally!' : ''}):
 ${touchChainLines.join('\n')}
-=> SERVED BY: ${rally.touches[0]?.player || '?'} — this player SERVED, scorer is ${scoringPlayer}. NEVER confuse them!
+=> SERVED BY: ${rally.touches[0]?.player || '?'}${recentCommentaryTexts.length > 0 ? `
+=> ANTI-REPETITION: NIGDY nie używaj tych fraz z ostatnich komentarzy:
+${recentCommentaryTexts.flatMap(t => {
+  const phrases = t.match(/(?:wyciąga[ł]? z podłogi|kapitalnie broni[ł]?|fenomenalnie wybron\w*|kapitalnie wybron\w*|spektakularna obrona|niesamowita obrona)/gi) || [];
+  return phrases;
+}).filter((p, i, arr) => arr.indexOf(p) === i).slice(0, 5).map(p => `- "${p}"`).join('\n')}
+Użyj innych słów!` : ''} — this player SERVED, scorer is ${scoringPlayer}. NEVER confuse them!
 => POINT FOR: ${winnerTeamLabel}
 
 CRITICAL COMMENTARY RULES:
