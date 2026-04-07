@@ -1801,6 +1801,9 @@ INSTRUCTIONS:
    if (lang === 'pl') {
      // ── English leaks → Polish ──────────────────────────────────────────
      t = t.replace(/\bSERVICE ACE\b/g, 'as serwisowy');
+     // Hiszpański wykrzyknik ¡ nigdy nie powinien być w PL
+     t = t.replace(/¡SET!/g, 'SET!');
+     t = t.replace(/¡/g, '');
      // Angielskie/błędne formy serwisu w wielkich literach
      t = t.replace(/SERVISIE/gi, 'serwisie');
      t = t.replace(/SERVIS\b/gi, 'serwis');
@@ -1849,6 +1852,17 @@ INSTRUCTIONS:
      // "wbija w boisko" → "wbija piłkę w boisko" (feedback użytkownika)
      t = t.replace(/wbija w boisko/gi, 'wbija piłkę w boisko');
      t = t.replace(/wbił w boisko/gi, 'wbił piłkę w boisko');
+     // Błąd ataku vs błąd przyjęcia — kontekstowe naprawienie błędnej klasyfikacji
+     if (scoringAction.toLowerCase().includes('przyjęci') ||
+         scoringAction.toLowerCase().includes('odbior') ||
+         scoringAction.toLowerCase().includes('receive') ||
+         scoringAction.toLowerCase().includes('pass')) {
+       const spEscBl = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+       t = t.replace(new RegExp(`(B|b)łąd w ataku\\s+${spEscBl}`, 'g'),
+         `Błąd w przyjęciu ${scoringPlayer}`);
+       t = t.replace(/błąd w ataku (przyjmującego|przyjmuje)/gi, 'błąd w przyjęciu');
+     }
+
      // "nie daje się" — zły styl PL komentarza siatkówki
      t = t.replace(/nie daje się i wraca do gry/gi, 'walczy dalej');
      t = t.replace(/nie daja sie i wraca do gry/gi, 'walczy dalej');
@@ -1987,33 +2001,34 @@ INSTRUCTIONS:
          // Usuń "[loserPlayer] kończy/zamyka" — ten gracz NIE zdobył punktu
          const errorPlayerEsc = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
          // Łapiemy: "kończy!", "kończy akcję", "konczy" (bez ń), "zamyka akcję"
-         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[nń]czy\\b[^.!?]{0,20}[!.]`, 'gi'), '');
-         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+zamyka\\s+akcj[eę][!.]`, 'gi'), '');
-         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[nń]czy\\s+akcj[eę]`, 'gi'), '');
+         // Nowa szeroka wersja: usuwa "[player] kończy [cokolwiek]" do końca zdania
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[nń]czy[^!.\\n]*[!.]`, 'gi'), '');
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+zamyka\\s+akcj[eę][^!.\\n]*[!.]`, 'gi'), '');
+         // Wersja bez terminatora (gdy zdanie urywa się lub kończy myślnikiem)
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[nń]czy\\s*[–—]`, 'gi'), '');
        }
 
        // ── "[ZłyGracz] przebija blok i kończy" gdy scoring player jest inny ─────
        // np. "Tavares przebija blok i kończy akcję! BOGDANKA wyrównuje!" gdy Leon strzelił
        // Przechwytujemy: "[Gracz] przebija blok i kończy [akcję]"
        // i jeśli Gracz ≠ scoringPlayer → zastępujemy scoringPlayer
-       if (!lastTouchIsLoser && scoringPlayer) {
-         t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+ko[nń]czy\s+akcj[eę]!/gi, (match, player) => {
+              if (!lastTouchIsLoser && scoringPlayer) {
+         const _fixBlock = (match: string, player: string): string => {
            if (player.toLowerCase() !== scoringPlayer.toLowerCase()) {
              return `${scoringPlayer} przebija blok i kończy!`;
            }
            return match;
-         });
-         t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+wbija!/gi, (match, player) => {
-           if (player.toLowerCase() !== scoringPlayer.toLowerCase()) {
-             return `${scoringPlayer} przebija blok i wbija piłkę w boisko!`;
-           }
-           return match;
-         });
+         };
+         t = t.replace(/(\w[\w]*?)\s+przebija\s+blok\s+i\s+ko[nń]czy\s+akcj[eę][!.]/gi, _fixBlock);
+         t = t.replace(/(\w[\w]*?)\s+przebija\s+blok\s+i\s+ko[nń]czy[!.]/gi, _fixBlock);
+         t = t.replace(/(\w[\w]*?)\s+przebija\s+blok\s+i\s+wbija[^!.]*[!.]/gi, _fixBlock);
+         t = t.replace(/(?:Środnkowy|Śroodkowy|Przyjmujący|Atakujący)(?:\s+\w+)?\s+przebija\s+blok\s+i\s+ko[nń]czy[^!.]*[!.]/gi,
+           `${scoringPlayer} przebija blok i kończy!`);
        }
-
        // Podwójne "punkt punkt"
        t = t.replace(/punkt punkt/gi, 'punkt');
        t = t.replace(/zdobywa punkt punkt/gi, 'zdobywa punkt');
+       t = t.replace(/zdobywa punkt pierwszy punkt/gi, 'zdobywa pierwszy punkt');
        // "zdobywa punkt kolejny punkt" — nowy duplikat
        t = t.replace(/zdobywa punkt kolejny punkt/gi, 'zdobywa kolejny punkt');
        t = t.replace(/zdobywa punkt ostatni punkt/gi, 'zdobywa ostatni punkt');
