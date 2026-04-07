@@ -1534,7 +1534,7 @@ if (!rally.touches || rally.touches.length === 0) {
    } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
      const isLastTouch = idx === rally.touches!.length - 1;
      if (isLastTouch) {
-       desc += ' - defensive dig (ball out — point to other team)';
+       desc += ` - BŁĄD OBRONY: ${player} próbował wybronić ale piłka wyszła poza boisko! Punkt dla przeciwnika. NIE pisz że obrona była dobra — ta obrona zakończyła się błędem!`;
      } else {
        desc += ' - defensive dig (ball kept in play — obrona, nie blok!)';
      }
@@ -1814,6 +1814,11 @@ INSTRUCTIONS:
 
      // ── Forbidden words ─────────────────────────────────────────────────
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
+     // If scoring action was a dig error (ball out), remove contradictory praise
+     if (isError) {
+       t = t.replace(/[^!.]*kapitalnie (obronił|wyciągnął|wybronił)[^!.]*ale (piłka|ball)[^!.]*[!.]/gi, '');
+       t = t.replace(/kapitalnie (obronił|wyciągnął|wybronił)([^!.]*)(piłka wychodzi|ball out)/gi, '$3');
+     }
      // Replace "atakujący" (generic) with scorer name when we know who scored
      if (scoringPlayer) {
        t = t.replace(/\batakujący\s+(Aluron|Bogdanka|Jastrzębski|Resovia|Projekt|Indykpol|Skra|Kędzierzyn|Bełchatów|Olsztyn|Lublin|Zawiercie|Warszawa)[^!.]*(?=[!.])/gi, 
