@@ -1419,13 +1419,40 @@ if (!rally.touches || rally.touches.length === 0) {
  // ================================================================
  // FULL TOUCH CHAIN (radio-style) - ALWAYS build from rally.touches
  // ================================================================
- const numTouches = rally.touches?.length || 0;
+
+ // PRE-PROCESS: Merge setter tip (Set→Attack same player = kiwka rozgrywającego)
+ // VolleyStation records setter tip as two separate touches: Set + Attack (same player)
+ const rawTouches = rally.touches || [];
+ const mergedTouches = rawTouches.reduce((acc: any[], touch: any, idx: number) => {
+   const prev = acc[acc.length - 1];
+   const prevAction = (prev?.action || '').toLowerCase();
+   const currAction = (touch.action || '').toLowerCase();
+   const samePlayer = prev?.player === touch.player;
+   const isSetterTip = samePlayer &&
+     (prevAction.includes('rozegranie') || prevAction.includes('setting') || prevAction === 'set') &&
+     (currAction.includes('atak') || currAction.includes('attack'));
+   
+   if (isSetterTip) {
+     // Merge: replace prev Set with a combined "setter tip" touch
+     acc[acc.length - 1] = {
+       ...touch,
+       action: touch.action,
+       _isTip: true,  // flag: kiwka rozgrywającego
+       attackStyle: touch.attackStyle || 'Tip',
+     };
+   } else {
+     acc.push(touch);
+   }
+   return acc;
+ }, []);
+
+ const numTouches = mergedTouches.length;
  const isLongRally = numTouches >= 8;
  
- if (rally.touches && rally.touches.length > 0) {
+ if (mergedTouches.length > 0) {
  const touchChainLines: string[] = [];
  
- rally.touches.forEach((touch, idx) => {
+ mergedTouches.forEach((touch: any, idx: number) => {
    const action = touch.action || '';
    const player = touch.player || '?';
    const actionLower = action.toLowerCase();
@@ -1437,7 +1464,7 @@ if (!rally.touches || rally.touches.length === 0) {
    if (actionLower.includes('zagrywka') || actionLower.includes('serwis') || actionLower.includes('serve')) {
      const sType = touch.serveType || '';
      const serveDesc = sType.includes('Float') ? 'zagrywka szybujaca/float (lekka, szybujaca — NIGDY mocna! PL: "szybujaca", IT: "flottante", DE: "Floater", TR: "float servis", ES: "flotante", PT: "flutuante", JP: "フローター")' : sType.includes('Spin') ? 'jump serve (PL: z wyskoku, IT: in salto, DE: Sprungaufschlag, TR: sıçrama, ES: en salto, PT: em salto, JP: ジャンプ)' : 'serve';
-     const isLastTouch = idx === rally.touches!.length - 1;
+     const isLastTouch = idx === mergedTouches.length - 1;
      
      if (actionLower.includes('as ') || actionLower.includes('ace')) {
        desc += ` - ${serveDesc} >>> SERVICE ACE! Direct point!`;
@@ -1492,10 +1519,11 @@ if (!rally.touches || rally.touches.length === 0) {
      else if (isBackRow) atkDesc = 'back-row attack';
      else atkDesc = 'attack';
      
-     if (style === 'Tip') atkDesc += ', tip shot';
+     if (touch._isTip) atkDesc = 'setter TIP (kiwka rozgrywającego — wystawił i sam zakończył akcję delikatnym atakiem!)';
+     else if (style === 'Tip') atkDesc += ', tip shot';
      else if (style === 'Tool') atkDesc += ', tool off block';
      
-     const isLastTouch = idx === rally.touches!.length - 1;
+     const isLastTouch = idx === mergedTouches.length - 1;
      
      if (actionLower.includes('blad') || actionLower.includes('error')) {
        if (isLastTouch) {
@@ -1516,7 +1544,7 @@ if (!rally.touches || rally.touches.length === 0) {
      }
    // BLOCK
    } else if (actionLower.includes('blok') || actionLower.includes('block')) {
-     const isLastTouch = idx === rally.touches!.length - 1;
+     const isLastTouch = idx === mergedTouches.length - 1;
      if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) {
        const blockSynonyms = [
          ' - attacker beat the block (wyblok — attacker scores)',
@@ -1532,7 +1560,7 @@ if (!rally.touches || rally.touches.length === 0) {
      }
    // DIG / DEFENSE
    } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
-     const isLastTouch = idx === rally.touches!.length - 1;
+     const isLastTouch = idx === mergedTouches.length - 1;
      if (isLastTouch) {
        desc += ` - BŁĄD OBRONY: ${player} próbował wybronić ale piłka wyszła poza boisko! Punkt dla przeciwnika. NIE pisz że obrona była dobra — ta obrona zakończyła się błędem!`;
      } else {
