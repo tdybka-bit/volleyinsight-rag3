@@ -772,6 +772,7 @@ if (!rally.touches || rally.touches.length === 0) {
  }
  
  const scoreDiff = Math.abs(finalScore.home - finalScore.away);
+ const totalPoints = finalScore.home + finalScore.away;
  const isBigLead = scoreDiff >= 10;
  const isFirstPoint = (finalScore.home === 1 && finalScore.away === 0) || 
  (finalScore.home === 0 && finalScore.away === 1);
@@ -1583,7 +1584,17 @@ if (!rally.touches || rally.touches.length === 0) {
  touchContext = `
 TOUCH CHAIN (${numTouches} touches${isLongRally ? ' — long rally!' : ''}):
 ${touchChainLines.join('\n')}
-=> SERVED BY: ${rally.touches[0]?.player || '?'}${recentCommentaryTexts.length > 0 ? `
+=> SERVED BY: ${rally.touches[0]?.player || '?'}
+=> DRAMA LEVEL: ${
+  setEndInfo.isSetEnd ? 'MAKSYMALNY — koniec seta, wszystko na szali!' :
+  (totalPoints >= 20 && scoreDiff <= 3) ? 'WYSOKI — końcówka seta, każdy punkt ważny' :
+  (totalPoints >= 20) ? 'ŚREDNI — końcówka seta ale duża przewaga' :
+  (scoreDiff >= 7) ? 'NISKI — duża różnica punktów, nie dramatyzuj' :
+  (scoreDiff >= 4) ? 'NISKI — wyraźna przewaga, spokojny komentarz' :
+  (totalPoints <= 8) ? 'NISKI — początek seta, nie dramatyzuj' :
+  'NORMALNY — standardowy komentarz'
+}
+=> ZASADA: Słów jak "komplikuje się", "dramatyczny moment", "krytyczna chwila" używaj TYLKO przy DRAMA LEVEL WYSOKI lub MAKSYMALNY!${recentCommentaryTexts.length > 0 ? `
 => ANTI-REPETITION: NIGDY nie używaj tych fraz z ostatnich komentarzy:
 ${recentCommentaryTexts.flatMap(t => {
   const phrases = t.match(/(?:wyciąga[ł]? z podłogi|kapitalnie broni[ł]?|fenomenalnie wybron\w*|kapitalnie wybron\w*|spektakularna obrona|niesamowita obrona)/gi) || [];
