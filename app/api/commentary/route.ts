@@ -1870,6 +1870,11 @@ INSTRUCTIONS:
      t = t.replace(/prowadza(?!\w)/g, 'prowadzą');
      t = t.replace(/prowadza!/g, 'prowadzą!');
      t = t.replace(/pilka/gi, 'piłka');
+     t = t.replace(/pilka /g, 'piłka ');
+     t = t.replace(/pilka!/g, 'piłka!');
+     t = t.replace(/pilka,/g, 'piłka,');
+     t = t.replace(/pilke /g, 'piłkę ');
+     t = t.replace(/ pilke/g, ' piłkę');
      t = t.replace(/pilke/gi, 'piłkę');
      t = t.replace(/pilki/gi, 'piłki');
      t = t.replace(/siatkówke/gi, 'siatkówkę');
@@ -1899,8 +1904,18 @@ INSTRUCTIONS:
      t = t.replace(/\bwyblokowuje\b/gi, 'dotyka bloku, wyblok');
      // GPT tworzy nieprawidłowe skróty/nicknames zawodników
      t = t.replace(/\bGroza\b/g, 'Grozdanov');
+     // Błędne odmiany nazwisk obcojęzycznych
+     t = t.replace(/\bKarliczek\b/gi, 'Karlitzek');
+     t = t.replace(/\bKarliczka\b/gi, 'Karlitzka');
+     t = t.replace(/\bKarliczkiem\b/gi, 'Karlitzkiem');
      // Zduplikowane litery w nazwiskach (GPT typos)
      t = t.replace(/\bBieniekk\b/gi, 'Bieniek');
+     // "bleduje" nie istnieje po polsku
+     t = t.replace(/\bleduje\b/gi, 'popełnia błąd');
+     t = t.replace(/\bledowania\b/gi, 'błędów');
+     // "blad" bez ł
+     t = t.replace(/\bblad\b/gi, 'błąd');
+     t = t.replace(/\bBLAD\b/g, 'BŁĄD');
      t = t.replace(/\bBieńkk\b/gi, 'Bieniek');
      t = t.replace(/\bGrozy\b/g, 'Grozdanova');
      t = t.replace(/\bBień\b/g, 'Bieniek');
@@ -1989,6 +2004,15 @@ INSTRUCTIONS:
        // np. "zdobywa punkt na siebie ciężar" ← score suppression ucięło "10." lub "XV"
        t = t.replace(/\bzdobywa punkt na siebie\b[^.!?]*/gi, 'zdobywa punkt');
        t = t.replace(/\bpunkt na siebie\b[^.!?]*/gi, 'punkt');
+       // Score suppression artifacts — urwane słowa przed nazwą drużyny
+       // np. "Wiesza Projekt Warszawa" ← ucięło "PGE" lub inne słowo
+       t = t.replace(/\bWiesza\b/g, 'PGE Projekt');
+       // Generyczny fix: słowo "zdobywa" lub "prowad" po urwanym słowie przed nazwą drużyny
+       t = t.replace(/([A-ZŁŚŹŻ][a-złśźżąęóćń]+)\s+(Projekt\s+Warszawa)/g, (m, w1, w2) => {
+         const knownPrefixes = ['PGE', 'Aluron', 'JSW', 'Asseco', 'Indykpol', 'Bogdanka', 'BOGDANKA'];
+         if (!knownPrefixes.includes(w1)) return `PGE ${w2}`;
+         return m;
+       });
 
        // "prowadzą na" bez liczby (score suppression ucięło np. "prowadzą na 3")
        t = t.replace(/\bprowadzą na\b(?!\s+\w)/g, 'prowadzą');
@@ -2037,6 +2061,7 @@ INSTRUCTIONS:
          const _sp = scoringPlayer;
          t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+ko.czy\s+akcj.[!.]?/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i kończy!` : m);
          t = t.replace(/(\w+)\s+zamyka\s+akcj.[!.]?/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} zamyka akcję!` : m);
+         t = t.replace(/(\w+)\s+wyci[aą]ga\s+si[eę]\s+i\s+ko[nń]czy[^!.]*[!.]/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} kończy akcję!` : m);
          t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+ko.czy!/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i kończy!` : m);
          t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+wbija[^!]*!/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i wbija piłkę w boisko!` : m);
        }
