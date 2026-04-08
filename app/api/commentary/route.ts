@@ -118,6 +118,21 @@ OBOWIAZKOWE SLOWNICTWO PL:
 - Float serve: "zagrywka szybujaca", "float" — ZAWSZE lekka/szybujaca, NIGDY "mocna zagrywka" przy float
 - Przyjecie perfekcyjne: "kapitalnie przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!"
 - Przyjecie zle: "trudne przyjecie", "pilka daleko od siatki", "nieidealne przyjecie" — NIGDY "nieporadnie"
+     // "recepcja" → "przyjęcie" (PL siatka nie używa recepcji)
+     t = t.replace(/wymuszona recepcja/gi, 'wymuszone przyjęcie');
+     t = t.replace(/perfekcyjna recepcja/gi, 'perfekcyjne przyjęcie');
+     t = t.replace(/dobra recepcja/gi, 'dobre przyjęcie');
+     t = t.replace(/recepcja/gi, 'przyjęcie');
+     // "piłka zyje" → "piłka żyje"
+     t = t.replace(/piłka zyje/gi, 'piłka żyje');
+     t = t.replace(/pilka zyje/gi, 'piłka żyje');
+     t = t.replace(/zyje!/g, 'żyje!');
+     // szybujaco bez ą
+     t = t.replace(/szybujaco/gi, 'szybująco');
+     // prowadza nadal
+     t = t.replace(/prowadza nadal/gi, 'prowadzą nadal');
+     // Ta drużyna prowadzą → prowadzi
+     t = t.replace(/[Tt]a drużyna prowadzą/g, 'Ta drużyna prowadzi');
 
 ABSOLUTNY ZAKAZ — te slowa/zwroty sa ZABRONIONE w PL:
 - "nieporadnie" — ZASTAP: "nieprecyzyjnie", "daleko od siatki", "z trudem"
@@ -1801,6 +1816,8 @@ INSTRUCTIONS:
    if (lang === 'pl') {
      // ── English leaks → Polish ──────────────────────────────────────────
      t = t.replace(/\bSERVICE ACE\b/g, 'as serwisowy');
+     // "SET para X" — hiszpański artifact w PL
+     t = t.replace(/SET para /g, 'SET dla ');
      // Hiszpański wykrzyknik ¡ nigdy nie powinien być w PL
      t = t.replace(/¡SET!/g, 'SET!');
      t = t.replace(/¡/g, '');
@@ -1908,8 +1925,14 @@ INSTRUCTIONS:
      t = t.replace(/\bKarliczek\b/gi, 'Karlitzek');
      t = t.replace(/\bKarliczka\b/gi, 'Karlitzka');
      t = t.replace(/\bKarliczkiem\b/gi, 'Karlitzkiem');
+     t = t.replace(/\bKarllitzek\b/gi, 'Karlitzek');   // podwójne l
+     t = t.replace(/\bKarllitzka\b/gi, 'Karlitzka');
+     t = t.replace(/\bBienioka\b/gi, 'Bieńka');        // błędna germanizacja
+     t = t.replace(/\bBienoka\b/gi, 'Bieńka');
      // Zduplikowane litery w nazwiskach (GPT typos)
      t = t.replace(/\bBieniekk\b/gi, 'Bieniek');
+     t = t.replace(/\bBieńkka\b/gi, 'Bieńka');
+     t = t.replace(/\bBieńkk\b/gi, 'Bieniek');
      // "bleduje" nie istnieje po polsku
      t = t.replace(/\bleduje\b/gi, 'popełnia błąd');
      t = t.replace(/\bledowania\b/gi, 'błędów');
@@ -1928,6 +1951,8 @@ INSTRUCTIONS:
      if (lang === 'pl') {
        // Gramatyka ataku
        t = t.replace(/atakuje na pierwszym tempie/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/pierwszotempowym atakiem/gi, 'atakiem z pierwszego tempa');
+       t = t.replace(/pierwszotempowy atak/gi, 'atak z pierwszego tempa');
        // Duplikat frazy ataku (GPT powtarza)
        t = t.replace(/z linii drugiej z drugiej linii/gi, 'z drugiej linii');
        // Duplikat z przerwą: "z linii drugiej [słowa] z drugiej linii"
@@ -1967,6 +1992,9 @@ INSTRUCTIONS:
 
        // "bierze" bez podmiotu → zdobywa punkt
        t = t.replace(/ bierze!/g, ' zdobywa punkt!');
+       // "Resovia bierze" (urwane zdanie) → "Resovia zdobywa punkt"
+       t = t.replace(/\bbierze$/gm, 'zdobywa punkt');
+       t = t.replace(/\bbierze\.$/gm, 'zdobywa punkt.');
        t = t.replace(/ bierze\./g, ' zdobywa punkt.');
        t = t.replace(/ bierze /g, ' zdobywa punkt ');
 
@@ -2069,6 +2097,9 @@ INSTRUCTIONS:
        t = t.replace(/punkt punkt/gi, 'punkt');
        t = t.replace(/zdobywa punkt punkt/gi, 'zdobywa punkt');
        t = t.replace(/zdobywa punkt pierwszy punkt/gi, 'zdobywa pierwszy punkt');
+       // "punkt zdobywa punkt X" — nowa forma z nazwą gracza/drużyny
+       t = t.replace(/punkt zdobywa punkt/gi, 'punkt zdobywa');
+       t = t.replace(/zdobywa punkt punkt/gi, 'zdobywa punkt');
        // "zdobywa punkt kolejny punkt" — nowy duplikat
        t = t.replace(/zdobywa punkt kolejny punkt/gi, 'zdobywa kolejny punkt');
        t = t.replace(/zdobywa punkt ostatni punkt/gi, 'zdobywa ostatni punkt');
