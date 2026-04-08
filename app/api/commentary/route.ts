@@ -1762,7 +1762,7 @@ INSTRUCTIONS:
  console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
 
  const completion = await openai.chat.completions.create({
- model: 'gpt-4.1-mini',
+ model: 'gpt-4o-mini',
  messages: [
  { role: 'system', content: systemPrompt },
  { role: 'user', content: commentaryPrompt },
@@ -2012,18 +2012,12 @@ INSTRUCTIONS:
        // np. "Tavares przebija blok i kończy akcję! BOGDANKA wyrównuje!" gdy Leon strzelił
        // Przechwytujemy: "[Gracz] przebija blok i kończy [akcję]"
        // i jeśli Gracz ≠ scoringPlayer → zastępujemy scoringPlayer
-              if (!lastTouchIsLoser && scoringPlayer) {
-         const _fixBlock = (match: string, player: string): string => {
-           if (player.toLowerCase() !== scoringPlayer.toLowerCase()) {
-             return `${scoringPlayer} przebija blok i kończy!`;
-           }
-           return match;
-         };
-         t = t.replace(/(\w[\w]*?)\s+przebija\s+blok\s+i\s+ko[nń]czy\s+akcj[eę][!.]/gi, _fixBlock);
-         t = t.replace(/(\w[\w]*?)\s+przebija\s+blok\s+i\s+ko[nń]czy[!.]/gi, _fixBlock);
-         t = t.replace(/(\w[\w]*?)\s+przebija\s+blok\s+i\s+wbija[^!.]*[!.]/gi, _fixBlock);
-         t = t.replace(/(?:Środnkowy|Śroodkowy|Przyjmujący|Atakujący)(?:\s+\w+)?\s+przebija\s+blok\s+i\s+ko[nń]czy[^!.]*[!.]/gi,
-           `${scoringPlayer} przebija blok i kończy!`);
+              // Prosta wersja bez Unicode w regex (bezpieczna dla buildu)
+       if (!lastTouchIsLoser && scoringPlayer) {
+         const _sp = scoringPlayer;
+         t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+ko.czy\s+akcj.!/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i kończy!` : m);
+         t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+ko.czy!/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i kończy!` : m);
+         t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+wbija[^!]*!/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i wbija piłkę w boisko!` : m);
        }
        // Podwójne "punkt punkt"
        t = t.replace(/punkt punkt/gi, 'punkt');
