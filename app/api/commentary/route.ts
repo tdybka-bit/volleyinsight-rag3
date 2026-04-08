@@ -1869,6 +1869,16 @@ INSTRUCTIONS:
      // "wbija w boisko" → "wbija piłkę w boisko" (feedback użytkownika)
      t = t.replace(/wbija w boisko/gi, 'wbija piłkę w boisko');
      t = t.replace(/wbił w boisko/gi, 'wbił piłkę w boisko');
+     // "wyciąga z podłogi obronę — piłka ląduje poza boiskiem"
+     // = gracz stracił rally po swojej obronie → nie chwalimy fenomenalnie, skracamy
+     t = t.replace(/fenomenalnie wyciąga z podłogi obronę[^!.]*piłka ląduje poza boiskiem/gi,
+       'niestety piłka ląduje poza boiskiem');
+     t = t.replace(/wyciąga z podłogi obronę[^!.]*piłka ląduje poza boiskiem/gi,
+       'niestety piłka ląduje poza boiskiem');
+     t = t.replace(/kapitalnie wyciąga z podłogi[^!.]*piłka ląduje poza boiskiem/gi,
+       'niestety piłka ląduje poza boiskiem');
+     t = t.replace(/wyciąga z podłogi[^!.]*piłka ląduje poza boiskiem/gi,
+       'niestety piłka ląduje poza boiskiem');
      // Błąd ataku vs błąd przyjęcia — kontekstowe naprawienie błędnej klasyfikacji
      if (scoringAction.toLowerCase().includes('przyjęci') ||
          scoringAction.toLowerCase().includes('odbior') ||
@@ -2085,7 +2095,7 @@ INSTRUCTIONS:
        // Przechwytujemy: "[Gracz] przebija blok i kończy [akcję]"
        // i jeśli Gracz ≠ scoringPlayer → zastępujemy scoringPlayer
               // Prosta wersja bez Unicode w regex (bezpieczna dla buildu)
-       if (!lastTouchIsLoser && scoringPlayer) {
+       if (scoringPlayer) {  // sprawdzamy zawsze — GPT może błędnie przypisać kończy do dowolnego gracza
          const _sp = scoringPlayer;
          t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+ko.czy\s+akcj.[!.]?/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i kończy!` : m);
          t = t.replace(/(\w+)\s+zamyka\s+akcj.[!.]?/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} zamyka akcję!` : m);
