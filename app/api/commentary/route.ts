@@ -1863,6 +1863,24 @@ INSTRUCTIONS:
        t = t.replace(/błąd w ataku (przyjmującego|przyjmuje)/gi, 'błąd w przyjęciu');
      }
 
+     // ── Brakujące polskie znaki w outputcie GPT ────────────────────────────
+     // GPT czasem nie stawia diakrytyków — normalizujemy deterministycznie
+     t = t.replace(/druzyna/gi, 'drużyna');
+     t = t.replace(/Druzyna/g, 'Drużyna');
+     t = t.replace(/prowadza(?!\w)/g, 'prowadzą');
+     t = t.replace(/prowadza!/g, 'prowadzą!');
+     t = t.replace(/pilka/gi, 'piłka');
+     t = t.replace(/pilke/gi, 'piłkę');
+     t = t.replace(/pilki/gi, 'piłki');
+     t = t.replace(/siatkówke/gi, 'siatkówkę');
+     t = t.replace(/serwis szybujacy/gi, 'serwis szybujący');
+     t = t.replace(/zagrywka szybujaca/gi, 'zagrywka szybująca');
+     t = t.replace(/szybujacym/gi, 'szybującym');
+     t = t.replace(/szybujacy/gi, 'szybujący');
+     t = t.replace(/lekka szybujaca/gi, 'lekka szybująca');
+     t = t.replace(/przyjecie/gi, 'przyjęcie');
+     t = t.replace(/przyjecia/gi, 'przyjęcia');
+
      // "nie daje się" — zły styl PL komentarza siatkówki
      t = t.replace(/nie daje się i wraca do gry/gi, 'walczy dalej');
      t = t.replace(/nie daja sie i wraca do gry/gi, 'walczy dalej');
@@ -2005,7 +2023,9 @@ INSTRUCTIONS:
          t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[nń]czy[^!.\\n]*[!.]`, 'gi'), '');
          t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+zamyka\\s+akcj[eę][^!.\\n]*[!.]`, 'gi'), '');
          // Wersja bez terminatora (gdy zdanie urywa się lub kończy myślnikiem)
-         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[nń]czy\\s*[–—]`, 'gi'), '');
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[n\u0144]czy[^!.\\n]*[!.]`, 'gi'), '');
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+zamyka\\s+akcj[e\u0119][^!.\\n]*[!.]`, 'gi'), '');
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+zamyka\\s+akcj[e\u0119](?![!.])`, 'gi'), '');
        }
 
        // ── "[ZłyGracz] przebija blok i kończy" gdy scoring player jest inny ─────
@@ -2015,7 +2035,8 @@ INSTRUCTIONS:
               // Prosta wersja bez Unicode w regex (bezpieczna dla buildu)
        if (!lastTouchIsLoser && scoringPlayer) {
          const _sp = scoringPlayer;
-         t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+ko.czy\s+akcj.!/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i kończy!` : m);
+         t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+ko.czy\s+akcj.[!.]?/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i kończy!` : m);
+         t = t.replace(/(\w+)\s+zamyka\s+akcj.[!.]?/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} zamyka akcję!` : m);
          t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+ko.czy!/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i kończy!` : m);
          t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+wbija[^!]*!/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i wbija piłkę w boisko!` : m);
        }
