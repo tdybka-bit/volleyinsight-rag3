@@ -118,6 +118,29 @@ OBOWIAZKOWE SLOWNICTWO PL:
 - Float serve: "zagrywka szybujaca", "float" — ZAWSZE lekka/szybujaca, NIGDY "mocna zagrywka" przy float
 - Przyjecie perfekcyjne: "kapitalnie przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!"
 - Przyjecie zle: "trudne przyjecie", "pilka daleko od siatki", "nieidealne przyjecie" — NIGDY "nieporadnie"
+     // Korekty językowe — naturalny PL komentarz siatki
+     // "blokuje nie na czas" → "spóźnił się z blokiem"
+     t = t.replace(/blokuje nie na czas/gi, 'spóźnił się z blokiem');
+     t = t.replace(/blokuje za późno/gi, 'spóźnił się z blokiem');
+     // "ma trudne przyjęcie" → "z problemami w przyjęciu"
+     t = t.replace(/ma trudne przyjęcie/gi, 'z problemami w przyjęciu');
+     t = t.replace(/ma trudne przyjecie/gi, 'z problemami w przyjęciu');
+     // "tipem" → "czubkiem palców" (nie po polsku)
+     t = t.replace(/tipem/gi, 'czubkiem palców');
+     t = t.replace(/typ(em|ie)/gi, (m) => m.toLowerCase().includes('tip') ? 'czubkiem palców' : m);
+     // "wystawia do środka" → "wystawia na środek"
+     t = t.replace(/wystawia do środka/gi, 'wystawia na środek');
+     t = t.replace(/wystawia do srodka/gi, 'wystawia na środek');
+     // "kiwką próbuje zaskoczyć" → "próbuje zaskoczyć kiwką"
+     t = t.replace(/kiwką próbuje zaskoczyć/gi, 'próbuje zaskoczyć kiwką');
+     t = t.replace(/kiwka probuje zaskoczyc/gi, 'próbuje zaskoczyć kiwką');
+     // "wbija blok" → nie po polsku, zastąp
+     t = t.replace(/wbija blok/gi, 'zamyka blokiem');
+     t = t.replace(/wbił blok/gi, 'zamknął blokiem');
+     // "Zagrywka szybująca" → "Szybująca zagrywka" (naturalniejszy szyk)
+     t = t.replace(/Zagrywka szybująca ([A-ZŁŚŹ])/g, 'Szybująca zagrywka $1');
+     t = t.replace(/Zagrywka szybujaca ([A-ZŁŚŹ])/g, 'Szybująca zagrywka $1');
+
      // "recepcja" → "przyjęcie" (PL siatka nie używa recepcji)
      t = t.replace(/wymuszona recepcja/gi, 'wymuszone przyjęcie');
      t = t.replace(/perfekcyjna recepcja/gi, 'perfekcyjne przyjęcie');
@@ -1907,7 +1930,19 @@ ${rally.phase === 'Transition' ? 'KONTRA: Podkreśl szybką reakcję i improwiza
      // "wbija w boisko" → "wbija piłkę w boisko" (feedback użytkownika)
      t = t.replace(/wbija w boisko/gi, 'wbija piłkę w boisko');
      t = t.replace(/wbił w boisko/gi, 'wbił piłkę w boisko');
-     // "wyciąga z podłogi obronę — piłka ląduje poza boiskiem"
+     // Sprzeczności logiczne — "obrona skuteczna" ale piłka wychodzi
+     t = t.replace(/obrona[^—–-]*jest skuteczna[^—–-]*[—–-][^!.]*piłka wychodzi poza boisko/gi,
+       'mimo obrony piłka wychodzi poza boisko');
+     t = t.replace(/obrona[^—–-]*jest skuteczna[^—–-]*[—–-][^!.]*wychodzi poza/gi,
+       'mimo obrony wychodzi poza boisko');
+     t = t.replace(/kapitalnie broni[^!.]*piłka wychodzi poza boisko/gi,
+       'choć piłka mimo obrony wychodzi poza boisko');
+     t = t.replace(/znakomicie broni[^,!.]*,\s*(?:choć\s*)?piłka wychodzi poza boisko/gi,
+       'mimo znakomitej obrony piłka wychodzi poza boisko');
+     t = t.replace(/świetnie broni[^,!.]*,\s*(?:choć\s*)?piłka wychodzi poza boisko/gi,
+       'mimo obrony piłka wychodzi poza boisko');
+
+     // "wyciąga z podłogi obronę — piłka ląduje poza boiskiem" 
      // = gracz stracił rally po swojej obronie → nie chwalimy fenomenalnie, skracamy
      t = t.replace(/fenomenalnie wyciąga z podłogi obronę[^!.]*piłka ląduje poza boiskiem/gi,
        'niestety piłka ląduje poza boiskiem');
@@ -2214,6 +2249,16 @@ ${rally.phase === 'Transition' ? 'KONTRA: Podkreśl szybką reakcję i improwiza
            t = t.replace(/nie odpuszcza/gi, (m) => {
              if (first) { first = false; return m; }
              return 'walczy dalej';
+           });
+         }
+         // "wyciąga z podłogi" — max 2x, potem rotacja
+         {
+           const wycAlts = ['broni', 'ratuje piłkę', 'interweniuje w obronie', 'dobija z parkietu'];
+           let wycCount = 0;
+           t = t.replace(/wyciąga z podłogi/gi, (m) => {
+             wycCount++;
+             if (wycCount <= 2) return m;
+             return wycAlts[(wycCount - 3) % wycAlts.length];
            });
          }
          // "wraca do gry" — tylko raz
