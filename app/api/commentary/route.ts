@@ -1978,7 +1978,13 @@ ${rally.phase === 'Transition' ? 'KONTRA: Podkreśl szybką reakcję i improwiza
      t = t.replace(/\bBienioka\b/gi, 'Bieńka');        // błędna germanizacja
      t = t.replace(/\bBienoka\b/gi, 'Bieńka');
      // Zduplikowane litery w nazwiskach (GPT typos)
-     t = t.replace(/\bBieniekk\b/gi, 'Bieniek');
+     // Bieniek — poprawna odmiana (GPT czasem podwaja k)
+     t = t.replace(/\bBieniekkowi\b/gi, 'Bieńkowi');   // celownik
+     t = t.replace(/\bBieniekkiego\b/gi, 'Bieńka');    // dopełniacz/biernik
+     t = t.replace(/\bBieniekkowi\b/gi, 'Bieńkowi');   // celownik
+     t = t.replace(/\bBieniekkel\b/gi, 'Bieńka');
+     t = t.replace(/\bBieniekka\b/gi, 'Bieńka');       // dopełniacz
+     t = t.replace(/\bBieniekk\b/gi, 'Bieniek');       // mianownik — NA KOŃCU
      t = t.replace(/\bBieńkka\b/gi, 'Bieńka');
      t = t.replace(/\bBieńkk\b/gi, 'Bieniek');
      // "bleduje" nie istnieje po polsku
@@ -2037,6 +2043,23 @@ ${rally.phase === 'Transition' ? 'KONTRA: Podkreśl szybką reakcję i improwiza
        t = t.replace(/Genialne!$/g, '');
        t = t.replace(/Kapitalnie! /g, '');
        t = t.replace(/Kapitalnie!$/g, '');
+       // "Fantastyczny punkt!" — tylko przy bloku/ataku i dramaLevel >= 2, max 1x
+       {
+         const isBadCtxFant =
+           scoringAction.toLowerCase().includes('serw') ||
+           scoringAction.toLowerCase().includes('przyjęci') ||
+           scoringAction.toLowerCase().includes('receive') ||
+           scoringAction.toLowerCase().includes('błąd ataku') ||
+           scoringAction.toLowerCase().includes('attack error') ||
+           dramaLevel <= 1;
+         if (isBadCtxFant) {
+           t = t.replace(/Fantastyczny punkt!\s*/g, '');
+           t = t.replace(/Fantastyczne zakończenie!\s*/g, '');
+         } else {
+           let _fc = 0;
+           t = t.replace(/Fantastyczny punkt!/g, (m: string) => { _fc++; return _fc <= 1 ? m : ''; });
+         }
+       }
 
        // "bierze" bez podmiotu → zdobywa punkt
        t = t.replace(/ bierze!/g, ' zdobywa punkt!');
@@ -2209,10 +2232,14 @@ ${rally.phase === 'Transition' ? 'KONTRA: Podkreśl szybką reakcję i improwiza
        // Podwójne "punkt punkt"
        t = t.replace(/punkt punkt/gi, 'punkt');
        t = t.replace(/zdobywa punkt punkt/gi, 'zdobywa punkt');
+       t = t.replace(/zdobywa punkt inicjatywę/gi, 'zdobywa inicjatywę');
+       t = t.replace(/zdobywa punkt i inicjatywę/gi, 'zdobywa inicjatywę');
        t = t.replace(/zdobywa punkt pierwszy punkt/gi, 'zdobywa pierwszy punkt');
        // "punkt zdobywa punkt X" — nowa forma z nazwą gracza/drużyny
        t = t.replace(/punkt zdobywa punkt/gi, 'punkt zdobywa');
        t = t.replace(/zdobywa punkt punkt/gi, 'zdobywa punkt');
+       t = t.replace(/zdobywa punkt inicjatywę/gi, 'zdobywa inicjatywę');
+       t = t.replace(/zdobywa punkt i inicjatywę/gi, 'zdobywa inicjatywę');
        // "zdobywa punkt kolejny punkt" — nowy duplikat
        t = t.replace(/zdobywa punkt kolejny punkt/gi, 'zdobywa kolejny punkt');
        t = t.replace(/zdobywa punkt ostatni punkt/gi, 'zdobywa ostatni punkt');
