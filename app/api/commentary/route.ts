@@ -2180,6 +2180,30 @@ ${rally.phase === 'Transition' ? 'KONTRA: Podkreśl szybką reakcję i improwiza
              return 'zmniejsza stratę';
            });
          }
+         // "odpowiada" — max 3x na komentarz, potem rotacja
+         const odpowiadaAlts = ['reaguje', 'kontratakuje', 'nie rezygnuje', 'zdobywa punkt', 'wraca'];
+         let odpowiadaCount = 0;
+         t = t.replace(/odpowiada/gi, (m) => {
+           odpowiadaCount++;
+           if (odpowiadaCount <= 3) return m;
+           return odpowiadaAlts[(odpowiadaCount - 4) % odpowiadaAlts.length];
+         });
+         // "buduje dystans" — max 2x, potem rotacja
+         const dystansAlts = ['powiększa przewagę', 'odskakuje', 'umacnia pozycję', 'nie zwalnia'];
+         let dystansCount = 0;
+         t = t.replace(/buduje dystans/gi, (m) => {
+           dystansCount++;
+           if (dystansCount <= 2) return m;
+           return dystansAlts[(dystansCount - 3) % dystansAlts.length];
+         });
+         // "buduje przewagę" — max 2x, potem rotacja
+         const przewagaAlts = ['powiększa dystans', 'umacnia prowadzenie', 'odskakuje dalej', 'nie odpuszcza'];
+         let przewagaCount = 0;
+         t = t.replace(/buduje przewagę/gi, (m) => {
+           przewagaCount++;
+           if (przewagaCount <= 2) return m;
+           return przewagaAlts[(przewagaCount - 3) % przewagaAlts.length];
+         });
        }
 
        // Podwójne "punkt punkt"
