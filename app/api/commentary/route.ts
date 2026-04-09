@@ -1973,6 +1973,9 @@ ${rally.phase === 'Transition' ? 'KONTRA: Podkreśl szybką reakcję i improwiza
      t = t.replace(/\bKarliczek\b/gi, 'Karlitzek');
      t = t.replace(/\bKarliczka\b/gi, 'Karlitzka');
      t = t.replace(/\bKarliczkiem\b/gi, 'Karlitzkiem');
+     t = t.replace(/\bKarliczkowi\b/gi, 'Karlitzkowi');
+     t = t.replace(/\bKarliczeka\b/gi, 'Karlitzka');    // błędna odmiana GPT
+     t = t.replace(/\bKarliczkowi\b/gi, 'Karlitzkowi');
      t = t.replace(/\bKarllitzek\b/gi, 'Karlitzek');   // podwójne l
      t = t.replace(/\bKarllitzka\b/gi, 'Karlitzka');
      t = t.replace(/\bBienioka\b/gi, 'Bieńka');        // błędna germanizacja
@@ -1987,11 +1990,25 @@ ${rally.phase === 'Transition' ? 'KONTRA: Podkreśl szybką reakcję i improwiza
      t = t.replace(/\bBieniekk\b/gi, 'Bieniek');       // mianownik — NA KOŃCU
      t = t.replace(/\bBieńkka\b/gi, 'Bieńka');
      t = t.replace(/\bBieńkk\b/gi, 'Bieniek');
+     // ── Sklejone zdania GPT: "[X] coś [X] zamyka akcję" ──────────────────────
+     // np. "Weber mocnym Weber zamyka akcję!" → "Weber mocnym zamyka akcję!"
+     // Wzorzec: (\w+) [tekst]  (zamyka|kończy|wbija)
+     t = t.replace(/(\w{4,})((?:\s+\w+){1,5})\s+\s+(zamyka|kończy|wbija|przebija|stawia)/gi,
+       (m: string, name: string, middle: string, verb: string) => `${name}${middle} ${verb}`);
+     // Prostszy fix dla najczęstszego wzorca: "[Nazwisko] [cos] [Nazwisko] zamyka akcję"
+     t = t.replace(/([A-ZŁŚŹ]\w+)([^!.]{3,30})\s+\s+zamyka akcję!/gi,
+       (m: string, name: string, middle: string) => `${name}${middle} zamyka akcję!`);
+     t = t.replace(/([A-ZŁŚŹ]\w+)([^!.]{3,30})\s+\s+kończy akcję!/gi,
+       (m: string, name: string, middle: string) => `${name}${middle} kończy akcję!`);
+
      // "bleduje" nie istnieje po polsku
      t = t.replace(/\bleduje\b/gi, 'popełnia błąd');
      t = t.replace(/\bledowania\b/gi, 'błędów');
      // "blad" bez ł
      t = t.replace(/\bblad\b/gi, 'błąd');
+     // Angielskie słowa w PL outputcie GPT
+     t = t.replace(/\bperfect\b/gi, 'perfekcyjne');
+     t = t.replace(/\bperfect przyjęcie/gi, 'perfekcyjne przyjęcie');
      t = t.replace(/\bBLAD\b/g, 'BŁĄD');
      t = t.replace(/\bBieńkk\b/gi, 'Bieniek');
      t = t.replace(/\bGrozy\b/g, 'Grozdanova');
@@ -1999,6 +2016,11 @@ ${rally.phase === 'Transition' ? 'KONTRA: Podkreśl szybką reakcję i improwiza
      t = t.replace(/\bBieńk\b/g, 'Bieniek');
      t = t.replace(/\bBienk\b/g, 'Bieniek');
      t = t.replace(/\bwyblokowują\b/gi, 'dotykają bloku, wyblok');
+     // Angielskie okrzyki w PL komentarzu
+     t = t.replace(/BLOCK POINT!\s*/g, '');
+     t = t.replace(/BLOCK!\s*/g, '');
+     t = t.replace(/ACE!\s*/g, '');
+     t = t.replace(/POINT!\s*/g, '');
      t = t.replace(/\bwyblokowuję\b/gi, 'dotykam bloku, wyblok');
 
      // ── SŁOWNIK KOREKT PL ────────────────────────────────────────────────
