@@ -1916,6 +1916,34 @@ ${rally.phase === 'Transition' ? 'KONTRA: Podkreśl szybką reakcję i improwiza
        return punktDlaVariants[Math.floor(Math.random() * punktDlaVariants.length)];
      });
 
+     // ── Wrong team names — GPT hallucynuje nazwy drużyn ────────────────────
+     // Jeśli w komentarzu pojawia się znana nazwa drużyny PlusLigi która NIE gra w tym meczu
+     // → zastąp nazwą drużyny która zdobyła/straciła punkt
+     if (lang === 'pl') {
+       const allTeams = [
+         'PGE Projekt Warszawa', 'Indykpol AZS Olsztyn', 'Aluron CMC Warta Zawiercie',
+         'BOGDANKA LUK Lublin', 'Bogdanka LUK Lublin', 'JSW Jastrzębski Węgiel',
+         'Asseco Resovia Rzeszów', 'Asseco Resovia', 'Jastrzębski Węgiel',
+         'Projekt Warszawa', 'Zawiercie', 'Lublin', 'Olsztyn',
+         'Trefl Gdańsk', 'Zaksa Kędzierzyn', 'Cuprum Lubin', 'Stal Nysa'
+       ];
+       // Sprawdź które drużyny są w tym meczu
+       const thisMatchTeams = [homeTeamFull.toLowerCase(), awayTeamFull.toLowerCase()];
+       // Skrócone wersje do sprawdzania
+       const homeShort = homeTeamFull.split(' ').slice(-1)[0]; // np. "Warszawa"
+       const awayShort = awayTeamFull.split(' ').slice(-1)[0]; // np. "Olsztyn"
+       for (const wrongTeam of allTeams) {
+         if (!thisMatchTeams.some(tm => tm.includes(wrongTeam.toLowerCase().split(' ')[0]) ||
+             wrongTeam.toLowerCase().includes(tm.split(' ')[0]))) {
+           // Ta drużyna nie gra w tym meczu — usuń jej nazwy z komentarza
+           if (t.includes(wrongTeam)) {
+             const scoringTeamName = rally.team_scored === 'home' ? homeTeamFull : awayTeamFull;
+             t = t.replace(new RegExp(wrongTeam.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), scoringTeamName);
+           }
+         }
+       }
+     }
+
      // ── Score in text → remove explicit numbers ─────────────────────────
      if (!setEndInfo.isSetEnd) {
        t = t.replace(/prowadz[ąią]\s+\d{1,2}:\d{1,2}/g, 'prowadzą');
