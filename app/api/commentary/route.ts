@@ -115,14 +115,22 @@ OBOWIAZKOWE SLOWNICTWO PL:
 - Blok punkt: "BLOK!", "zatrzymany blokiem!", "mur przy siatce!" — NIGDY "broni blokiem" (blok to NIE obrona!)
 - Wyblok (blok niekonczacy rally): "pilka po bloku", "wyblok — pilka zyje!", "zablokowany ale akcja trwa!"
 - Obrona/dig: "wybroniony!", "świetna obrona!", "ratuje akcję!" — NIGDY angielskie "dig", NIGDY "wyciąga z podłogi", NIGDY "kapitalnie"
+- Blok: "muruje siatkę" NIE "muruje atakującego rywala" — blok jest na siatce, nie na zawodniku
+- Blok: "zdobywa punkt blokiem", "zamyka blokiem" — NIGDY "wbija blok"
+- Kiwka: "kiwa", "zagrywa kiwką", "próbuje zaskoczyć kiwką" — NIGDY "atakuje kiwką"
+- Przyjęcie słabe: "niedokładne", "dalekie od ideału", "nienajlepsze", "z problemami" — NIGDY "trudne przyjęcie"
+- Wyblok — piłka wraca: "wraca na stronę [drużyny/gospodarzy/gości]" — NIGDY "wraca w pole"
+- "oczko" — max 1x na komentarz, preferuj "punkt"
+- "wbija" bez doprecyzowania co — zawsze "wbija piłkę w boisko"
 - Float serve: "zagrywka szybujaca", "float" — ZAWSZE lekka/szybujaca, NIGDY "mocna zagrywka" przy float
 - Przyjecie perfekcyjne: "w punkt przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!", "doskonale przyjal!"
 - Przyjecie zle: "trudne przyjecie", "pilka daleko od siatki", "nieidealne przyjecie" — NIGDY "nieporadnie"
 
 ABSOLUTNY ZAKAZ — te slowa/zwroty sa ZABRONIONE w PL:
 - "nieporadnie" — ZASTAP: "nieprecyzyjnie", "daleko od siatki", "z trudem"
-- "kapitalnie" — ZAKAZANE! ZASTAP: "świetnie", "doskonale", "w punkt", "znakomicie"
-- "wyciąga z podłogi" / "wyciagnal z podlogi" — ZAKAZANE! ZASTAP: "ratuje", "wybroniony", "świetna obrona"
+- "kapitalnie" — BARDZO RZADKO! Tylko przy dramaLevel 3-4 (końcówka, remis). Max 1x na komentarz. Normalnie użyj: "świetnie", "doskonale", "znakomicie"
+- "niesamowite" — RZADKO! Tylko dramaLevel 3-4. Max 1x na komentarz.
+- "wyciąga z podłogi" — ZAKAZANE! ZASTAP: "ratuje", "wybroniony", "świetna obrona"
 - "dig" (angielskie) — ZASTAP: "obrona", "wybroniony", "wyciagnal"
 - "ustawia do ataku" — ZASTAP: "wystawia do [nazwisko]"
 - "przygotowuje akcje" / "przygotowuje pilke" — za ogolne, opisz konkretnie
@@ -1930,18 +1938,72 @@ INSTRUCTIONS:
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
 
      // ── Banned phrases — najczęstsze błędy GPT ──────────────────────────
-     t = t.replace(/\bkapitalnie\b/gi, 'świetnie');
-     t = t.replace(/\bkapitalna\b/gi, 'świetna');
-     t = t.replace(/\bkapitalny\b/gi, 'świetny');
-     t = t.replace(/\bkapitalnego\b/gi, 'świetnego');
-     t = t.replace(/\bkapitalnym\b/gi, 'świetnym');
-     t = t.replace(/\bkapitalnej\b/gi, 'świetnej');
-     t = t.replace(/\bkapitalnych\b/gi, 'świetnych');
+     // kapitalnie/niesamowite/fenomenalnie — max 1x, tylko przy dramaLevel >= 3
+     {
+       const allowEmphasis = dramaLevel >= 3;
+       // kapitalnie — max 1x przy drama>=3, inaczej → świetnie
+       let kapCount = 0;
+       t = t.replace(/\b(kapitalnie|kapitalna|kapitalny|kapitalnego|kapitalnym|kapitalnej|kapitalnych)\b/gi,
+         (m) => {
+           if (allowEmphasis && kapCount === 0) { kapCount++; return m; }
+           const alt: Record<string,string> = {
+             'kapitalnie':'świetnie','kapitalna':'świetna','kapitalny':'świetny',
+             'kapitalnego':'świetnego','kapitalnym':'świetnym','kapitalnej':'świetnej','kapitalnych':'świetnych'
+           };
+           return alt[m.toLowerCase()] || 'świetnie';
+         });
+       // niesamowite — max 1x przy drama>=3
+       let niesamCount = 0;
+       t = t.replace(/\bniesamowit\w*/gi, (m) => {
+         if (allowEmphasis && niesamCount === 0) { niesamCount++; return m; }
+         return 'doskonał' + (m.slice(-1) === 'e' ? 'e' : m.slice(-2) === 'ie' ? 'ie' : 'y');
+       });
+       // fenomenalnie — max 1x tylko przy drama=4
+       let fenomCount = 0;
+       t = t.replace(/\b(fenomenalnie|fenomenalna|fenomenalny|fenomenalnego)\b/gi, (m) => {
+         if (dramaLevel >= 4 && fenomCount === 0) { fenomCount++; return m; }
+         return m.includes('nie') ? 'znakomicie' : m.includes('na') ? 'znakomita' : 'znakomity';
+       });
+     }
      t = t.replace(/ma trudne przyjęcie/gi, 'z problemami w przyjęciu');
      t = t.replace(/ma trudne przyjecie/gi, 'z problemami w przyjęciu');
+     // Słownictwo blok
+     t = t.replace(/muruje atakującego rywala/gi, 'muruje siatkę');
+     t = t.replace(/muruje atakujacego rywala/gi, 'muruje siatkę');
+     t = t.replace(/wbija blok punktowy/gi, 'zdobywa punkt blokiem');
+     t = t.replace(/wbija blok/gi, 'zamyka blokiem');
+     t = t.replace(/wbija piłkę w boisko/gi, 'wbija piłkę w boisko');
+     t = t.replace(/wbija(?! piłkę)/gi, 'wbija piłkę');
+     // Przyjęcie — nie "trudne"
+     t = t.replace(/trudne przyjęcie/gi, 'niedokładne przyjęcie');
+     t = t.replace(/trudne przyjecie/gi, 'niedokładne przyjęcie');
+     t = t.replace(/przyjęcie nie jest precyzyjne/gi, 'przyjęcie dalekie od ideału');
+     t = t.replace(/przyjecie nie jest precyzyjne/gi, 'przyjęcie dalekie od ideału');
+     // Kiwka — naturalna forma
+     t = t.replace(/atakuje kiwką/gi, 'kiwa');
+     t = t.replace(/atakuje kiwka/gi, 'kiwa');
+     t = t.replace(/próbuje kiwką/gi, 'próbuje zaskoczyć kiwką');
+     // Wyblok — "wraca w pole" → "wraca na stronę"
+     t = t.replace(/wraca w pole/gi, 'wraca na stronę atakujących');
+     t = t.replace(/wraca w pole gry/gi, 'wraca na stronę atakujących');
+     // "oczko" — max 1x
+     {
+       let oczkoCount = 0;
+       t = t.replace(/„oczko"|"oczko"|oczko/gi, (m) => {
+         oczkoCount++;
+         return oczkoCount <= 1 ? 'punkt' : 'punkt';
+       });
+     }
      t = t.replace(/Punkt oddany bez walki[!.]?/gi, 'strata punktu.');
      t = t.replace(/Nieudana próba serwisu[!.]?/gi, 'błąd na zagrywce.');
      t = t.replace(/Zmarnowany serwis[!,.]?/gi, 'Błąd serwisowy.');
+     // Błąd serwisu — max 10 słów, obcinamy nadmiar
+     if (/błąd serwis|serw.*błąd|myli się.*serw|blad serw/i.test(t)) {
+       const sentences = t.split(/(?<=[.!?])\s+/);
+       if (sentences.length > 1 && t.split(/\s+/).length > 12) {
+         t = sentences[0]; // zostaw tylko pierwsze zdanie
+       }
+     }
      t = t.replace(/wystawia do środka/gi, 'wystawia na środek');
      t = t.replace(/wystawiając do środka/gi, 'wystawiając na środek');
      t = t.replace(/\bbierze!$/gi, 'zdobywa punkt!');
