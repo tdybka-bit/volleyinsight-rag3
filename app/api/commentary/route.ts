@@ -107,20 +107,22 @@ STYL PL — RADIO NA ZYWO:
 - Prowadz narracje z EMOCJA proporcjonalna do sytuacji. Serve error = krotko i zwiezle. Koniec seta = wybuch emocji!
 - UNIKAJ mechanicznych zwrotow: zamiast "zwieksza przewage" uzyj "odskoczyc", "dokrecil srube", "nie odpuszcza". Zamiast "zmniejsza strate" uzyj "wraca do gry!", "nie daje sie!", "zapala iskre!".
 - UNIKAJ "gra trwa" — uzyj "akcja trwa!", "wymiana!", "pilka zyje!", "nie daja sie!".
-- Przeplataj krotkie zdania uderzajace z dluzszymi opisowymi. Czasem zacznij od akcji: "Mocna zagrywka!", "Kapitalny blok!".
+- Przeplataj krotkie zdania uderzajace z dluzszymi opisowymi. Czasem zacznij od akcji: "Mocna zagrywka!", "Blok punktowy!".
 - Przynajmniej JEDNO zdanie z wykrzyknikiem na komentarz (chyba ze to blad serwisowy — wtedy wystarczy jedno krotkie).
 
 OBOWIAZKOWE SLOWNICTWO PL:
 - Wystawienie: "wystawia do [nazwisko]" LUB "wystawia na lewe/prawe skrzydlo" LUB "szybka pilka do srodka" — NIGDY "wystawia w prawo/lewo", NIGDY "ustawia do ataku", NIGDY "przygotowuje akcje"
 - Blok punkt: "BLOK!", "zatrzymany blokiem!", "mur przy siatce!" — NIGDY "broni blokiem" (blok to NIE obrona!)
 - Wyblok (blok niekonczacy rally): "pilka po bloku", "wyblok — pilka zyje!", "zablokowany ale akcja trwa!"
-- Obrona/dig: "kapitalnie obroniony!", "wyciagnal z podlogi!", "fenomenalna obrona!" — NIGDY angielskie "dig"
+- Obrona/dig: "wybroniony!", "świetna obrona!", "ratuje akcję!" — NIGDY angielskie "dig", NIGDY "wyciąga z podłogi", NIGDY "kapitalnie"
 - Float serve: "zagrywka szybujaca", "float" — ZAWSZE lekka/szybujaca, NIGDY "mocna zagrywka" przy float
-- Przyjecie perfekcyjne: "kapitalnie przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!"
+- Przyjecie perfekcyjne: "w punkt przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!", "doskonale przyjal!"
 - Przyjecie zle: "trudne przyjecie", "pilka daleko od siatki", "nieidealne przyjecie" — NIGDY "nieporadnie"
 
 ABSOLUTNY ZAKAZ — te slowa/zwroty sa ZABRONIONE w PL:
 - "nieporadnie" — ZASTAP: "nieprecyzyjnie", "daleko od siatki", "z trudem"
+- "kapitalnie" — ZAKAZANE! ZASTAP: "świetnie", "doskonale", "w punkt", "znakomicie"
+- "wyciąga z podłogi" / "wyciagnal z podlogi" — ZAKAZANE! ZASTAP: "ratuje", "wybroniony", "świetna obrona"
 - "dig" (angielskie) — ZASTAP: "obrona", "wybroniony", "wyciagnal"
 - "ustawia do ataku" — ZASTAP: "wystawia do [nazwisko]"
 - "przygotowuje akcje" / "przygotowuje pilke" — za ogolne, opisz konkretnie
@@ -142,7 +144,7 @@ ABSOLUTNY ZAKAZ — te slowa/zwroty sa ZABRONIONE w PL:
 LOGIKA BLOK vs OBRONA — KRYTYCZNE dla poprawnosci:
 - BLOK KONCZACY rally = "[Nazwisko] blokuje! Punkt dla [Druzyna]!"
 - WYBLOK (blok niekonczacy, akcja trwa) = "pilka po bloku wraca w pole!" / "wyblok, pilka zyje!"
-- OBRONA (dig, nie blok) = "kapitalnie obroniony!", "wyciagnal z podlogi!"
+- OBRONA (dig, nie blok) = "wybroniony!", "świetnie obronił!", "ratuje akcję!"
 - Jesli po bloku akcja TRWA → to byl WYBLOK, nie blok punkt. Nie mow "blokuje" jezeli akcja trwa dalej.`,
 
 
@@ -345,7 +347,7 @@ const getCommentarySystemPrompt = (
      'AS SERWISOWY': [
        'START: "Swietny serwis Bienka - Hilir Henno nie utrzymal pilki w grze!"',
        'ŚRODEK po raz kolejny: "I jeszcze Russell postanawia dolozyc sie asem! Alez popisy Zawiercian w polu zagrywki!"',
-       'KOŃCÓWKA: "Bartlomiej Boladz zza linii 9 metrow kapitalnie po prostej zdobywa punkt."',
+       'KOŃCÓWKA: "Bartlomiej Boladz zza linii 9 metrow — po prostej i mamy punkt!"',
      ],
      'BŁĄD PRZYJĘCIA': [
        '"McCarthy! dobra zagrywka i punkt na koncie Lublina po zlym przyjeciu Popiwczaka! No i mamy remis!"',
@@ -1926,6 +1928,22 @@ INSTRUCTIONS:
 
      // ── Forbidden words ─────────────────────────────────────────────────
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
+
+     // ── Banned phrases — najczęstsze błędy GPT ──────────────────────────
+     t = t.replace(/\bkapitalnie\b/gi, 'świetnie');
+     t = t.replace(/\bkapitalna\b/gi, 'świetna');
+     t = t.replace(/\bkapitalny\b/gi, 'świetny');
+     t = t.replace(/\bkapitalnego\b/gi, 'świetnego');
+     t = t.replace(/\bkapitalnym\b/gi, 'świetnym');
+     t = t.replace(/\bkapitalnej\b/gi, 'świetnej');
+     t = t.replace(/\bkapitalnych\b/gi, 'świetnych');
+     t = t.replace(/ma trudne przyjęcie/gi, 'z problemami w przyjęciu');
+     t = t.replace(/ma trudne przyjecie/gi, 'z problemami w przyjęciu');
+     t = t.replace(/Punkt oddany bez walki[!.]?/gi, 'strata punktu.');
+     t = t.replace(/Nieudana próba serwisu[!.]?/gi, 'błąd na zagrywce.');
+     t = t.replace(/Zmarnowany serwis[!,.]?/gi, 'Błąd serwisowy.');
+     t = t.replace(/wystawia do środka/gi, 'wystawia na środek');
+     t = t.replace(/wystawiając do środka/gi, 'wystawiając na środek');
      t = t.replace(/\bbierze!$/gi, 'zdobywa punkt!');
      t = t.replace(/\s+bierze!/g, ' zdobywa punkt!');
      t = t.replace(/\s+bierze\./g, ' zdobywa punkt.');
