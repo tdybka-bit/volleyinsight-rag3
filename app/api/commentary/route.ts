@@ -2083,6 +2083,8 @@ INSTRUCTIONS:
      t = t.replace(/atakuje pierwsza tempo/gi, 'atakuje z pierwszego tempa');
      t = t.replace(/atakuje pierwszego tempa/gi, 'atakuje z pierwszego tempa');
      t = t.replace(/atak pierwszym tempem/gi, 'atak z pierwszego tempa');
+     t = t.replace(/szybkim atakiem z pierwszej piłki/gi, 'szybkim atakiem ze środka');
+     t = t.replace(/atakiem z pierwszej piłki/gi, 'atakiem ze środka');
      t = t.replace(/atakiem pierwszego tempa/gi, 'atakiem z pierwszego tempa');
      t = t.replace(/szybkim atakiem pierwszego tempa/gi, 'szybkim atakiem ze środka');
      t = t.replace(/blyskawicznym atakiem pierwszego tempa/gi, 'błyskawicznym atakiem ze środka');
@@ -2094,6 +2096,8 @@ INSTRUCTIONS:
      t = t.replace(/z szybkim pierwszym tempem/gi, 'z pierwszego tempa');
      t = t.replace(/przez pierwsze tempo/gi, 'z pierwszego tempa');
      t = t.replace(/atak pierwszym tempem/gi, 'atak z pierwszego tempa');
+     t = t.replace(/szybkim atakiem z pierwszej piłki/gi, 'szybkim atakiem ze środka');
+     t = t.replace(/atakiem z pierwszej piłki/gi, 'atakiem ze środka');
      t = t.replace(/atakiem pierwszej piłki/gi, 'atakiem');
      t = t.replace(/kończy pierwszą piłkę/gi, 'kończy akcję');
      // Szybko przyjęty → dobrze przyjęty
