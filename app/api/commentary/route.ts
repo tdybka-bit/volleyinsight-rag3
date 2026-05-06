@@ -490,6 +490,14 @@ ANTI-REDUNDANCY:
 - STRUCTURE: if you are running out of space — SKIP the middle touches, NEVER skip the ending.
 - The LAST sentence MUST contain: who scored + how (attack/block/serve error/ace). No exceptions.
 - If forced to choose: 1 sentence about serve + 1 sentence about who scored = complete commentary.
+
+NARRATIVE ORDER — CLIMAX FIRST:
+For rallies with 5+ touches: START with who scored and how, THEN add context.
+WRONG: "Karlitzek serwuje, Tillie przyjmuje, Firlej wystawia na lewe skrzydło, Weber atakuje..."
+RIGHT: "Weber kończy atakiem z lewej! Wcześniej dobre przyjęcie Tillie po zagrywce Karlitzka."
+RIGHT: "Punkt dla Indykpola — Hadrava wbija piłkę z prawego skrzydła po dobrej zagrywce Tille."
+RIGHT: "Kochanowski zatrzymuje atak Webera — blok punktowy! Wcześniej trudna zagrywka Firleja."
+This prevents cutoff — the essential info (who scored) is ALWAYS in the first sentence.
 - Do NOT describe every touch — only: serve, reception (if notable), culmination (who scored and how).
 - If setter sets → attack → point: you can skip "Firlej wystawia" and just say who attacked and how.
 - "muruje siatkę" ONLY for a BLOCK POINT (successful block ending the rally). For block touch (wyblok): say "dotyka blokiem, piłka wraca na stronę [drużyny]" — NEVER "muruje siatkę" for non-scoring blocks.
