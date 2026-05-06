@@ -487,6 +487,9 @@ ANTI-REDUNDANCY:
 - ONE sentence per simple rally (serve error, single attack). Max 2-3 for long rallies.
 - ABSOLUTE MAX 4 sentences per commentary — NEVER more. Prefer 1-2 for simple, 3 for long rallies.
 - ALWAYS end with who scored (or who made the error) and HOW — never leave it hanging.
+- STRUCTURE: if you are running out of space — SKIP the middle touches, NEVER skip the ending.
+- The LAST sentence MUST contain: who scored + how (attack/block/serve error/ace). No exceptions.
+- If forced to choose: 1 sentence about serve + 1 sentence about who scored = complete commentary.
 - Do NOT describe every touch — only: serve, reception (if notable), culmination (who scored and how).
 - If setter sets → attack → point: you can skip "Firlej wystawia" and just say who attacked and how.
 - "muruje siatkę" ONLY for a BLOCK POINT (successful block ending the rally). For block touch (wyblok): say "dotyka blokiem, piłka wraca na stronę [drużyny]" — NEVER "muruje siatkę" for non-scoring blocks.
@@ -496,6 +499,9 @@ ANTI-REDUNDANCY:
 - "zagrywa" is only for serving — for non-serve use "kiwa", "atakuje", "lekko na drugą stronę".
 - "bierze prowadzenie" → ALWAYS say "wychodzi na prowadzenie".
 - "piłka żyje" max 1x per commentary — if used once, next time say "akcja trwa" or omit.
+- "próbuje ratować" ALWAYS say what: "próbuje ratować PIŁKĘ" — never just "ratować"
+- "piłka wychodzi" ALWAYS say where: "wychodzi NA AUT" or "wychodzi POZA BOISKO" — never just "wychodzi"
+- "obroniony" or "wybroniony" — always clarify what happens next: "ale piłka wraca na stronę X" or "ale piłka wychodzi na aut"
 
 AVOID PHRASES:
 - "kluczowy moment" (unless dramaLevel 3-4)
@@ -1876,13 +1882,13 @@ INSTRUCTIONS:
  } else if (numTouches <= 3) {
    dynamicMaxTokens = 80;  // short: 1-2 sentences MAX
  } else if (numTouches >= 8) {
-   dynamicMaxTokens = 160; // long rally: 3 sentences MAX
+   dynamicMaxTokens = 200; // long rally: raised to prevent cutoff — max 4 sentences
  } else if (numTouches >= 5) {
-   dynamicMaxTokens = 120; // medium: 2-3 sentences MAX
+   dynamicMaxTokens = 150; // medium: 2-3 sentences
  }
  // Modifiers
  if (hasSubstitution) dynamicMaxTokens += 40;
- if (isHotSituation) dynamicMaxTokens += 30;
+ if (isHotSituation) dynamicMaxTokens += 40; // raised — ending must always be complete
  if (milestone) dynamicMaxTokens += 30;
  
  console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
@@ -2024,6 +2030,13 @@ INSTRUCTIONS:
      }
      t = t.replace(/wystawia do środka/gi, 'wystawia na środek');
      t = t.replace(/wystawiając do środka/gi, 'wystawiając na środek');
+     // Freeball — naturalne formy
+     t = t.replace(/puszcza swobodną piłkę/gi, 'oddaje piłkę za darmo');
+     t = t.replace(/posyła swobodną piłkę/gi, 'oddaje piłkę za darmo');
+     t = t.replace(/zagrywa swobodną piłkę/gi, 'oddaje piłkę za darmo');
+     t = t.replace(/swobodna piłka/gi, 'free ball');
+     t = t.replace(/swobodną piłkę/gi, 'free balla');
+     t = t.replace(/darmowa piłka(?! dla)/gi, 'free ball');
 
      // ── Nowe reguły z feedbacku Ziomków 2026-05-04 ─────────────────────
      // Błąd serwisu → błąd serwisowy
@@ -2032,6 +2045,10 @@ INSTRUCTIONS:
      t = t.replace(/\bbłąd serwisu\b/g, 'błąd serwisowy');
      // Pierwsze tempo — prawidłowa forma
      t = t.replace(/atakuje pierwszym tempem/gi, 'atakuje z pierwszego tempa');
+     t = t.replace(/atakuje pierwszego tempa/gi, 'atakuje z pierwszego tempa');
+     t = t.replace(/konczy pierwszym tempem/gi, 'kończy z pierwszego tempa');
+     t = t.replace(/kończy pierwszym tempem/gi, 'kończy z pierwszego tempa');
+     t = t.replace(/uderza pierwszym tempem/gi, 'uderza z pierwszego tempa');
      t = t.replace(/atakuje pierwsza tempo/gi, 'atakuje z pierwszego tempa');
      t = t.replace(/atakuje pierwszego tempa/gi, 'atakuje z pierwszego tempa');
      t = t.replace(/atak pierwszym tempem/gi, 'atak z pierwszego tempa');
@@ -2061,6 +2078,20 @@ INSTRUCTIONS:
      // Nie zdąża z obroną → próbuje bronić
      t = t.replace(/nie zdąża z obroną/gi, 'próbuje bronić, ale piłka');
      t = t.replace(/nie zdążył z obroną/gi, 'próbował bronić, ale piłka');
+     // Semantyka — "ratować" i "piłka wychodzi" bez doprecyzowania
+     t = t.replace(/próbuje ratować, ale piłka wychodzi/gi, 'próbuje ratować piłkę, ale ta wychodzi na aut');
+     t = t.replace(/probuje ratowac, ale pilka wychodzi/gi, 'próbuje ratować piłkę, ale ta wychodzi na aut');
+     t = t.replace(/próbuje ratować ale piłka wychodzi/gi, 'próbuje ratować piłkę, ale ta wychodzi na aut');
+     t = t.replace(/próbuje ratować, jednak piłka wychodzi/gi, 'próbuje ratować piłkę, ale ta wychodzi na aut');
+     t = t.replace(/stara się ratować, ale piłka wychodzi/gi, 'stara się ratować piłkę, ale ta wychodzi na aut');
+     // "piłka wychodzi" bez doprecyzowania gdzie
+     t = t.replace(/piłka wychodzi — /gi, 'piłka wychodzi na aut — ');
+     t = t.replace(/piłka wychodzi poza(?! boisko)/gi, 'piłka wychodzi poza boisko');
+     t = t.replace(/ale piłka wychodzi(?! (na|poza|za))/gi, 'ale piłka wychodzi na aut');
+     t = t.replace(/a piłka wychodzi(?! (na|poza|za))/gi, 'a piłka wychodzi na aut');
+     t = t.replace(/i piłka wychodzi(?! (na|poza|za))/gi, 'i piłka wychodzi na aut');
+     t = t.replace(/piłka wychodzi\./gi, 'piłka wychodzi na aut.');
+     t = t.replace(/piłka wychodzi!/gi, 'piłka wychodzi na aut!');
      // Zagrywa kiwką (non-serwis) — zawodnik nie serwuje
      t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) zagrywa kiwką/g, '$1 kiwa');
      t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) zagrywa lekko/g, '$1 kiwa');
