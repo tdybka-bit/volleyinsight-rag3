@@ -1702,9 +1702,17 @@ if (!rally.touches || rally.touches.length === 0) {
  const winnerTeamLabel = rally.team_scored === 'home' ? homeTeamFull : awayTeamFull;
 
  
+ // Buduj touch chain: LAST touch najpierw (climax-first), potem kontekst
+ const lastLine = touchChainLines[touchChainLines.length - 1] || '';
+ const contextLines = touchChainLines.slice(0, -1);
+ // Dla krótkich rally (<=4): normalna kolejność. Dla długich: ostatnie dotknięcie wyróżnione.
+ const chainFormatted = numTouches <= 4
+   ? touchChainLines.join('\n')
+   : `★ CLIMAX (ostatnia akcja): ${lastLine}\n\nKONTEKST (wcześniejsze akcje):\n${contextLines.join('\n')}`;
+
  touchContext = `
 TOUCH CHAIN (${numTouches} touches${isLongRally ? ' — long rally!' : ''}):
-${touchChainLines.join('\n')}
+${chainFormatted}
 => SERVED BY: ${rally.touches[0]?.player || '?'} — this player SERVED, scorer is ${scoringPlayer}. NEVER confuse them!
 => POINT FOR: ${winnerTeamLabel}
 
@@ -1712,12 +1720,13 @@ CRITICAL COMMENTARY RULES:
 1. "SERVED BY" ≠ scorer! If "SERVED BY" shows X and scorer is Y — X served, Y finished. NEVER say Y served!
 1b. "POINT FOR: ${winnerTeamLabel}" = ONLY this team scored. NEVER say the other team scored!
 2. Describe ONLY what is in the touch chain above. Nothing invented!
-3. LENGTH LIMIT (MANDATORY): 2-3 touches = MAX 2 sentences. 4-6 touches = MAX 3 sentences. 7+ touches = MAX 3 sentences. NEVER more than 3 sentences!
-4. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
-5. NO "PUNKT DLA X": Banned! Use: "[Nazwisko] konczy!", "Punkt!", "I to punkt!", "[Druzyna] bierze!" or emotional equivalent.
-6. SERVE: Error only when ">>> SERVE ERROR". Otherwise serve was good.
-7. BLOCK POINT vs WYBLOK: "BLOCK POINT!" = blocker scores. "block touch, ball rebounds" = wyblok — say "wyblok" in PL, NEVER "blokuje" if play continued.
-8. DIG ≠ BLOCK: "defensive dig" = obrona (not blok).
+3. LENGTH LIMIT (MANDATORY): 2-3 touches = MAX 1 sentence. 4-6 touches = MAX 2 sentences. 7+ touches = MAX 3 sentences. NEVER more!
+4. START WITH CLIMAX: For 5+ touches — your FIRST sentence must say who scored and how. Context (serve, reception) goes in sentence 2-3 only if space allows.
+5. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
+6. NO "PUNKT DLA X": Banned! Use: "[Nazwisko] konczy!", "Punkt!", "I to punkt!", "[Druzyna] bierze!" or emotional equivalent.
+7. SERVE: Error only when ">>> SERVE ERROR". Otherwise serve was good.
+8. BLOCK POINT vs WYBLOK: "BLOCK POINT!" = blocker scores. "block touch, ball rebounds" = wyblok — say "wyblok" in PL, NEVER "blokuje" if play continued.
+9. DIG ≠ BLOCK: "defensive dig" = obrona (not blok).
 9. PL: "sets to left/right wing" → "wystawia na lewe/prawe skrzydlo".
 10. NEVER "znowu/ponownie" — only if same player appears TWICE in this touch chain.
 11. PL: "Thales" not "Hoss". "as serwisowy" not "SERVICE ACE". "Koniec seta!" not "SET OVER".`;
