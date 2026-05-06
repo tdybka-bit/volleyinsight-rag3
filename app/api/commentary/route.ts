@@ -1720,7 +1720,7 @@ CRITICAL COMMENTARY RULES:
 1. "SERVED BY" ≠ scorer! If "SERVED BY" shows X and scorer is Y — X served, Y finished. NEVER say Y served!
 1b. "POINT FOR: ${winnerTeamLabel}" = ONLY this team scored. NEVER say the other team scored!
 2. Describe ONLY what is in the touch chain above. Nothing invented!
-3. LENGTH LIMIT (MANDATORY): 2-3 touches = MAX 1 sentence. 4-6 touches = MAX 2 sentences. 7+ touches = MAX 3 sentences. NEVER more!
+3. LENGTH LIMIT (ABSOLUTE HARD LIMIT): 1-3 touches = MAX 1 sentence. 4-6 touches = MAX 2 sentences. 7+ touches = MAX 3 SHORT sentences. TOTAL MAX 50 words. NEVER more — cut the context, NEVER cut the ending!
 4. START WITH CLIMAX: For 5+ touches — your FIRST sentence must say who scored and how. Context (serve, reception) goes in sentence 2-3 only if space allows.
 5. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
 6. NO "PUNKT DLA X": Banned! Use: "[Nazwisko] konczy!", "Punkt!", "I to punkt!", "[Druzyna] bierze!" or emotional equivalent.
@@ -2038,6 +2038,20 @@ INSTRUCTIONS:
      t = t.replace(/Punkt oddany bez walki[!.]?/gi, 'strata punktu.');
      t = t.replace(/Nieudana próba serwisu[!.]?/gi, 'błąd na zagrywce.');
      t = t.replace(/Zmarnowany serwis[!,.]?/gi, 'Błąd serwisowy.');
+     // Hard length limit — max 3 zdania, max 55 słów
+     if (lang === 'pl') {
+       const sentences = t.split(/(?<=[.!?])\s+/);
+       if (sentences.length > 3) {
+         t = sentences.slice(0, 3).join(' ');
+       }
+       const words = t.split(/\s+/);
+       if (words.length > 55) {
+         // Obetnij do 55 słów na granicy zdania
+         const truncated = words.slice(0, 55).join(' ');
+         const lastPunct = Math.max(truncated.lastIndexOf('.'), truncated.lastIndexOf('!'), truncated.lastIndexOf('?'));
+         t = lastPunct > 30 ? truncated.slice(0, lastPunct + 1) : truncated + '.';
+       }
+     }
      // Błąd serwisu — max 10 słów, obcinamy nadmiar
      if (/błąd serwis|serw.*błąd|myli się.*serw|blad serw/i.test(t)) {
        const sentences = t.split(/(?<=[.!?])\s+/);
@@ -2075,6 +2089,11 @@ INSTRUCTIONS:
      t = t.replace(/błyskawicznym atakiem pierwszego tempa/gi, 'błyskawicznym atakiem ze środka');
      // Pierwsza piłka — tylko przy złym przyjęciu
      t = t.replace(/szybkim atakiem pierwszej piłki/gi, 'szybkim atakiem');
+     t = t.replace(/po pierwszym tempem/gi, 'z pierwszego tempa');
+     t = t.replace(/mimo pierwszym tempem/gi, 'mimo ataku z pierwszego tempa');
+     t = t.replace(/z szybkim pierwszym tempem/gi, 'z pierwszego tempa');
+     t = t.replace(/przez pierwsze tempo/gi, 'z pierwszego tempa');
+     t = t.replace(/atak pierwszym tempem/gi, 'atak z pierwszego tempa');
      t = t.replace(/atakiem pierwszej piłki/gi, 'atakiem');
      t = t.replace(/kończy pierwszą piłkę/gi, 'kończy akcję');
      // Szybko przyjęty → dobrze przyjęty
