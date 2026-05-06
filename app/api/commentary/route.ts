@@ -122,6 +122,10 @@ OBOWIAZKOWE SLOWNICTWO PL:
 - Wyblok — piłka wraca: "wraca na stronę [drużyny/gospodarzy/gości]" — NIGDY "wraca w pole"
 - "oczko" — max 1x na komentarz, preferuj "punkt"
 - "wbija" bez doprecyzowania co — zawsze "wbija piłkę w boisko"
+- "ratuje obronę" to nie po polsku — użyj "ratuje piłkę w obronie" / "próbuje ratować piłkę"
+- "nie zdąża z obroną" → "próbuje bronić, ale piłka..."
+- "piłka żyje" max 1x — potem "akcja trwa" lub pomiń
+- Błąd logiczny wyblok: jeśli blok dotknął piłkę ale akcja trwa → NIGDY "muruje siatkę" → "dotyka blokiem, piłka wraca na stronę [drużyny]"
 - Float serve: "zagrywka szybujaca", "float" — ZAWSZE lekka/szybujaca, NIGDY "mocna zagrywka" przy float
 - Przyjecie perfekcyjne: "w punkt przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!", "doskonale przyjal!"
 - Przyjecie zle: "trudne przyjecie", "pilka daleko od siatki", "nieidealne przyjecie" — NIGDY "nieporadnie"
@@ -481,6 +485,17 @@ ANTI-REDUNDANCY:
 - Block point = just describe the block — do NOT say "koniec akcji"
 - NEVER mention the exact score in commentary — it is shown in the UI. EXCEPTION: at set end, always state the final score.
 - ONE sentence per simple rally (serve error, single attack). Max 2-3 for long rallies.
+- ABSOLUTE MAX 4 sentences per commentary — NEVER more. Prefer 1-2 for simple, 3 for long rallies.
+- ALWAYS end with who scored (or who made the error) and HOW — never leave it hanging.
+- Do NOT describe every touch — only: serve, reception (if notable), culmination (who scored and how).
+- If setter sets → attack → point: you can skip "Firlej wystawia" and just say who attacked and how.
+- "muruje siatkę" ONLY for a BLOCK POINT (successful block ending the rally). For block touch (wyblok): say "dotyka blokiem, piłka wraca na stronę [drużyny]" — NEVER "muruje siatkę" for non-scoring blocks.
+- "z pierwszego tempa" NOT "pierwszym tempem" — always the correct form.
+- "pierwsza piłka" / "z pierwszej piłki" ONLY when reception was bad (pass far from net) and setter had to improvise.
+- "szybko przyjęty" is WRONG — use "dobrze/perfekcyjnie/w punkt przyjęty".
+- "zagrywa" is only for serving — for non-serve use "kiwa", "atakuje", "lekko na drugą stronę".
+- "bierze prowadzenie" → ALWAYS say "wychodzi na prowadzenie".
+- "piłka żyje" max 1x per commentary — if used once, next time say "akcja trwa" or omit.
 
 AVOID PHRASES:
 - "kluczowy moment" (unless dramaLevel 3-4)
@@ -527,7 +542,10 @@ NEVER use Polish "KONIEC SETA" — always use target language!`;
    ? `\n- 📈 ENERGIA (końcówka)! Każdy punkt ważny. Energiczne ale kontrolowane.`
    : dramaLevel === 1
    ? `\n- 📊 UMIARKOWANIE (środek wyrównany). Fakty z energią. Wzmianka o kontekście walki.`
-   : `\n- 📝 SPOKOJNIE (start/duża przewaga). Zero dramy. Sucho i rzeczowo.`;
+   : `\n- 📝 SPOKOJNIE (start/duża przewaga). Zero dramy. Sucho i rzeczowo.
+- Przy błędzie serwisu w KOŃCÓWCE (dramaLevel 3-4): dodaj emocję zawodu/krytyki:
+  "w takim momencie!", "zaryzykował i nie wyszło", "postawił wszystko na jedną kartę",
+  "droga pomyłka w tak kluczowym momencie"`;
 
  if (hasStreak) {
    return basePrompt + dramaZone + `\n- SERIA PUNKTÓW! Wspomnij momentum.`;
@@ -2006,6 +2024,56 @@ INSTRUCTIONS:
      }
      t = t.replace(/wystawia do środka/gi, 'wystawia na środek');
      t = t.replace(/wystawiając do środka/gi, 'wystawiając na środek');
+
+     // ── Nowe reguły z feedbacku Ziomków 2026-05-04 ─────────────────────
+     // Błąd serwisu → błąd serwisowy
+     t = t.replace(/\bBłąd serwisu\b/g, 'Błąd serwisowy');
+     t = t.replace(/\bbląd serwisu\b/gi, 'błąd serwisowy');
+     t = t.replace(/\bbłąd serwisu\b/g, 'błąd serwisowy');
+     // Pierwsze tempo — prawidłowa forma
+     t = t.replace(/atakuje pierwszym tempem/gi, 'atakuje z pierwszego tempa');
+     t = t.replace(/atakuje pierwsza tempo/gi, 'atakuje z pierwszego tempa');
+     t = t.replace(/atakuje pierwszego tempa/gi, 'atakuje z pierwszego tempa');
+     t = t.replace(/atak pierwszym tempem/gi, 'atak z pierwszego tempa');
+     t = t.replace(/atakiem pierwszego tempa/gi, 'atakiem z pierwszego tempa');
+     t = t.replace(/szybkim atakiem pierwszego tempa/gi, 'szybkim atakiem ze środka');
+     t = t.replace(/blyskawicznym atakiem pierwszego tempa/gi, 'błyskawicznym atakiem ze środka');
+     t = t.replace(/błyskawicznym atakiem pierwszego tempa/gi, 'błyskawicznym atakiem ze środka');
+     // Pierwsza piłka — tylko przy złym przyjęciu
+     t = t.replace(/szybkim atakiem pierwszej piłki/gi, 'szybkim atakiem');
+     t = t.replace(/atakiem pierwszej piłki/gi, 'atakiem');
+     t = t.replace(/kończy pierwszą piłkę/gi, 'kończy akcję');
+     // Szybko przyjęty → dobrze przyjęty
+     t = t.replace(/szybko przyjęty/gi, 'dobrze przyjęty');
+     t = t.replace(/szybko przyjął/gi, 'dobrze przyjął');
+     t = t.replace(/szybko przyjęła/gi, 'dobrze przyjęła');
+     t = t.replace(/szybko przyjęte/gi, 'dobrze przyjęte');
+     // Bierze prowadzenie
+     t = t.replace(/bierze prowadzenie/gi, 'wychodzi na prowadzenie');
+     t = t.replace(/biorą prowadzenie/gi, 'wychodzą na prowadzenie');
+     t = t.replace(/Punkt bierze/gi, 'Punkt dla');
+     t = t.replace(/punkt bierze/gi, 'punkt dla');
+     // Wyblokowuje → dotyka blokiem
+     t = t.replace(/wyblokowuje/gi, 'dotyka blokiem');
+     t = t.replace(/wyblokowują/gi, 'dotykają blokiem');
+     // Ratuje obronę → ratuje piłkę w obronie
+     t = t.replace(/ratuje obronę/gi, 'ratuje piłkę w obronie');
+     // Nie zdąża z obroną → próbuje bronić
+     t = t.replace(/nie zdąża z obroną/gi, 'próbuje bronić, ale piłka');
+     t = t.replace(/nie zdążył z obroną/gi, 'próbował bronić, ale piłka');
+     // Zagrywa kiwką (non-serwis) — zawodnik nie serwuje
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) zagrywa kiwką/g, '$1 kiwa');
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) zagrywa lekko/g, '$1 kiwa');
+     // Muruje siatkę — TYLKO przy bloku punktowym. Przy wybloku usuń
+     // (nie możemy tego zrobić bez kontekstu — robimy w prompcie)
+     // piłka żyje — max 1x
+     {
+       let zyjeCount = 0;
+       t = t.replace(/piłka żyje/gi, (m) => {
+         zyjeCount++;
+         return zyjeCount <= 1 ? m : 'akcja trwa';
+       });
+     }
      t = t.replace(/\bbierze!$/gi, 'zdobywa punkt!');
      t = t.replace(/\s+bierze!/g, ' zdobywa punkt!');
      t = t.replace(/\s+bierze\./g, ' zdobywa punkt.');
