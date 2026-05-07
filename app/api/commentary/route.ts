@@ -439,93 +439,25 @@ const getCommentarySystemPrompt = (
 - "punkt dla" → IT:"punto per" / ES:"punto para" / TR:"sayı" / DE:"Punkt für" / JP:"ポイント"
 Player surnames stay as-is. NEVER copy Polish words verbatim.
 
-Your task is to generate professional, factual volleyball match commentary in RADIO STYLE.
+Twoje zadanie: wygeneruj komentarz siatkarskie w stylu radia — jak Swędrowski na żywo.
 ${fewShotBlock}
-RADIO STYLE MEANS:
-- You receive a TOUCH CHAIN - describe EXACTLY what happened step by step
-- Follow the EXACT order of touches. Do NOT rearrange, skip, or invent actions.
-- If the data says "zagrywka" (without "BLAD"), the serve was GOOD - do NOT say it was an error!
-- If data says "blok PRZEBITY", the BLOCKER lost - the attacker beat them. Do NOT say the blocker broke through.
-- The LAST touch in the chain determines the point. Do NOT add extra actions after it.
-- FOCUS ON CLIMAX: Lead with who scored and how. Earlier touches = brief context only, NOT play-by-play.
-- 1-2 touches (ace/serve error) = max 1 sentence. 3-5 touches = 1-2 sentences. 6+ touches = max 3 sentences with climax at end.
+JEDNA ZASADA NARRACJI:
+- Akcje 1-4 dotknięcia: chronologicznie, zwięźle
+- Akcje 5+ dotknięć: ZACZNIJ od kto zdobył i jak (★ CLIMAX w danych poniżej), POTEM krótki kontekst
+- MAX 3 zdania. MAX 50 słów. NIGDY nie urywaj przed zakończeniem.
+- ZAWSZE ostatnie zdanie: kto zdobył punkt i jak.
 
-CRITICAL RULES:
-- Be FACTUAL - describe ONLY what is in the touch chain data
-- NEVER exaggerate situation importance (3:2 is NOT critical!)
-- NEVER mention "morale" or "pressure" in early set
-- Focus on WHAT HAPPENED, not speculation
-- NEVER use quotation marks (" ") around commentary - write directly
-- NEVER invent or add first names - use only surnames provided in data
-- Use proper Polish grammar and declensions for names
+FAKTY PONAD WSZYSTKO:
+- Opisuj TYLKO to co jest w touch chain. Zero inwencji.
+- Zagrywka bez "BŁĄD" = dobra zagrywka
+- BLOCK POINT = bloker zdobywa punkt | wyblok = akcja trwa
+- Wynik: używaj "prowadzą/remis/zmniejszają stratę" — NIGDY liczb (widoczne w UI)
+- Imiona: tylko z touch chain lub NAMING RULES — NIGDY nie wymyślaj
 
-VOCABULARY IMPROVEMENTS:
-- NEVER say "chaos w przyjeciu" use "niedokladne przyjecie", "przyjecie daleko od siatki", "bardzo trudne przyjecie"
-- NEVER say "blad blokowy" -> use "blad w bloku"
-- For block errors: praise the ATTACKER who broke through, not the blocker's mistake
- Example: "Leon przebija blok Kwolka! Potezny atak!"
-
-SCORE ACCURACY — KRYTYCZNE:
-- ALWAYS use SCORE SITUATION and WHO LEADS from the prompt — they tell you EXACTLY what happened
-- NIGDY nie wymyslaj wlasnej interpretacji wyniku
-- If SCORE SITUATION says team is trailing — do NOT say that team is "leading" or "maintaining advantage"!
-- If WHO LEADS says "[team] LEADS" — that team IS leading, not the other way around!
-- NIGDY nie wymyslaj konkretnego wyniku liczbowego (np. "9:9") — wynik jest widoczny w UI
-- Uzywaj ogolnych zwrotow: "prowadza", "wyrownuja", "zmniejszaja strate", "odskoczyly"
-- EXCEPTION: at set end, mention the final score explicitly
-
-NAMING — KRYTYCZNE:
-- Uzywaj nazwisk z PRZEBIEGU AKCJI jako podstawe. Mozesz uzyc IMIENIA jesli masz je z CHARAKTERYSTYKI ZAWODNIKA lub NAMING RULES ponizej.
-- NIGDY nie WYMYSLAJ imion od siebie! Jesli nie masz danych o imieniu gracza — uzywaj TYLKO nazwiska.
-- DOBRZE: "Demyanenko" (samo nazwisko) lub "Danny Demyanenko" (jesli RAG potwierdza imie)
-- ZLE: "Konrad Stankowski" (wymyslony gracz), "Roberto Toniutti" (zgadywane imie)
-
-ANTI-REDUNDANCY:
-- NEVER repeat what is obvious from the action itself
-- Serve error = brief mention of the error — do NOT add "ball out", "end of action", "point for rivals" etc.
-- Attack error = just say "blad w ataku" — do NOT explain what error means
-- Block point = just describe the block — do NOT say "koniec akcji"
-- NEVER mention the exact score in commentary — it is shown in the UI. EXCEPTION: at set end, always state the final score.
-- ONE sentence per simple rally (serve error, single attack). Max 2-3 for long rallies.
-- ABSOLUTE MAX 4 sentences per commentary — NEVER more. Prefer 1-2 for simple, 3 for long rallies.
-- ALWAYS end with who scored (or who made the error) and HOW — never leave it hanging.
-- STRUCTURE: if you are running out of space — SKIP the middle touches, NEVER skip the ending.
-- The LAST sentence MUST contain: who scored + how (attack/block/serve error/ace). No exceptions.
-- If forced to choose: 1 sentence about serve + 1 sentence about who scored = complete commentary.
-
-NARRATIVE ORDER — CLIMAX FIRST:
-For rallies with 5+ touches: START with who scored and how, THEN add context.
-WRONG: "Karlitzek serwuje, Tillie przyjmuje, Firlej wystawia na lewe skrzydło, Weber atakuje..."
-RIGHT: "Weber kończy atakiem z lewej! Wcześniej dobre przyjęcie Tillie po zagrywce Karlitzka."
-RIGHT: "Punkt dla Indykpola — Hadrava wbija piłkę z prawego skrzydła po dobrej zagrywce Tille."
-RIGHT: "Kochanowski zatrzymuje atak Webera — blok punktowy! Wcześniej trudna zagrywka Firleja."
-This prevents cutoff — the essential info (who scored) is ALWAYS in the first sentence.
-- Do NOT describe every touch — only: serve, reception (if notable), culmination (who scored and how).
-- If setter sets → attack → point: you can skip "Firlej wystawia" and just say who attacked and how.
-- "muruje siatkę" ONLY for a BLOCK POINT (successful block ending the rally). For block touch (wyblok): say "dotyka blokiem, piłka wraca na stronę [drużyny]" — NEVER "muruje siatkę" for non-scoring blocks.
-- "z pierwszego tempa" NOT "pierwszym tempem" — always the correct form.
-- "pierwsza piłka" / "z pierwszej piłki" ONLY when reception was bad (pass far from net) and setter had to improvise.
-- "szybko przyjęty" is WRONG — use "dobrze/perfekcyjnie/w punkt przyjęty".
-- "zagrywa" is only for serving — for non-serve use "kiwa", "atakuje", "lekko na drugą stronę".
-- "bierze prowadzenie" → ALWAYS say "wychodzi na prowadzenie".
-- "piłka żyje" max 1x per commentary — if used once, next time say "akcja trwa" or omit.
-- "próbuje ratować" ALWAYS say what: "próbuje ratować PIŁKĘ" — never just "ratować"
-- "piłka wychodzi" ALWAYS say where: "wychodzi NA AUT" or "wychodzi POZA BOISKO" — never just "wychodzi"
-- "obroniony" or "wybroniony" — always clarify what happens next: "ale piłka wraca na stronę X" or "ale piłka wychodzi na aut"
-
-AVOID PHRASES:
-- "kluczowy moment" (unless dramaLevel 3-4)
-- "wplynac na morale" (never use)
-- "presja ze strony przeciwnika" (never for serves)
-- "blad blokowy" (say "blad w bloku")
-- "chaos w przyjeciu" (use better vocabulary)
-- Any dramatic language when dramaLevel is 0-1
-
-RAG KNOWLEDGE USAGE:
-- If NAMING RULES are provided above — FOLLOW THEM EXACTLY for declensions
-- If COMMENTARY EXAMPLES are provided — match their style and energy
-- If TONE GUIDANCE is provided — adjust your tone accordingly
-- RAG knowledge has PRIORITY over these general rules`;
+RAG (jeśli dostarczone poniżej):
+- NAMING RULES → stosuj odmianę DOKŁADNIE jak tam podano
+- PRZYKŁADY KOMENTARZY → naśladuj styl i energię
+- FRAZY → inspiracja, nie obowiązek`;
 
  if (isSetEnd) {
  return basePrompt + `
@@ -1336,7 +1268,7 @@ if (!rally.touches || rally.touches.length === 0) {
  .filter(Boolean);
  
  if (phrases.length > 0) {
- commentaryPhrasesContext = `VARIACJE ZWROTOW — OBOWIAZKOWE! Zamiast mechanicznego "Punkt dla X" uzyj JEDNEGO z tych zwrotow:\n${phrases.join(' / ')}\nJezeli masz te warianty — MUSISZ uzyc jednego zamiast "Punkt dla"!`;
+ commentaryPhrasesContext = `INSPIRACJA — naturalne frazy z PlusLigi (naśladuj styl, nie kopiuj dosłownie):\n${phrases.join(' / ')}`;
  console.log('Commentary phrases found:', phrases.length, 'variants');
  console.log('[RAG-DEBUG] Phrases scores:', phrasesResults.matches.map(m => m.score?.toFixed(3)).join(', '));
  }
@@ -1593,20 +1525,20 @@ if (!rally.touches || rally.touches.length === 0) {
    // SERVE
    if (actionLower.includes('zagrywka') || actionLower.includes('serwis') || actionLower.includes('serve')) {
      const sType = touch.serveType || '';
-     const serveDesc = sType.includes('Float') ? 'zagrywka szybujaca/float (lekka, szybujaca — NIGDY mocna! PL: "szybujaca", IT: "flottante", DE: "Floater", TR: "float servis", ES: "flotante", PT: "flutuante", JP: "フローター")' : sType.includes('Spin') ? 'jump serve (PL: z wyskoku, IT: in salto, DE: Sprungaufschlag, TR: sıçrama, ES: en salto, PT: em salto, JP: ジャンプ)' : 'serve';
+     const serveDesc = sType.includes('Float') ? 'zagrywka szybująca (float)' : sType.includes('Spin') ? 'zagrywka z wyskoku (jump spin)' : 'zagrywka';
      const isLastTouch = idx === rally.touches!.length - 1;
      
      if (actionLower.includes('as ') || actionLower.includes('ace')) {
-       desc += ` - ${serveDesc} >>> SERVICE ACE! Direct point!`;
+       desc += ` - ${serveDesc} >>> AS SERWISOWY — punkt bezpośredni!`;
      } else if ((actionLower.includes('blad') || actionLower.includes('error')) && isLastTouch) {
-       desc += ` - ${serveDesc} >>> SERVE ERROR`;
+       desc += ` - ${serveDesc} >>> BŁĄD SERWISOWY — punkt dla rywali`;
      } else {
        desc += ` - ${serveDesc}`;
      }
    // RECEIVE
    } else if (actionLower.includes('przyjecie') || actionLower.includes('pass') || actionLower.includes('receive')) {
      if (actionLower.includes('perfect')) desc += ' - perfect reception';
-     else if (actionLower.includes('positive')) desc += ' - good reception';
+     else if (actionLower.includes('positive')) desc += ' - dobre przyjęcie';
      else if (actionLower.includes('negative') || actionLower.includes('poor')) {
        const poorVariants = [
          ' - imprecise reception',
@@ -1619,7 +1551,7 @@ if (!rally.touches || rally.touches.length === 0) {
        ];
        desc += poorVariants[Math.floor(Math.random() * poorVariants.length)];
      }
-     else desc += ' - reception';
+     else desc += ' - przyjęcie';
    // SET
    } else if (actionLower.includes('rozegranie') || actionLower.includes('setting') || actionLower === 'set') {
      const combo = touch.attackCombination || '';
@@ -1639,32 +1571,32 @@ if (!rally.touches || rally.touches.length === 0) {
      const isBackRow = loc.includes('Back') || loc.toLowerCase().includes('pipe') || combo.toLowerCase().includes('pipe');
      
      let atkDesc = 'attack';
-     if (loc.toLowerCase() === 'pipe') atkDesc = 'pipe back-row attack';
-     else if (loc.includes('Left') && loc.includes('Back')) atkDesc = 'back-row attack from left';
-     else if (loc.includes('Left')) atkDesc = 'attack from left';
-     else if (loc.includes('Right') && loc.includes('Back')) atkDesc = 'back-row attack from right';
-     else if (loc.includes('Right')) atkDesc = 'attack from right';
-     else if (loc.includes('Middle')) atkDesc = 'quick attack first tempo';
-     else if (combo.toLowerCase().includes('pipe')) atkDesc = 'pipe back-row attack';
-     else if (isBackRow) atkDesc = 'back-row attack';
-     else atkDesc = 'attack';
+     if (loc.toLowerCase() === 'pipe') atkDesc = 'atak pipe z drugiej linii';
+     else if (loc.includes('Left') && loc.includes('Back')) atkDesc = 'atak z lewej strony (z drugiej linii)';
+     else if (loc.includes('Left')) atkDesc = 'atak z lewego skrzydła';
+     else if (loc.includes('Right') && loc.includes('Back')) atkDesc = 'atak z prawej strony (z drugiej linii)';
+     else if (loc.includes('Right')) atkDesc = 'atak z prawego skrzydła';
+     else if (loc.includes('Middle')) atkDesc = 'atak ze środka (z pierwszego tempa)';
+     else if (combo.toLowerCase().includes('pipe')) atkDesc = 'atak pipe z drugiej linii';
+     else if (isBackRow) atkDesc = 'atak z drugiej linii';
+     else atkDesc = 'atak';
      
-     if (style === 'Tip') atkDesc += ', tip shot';
-     else if (style === 'Tool') atkDesc += ', tool off block';
+     if (style === 'Tip') atkDesc += ' (kiwka)';
+     else if (style === 'Tool') atkDesc += ' (atak w blok — blok-out)';
      
      const isLastTouch = idx === rally.touches!.length - 1;
      
      if (actionLower.includes('blad') || actionLower.includes('error')) {
        if (isLastTouch) {
-         desc += ` - ${atkDesc} >>> ATTACK ERROR`;
+         desc += ` - ${atkDesc} >>> BŁĄD ATAKU — punkt dla rywali`;
        } else {
-         desc += ` - ${atkDesc} (failed, play continues)`;
+         desc += ` - ${atkDesc} (nieudany, akcja trwa)`;
        }
      } else if (actionLower.includes('zablok') || actionLower.includes('block')) {
        if (isLastTouch) {
-         desc += ` - ${atkDesc} >>> BLOCKED`;
+         desc += ` - ${atkDesc} >>> ZABLOKOWANY — blok punktowy rywali`;
        } else {
-         desc += ` - ${atkDesc} (blocked, play continues)`;
+         desc += ` - ${atkDesc} (wyblok — piłka wraca, akcja TRWA)`;
        }
      } else if (isLastTouch) {
        desc += ` - ${atkDesc} >>> POINT!`;
@@ -1687,13 +1619,13 @@ if (!rally.touches || rally.touches.length === 0) {
    } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
      const isLastTouch = idx === rally.touches!.length - 1;
      if (isLastTouch) {
-       desc += ' - defensive dig (ball out — point to other team)';
+       desc += ' - obrona/dig (piłka wyszła na aut — punkt dla rywali)';
      } else {
-       desc += ' - defensive dig (ball kept in play — obrona, nie blok!)';
+       desc += ' - obrona/dig (piłka utrzymana w grze)';
      }
    // FREE
    } else if (actionLower.includes('wolna') || actionLower.includes('free')) {
-     desc += ' - free ball';
+     desc += ' - darmowa piłka (free ball — oddana przez rywali)';
    } else {
      desc += ` - ${action}`;
    }
@@ -1721,13 +1653,18 @@ ${chainFormatted}
 CRITICAL COMMENTARY RULES:
 1. "SERVED BY" ≠ scorer! If "SERVED BY" shows X and scorer is Y — X served, Y finished. NEVER say Y served!
 1b. "POINT FOR: ${winnerTeamLabel}" = ONLY this team scored. NEVER say the other team scored!
-2. Describe ONLY what is in the touch chain above. Nothing invented!
+2. CLIMAX-FIRST: Start with who scored (★ CLIMAX above). Then add context. Nothing invented!
 3. LENGTH LIMIT (ABSOLUTE HARD LIMIT): 1-3 touches = MAX 1 sentence. 4-6 touches = MAX 2 sentences. 7+ touches = MAX 3 SHORT sentences. TOTAL MAX 50 words. NEVER more — cut the context, NEVER cut the ending!
 4. START WITH CLIMAX: For 5+ touches — your FIRST sentence must say who scored and how. Context (serve, reception) goes in sentence 2-3 only if space allows.
 5. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
 6. NO "PUNKT DLA X": Banned! Use: "[Nazwisko] konczy!", "Punkt!", "I to punkt!", "[Druzyna] bierze!" or emotional equivalent.
 7. SERVE: Error only when ">>> SERVE ERROR". Otherwise serve was good.
-8. BLOCK POINT vs WYBLOK: "BLOCK POINT!" = blocker scores. "block touch, ball rebounds" = wyblok — say "wyblok" in PL, NEVER "blokuje" if play continued.
+8. BLOCK — 4 przypadki:
+   - "BLOCK POINT" / "blok punktowy" = piłka spada w pole atakujących → "muruje siatkę!", "blok punktowy!"
+   - "wyblok" / "ball stays blocker side" = piłka po bloku PO STRONIE BLOKUJĄCYCH → "wyblok — piłka wraca na stronę [blokujący]!"
+   - "block, ball back to attacker" / "piłka wraca do atakujących" = akcja trwa po stronie atakujących → "blok ale piłka wraca — [atakujący] ponawia!"
+   - "blok-out" = piłka po bloku wychodzi za boisko → "blok-out! Punkt dla [atakujący]!"
+   NIE używaj "kończy po wybloku X" — wyblok X oznacza piłka poszła do X, nie od X.
 9. DIG ≠ BLOCK: "defensive dig" = obrona (not blok).
 9. PL: "sets to left/right wing" → "wystawia na lewe/prawe skrzydlo".
 10. NEVER "znowu/ponownie" — only if same player appears TWICE in this touch chain.
@@ -1827,24 +1764,19 @@ ${rally.homeRotation || rally.awayRotation ? `ROTATION: ${homeTeamFull} R${rally
 SCORE SITUATION: ${scoreSituation}
 WHO LEADS: ${leadInfo}${situationContext}${errorContext}${substitutionContext}
 
-${tacticsContext ? `TACTICAL CONTEXT:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `GOOD COMMENTARY EXAMPLES:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `[!!] USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `PHRASE VARIATIONS:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `PLAYER PROFILE:\n${playerContext}` : ''}
+${namingRulesContext ? `ZASADY ODMIANY NAZWISK (PRIORYTET!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `SUGESTIE STYLISTYCZNE (inspiracja):\n${commentaryPhrasesContext}\n\n` : ''}${commentaryHintsContext ? `KOREKTY UZYTKOWNIKA (PRIORYTET!):\n${commentaryHintsContext}\n\n` : ''}${commentaryExamplesContext ? `WZORZEC STYLU:\n${commentaryExamplesContext}\n\n` : ''}${playerContext ? `PROFIL ZAWODNIKA:\n${playerContext}` : ''}
 
-INSTRUCTIONS:
-- Describe ONLY the touch chain above. Each touch in order. Do not add anything!
-- SCORE: Use EXACTLY the score from SCORE SITUATION and WHO LEADS above. NEVER invent a different score! If it says ${otherTeamName || 'opponent'} STILL LEADS — do not say ${scoringTeamName || 'team'} is ahead!
-- NAMES: Use surnames from touch chain. You may add a first name only if PLAYER PROFILE confirms it — NEVER invent names! If unsure — surname only.
-- ${setEndInfo.isSetEnd ? `SET OVER! ANNOUNCE IT! Final score: ${score}. Winner: ${setEndInfo.winner}.` : isFirstPoint ? 'FIRST POINT — brief and calm.' : isHotSituation ? 'SET ENDGAME — build tension!' : currentStreak >= 3 ? 'STREAK — highlight momentum!' : milestone ? 'MILESTONE — mention the number!' : isBigLead ? 'Big lead — note the dominance.' : isEarlySet ? 'Early set — calm.' : 'Mid-set — factual.'}
-- ${attackingPlayer ? `This is ${attackingPlayer}'s ATTACK — praise the ATTACKER, not the block error! Use: "${attackingPlayer} beats ${scoringPlayer}'s block!"` : ''}
-- ${milestone ? `IMPORTANT: Mention this is ${milestone}!` : ''}${passInstructions}
-- ${commentaryHintsContext ? 'APPLY USER HINTS - they have PRIORITY over other context!' : ''}
-- ${isFirstPoint ? 'Do NOT use "increases/reduces lead" — this is the FIRST point!' : ''}
-- ${language === 'pl' ? 'ODMIANA PL: Odmieniaj nazwiska przez przypadki — Kaczmarek→Kaczmareka, Szalpuk→Szalpuka, Butryn→Butryna, Toniutti→Toniuttiego, Shoji→Shojiego. Dopasuj przypadek do kontekstu zdania!' : 'NAMES: Surnames invariable — use BASE FORM only. NOT Kaczmarka but Kaczmarek.'}
-- DO NOT REPEAT INFORMATION! Score, who scored, who leads — mention ONCE. Do not add another sentence saying the same thing.
-- AVOID MECHANICAL PHRASES: Do NOT use literal score-report language. Use emotional equivalents from tone-rules context.
-- ${attackCombo ? `TACTICAL DATA: Attack type ${attackCombo}${attackLocation ? `, zone: ${attackLocation}` : ''}${attackStyle ? `, style: ${attackStyle}` : ''}. Use this to describe SPECIFICALLY what happened (e.g. diagonal attack, pipe, quick middle) instead of vague terms!` : serveType ? `TACTICAL DATA: Serve type ${serveType}. Describe it specifically!` : ''}
-- ${rally.substitutions?.length ? 'SUBSTITUTION! Weave naturally into commentary using tactical hints.' : ''}
-- ${rally.phase === 'Transition' ? 'TRANSITION ATTACK! Highlight quick reaction, improvisation, less time to set up.' : rally.phase === 'First Ball' ? 'SIDE-OUT — mention reception quality only if it affected the attack (perfect = full combination, poor = forced ball).' : ''}
-- ${(rally.homeRotation || rally.awayRotation) ? 'ROTATION: Mention ONLY when tactically relevant (e.g. setter in back row = fewer options). Do NOT mention rotation number in every commentary!' : ''}
+ZASADY (10 regul — zamiast 15+ sprzecznych):
+1. ZACZNIJ OD KULMINACJI: Pierwsze zdanie = kto i jak (★ CLIMAX na górze). Kontekst potem.
+2. TYLKO touch chain — nic nie wymyslaj. Kazda akcja musi byc w danych powyzej.
+3. WYNIK: Uzywaj DOKLADNIE "SCORE SITUATION" i "WHO LEADS". NIGDY nie twórz innego!
+4. NAZWISKA: Z touch chain. Imie tylko jesli PROFIL ZAWODNIKA potwierdza. W razine watpliwosci — samo nazwisko.
+5. ${language === 'pl' ? 'ODMIANA PL: Kaczmarek→Kaczmareka, Szalpuk→Szalpuka, Butryn→Butryna, Toniutti→Toniuttiego.' : 'NAMES: Base form only — Kaczmarek not Kaczmarka.'}
+6. ${setEndInfo.isSetEnd ? `KONIEC SETA! Oglos to! Wynik: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZA AKCJA meczu — krotko, zadnego "kolejny"!' : isHotSituation ? 'KONCOWKA — buduj napiecie!' : currentStreak >= 3 ? 'SERIA PUNKTOW — wspomnij!' : 'Rzeczowo i energicznie.'}
+7. ${attackingPlayer ? `ATAK: Chwál ${attackingPlayer} za przelamanie bloku. NIE wspominaj bledow obrony!` : ''}
+8. ${attackCombo ? `TYP: ${attackCombo}${attackLocation ? ` z ${attackLocation}` : ''}${attackStyle ? ` styl: ${attackStyle}` : ''} — opisz konkretnie.` : serveType ? `TYP ZAGRYWKI: ${serveType}` : ''}
+9. ${rally.phase === 'Transition' ? 'KONTRA — improwizacja, szybka reakcja.' : rally.phase === 'First Ball' ? 'PIERWSZA PILKA — przyjecie tylko jesli wazne.' : ''}
+10. ${commentaryHintsContext ? 'KOREKTY UZYTKOWNIKA maja ABSOLUTNY PRIORYTET!' : 'Nie powtarzaj informacji. Wynik, zdobywca — wspomnij RAZ.'}
 
 🔴 FINAL REMINDER: Your response must be 100% in ${language === 'pl' ? 'Polish' : language === 'it' ? 'Italian' : language === 'de' ? 'German' : language === 'tr' ? 'Turkish' : language === 'es' ? 'Spanish' : language === 'pt' ? 'Portuguese' : language === 'jp' ? 'Japanese' : 'English'}. Zero Polish words allowed. If context data contains Polish — translate it. Do NOT write a single Polish word.`;
 
@@ -2069,6 +2001,15 @@ INSTRUCTIONS:
      t = t.replace(/[Kk]olejne punkty trafiają na konto/gi, 'Punkt dla');
      t = t.replace(/[Pp]unkt trafia na konto/gi, 'Punkt dla');
      t = t.replace(/trafia na konto ([A-ZŁŚŹĆĘÓĄŃ])/g, 'dla $1');
+     // "Kolejny punkt oddane/oddany rywalom"
+     t = t.replace(/[Kk]olejny punkt oddane rywalom[^.!]*[.!]?/gi, 'Błąd serwisowy.');
+     t = t.replace(/[Kk]olejny punkt oddany rywalom[^.!]*[.!]?/gi, 'Błąd serwisowy.');
+     t = t.replace(/[Pp]unkt oddane rywalom[^.!]*/gi, 'Punkt dla rywali.');
+     t = t.replace(/[Pp]unkt oddany rywalom[^.!]*/gi, 'Punkt dla rywali.');
+     t = t.replace(/oddane rywalom/gi, 'dla rywali');
+     // "zdobywa!" bez doprecyzowania
+     t = t.replace(/i zdobywa!/gi, 'i zdobywa punkt!');
+     t = t.replace(/i zdobywa(?! punkt)/gi, 'i zdobywa punkt');
      // Zdobywa punkt prowadzenie (artefakt score suppression)
      t = t.replace(/zdobywa punkt prowadzenie/gi, 'zdobywa punkt');
      t = t.replace(/zdobywa punkt i prowadzenie/gi, 'zdobywa punkt');
@@ -2131,6 +2072,11 @@ INSTRUCTIONS:
      t = t.replace(/punkt bierze/gi, 'punkt dla');
      // Wyblokowuje → dotyka blokiem
      t = t.replace(/wyblokowuje/gi, 'dotyka blokiem');
+     // "kończy po wybloku X" — semantycznie mylące, zamień na naturalne
+     t = t.replace(/kończy atakiem (.{3,30}) po wybloku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/gi,
+       'kończy atakiem $1 po odbiciu od bloku $2');
+     t = t.replace(/kończy (.{0,20}) po wybloku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/gi,
+       'kończy $1 po odbiciu od bloku $2');
      t = t.replace(/wyblokowują/gi, 'dotykają blokiem');
      // Ratuje obronę → ratuje piłkę w obronie
      t = t.replace(/ratuje obronę/gi, 'ratuje piłkę w obronie');
