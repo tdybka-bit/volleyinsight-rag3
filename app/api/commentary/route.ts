@@ -121,6 +121,8 @@ OBOWIAZKOWE SLOWNICTWO PL:
 - Przyjęcie słabe: "niedokładne", "dalekie od ideału", "nienajlepsze", "z problemami" — NIGDY "trudne przyjęcie"
 - Wyblok — piłka wraca: "wraca na stronę [drużyny/gospodarzy/gości]" — NIGDY "wraca w pole"
 - "oczko" — max 1x na komentarz, preferuj "punkt"
+- "kolejny/kolejne" — TYLKO gdy wiesz że to nie jest pierwsza akcja (wynik > 1:0). Przy wyniku 1:0 lub 0:1 NIGDY nie pisz "kolejny punkt"
+- "punkt trafia na konto X" — ZAKAZANE! Użyj: "Punkt dla X!", "[Nazwisko] zdobywa punkt!", "I to punkt!"
 - "wbija" bez doprecyzowania co — zawsze "wbija piłkę w boisko"
 - "ratuje obronę" to nie po polsku — użyj "ratuje piłkę w obronie" / "próbuje ratować piłkę"
 - "nie zdąża z obroną" → "próbuje bronić, ale piłka..."
@@ -2061,6 +2063,15 @@ INSTRUCTIONS:
      }
      t = t.replace(/wystawia do środka/gi, 'wystawia na środek');
      t = t.replace(/wystawiając do środka/gi, 'wystawiając na środek');
+     // Gramatyka — "kolejne punkt" i podobne artefakty GPT
+     t = t.replace(/[Kk]olejne punkt/g, 'Kolejny punkt');
+     t = t.replace(/[Kk]olejny punkt trafia na konto/gi, 'Punkt dla');
+     t = t.replace(/[Kk]olejne punkty trafiają na konto/gi, 'Punkt dla');
+     t = t.replace(/[Pp]unkt trafia na konto/gi, 'Punkt dla');
+     t = t.replace(/trafia na konto ([A-ZŁŚŹĆĘÓĄŃ])/g, 'dla $1');
+     // Zdobywa punkt prowadzenie (artefakt score suppression)
+     t = t.replace(/zdobywa punkt prowadzenie/gi, 'zdobywa punkt');
+     t = t.replace(/zdobywa punkt i prowadzenie/gi, 'zdobywa punkt');
      // Freeball — naturalne formy
      t = t.replace(/puszcza swobodną piłkę/gi, 'oddaje piłkę za darmo');
      t = t.replace(/posyła swobodną piłkę/gi, 'oddaje piłkę za darmo');
