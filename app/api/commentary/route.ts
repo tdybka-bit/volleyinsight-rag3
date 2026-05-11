@@ -426,7 +426,7 @@ const getCommentarySystemPrompt = (
    ? `\n\nPRZYKŁADY TWOJEGO STYLU dla "${rallyCategory}" (naśladuj DOKŁADNIE ten styl):\n${getFewShotExamples(rallyCategory, dramaLevel)}\n`
    : '';
 
- const plRules = language === 'pl' ? `
+   const plRules = language === 'pl' ? `
 ╔══════════════════════════════════════════════════════════════════╗
 ║  COMMENTARY RULES — ZASADY BEZWZGLĘDNE (aktualizacja 2026-05-07) ║
 ╚══════════════════════════════════════════════════════════════════╝
@@ -692,6 +692,40 @@ export async function POST(request: NextRequest) {
  // STEP 2: CHECK IF SET ENDED
  // ========================================================================
  const setNumber = rally.set_number || 1;
+
+ // ── PHRASE TRACKER — skanuj ostatnie komentarze seta ────────────────────────
+ const TRACKED_PHRASES_CONFIG = [
+   { phrase: 'muruje siatkę', limit: 2, alt: 'zamyka blokiem / zdobywa punkt blokiem' },
+   { phrase: 'muruje siatke', limit: 2, alt: 'zamyka blokiem / zdobywa punkt blokiem' },
+   { phrase: 'blok punktowy', limit: 3, alt: 'zamyka blokiem / czapa! / ręce przy siatce' },
+   { phrase: 'piłka żyje',   limit: 1, alt: 'akcja trwa / wymiana trwa' },
+   { phrase: 'pilka zyje',   limit: 1, alt: 'akcja trwa / wymiana trwa' },
+   { phrase: 'świetna obrona', limit: 2, alt: 'twarda obrona / kapitalnie wybroniony' },
+   { phrase: 'perfekcyjne przyjęcie', limit: 3, alt: 'w punkt przyjął / doskonale przyjął' },
+   { phrase: 'dłuższa wymiana', limit: 2, alt: 'zacięta walka / nie dają wbijać' },
+   { phrase: 'długa wymiana', limit: 2, alt: 'zacięta walka / nie dają wbijać' },
+   { phrase: 'alez emocje', limit: 1, alt: 'niesamowite widowisko / co za mecz' },
+ ];
+
+ // Zbierz komentarze z bieżącego seta (z recentRallies)
+ const currentSetCommentaries = (recentRallies || [])
+   .filter((r: any) => r.set_number === setNumber)
+   .map((r: any) => (r.commentary || r.generated_commentary || '').toLowerCase()
+     .replace(/ą/g,'a').replace(/ę/g,'e').replace(/ó/g,'o').replace(/ś/g,'s')
+     .replace(/ź/g,'z').replace(/ż/g,'z').replace(/ć/g,'c').replace(/ń/g,'n').replace(/ł/g,'l'));
+
+ const phraseWarnings: string[] = [];
+ for (const tracked of TRACKED_PHRASES_CONFIG) {
+   const count = currentSetCommentaries.filter((c: string) => c.includes(tracked.phrase)).length;
+   if (count >= tracked.limit) {
+     phraseWarnings.push(`"${tracked.phrase}" użyte już ${count}x → użyj: ${tracked.alt}`);
+   }
+ }
+
+ const phraseWarningBlock = phraseWarnings.length > 0
+   ? '\nFRAZY WYCZERPANE W TYM SECIE — NIE używaj:\n' + phraseWarnings.map(w => '⚠️ ' + w).join('\n') + '\n'
+   : '';
+
  const setEndInfo = checkSetEnd(finalScore, setNumber, homeTeamFullName, awayTeamFullName);
 
  // ========================================================================
@@ -925,6 +959,8 @@ if (!rally.touches || rally.touches.length === 0) {
  }
 
  console.log('[DRAMA]', { dramaLevel, rallyCategory, momentSeta, isTransition });
+
+
  const isFirstPoint = (finalScore.home === 1 && finalScore.away === 0) || 
  (finalScore.home === 0 && finalScore.away === 1);
  const isTied = finalScore.home === finalScore.away;
@@ -1849,7 +1885,9 @@ ${namingRulesContext ? `ZASADY ODMIANY NAZWISK (PRIORYTET!):\n${namingRulesConte
 
 ZASADY (10 regul — zamiast 15+ sprzecznych):
 ⚠️ NAZWY DRUŻYN: Używaj DOKŁADNIE nazw z "HOME:" i "AWAY:" powyżej. NIGDY nie tłumacz, nie skracaj, nie modyfikuj. "LUK" to NIE jest "Łuk". "PGE" to NIE jest "Polskie Górnictwo Energetyczne". Kopiuj DOSŁOWNIE.
-1. ZACZNIJ OD KULMINACJI: Pierwsze zdanie = kto i jak (★ CLIMAX na górze). Kontekst potem.
+1. STYL NARRACJI: \${narrativeStyle === 'climax-first' 
+   ? 'CLIMAX-FIRST — zacznij od kto i jak zdobył punkt (★ CLIMAX). Kontekst (zagrywka, przyjęcie) dopiero potem.'
+   : 'CHRONOLOGICZNY — zacznij od zagrywki, buduj napięcie, zakończ kulminacją. Jak prawdziwy komentator radiowy: zagrywka → przyjęcie → atak → PUNKT! UWAGA: jeśli zabraknie miejsca — SKRÓĆ ŚRODEK (przyjęcie, wystawę), nigdy nie urywaj zakończenia (kto zdobył punkt)!'}
 2. TYLKO touch chain — nic nie wymyslaj. Kazda akcja musi byc w danych powyzej.
 3. WYNIK: Uzywaj DOKLADNIE "SCORE SITUATION" i "WHO LEADS". NIGDY nie twórz innego!
 4. NAZWISKA: Z touch chain. Imie tylko jesli PROFIL ZAWODNIKA potwierdza. W razine watpliwosci — samo nazwisko.
@@ -1904,6 +1942,14 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
  
  // B1: Dynamic token limits based on rally complexity
  const isServeError = numTouches <= 2 && scoringAction.toLowerCase().includes('blad serw');
+
+ // ── HYBRYDA NARRACJI ──────────────────────────────────────────────────────
+ const narrativeStyle: 'climax-first' | 'chronological' = 
+   isServeError ? 'chronological'
+   : dramaLevel >= 3 ? 'climax-first'
+   : dramaLevel === 2 ? (Math.random() < 0.7 ? 'climax-first' : 'chronological')
+   : (Math.random() < 0.5 ? 'climax-first' : 'chronological');
+ console.log('[NARRATIVE]', narrativeStyle);
  const isAcePoint = numTouches <= 2 && (scoringAction.toLowerCase().includes('ace') || scoringAction.toLowerCase().includes('as serw'));
  const hasSubstitution = rally.substitutions?.length > 0;
  
@@ -1921,8 +1967,10 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
  }
  // Modifiers
  if (hasSubstitution) dynamicMaxTokens += 40;
- if (isHotSituation) dynamicMaxTokens += 40; // raised — ending must always be complete
+ if (isHotSituation) dynamicMaxTokens += 40;
  if (milestone) dynamicMaxTokens += 30;
+ // Chronologiczny styl potrzebuje więcej tokenów — buduje od zagrywki do końca
+ if (narrativeStyle === 'chronological') dynamicMaxTokens += 30;
  
  console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
 
