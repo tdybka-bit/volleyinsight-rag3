@@ -1887,7 +1887,7 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
 ⚠️ NAZWY DRUŻYN: Używaj DOKŁADNIE nazw z "HOME:" i "AWAY:" powyżej. NIGDY nie tłumacz, nie skracaj, nie modyfikuj. "LUK" to NIE jest "Łuk". "PGE" to NIE jest "Polskie Górnictwo Energetyczne". Kopiuj DOSŁOWNIE.
 1. STYL NARRACJI: \${narrativeStyle === 'climax-first' 
    ? 'CLIMAX-FIRST — zacznij od kto i jak zdobył punkt (★ CLIMAX). Kontekst (zagrywka, przyjęcie) dopiero potem.'
-   : 'CHRONOLOGICZNY — zacznij od zagrywki, buduj napięcie, zakończ kulminacją. Jak prawdziwy komentator radiowy: zagrywka → przyjęcie → atak → PUNKT! UWAGA: jeśli zabraknie miejsca — SKRÓĆ ŚRODEK (przyjęcie, wystawę), nigdy nie urywaj zakończenia (kto zdobył punkt)!'}
+   : 'CHRONOLOGICZNY — PIERWSZE ZDANIE musi zaczynac sie od zagrywki. Buduj akcje: zagrywka → przyjecie → atak → PUNKT! NIE zaczynaj od kulminacji — to bedzie climax-first, nie chronologiczny. Jesli zabraknie miejsca — skroc srodek, nigdy nie urywaj zakonczenia.'
 2. TYLKO touch chain — nic nie wymyslaj. Kazda akcja musi byc w danych powyzej.
 3. WYNIK: Uzywaj DOKLADNIE "SCORE SITUATION" i "WHO LEADS". NIGDY nie twórz innego!
 4. NAZWISKA: Z touch chain. Imie tylko jesli PROFIL ZAWODNIKA potwierdza. W razine watpliwosci — samo nazwisko.
@@ -2209,6 +2209,8 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.replace(/punkt bierze/gi, 'punkt dla');
      // Wyblokowuje → dotyka blokiem
      t = t.replace(/wyblokowuje/gi, 'dotyka blokiem');
+     t = t.replace(/dotyka blok(?!u|iem)/gi, 'dotyka bloku');
+     t = t.replace(/dotykacie blok(?!u|iem)/gi, 'dotyka bloku');
      // "kończy po wybloku X" — semantycznie mylące, zamień na naturalne
      t = t.replace(/kończy atakiem (.{3,30}) po wybloku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/gi,
        'kończy atakiem $1 po odbiciu od bloku $2');
