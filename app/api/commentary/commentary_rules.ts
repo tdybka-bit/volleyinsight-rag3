@@ -85,7 +85,10 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 [F33] "zagrywa kiwką" (non-serwis) — NIGDY. Użyj: "kiwa"
 [F34] "wbija" bez doprecyzowania — NIGDY. Zawsze: "wbija piłkę w boisko"
 [F35] "muruje siatkę" przy wybloku (niepontowym) — NIGDY. Tylko przy bloku kończącym akcję.
-[F36] "Piękny punkt!" po błędzie serwisowym — NIGDY. Błąd serwisu to strata, nie osiągnięcie. Nie oceniaj błędów jako pięknych.
+[F36] "Piękny punkt!" po błędzie serwisowym — NIGDY.
+[F37] "świetnie!" / "doskonałe!" po błędzie serwisu — NIGDY.
+[F38] "Prowadzą/Wyrównują od pierwszej piłki!" bez podmiotu — NIGDY. Zawsze: "[Drużyna] prowadzi/wyrównuje".
+[F39] Wymyślone metafory ("przez mur", "przez ścianę") — NIGDY. Tylko to co jest w touch chain. "Piękny punkt!" po błędzie serwisowym — NIGDY. Błąd serwisu to strata, nie osiągnięcie. Nie oceniaj błędów jako pięknych.
 `;
 
 export const COMMENTARY_RULES_MARKER = '// COMMENTARY_RULES v2026-05-07';
