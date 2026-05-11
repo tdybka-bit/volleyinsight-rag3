@@ -2225,6 +2225,17 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.split('! Piękny punkt!').join('!');
      t = t.split(' Piękny punkt!').join('.');
      t = t.split('. Piękny punkt.').join('.');
+     // Pochwały po błędzie serwisu
+     t = t.split('serwisowy! świetnie!').join('serwisowy!');
+     t = t.split('serwisowy. świetnie!').join('serwisowy!');
+     t = t.replace(/ świetnie!\s*$/g, '.');
+     t = t.replace(/ Świetnie!\s*$/g, '.');
+     // 'Prowadzą od pierwszej piłki' bez podmiotu
+     t = t.replace(/Prowadzą od pierwszej piłki[!.]/gi, '');
+     t = t.replace(/Wyrównują od pierwszej piłki[!.]/gi, '');
+     // Wymyślone metafory
+     t = t.replace(/przebija się przez mur/gi, 'przebija blok');
+     t = t.replace(/przebija się przez ścianę/gi, 'przebija blok');
      // "kończy po wybloku X" — semantycznie mylące, zamień na naturalne
      t = t.replace(/kończy atakiem (.{3,30}) po wybloku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/gi,
        'kończy atakiem $1 po odbiciu od bloku $2');
