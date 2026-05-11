@@ -708,6 +708,7 @@ export async function POST(request: NextRequest) {
    { phrase: 'z pierwszego tempa', limit: 3, alt: 'ze srodka / blyskawiczny atak / szybka pilka na srodek' },
    { phrase: 'ze srodka z pierwszego', limit: 2, alt: 'ze srodka / szybka pilka / blyskawicznie' },
    { phrase: 'konczy atak ze srodka', limit: 3, alt: 'wbija pilke ze srodka / przebija blok ze srodka' },
+   { phrase: 'konczy', limit: 8, alt: 'wbija pilke / przebija blok / zdobywa punkt / uderza' },
  ];
 
  // Zbierz komentarze z bieżącego seta (z recentRallies)
@@ -2236,6 +2237,12 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.split('dotyka blok ale ').join('dotyka bloku, ale ');
      t = t.split('dotyka blok i ').join('dotyka bloku i ');
      t = t.split('Dotyka blok, ').join('Dotyka bloku, ');
+     // "I to punkt!" — mechaniczne, zastąp wariantami
+     t = t.replace(/ I to punkt!/g, '!');
+     t = t.replace(/ i to punkt!/gi, '!');
+     t = t.replace(/\. I to punkt!/g, '!');
+     // "przebija się przez siatkę" — fizycznie niemożliwe
+     t = t.replace(/przebija się przez siatkę/gi, 'przebija blok');
      // Artefakty ocen technicznych na końcu komentarza
      if (t.trimEnd().endsWith('doskonłe!')) t = t.trimEnd().slice(0, -10).trimEnd() + '.';
      if (t.trimEnd().endsWith('doskonły!')) t = t.trimEnd().slice(0, -10).trimEnd() + '.';
