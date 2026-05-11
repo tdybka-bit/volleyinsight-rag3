@@ -1889,6 +1889,7 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
    ? 'CLIMAX-FIRST — zacznij od kto i jak zdobył punkt (★ CLIMAX). Kontekst (zagrywka, przyjęcie) dopiero potem.'
    : 'CHRONOLOGICZNY — PIERWSZE ZDANIE musi zaczynac sie od zagrywki. Buduj akcje: zagrywka → przyjecie → atak → PUNKT! NIE zaczynaj od kulminacji — to bedzie climax-first, nie chronologiczny. Jesli zabraknie miejsca — skroc srodek, nigdy nie urywaj zakonczenia.'
 2. TYLKO touch chain — nic nie wymyslaj. Kazda akcja musi byc w danych powyzej.
+2b. PODMIOT ZAWSZE: "piłka kończy atak" jest BŁĘDEM — piłka nie kończy ataku, zawodnik kończy. Zawsze: "[Nazwisko] kończy atak" lub "[Nazwisko] zdobywa punkt".
 3. WYNIK: Uzywaj DOKLADNIE "SCORE SITUATION" i "WHO LEADS". NIGDY nie twórz innego!
 4. NAZWISKA: Z touch chain. Imie tylko jesli PROFIL ZAWODNIKA potwierdza. W razine watpliwosci — samo nazwisko.
 5. ${language === 'pl' ? 'ODMIANA PL: Kaczmarek→Kaczmareka, Szalpuk→Szalpuka, Butryn→Butryna, Toniutti→Toniuttiego.' : 'NAMES: Base form only — Kaczmarek not Kaczmarka.'}
