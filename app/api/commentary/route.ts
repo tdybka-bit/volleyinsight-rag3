@@ -509,7 +509,7 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 
  const basePrompt = `${langPrompt}${plRules ? '\n\n' + plRules : ''}
 
-⚠️ ABSOLUTE LANGUAGE RULE: Write 100% in the language above. Context data may contain Polish technical words — TRANSLATE them ALL:
+🚨 ABSOLUTE LANGUAGE RULE: Write 100% in Polish (język: POLSKI). EVERY word must be Polish. If you write even one English word — it is a CRITICAL FAILURE. No exceptions. Context data may contain Polish technical words — TRANSLATE them ALL:
 - "zagrywka z wyskoku" → IT:"servizio in salto" / ES:"saque en salto" / TR:"sıçrama servisi" / DE:"Sprungaufschlag" / JP:"ジャンプサーブ"
 - "przyjęcie" → IT:"ricezione" / ES:"recepción" / TR:"kabul" / DE:"Annahme" / JP:"レセプション"
 - "potężny/potężna/potężni/potężnym/potężnego/potężnymi/potężli" → IT:"potente" / ES:"potente" / TR:"güçlü" / DE:"kraftvoll" / JP:"強力な"
@@ -2255,6 +2255,10 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.split('serwisowy! świetnie!').join('serwisowy!');
      t = t.split('serwisowy. świetnie!').join('serwisowy!');
      t = t.replace(/ świetnie!\s*$/g, '.');
+     t = t.replace(/ Świetnie!	*$/gi, '.');
+     if (lang === 'pl' && (t.startsWith('świetnie! ') || t.startsWith('Świetnie! '))) {
+       t = t.slice(t.indexOf(' ') + 1);
+     }
      t = t.replace(/ Świetnie!\s*$/g, '.');
      // 'Prowadzą od pierwszej piłki' bez podmiotu
      t = t.replace(/Prowadzą od pierwszej piłki[!.]/gi, '');
@@ -2388,7 +2392,16 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
    return t;
  };
 
- const commentary = postProcess(rawCommentary, language);
+ // Wykryj angielski komentarz — jeśli język PL ale mamy angielski tekst
+ const hasEnglishWords = language === 'pl' && /(but|the|from|and|for|with|this|that|not|are|was|were|has|have|been|their|they|when|what|where|which|who|how|its|our|your|also|then|than|because|after|before|however|therefore|although|despite|moreover|furthermore|meanwhile|subsequently|consequently)/i.test(rawCommentary);
+ 
+ const commentary = hasEnglishWords
+   ? postProcess(`BŁĄD GENEROWANIA — spróbuj ponownie. (Kod: EN-${language})`, language)
+   : postProcess(rawCommentary, language);
+ 
+ if (hasEnglishWords) {
+   console.error('[LANGUAGE ERROR] English commentary detected for PL:', rawCommentary.slice(0, 100));
+ }
 
  // ========================================================================
  // STEP 9: GENERATE TAGS, MILESTONES, ICONS, SCORES
