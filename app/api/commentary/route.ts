@@ -705,6 +705,9 @@ export async function POST(request: NextRequest) {
    { phrase: 'dłuższa wymiana', limit: 2, alt: 'zacięta walka / nie dają wbijać' },
    { phrase: 'długa wymiana', limit: 2, alt: 'zacięta walka / nie dają wbijać' },
    { phrase: 'alez emocje', limit: 1, alt: 'niesamowite widowisko / co za mecz' },
+   { phrase: 'z pierwszego tempa', limit: 3, alt: 'ze srodka / blyskawiczny atak / szybka pilka na srodek' },
+   { phrase: 'ze srodka z pierwszego', limit: 2, alt: 'ze srodka / szybka pilka / blyskawicznie' },
+   { phrase: 'konczy atak ze srodka', limit: 3, alt: 'wbija pilke ze srodka / przebija blok ze srodka' },
  ];
 
  // Zbierz komentarze z bieżącego seta (z recentRallies)
@@ -2252,6 +2255,14 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      // Wymyślone metafory
      t = t.replace(/przebija się przez mur/gi, 'przebija blok');
      t = t.replace(/przebija się przez ścianę/gi, 'przebija blok');
+     t = t.replace(/przebija zasłonę/gi, 'przebija blok');
+     t = t.replace(/przełamuje mur rywali/gi, 'przebija blok rywali');
+     t = t.replace(/przebija mur/gi, 'przebija blok');
+     // Podwójne słowo (GPT się zaciął) — "piłka, piłka" itp.
+     t = t.replace(/(\w{3,}) (?:.*?)/g, '$1');
+     t = t.replace(/, piłka wychodzi na aut! piłka/gi, ', piłka wychodzi na aut!');
+     t = t.replace(/piłka, piłka/gi, 'piłka');
+     t = t.replace(/atak, atak/gi, 'atak');
      // "kończy po wybloku X" — semantycznie mylące, zamień na naturalne
      t = t.replace(/kończy atakiem (.{3,30}) po wybloku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/gi,
        'kończy atakiem $1 po odbiciu od bloku $2');
