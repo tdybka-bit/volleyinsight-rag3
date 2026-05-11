@@ -2212,6 +2212,14 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.replace(/wyblokowuje/gi, 'dotyka blokiem');
      t = t.replace(/dotyka blok(?!u|iem)/gi, 'dotyka bloku');
      t = t.replace(/dotykacie blok(?!u|iem)/gi, 'dotyka bloku');
+     // Explicit string fallback — regex nie łapie gdy po 'blok' jest interpunkcja
+     t = t.split('dotyka blok, ').join('dotyka bloku, ');
+     t = t.split('dotyka blok ale ').join('dotyka bloku, ale ');
+     t = t.split('dotyka blok i ').join('dotyka bloku i ');
+     t = t.split('Dotyka blok, ').join('Dotyka bloku, ');
+     // Artefakty ocen technicznych na końcu komentarza
+     if (t.trimEnd().endsWith('doskonłe!')) t = t.trimEnd().slice(0, -10).trimEnd() + '.';
+     if (t.trimEnd().endsWith('doskonły!')) t = t.trimEnd().slice(0, -10).trimEnd() + '.';
      // "kończy po wybloku X" — semantycznie mylące, zamień na naturalne
      t = t.replace(/kończy atakiem (.{3,30}) po wybloku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/gi,
        'kończy atakiem $1 po odbiciu od bloku $2');
