@@ -2220,6 +2220,11 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      // Artefakty ocen technicznych na końcu komentarza
      if (t.trimEnd().endsWith('doskonłe!')) t = t.trimEnd().slice(0, -10).trimEnd() + '.';
      if (t.trimEnd().endsWith('doskonły!')) t = t.trimEnd().slice(0, -10).trimEnd() + '.';
+     // 'Piękny punkt!' po błędzie serwisu — absurd
+     t = t.split('. Piękny punkt!').join('.');
+     t = t.split('! Piękny punkt!').join('!');
+     t = t.split(' Piękny punkt!').join('.');
+     t = t.split('. Piękny punkt.').join('.');
      // "kończy po wybloku X" — semantycznie mylące, zamień na naturalne
      t = t.replace(/kończy atakiem (.{3,30}) po wybloku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/gi,
        'kończy atakiem $1 po odbiciu od bloku $2');
