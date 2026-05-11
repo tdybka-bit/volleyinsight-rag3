@@ -88,3 +88,96 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 `;
 
 export const COMMENTARY_RULES_MARKER = '// COMMENTARY_RULES v2026-05-07';
+
+// ============================================================================
+// FEEDBACK LOG — historia wszystkich zmian jakości komentarza
+// ============================================================================
+// Format: [data] [kto] problem → gdzie naprawione
+// NIGDY nie usuwaj starych wpisów. Tylko dodawaj na górze.
+// ============================================================================
+
+export const FEEDBACK_LOG = `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OSTATNIE ZMIANY (najnowsze na górze)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[2026-05-11] Tomek: hybryda narracji
+→ route.ts: narrativeStyle climax-first/chronological per dramaLevel
+→ PHRASE_TRACKER: wbudowany w route.ts, skanuje recentRallies per set
+
+[2026-05-11] Tomek: frazy się powtarzają (muruje, piłka żyje)
+→ route.ts: PHRASE_TRACKER — limity per set z alternatywami
+→ COMMENTARY_RULES: F25 (piłka żyje max 1x), F35 (muruje tylko blok punkt)
+
+[2026-05-07] Tomek/Ziomkowie: komentarze urwane (brak info kto zdobył)
+→ route.ts: max_tokens podniesione (160→200 długie, 120→150 średnie)
+→ route.ts: CLIMAX-FIRST touch chain — ostatnia akcja na górze
+→ RULES: M2, M3, M4 dodane
+
+[2026-05-07] Tomek: "Bogdanka Łuk Lublin" — GPT tłumaczył nazwy drużyn
+→ route.ts: reguła M1 w ZASADY — nazwy drużyn dosłownie
+→ COMMENTARY_RULES: M1 dodane
+
+[2026-05-07] Tomek: "kolejne punkt" — zła gramatyka + zły kontekst
+→ route.ts: postProcess + prompt M10 (pierwsza akcja = NIGDY kolejny)
+
+[2026-05-07] Tomek: "zdobywa!" bez doprecyzowania
+→ route.ts: postProcess: zdobywa → zdobywa punkt (z wyjątkiem "as")
+
+[2026-05-07] Tomek: "oddane rywalom" — zła polska gramatyka
+→ route.ts: postProcess: oddane rywalom → dla rywali / błąd serwisowy
+
+[2026-05-07] Tomek: "ratować" i "piłka wychodzi" bez doprecyzowania
+→ route.ts: postProcess + RULES F18 (na aut), M9 (ratować piłkę)
+
+[2026-05-06] Tomek: komentarze za długie (>60 słów)
+→ route.ts: postProcess hard cut 55 słów / 3 zdania
+
+[2026-05-06] Tomek: CLIMAX-FIRST nie działało (38%)
+→ route.ts: touch chain reformat — ★ CLIMAX na górze dla 5+ dotknięć
+
+[2026-05-06] Tomek: "puszcza swobodną piłkę" — kalka z angielskiego
+→ route.ts: postProcess: swobodna piłka → free ball / oddaje za darmo
+
+[2026-05-06] Tomek: "atakuje kiwką" — nie po polsku
+→ route.ts: postProcess + RULES F6: atakuje kiwką → kiwa
+
+[2026-05-06] Tomek: "muruje atakującego rywala" / "wbija blok"
+→ route.ts: postProcess + RULES F7, F8
+
+[2026-05-06] Tomek: "trudne przyjęcie" — RULES F5
+
+[2026-05-05] Tomek: "błąd serwisu" zamiast "serwisowy" — RULES F15
+→ route.ts: postProcess
+
+[2026-05-05] Tomek: "wraca w pole" — RULES F9
+→ route.ts: postProcess
+
+[2026-05-04] Tomek/Ziomkowie: "kapitalnie" za często
+→ route.ts: kontekstowe — max 1x, tylko dramaLevel 3-4 — RULES F1
+
+[2026-05-04] Tomek: "wyblokowuje" — nie po polsku — RULES F10
+→ route.ts: postProcess: wyblokowuje → dotyka blokiem
+
+[2026-05-04] Tomek: "pierwszym tempem" zamiast "z pierwszego tempa" — RULES F16
+→ route.ts: postProcess (6 wariantów)
+
+[2026-05-04] Tomek: "szybko przyjął" — RULES F11
+→ route.ts: postProcess
+
+[2026-05-04] Tomek: "bierze prowadzenie" — RULES F12
+→ route.ts: postProcess
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+JAK DODAĆ NOWY FEEDBACK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Powiedz Mordo: "fraza X jest zła/powtarza się/brzmi nienaturalnie"
+2. Mordo decyduje gdzie to idzie:
+   NIGDY tej frazy    → COMMENTARY_RULES.ts [F-lista] + postProcess w route.ts
+   za często          → PHRASE_TRACKER w route.ts [limit + alternatywy]  
+   zły styl           → nowy MD do Drive/commentary-phrases + Colab sync
+3. Mordo dopisuje tutaj z datą
+4. Commit obu plików → Vercel deploy → gotowe
+
+`;
