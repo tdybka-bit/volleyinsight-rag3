@@ -1,0 +1,118 @@
+// ============================================================================
+// PHRASE_TRACKER.ts — ŚLEDZENIE FREKWENCJI FRAZ
+// ============================================================================
+// Każda fraza ma limit per SET (nie per mecz).
+// route.ts skanuje recentRallies i liczy ile razy dana fraza już padła.
+// GPT dostaje listę "już użytych" — i wie żeby ich unikać.
+// ============================================================================
+
+export interface TrackedPhrase {
+  phrase: string;        // fraza do szukania (lowercase, bez polskich znaków)
+  limit: number;         // max razy per set
+  alternatives: string[]; // co użyć zamiast
+}
+
+export const TRACKED_PHRASES: TrackedPhrase[] = [
+  // ── Blok ──────────────────────────────────────────────────────────────────
+  {
+    phrase: 'muruje siatke',
+    limit: 2,
+    alternatives: ['zamyka blokiem', 'zdobywa punkt blokiem', 'blok punktowy', 'ręce przy siatce — punkt!'],
+  },
+  {
+    phrase: 'blok punktowy',
+    limit: 3,
+    alternatives: ['zamyka blokiem', 'muruje siatkę', 'zdobywa punkt blokiem', 'czapa!'],
+  },
+  // ── Atak ──────────────────────────────────────────────────────────────────
+  {
+    phrase: 'konczy atak',
+    limit: 4,
+    alternatives: ['wbija piłkę w boisko', 'przebija blok', 'uderza po skosie', 'uderza po prostej', 'zdobywa punkt'],
+  },
+  {
+    phrase: 'wbija pilke w boisko',
+    limit: 3,
+    alternatives: ['kończy atak', 'uderza po skosie', 'uderza po prostej', 'przebija blok'],
+  },
+  // ── Narracja ──────────────────────────────────────────────────────────────
+  {
+    phrase: 'pilka zyje',
+    limit: 1,
+    alternatives: ['akcja trwa', 'wymiana trwa', 'walka o piłkę', 'jeszcze grają'],
+  },
+  {
+    phrase: 'dluzsza wymiana',
+    limit: 2,
+    alternatives: ['zacięta walka', 'nie dają sobie wbijać', 'wymiana nie chce się skończyć'],
+  },
+  {
+    phrase: 'swietna obrona',
+    limit: 2,
+    alternatives: ['dobra, twarda obrona', 'kapitalnie wybroniony', 'ratuje piłkę', 'nie dał wbić'],
+  },
+  {
+    phrase: 'perfekcyjne przyjecie',
+    limit: 3,
+    alternatives: ['w punkt przyjął', 'doskonale przyjął', 'bezbłędne przyjęcie', 'wzorowe przyjęcie'],
+  },
+  // ── Emocje ────────────────────────────────────────────────────────────────
+  {
+    phrase: 'alez emocje',
+    limit: 1,
+    alternatives: ['niesamowite widowisko', 'co za mecz', 'to się ogląda'],
+  },
+  {
+    phrase: 'coz za',
+    limit: 2,
+    alternatives: ['niesamowite', 'co za akcja', 'fantastyczne'],
+  },
+];
+
+// ── Funkcja: skanuj poprzednie komentarze i zwróć liczniki ──────────────────
+export function countPhraseUsage(
+  recentCommentaries: string[],
+  currentSetNumber: number
+): Record<string, number> {
+  const counts: Record<string, number> = {};
+
+  for (const tracked of TRACKED_PHRASES) {
+    const key = tracked.phrase;
+    counts[key] = 0;
+    for (const commentary of recentCommentaries) {
+      // Normalizuj: małe litery, usuń polskie znaki
+      const normalized = commentary.toLowerCase()
+        .replace(/ą/g, 'a').replace(/ę/g, 'e').replace(/ó/g, 'o')
+        .replace(/ś/g, 's').replace(/ź/g, 'z').replace(/ż/g, 'z')
+        .replace(/ć/g, 'c').replace(/ń/g, 'n').replace(/ł/g, 'l');
+      if (normalized.includes(key)) {
+        counts[key]++;
+      }
+    }
+  }
+
+  return counts;
+}
+
+// ── Funkcja: zbuduj kontekst dla GPT ────────────────────────────────────────
+export function buildPhraseWarning(counts: Record<string, number>): string {
+  const warnings: string[] = [];
+
+  for (const tracked of TRACKED_PHRASES) {
+    const count = counts[tracked.phrase] || 0;
+    if (count >= tracked.limit) {
+      warnings.push(
+        `"${tracked.phrase.replace(/([aeiou])/g, (m, c) => c)}" — już ${count}x w tym secie! ` +
+        `Użyj zamiast: ${tracked.alternatives.slice(0, 2).join(' / ')}`
+      );
+    } else if (count >= tracked.limit - 1 && tracked.limit > 1) {
+      warnings.push(
+        `"${tracked.phrase}" — już ${count}x (limit: ${tracked.limit}). Rozważ alternatywę.`
+      );
+    }
+  }
+
+  if (warnings.length === 0) return '';
+
+  return `\nFRAZY DO UNIKNIĘCIA W TYM SECIE (już użyte za dużo razy):\n${warnings.map(w => `- ${w}`).join('\n')}\n`;
+}
