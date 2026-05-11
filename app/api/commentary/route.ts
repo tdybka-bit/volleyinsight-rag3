@@ -2238,9 +2238,11 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.split('dotyka blok i ').join('dotyka bloku i ');
      t = t.split('Dotyka blok, ').join('Dotyka bloku, ');
      // "I to punkt!" — mechaniczne, zastąp wariantami
-     t = t.replace(/ I to punkt!/g, '!');
-     t = t.replace(/ i to punkt!/gi, '!');
-     t = t.replace(/\. I to punkt!/g, '!');
+     // "I to punkt" — usuń całą frazę z kontekstem
+     t = t.replace(/[!.]\s*I to punkt[^.!]*/gi, '!');
+     t = t.replace(/—\s*I to punkt[^.!]*/gi, '!');
+     t = t.replace(/I to jest punkt[!.]?/gi, '');
+     t = t.replace(/I to punkt[!.]?/gi, '');
      // "przebija się przez siatkę" — fizycznie niemożliwe
      t = t.replace(/przebija się przez siatkę/gi, 'przebija blok');
      // Artefakty ocen technicznych na końcu komentarza
@@ -2251,6 +2253,9 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.split('! Piękny punkt!').join('!');
      t = t.split(' Piękny punkt!').join('.');
      t = t.split('. Piękny punkt.').join('.');
+     // "doskonałe!" w środku zdania
+     t = t.replace(/! doskon[aą][łl]e! /gi, '! ');
+     t = t.replace(/\. doskon[aą][łl]e! /gi, '. ');
      // Pochwały po błędzie serwisu
      t = t.split('serwisowy! świetnie!').join('serwisowy!');
      t = t.split('serwisowy. świetnie!').join('serwisowy!');
