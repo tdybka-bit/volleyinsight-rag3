@@ -85,6 +85,7 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 [F33] "zagrywa kiwką" (non-serwis) — NIGDY. Użyj: "kiwa"
 [F34] "wbija" bez doprecyzowania — NIGDY. Zawsze: "wbija piłkę w boisko"
 [F35] "muruje siatkę" przy wybloku (niepontowym) — NIGDY. Tylko przy bloku kończącym akcję.
+[F36] "Piękny punkt!" po błędzie serwisowym — NIGDY. Błąd serwisu to strata, nie osiągnięcie. Nie oceniaj błędów jako pięknych.
 `;
 
 export const COMMENTARY_RULES_MARKER = '// COMMENTARY_RULES v2026-05-07';
@@ -101,6 +102,9 @@ export const FEEDBACK_LOG = `
 OSTATNIE ZMIANY (najnowsze na górze)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+[2026-05-11] Tomek: "Piękny punkt!" po błędzie serwisu — absurd
+→ COMMENTARY_RULES: F36 dodane
+→ route.ts: postProcess usuwa "Piękny punkt!" po błędzie serwisowym
 [2026-05-11] Tomek: hybryda narracji
 → route.ts: narrativeStyle climax-first/chronological per dramaLevel
 → PHRASE_TRACKER: wbudowany w route.ts, skanuje recentRallies per set
