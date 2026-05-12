@@ -2096,6 +2096,17 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.replace(/McCarthy'm/g, "McCarthy'ego");
      t = t.replace(/McCarthy'mu/g, "McCarthy'emu");
      t = t.replace(/O'Connor'm/g, "O'Connora");
+     // ── Odmiana nazwisk na -ek ────────────────────────────────────────────────
+     if (lang === 'pl') {
+       t = t.replace(/Kwoleka/g, 'Kwolka');
+       t = t.replace(/Kwolek[uo]wi/g, 'Kwolkowi');
+       t = t.replace(/Bienieka/g, 'Bieńka');
+       t = t.replace(/Bieńkea/g, 'Bieńka');
+       t = t.replace(/Sasaeka/g, 'Saszka');
+       // "powiększa impet" — niepolskie
+       t = t.replace(/powiększa impet/gi, 'buduje przewagę');
+       t = t.replace(/zwiększa impet/gi, 'wzmacnia przewagę');
+     }
      // Ogólna reguła: X'm → X'ego (dopełniacz)
      t = t.replace(/([A-Z][a-z]+)'m/g, "$1'ego");
      t = t.replace(/([A-Z][a-z]+)'mu/g, "$1'emu");
