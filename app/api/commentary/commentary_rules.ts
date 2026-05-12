@@ -90,7 +90,9 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 [F38] "Prowadzą/Wyrównują od pierwszej piłki!" bez podmiotu — NIGDY. Zawsze: "[Drużyna] prowadzi/wyrównuje".
 [F39] Wymyślone metafory ("przez mur", "przez ścianę") — NIGDY. Tylko to co jest w touch chain.
 [F40] "kończy!" przy błędzie serwisu lub ataku — NIGDY. "kończy" = sukces atakującego. Błąd = "myli się", "popełnia błąd", "nie trafia".
-[F41] "Fantastyczny/Wspaniały/Piękny punkt!" po błędzie serwisu — NIGDY. ("przez mur", "przez ścianę") — NIGDY. Tylko to co jest w touch chain. "Piękny punkt!" po błędzie serwisowym — NIGDY. Błąd serwisu to strata, nie osiągnięcie. Nie oceniaj błędów jako pięknych.
+[F41] "Fantastyczny/Wspaniały/Piękny punkt!" po błędzie serwisu — NIGDY.
+[F42] "powiększa impet" — NIGDY. "impet" to nie jest wynik. Użyj: "buduje przewagę", "wychodzi na prowadzenie", "odskakuje".
+[F43] ODMIANA NAZWISK na -EK: Kwolek→Kwolka, Bieniek→Bieńka, Sasek→Saszka. Reguła: -ek odpada. NIGDY Kwoleka, Bienieka. ("przez mur", "przez ścianę") — NIGDY. Tylko to co jest w touch chain. "Piękny punkt!" po błędzie serwisowym — NIGDY. Błąd serwisu to strata, nie osiągnięcie. Nie oceniaj błędów jako pięknych.
 `;
 
 export const COMMENTARY_RULES_MARKER = '// COMMENTARY_RULES v2026-05-07';
