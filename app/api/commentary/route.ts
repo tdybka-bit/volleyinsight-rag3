@@ -2099,6 +2099,12 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      // ── Odmiana nazwisk na -ek ────────────────────────────────────────────────
      if (lang === 'pl') {
        t = t.replace(/Kwoleka/g, 'Kwolka');
+       t = t.replace(/Karliczeka/g, 'Karlitzka');
+       t = t.replace(/Karliczek[uo]wi/g, 'Karlitzkowi');
+       t = t.replace(/Karliczkiem/g, 'Karlitzkiem');
+       // Ogólna reguła: [Cz]ek → [tz]ka przy odmianie
+       t = t.replace(/Koppersa/g, 'Koppersa'); // OK
+       t = t.replace(/Toniuttiego/g, 'Toniuttiego'); // OK
        t = t.replace(/Kwolek[uo]wi/g, 'Kwolkowi');
        t = t.replace(/Bienieka/g, 'Bieńka');
        t = t.replace(/Bieńkea/g, 'Bieńka');
