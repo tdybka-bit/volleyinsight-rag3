@@ -2107,6 +2107,12 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
        t = t.replace(/Toniuttiego/g, 'Toniuttiego'); // OK
        t = t.replace(/Kwolek[uo]wi/g, 'Kwolkowi');
        t = t.replace(/Bienieka/g, 'Bieńka');
+       // Duplikat imię+nazwisko
+       t = t.replace(/Thales Thales/g, 'Thales');
+       t = t.replace(/Hoss Hoss/g, 'Hoss');
+       t = t.replace(/\b([A-Z][a-z]{2,}) \1\b/g, '$1');
+       // bierze ten punkt
+       t = t.replace(/bierze ten punkt/gi, 'zdobywa punkt');
        t = t.replace(/Bieńkea/g, 'Bieńka');
        t = t.replace(/Sasaeka/g, 'Saszka');
        // "powiększa impet" — niepolskie
@@ -2259,6 +2265,9 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.replace(/[!.]\s*I to punkt[^.!]*/gi, '!');
      t = t.replace(/—\s*I to punkt[^.!]*/gi, '!');
      t = t.replace(/I to jest punkt[!.]?/gi, '');
+     // As serwisowy + "wbija piłkę" = oksymoron (as = piłka nie przyjęta)
+     t = t.replace(/as serwisowy[^.!]*[.!]\s*Punkt kończy [A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+, wbija piłkę[^.!]*/gi,
+       (m) => m.split(/[.!]/)[0] + '!');
      // "[Nazwisko] kończy!" jako jedyne zdanie przy błędzie serwisu = mylące
      // Łapiemy tylko gdy komentarz MA 1-2 słowa (samo "X kończy!")
      if (lang === 'pl') {
