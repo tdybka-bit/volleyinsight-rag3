@@ -2242,6 +2242,21 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.replace(/[!.]\s*I to punkt[^.!]*/gi, '!');
      t = t.replace(/—\s*I to punkt[^.!]*/gi, '!');
      t = t.replace(/I to jest punkt[!.]?/gi, '');
+     // "[Nazwisko] kończy!" jako jedyne zdanie przy błędzie serwisu = mylące
+     // Łapiemy tylko gdy komentarz MA 1-2 słowa (samo "X kończy!")
+     if (lang === 'pl') {
+       const words = t.trim().split(/\s+/);
+       if (words.length <= 3 && /kończy[!.]?$/i.test(t)) {
+         // Zostaw jak jest — to jest za krótkie żeby poprawiać bez kontekstu
+         // GPT musi dostać lepszą instrukcję
+       }
+     }
+     // Pochwały po błędzie serwisu (rozszerzona lista)
+     t = t.replace(/[Bb]łąd serwisowy[^.!]*[.!]\s*[Ff]antastyczny punkt[!.]?/g, (m) => m.split(/[.!]/)[0] + '.');
+     t = t.replace(/[Bb]łąd serwisowy[^.!]*[.!]\s*[Ww]spaniały punkt[!.]?/g, (m) => m.split(/[.!]/)[0] + '.');
+     t = t.replace(/\.\s*[Ff]antastyczny punkt[!.]\s*$/g, '.');
+     t = t.replace(/\.\s*[Ww]spaniały punkt[!.]\s*$/g, '.');
+     t = t.replace(/!\s*[Ff]antastyczny punkt[!.]\s*$/g, '!');
      t = t.replace(/I to punkt[!.]?/gi, '');
      // "przebija się przez siatkę" — fizycznie niemożliwe
      t = t.replace(/przebija się przez siatkę/gi, 'przebija blok');
