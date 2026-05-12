@@ -2257,6 +2257,12 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.replace(/dotykacie blok(?!u|iem)/gi, 'dotyka bloku');
      // Explicit string fallback — regex nie łapie gdy po 'blok' jest interpunkcja
      t = t.split('dotyka blok, ').join('dotyka bloku, ');
+     // "dotyka bloku — piłka przebija blok" = blok pojawia się 2x
+     t = t.replace(/dotyka bloku — piłka przebija blok/gi, 'dotyka bloku, ale piłka wraca');
+     t = t.replace(/dotyka bloku, ale piłka przebija blok/gi, 'dotyka bloku, ale piłka wraca');
+     // "kontra zaczęła się od zagrywki" — logicznie niemożliwe
+     t = t.replace(/[Kk]ontra zaczęła się od zagrywki/gi, 'akcja zaczęła się od zagrywki');
+     t = t.replace(/[Kk]ontra rozpoczęła się od zagrywki/gi, 'akcja rozpoczęła się od zagrywki');
      t = t.split('dotyka blok ale ').join('dotyka bloku, ale ');
      t = t.split('dotyka blok i ').join('dotyka bloku i ');
      t = t.split('Dotyka blok, ').join('Dotyka bloku, ');
