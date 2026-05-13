@@ -95,7 +95,11 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 [F43] ODMIANA NAZWISK na -EK: Kwolek→Kwolka, Bieniek→Bieńka, Sasek→Saszka. Reguła: -ek odpada.
 [F44] "Thales Thales" / "Jan Jan" — duplikat imienia i nazwiska — NIGDY. Zawodnik to "Thales Hoss" lub samo "Thales".
 [F45] As serwisowy + "wbija piłkę w boisko" = oksymoron — NIGDY.
-[F46] "Kontra zaczęła się od zagrywki" — NIGDY. Kontra = przejście z obrony do ataku w trakcie wymiany. Zagrywka ZAWSZE zaczyna akcję, nie kontrę. + "wbija piłkę w boisko" = oksymoron — NIGDY. As = piłka NIE była przyjęta. Nie "wbił w boisko". Kwolek→Kwolka, Bieniek→Bieńka, Sasek→Saszka. Reguła: -ek odpada. NIGDY Kwoleka, Bienieka. ("przez mur", "przez ścianę") — NIGDY. Tylko to co jest w touch chain. "Piękny punkt!" po błędzie serwisowym — NIGDY. Błąd serwisu to strata, nie osiągnięcie. Nie oceniaj błędów jako pięknych.
+[F46] "Kontra zaczęła się od zagrywki" — NIGDY. Zagrywka zawsze zaczyna akcję, kontra to przejście w trakcie.
+[F47] "piłka muruje siatkę" — NIGDY. ZAWODNIK muruje siatkę, nie piłka. Poprawnie: "[Bloker] muruje siatkę!"
+[F48] "nie odpuszcza" — TYLKO gdy od dłuższego czasu jest seria punkt za punkt. NIE jako ogólna zachęta na końcu komentarza.
+[F49] Japońskie/cyrylica w PL komentarzu — NIGDY. Imiona obcokrajowców piszemy łaciną: Demyanenko, nie デミヤネンコ.
+[F50] As serwisowy + "wystawia na..." w jednym komentarzu = BŁĄD LOGICZNY. As = piłka nie przyjęta. Nie może być wystawy. — NIGDY. Kontra = przejście z obrony do ataku w trakcie wymiany. Zagrywka ZAWSZE zaczyna akcję, nie kontrę. + "wbija piłkę w boisko" = oksymoron — NIGDY. As = piłka NIE była przyjęta. Nie "wbił w boisko". Kwolek→Kwolka, Bieniek→Bieńka, Sasek→Saszka. Reguła: -ek odpada. NIGDY Kwoleka, Bienieka. ("przez mur", "przez ścianę") — NIGDY. Tylko to co jest w touch chain. "Piękny punkt!" po błędzie serwisowym — NIGDY. Błąd serwisu to strata, nie osiągnięcie. Nie oceniaj błędów jako pięknych.
 `;
 
 export const COMMENTARY_RULES_MARKER = '// COMMENTARY_RULES v2026-05-07';
