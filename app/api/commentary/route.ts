@@ -2153,6 +2153,9 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.replace(/Punkt oddany bez walki[!.]?/gi, 'strata punktu.');
      t = t.replace(/Nieudana próba serwisu[!.]?/gi, 'błąd na zagrywce.');
      t = t.replace(/Zmarnowany serwis[!,.]?/gi, 'Błąd serwisowy.');
+     // "prowadzi już" bez dalszego kontekstu — zbyt urwane
+     t = t.replace(/prowadzi już!\s*$/gi, 'prowadzi!');
+     t = t.replace(/prowadzi już\.\s*$/gi, 'prowadzi!');
      // Hard length limit — max 3 zdania, max 55 słów
      if (lang === 'pl') {
        const sentences = t.split(/(?<=[.!?])\s+/);
@@ -2292,9 +2295,19 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.replace(/I to punkt[!.]?/gi, '');
      // "przebija się przez siatkę" — fizycznie niemożliwe
      t = t.replace(/przebija się przez siatkę/gi, 'przebija blok');
+     // "piłka muruje siatkę" — piłka nie muruje, ZAWODNIK muruje
+     t = t.replace(/piłka muruje siatkę/gi, 'piłka trafia w blok');
+     t = t.replace(/piłka zamknęła siatkę/gi, 'blok zamknął akcję');
      // Artefakty ocen technicznych na końcu komentarza
      if (t.trimEnd().endsWith('doskonłe!')) t = t.trimEnd().slice(0, -10).trimEnd() + '.';
      if (t.trimEnd().endsWith('doskonły!')) t = t.trimEnd().slice(0, -10).trimEnd() + '.';
+     // Nielacińskie znaki (japonski, cyrylica itp.) — usuń i zastąp
+     if (lang === 'pl') {
+       // Japońskie znaki (U+3040-U+30FF, U+4E00-U+9FFF)
+       // Cyrylica
+       // Jeśli mamy ??? to znaczy że GPT użył złego języka — usuń to słowo
+       t = t.replace(/[ ]{2,}/g, ' ').trim();
+     }
      // 'Piękny punkt!' po błędzie serwisu — absurd
      t = t.split('. Piękny punkt!').join('.');
      t = t.split('! Piękny punkt!').join('!');
@@ -2317,6 +2330,9 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.replace(/Wyrównują od pierwszej piłki[!.]/gi, '');
      // Wymyślone metafory
      t = t.replace(/przebija się przez mur/gi, 'przebija blok');
+     // "nie dają się" na końcu — zbyt kolokwialne
+     t = t.replace(/ i nie dają się!$/gi, '!');
+     t = t.replace(/ i nie dają się\./gi, '.');
      t = t.replace(/przebija się przez ścianę/gi, 'przebija blok');
      t = t.replace(/przebija zasłonę/gi, 'przebija blok');
      t = t.replace(/przełamuje mur rywali/gi, 'przebija blok rywali');
