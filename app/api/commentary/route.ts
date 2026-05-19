@@ -1450,6 +1450,7 @@ if (!rally.touches || rally.touches.length === 0) {
  if (rally.touches && rally.touches.length > 0) {
  const touchChainLines: string[] = [];
  
+ const winnerTeamLabel = rally.team_scored === 'home' ? homeTeamFull : awayTeamFull;
  rally.touches.forEach((touch, idx) => {
    const action = touch.action || '';
    const player = touch.player || '?';
@@ -1596,7 +1597,6 @@ if (!rally.touches || rally.touches.length === 0) {
    touchChainLines.push(desc);
  });
 
- const winnerTeamLabel = rally.team_scored === 'home' ? homeTeamFull : awayTeamFull;
 
  
  touchContext = `
