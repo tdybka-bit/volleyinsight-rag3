@@ -1796,7 +1796,7 @@ INSTRUCTIONS:
  if (hasSubstitution) dynamicMaxTokens += 40;
  if (isHotSituation) dynamicMaxTokens += 30;
  if (narrativeStyle === 'chronological' && !isVeryLongRally) dynamicMaxTokens += 30;
- if (isVeryLongRally) dynamicMaxTokens = Math.min(dynamicMaxTokens, 130); // >12 dotknięć = max 130 tokenów (było 80 — zbyt mało, urywało zdania)
+ if (isVeryLongRally) dynamicMaxTokens = Math.min(dynamicMaxTokens, 170); // >12 dotknięć = max 170 tokenów (v8.1: zwiększone z 130 bo nadal urywało przy 14+ dotknięciach)
  if (milestone) dynamicMaxTokens += 30;
  
  console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
@@ -1871,14 +1871,22 @@ INSTRUCTIONS:
      t = t.replace(/タバレス/g, 'Tavares');
      t = t.replace(/グロズダノフ/g, 'Grozdanov');
 
-     // ── "Punkt dla X" → neutral ending ─────────────────────────────────
+     // ── "Punkt dla X" / "I to jest punkt dla X" → neutral ending ──────────
      const punktDlaVariants = [
-       'Punkt!', 'I to jest punkt!', 'Zdobyte!', 'Piękny punkt!',
-       'Niesamowite!', 'Kapitalnie!', 'Fantastyczny punkt!', 'Genialne!'
+       'Punkt!', 'I to jest punkt!', 'Zdobyte!', 'Biorą to!',
+       'Niesamowite!', 'I to wystarczy!', 'I punkt wędruje do nich!', 'Wbija piłkę w boisko!'
      ];
-     t = t.replace(/Punkt dla [^!.]+[!.]/g, () => {
-       return punktDlaVariants[Math.floor(Math.random() * punktDlaVariants.length)];
-     });
+     const _rdx = () => punktDlaVariants[Math.floor(Math.random() * punktDlaVariants.length)];
+     // "I to jest punkt dla X!" / "i to jest punkt dla X!"
+     t = t.replace(/[Ii] to jest punkt dla [^!.]+[!.]/g, _rdx);
+     // "I to punkt dla X!"
+     t = t.replace(/[Ii] to punkt dla [^!.]+[!.]/g, _rdx);
+     // "punkt dla X!" (lowercase p, after clause) 
+     t = t.replace(/[,—–]\s*punkt dla [^!.]+[!.]/gi, () => ' ' + _rdx());
+     // "Punkt dla X!" (sentence start)
+     t = t.replace(/Punkt dla [^!.]+[!.]/g, _rdx);
+     // Fallback: any remaining "punkt dla X" without punctuation
+     t = t.replace(/punkt dla [A-ZŁŚŹĆĘÓĄŃ][^.!?,]{0,40}/gi, 'punkt');
 
      // ── Score in text → remove explicit numbers ─────────────────────────
      if (!setEndInfo.isSetEnd) {
@@ -1935,6 +1943,17 @@ INSTRUCTIONS:
      t = t.replace(/\bszybujacym\b/gi, 'szybującym');
      t = t.replace(/\bszybujacy\b/gi, 'szybujący');
      t = t.replace(/\blekka szybujaca\b/gi, 'lekka szybująca');
+     t = t.replace(/\bszybujaca\b/gi, 'szybująca'); // standalone: "piłka szybujaca" itp.
+     // Brakujące diakrytyki — rozszerzone (GPT czasem generuje bez polskich znaków)
+     t = t.replace(/\bskrzydlo\b/gi, 'skrzydło');
+     t = t.replace(/\bskrzydla\b/gi, 'skrzydła');
+     t = t.replace(/\bwyciaga\b/gi, 'wyciąga');
+     t = t.replace(/\bwyciagnal\b/gi, 'wyciągnął');
+     t = t.replace(/\bwalcza\b/gi, 'walczą');
+     t = t.replace(/\bwalcza dalej\b/gi, 'walczą dalej');
+     t = t.replace(/\bktory\b/gi, 'który');
+     t = t.replace(/\bktora\b/gi, 'która');
+     t = t.replace(/\bktore\b/gi, 'które');
      t = t.replace(/\bprzyjecie\b/gi, 'przyjęcie');
      t = t.replace(/\bprzyjecia\b/gi, 'przyjęcia');
 
@@ -1961,8 +1980,19 @@ INSTRUCTIONS:
      t = t.replace(/[Zz]agrywkę floatową ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) posłał/g, '$1 posłał zagrywkę floatową');
      t = t.replace(/[Zz]agrywkę floatową posłał ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/g, '$1 posłał zagrywkę floatową');
      t = t.replace(/[Zz]agrywkę z wyskoku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) wykonał/g, '$1 wykonał zagrywkę z wyskoku');
+     // "posyłał zagrywkę" → "posłał zagrywkę" (czas niedokonany brzmi nienaturalnie)
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) posyłał zagrywkę/g, '$1 posłał zagrywkę');
+     t = t.replace(/posyłał zagrywkę z wyskoku/gi, 'posłał zagrywkę z wyskoku');
      // "kończy akcję" — za ogólne, za suche
+     t = t.replace(/i blokiem kończy akcję/gi, 'i blokuje — punkt');
+     t = t.replace(/blokiem kończy akcję/gi, 'blokuje — punkt');
+     t = t.replace(/i blokiem kończy akcję/gi, 'i blokuje skutecznie');
      t = t.replace(/\bkończy akcję\b/gi, 'zdobywa punkt');
+     // "znowu" / "ponownie" — GPT nadużywa, usuń bezwarunkowo (bez touch chain nie da się ocenić kontekstu)
+     t = t.replace(/\bznowu\b/gi, '');
+     t = t.replace(/\bpownie\b/gi, '');   // literówka GPT
+     t = t.replace(/\bponownie\b/gi, '');
+     t = t.replace(/  +/g, ' '); // cleanup podwójnych spacji po usunięciu
      // Brakujące "punkt" przed "dla X"
      t = t.replace(/serwisowy i dla ([A-ZŁŚŹĆĘÓĄŃ])/gi, 'serwisowy — punkt dla $1');
      t = t.replace(/serwisowy — dla ([A-ZŁŚŹĆĘÓĄŃ])/gi, 'serwisowy — punkt dla $1');
@@ -1980,7 +2010,26 @@ INSTRUCTIONS:
        t = t.replace(/\bwraca do gry\b/gi, 'odpowiada');
      }
      t = t.replace(/ i wraca do gry/gi, '');
+     // Deduplikacja po replace wraca do gry → odpowiada
+     t = t.replace(/odpowiada i odpowiada/gi, 'odpowiada');
+     t = t.replace(/i odpowiada i odpowiada/gi, 'i odpowiada');
+     // "ale I to punkt" — artifact po score suppression (ale [wynik usunięty] I to punkt)
+     // Pattern: "..., ale I to jest punkt dla X!" → "... — punkt!"
+     t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
+     t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // "staje na wysokości zadania" — klisze, zastępujemy rotacją
+     t = t.replace(/staje na wysokości zadania/gi, () => {
+       const v = ['odpowiada na wyzwanie', 'nie zawodzi', 'jest niesamowity', 'robi co do niego należy'];
+       return v[Math.floor(Math.random() * v.length)];
+     });
+     // "powiększa przewagę" — mechaniczne, zastępujemy rotacją
+     // (tylko standalone zdanie na końcu, nie w środku)
+     t = t.replace(/i powiększa przewagę!$/gim, () => {
+       const v = ['i odskakuje!', 'i rośnie w siłę!', 'i dokręca śrubę!', 'i prowadzi pewnie!'];
+       return v[Math.floor(Math.random() * v.length)];
+     });
+     t = t.replace(/powiększa przewagę, prowadz/gi, 'prowadz');
      t = t.replace(/\bżywa zagrywka\b/gi, 'zagrywka szybująca');
      t = t.replace(/\bżywą zagrywką\b/gi, 'zagrywką szybującą');
      t = t.replace(/\bżywej zagrywki\b/gi, 'zagrywki szybującej');
