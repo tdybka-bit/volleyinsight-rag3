@@ -99,6 +99,12 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 [F47] "piłka muruje siatkę" — NIGDY. ZAWODNIK muruje siatkę, nie piłka. Poprawnie: "[Bloker] muruje siatkę!"
 [F48] "nie odpuszcza" — TYLKO gdy od dłuższego czasu jest seria punkt za punkt. NIE jako ogólna zachęta na końcu komentarza.
 [F49] Japońskie/cyrylica w PL komentarzu — NIGDY. Imiona obcokrajowców piszemy łaciną: Demyanenko, nie デミヤネンコ.
+[F51] SCORER RULE: Ostatni obrońca w akcji (np. Tavares "próbuje ratować") NIGDY nie zdobywa punktu.
+      Punkt zawsze należy do SCORERA z nagłówka. Obrona może być wspomniana jako kontekst,
+      ale zakończenie ZAWSZE: "[Scorer] zdobywa punkt / wbija piłkę w boisko".
+[F52] "piłka żyje" — ABSOLUTNY ZAKAZ. Użyj: "akcja trwa", "wymiana trwa".
+[F53] "nie daje się" — ABSOLUTNY ZAKAZ. Użyj: "odpowiada", "nie odpuszcza", "walczy dalej".
+[F54] "wraca do gry" — TYLKO gdy drużyna odrabia stratę 5+ punktów. Przy zwykłym punkcie: "odpowiada".
 [F50] As serwisowy + "wystawia na..." w jednym komentarzu = BŁĄD LOGICZNY. As = piłka nie przyjęta. Nie może być wystawy. — NIGDY. Kontra = przejście z obrony do ataku w trakcie wymiany. Zagrywka ZAWSZE zaczyna akcję, nie kontrę. + "wbija piłkę w boisko" = oksymoron — NIGDY. As = piłka NIE była przyjęta. Nie "wbił w boisko". Kwolek→Kwolka, Bieniek→Bieńka, Sasek→Saszka. Reguła: -ek odpada. NIGDY Kwoleka, Bienieka. ("przez mur", "przez ścianę") — NIGDY. Tylko to co jest w touch chain. "Piękny punkt!" po błędzie serwisowym — NIGDY. Błąd serwisu to strata, nie osiągnięcie. Nie oceniaj błędów jako pięknych.
 `;
 
@@ -115,6 +121,12 @@ export const FEEDBACK_LOG = `
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OSTATNIE ZMIANY (najnowsze na górze)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[2026-05-19] Tomek: GPT kredytuje ostatniego obrońcę jako scorera (Tavares wbija zamiast Leon)
+→ route.ts: touch chain — opis nieudanej obrony z explicite SCORER
+→ route.ts: nuclear scorer postProcess v2 — podmiana [non-scorer] wbija/zamyka/przebija
+→ route.ts: import COMMENTARY_RULES_PL do basePrompt (było podpięte!)
+→ COMMENTARY_RULES: F51 (scorer rule), F52 (piłka żyje), F53 (nie daje się), F54 (wraca do gry)
 
 [2026-05-11] Tomek: "Piękny punkt!" po błędzie serwisu — absurd
 → COMMENTARY_RULES: F36 dodane
