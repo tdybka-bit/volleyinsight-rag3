@@ -107,36 +107,35 @@ STYL PL — RADIO NA ZYWO:
 - Prowadz narracje z EMOCJA proporcjonalna do sytuacji. Serve error = krotko i zwiezle. Koniec seta = wybuch emocji!
 - UNIKAJ mechanicznych zwrotow: zamiast "zwieksza przewage" uzyj "odskoczyc", "dokrecil srube", "nie odpuszcza". Zamiast "zmniejsza strate" uzyj "wraca do gry!", "nie daje sie!", "zapala iskre!".
 - UNIKAJ "gra trwa" — uzyj "akcja trwa!", "wymiana!", "pilka zyje!", "nie daja sie!".
-- Przeplataj krotkie zdania uderzajace z dluzszymi opisowymi. Czasem zacznij od akcji: "Mocna zagrywka!", "Blok punktowy!".
+- Przeplataj krotkie zdania uderzajace z dluzszymi opisowymi. Czasem zacznij od akcji: "Mocna zagrywka!", "Kapitalny blok!".
 - Przynajmniej JEDNO zdanie z wykrzyknikiem na komentarz (chyba ze to blad serwisowy — wtedy wystarczy jedno krotkie).
 
 OBOWIAZKOWE SLOWNICTWO PL:
 - Wystawienie: "wystawia do [nazwisko]" LUB "wystawia na lewe/prawe skrzydlo" LUB "szybka pilka do srodka" — NIGDY "wystawia w prawo/lewo", NIGDY "ustawia do ataku", NIGDY "przygotowuje akcje"
 - Blok punkt: "BLOK!", "zatrzymany blokiem!", "mur przy siatce!" — NIGDY "broni blokiem" (blok to NIE obrona!)
 - Wyblok (blok niekonczacy rally): "pilka po bloku", "wyblok — pilka zyje!", "zablokowany ale akcja trwa!"
-- Obrona/dig: "wybroniony!", "świetna obrona!", "ratuje akcję!" — NIGDY angielskie "dig", NIGDY "wyciąga z podłogi", NIGDY "kapitalnie"
-- Blok: "muruje siatkę" NIE "muruje atakującego rywala" — blok jest na siatce, nie na zawodniku
-- Blok: "zdobywa punkt blokiem", "zamyka blokiem" — NIGDY "wbija blok"
-- Kiwka: "kiwa", "zagrywa kiwką", "próbuje zaskoczyć kiwką" — NIGDY "atakuje kiwką"
-- Przyjęcie słabe: "niedokładne", "dalekie od ideału", "nienajlepsze", "z problemami" — NIGDY "trudne przyjęcie"
-- Wyblok — piłka wraca: "wraca na stronę [drużyny/gospodarzy/gości]" — NIGDY "wraca w pole"
-- "oczko" — max 1x na komentarz, preferuj "punkt"
-- "kolejny/kolejne" — TYLKO gdy wiesz że to nie jest pierwsza akcja (wynik > 1:0). Przy wyniku 1:0 lub 0:1 NIGDY nie pisz "kolejny punkt"
-- "punkt trafia na konto X" — ZAKAZANE! Użyj: "Punkt dla X!", "[Nazwisko] zdobywa punkt!", "I to punkt!"
-- "wbija" bez doprecyzowania co — zawsze "wbija piłkę w boisko"
-- "ratuje obronę" to nie po polsku — użyj "ratuje piłkę w obronie" / "próbuje ratować piłkę"
-- "nie zdąża z obroną" → "próbuje bronić, ale piłka..."
-- "piłka żyje" max 1x — potem "akcja trwa" lub pomiń
-- Błąd logiczny wyblok: jeśli blok dotknął piłkę ale akcja trwa → NIGDY "muruje siatkę" → "dotyka blokiem, piłka wraca na stronę [drużyny]"
+- Obrona/dig: "kapitalnie obroniony!", "wyciagnal z podlogi!", "fenomenalna obrona!" — NIGDY angielskie "dig"
 - Float serve: "zagrywka szybujaca", "float" — ZAWSZE lekka/szybujaca, NIGDY "mocna zagrywka" przy float
-- Przyjecie perfekcyjne: "w punkt przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!", "doskonale przyjal!"
+- Przyjecie perfekcyjne: "kapitalnie przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!"
 - Przyjecie zle: "trudne przyjecie", "pilka daleko od siatki", "nieidealne przyjecie" — NIGDY "nieporadnie"
+     // "recepcja" → "przyjęcie" (PL siatka nie używa recepcji)
+     t = t.replace(/wymuszona recepcja/gi, 'wymuszone przyjęcie');
+     t = t.replace(/perfekcyjna recepcja/gi, 'perfekcyjne przyjęcie');
+     t = t.replace(/dobra recepcja/gi, 'dobre przyjęcie');
+     t = t.replace(/recepcja/gi, 'przyjęcie');
+     // "piłka zyje" → "piłka żyje"
+     t = t.replace(/piłka zyje/gi, 'piłka żyje');
+     t = t.replace(/pilka zyje/gi, 'piłka żyje');
+     t = t.replace(/zyje!/g, 'żyje!');
+     // szybujaco bez ą
+     t = t.replace(/szybujaco/gi, 'szybująco');
+     // prowadza nadal
+     t = t.replace(/prowadza nadal/gi, 'prowadzą nadal');
+     // Ta drużyna prowadzą → prowadzi
+     t = t.replace(/[Tt]a drużyna prowadzą/g, 'Ta drużyna prowadzi');
 
 ABSOLUTNY ZAKAZ — te slowa/zwroty sa ZABRONIONE w PL:
 - "nieporadnie" — ZASTAP: "nieprecyzyjnie", "daleko od siatki", "z trudem"
-- "kapitalnie" — BARDZO RZADKO! Tylko przy dramaLevel 3-4 (końcówka, remis). Max 1x na komentarz. Normalnie użyj: "świetnie", "doskonale", "znakomicie"
-- "niesamowite" — RZADKO! Tylko dramaLevel 3-4. Max 1x na komentarz.
-- "wyciąga z podłogi" — ZAKAZANE! ZASTAP: "ratuje", "wybroniony", "świetna obrona"
 - "dig" (angielskie) — ZASTAP: "obrona", "wybroniony", "wyciagnal"
 - "ustawia do ataku" — ZASTAP: "wystawia do [nazwisko]"
 - "przygotowuje akcje" / "przygotowuje pilke" — za ogolne, opisz konkretnie
@@ -158,7 +157,7 @@ ABSOLUTNY ZAKAZ — te slowa/zwroty sa ZABRONIONE w PL:
 LOGIKA BLOK vs OBRONA — KRYTYCZNE dla poprawnosci:
 - BLOK KONCZACY rally = "[Nazwisko] blokuje! Punkt dla [Druzyna]!"
 - WYBLOK (blok niekonczacy, akcja trwa) = "pilka po bloku wraca w pole!" / "wyblok, pilka zyje!"
-- OBRONA (dig, nie blok) = "wybroniony!", "świetnie obronił!", "ratuje akcję!"
+- OBRONA (dig, nie blok) = "kapitalnie obroniony!", "wyciagnal z podlogi!"
 - Jesli po bloku akcja TRWA → to byl WYBLOK, nie blok punkt. Nie mow "blokuje" jezeli akcja trwa dalej.`,
 
 
@@ -342,174 +341,13 @@ const getCommentarySystemPrompt = (
  isBigLead: boolean,
  hasStreak: boolean,
  hasMilestone: boolean,
- language: string = 'pl',
- dramaLevel: number = 0,
- rallyCategory: string = '',
- momentSeta: string = ''
+ language: string = 'pl'
 ) => {
  const langPrompt = getLanguagePrompt(language);
+ 
+ const basePrompt = `${langPrompt}
 
- // ── FEW-SHOT EXAMPLES per kategoria — Twój styl ──────────────────────────
- const getFewShotExamples = (cat: string, drama: number): string => {
-   const examples: Record<string, string[]> = {
-     'BŁĄD SERWISU': [
-       'START: "Sasak rowniez z bledem w polu serwisowym."',
-       'ŚRODEK: "Ponownie Boladz ale blad. Alez zmienny ten poczatek seta."',
-       'KOŃCÓWKA dramat: "Oj myli sie w waznym momencie — juz jestesmy po 20-tym punkcie!"',
-       'KOŃCÓWKA zmiana: "Zmiana zadaniowa Malinowski za Sasaka zeby wzmocnic zagrywke. Ale nieskutecznie."',
-     ],
-     'AS SERWISOWY': [
-       'START: "Swietny serwis Bienka - Hilir Henno nie utrzymal pilki w grze!"',
-       'ŚRODEK po raz kolejny: "I jeszcze Russell postanawia dolozyc sie asem! Alez popisy Zawiercian w polu zagrywki!"',
-       'KOŃCÓWKA: "Bartlomiej Boladz zza linii 9 metrow — po prostej i mamy punkt!"',
-     ],
-     'BŁĄD PRZYJĘCIA': [
-       '"McCarthy! dobra zagrywka i punkt na koncie Lublina po zlym przyjeciu Popiwczaka! No i mamy remis!"',
-       '"Popiwczak trafiony juz drugi raz w przyjeciu - alez skuteczny serwis Grozdanova w koncowce seta!"',
-       '"Fynnian McCarthy i kolejny as serwisowy - nie wstrzymal reki po przerwie Zawiercian!"',
-     ],
-     'BŁĄD ATAKU': [
-       'prosty: "Aaron Russell wyrzucajaca zagrywka. Zniszczol z bledem w ataku."',
-       'po trudnej: "Z takiej pilki ciezko cokolwiek zrobic — i blad Kwolek."',
-       'KOŃCÓWKA: "Kosztowny blad w koncowce! Sasak myli sie w ataku."',
-     ],
-     'BLOK PUNKTOWY': [
-       '"Grozdanov zagrywa i Russell nie konczy! szybka kontra Lublina i Henno zdobywa kolejny punkt!"',
-       '"Kwolek nie konczy ataku — Henno broni po wybloku Grozdanova i Leon powieksza przewage do 3 punktow."',
-       '"Alez akcja! Pilka raz po raz przebijana — ostatecznie Gallego konczy atakiem ze srodka!"',
-     ],
-     'ATAK LEWE SKRZYDŁO': [
-       '"Kwolek przyjmuje zagrywke Komendy i od razu dostaje pilke do ataku! Swietnie sobie radzi z blokiem Sasaka."',
-       '"Szybka akcja Lublina — po swietnym przyjeciu pilka poslana na lewa strone i Henno konczy!"',
-       '"Komenda na Russella, Tavares w nagrode posyla mu pilke na lewa strone a ten konczy kapitalnym atakiem po skosie."',
-     ],
-     'ATAK PRAWE SKRZYDŁO': [
-       '"Hilir Henno. Russell, druga linia i Boladz po prostej konczy."',
-       '"Krotka akcja: Honorato na Orczyka, Worsley do Nasevicha i punkt dla Trefla."',
-       '"Na zagrywce Grozdanov — lekko na Popiwczaka ktory bardzo dobrze przyjmuje. Wystawa do Boladzia i mamy koniec meczu!"',
-     ],
-     'ATAK ŚRODEK / PIPE': [
-       '"Swietnie! Milosz ze srodka z doskonalym atakiem i mamy remis 8:8."',
-       '"Float przyjety bezblednie, Kozub z Siwczykiem przez srodek i jest punkt dla gospodarzy."',
-       '"Swietne przyjecie zagrywki Boladzia przez Leona i rozpedzony Henno na pipe konczy te akcje!"',
-     ],
-     'DŁUGA WYMIANA': [
-       '"Pierwsza dluzsza wymiana w tym meczu! Russell w przyjeciu, Lublin wyprowadza kontre. Ostatecznie Sasak z prawej strony."',
-       '"McCarthy mocno, Russell z problemami — Kwolek dostaje pilke do ataku, po bloku wraca, i tym razem konczy swietnym atakiem po bloku! Zrobil swoje na lewej."',
-       '"Lublin na dwa razy — najpierw Leon wyblokowany, ale Komenda gra na srodek do Grozdanova i tym razem konczacy atak."',
-     ],
-     'KONTRA → ATAK LEWE SKRZYDŁO': [
-       '"Wracamy po przerwie i od razu skuteczna kontra! Russell po swietnym przyjeciu Popiwczaka."',
-       '"Asparuhov na libero, Worsley na lewa strone do Orczyka i ten po bloku konczy."',
-     ],
-     'KONTRA → ATAK PRAWE SKRZYDŁO': [
-       '"Milosz na Henno. Pilka daleko od siatki i Komenda sle pilke do Sasaka na druga linie — swietnie konczy!"',
-       '"Grozdanov przyjety i konczy Boladz z drugiej linii! Dobre, pewne uderzenie po prostej."',
-     ],
-     'KONTRA → ATAK ŚRODEK / PIPE': [
-       '"Wracamy po przerwie i mamy pierwszy atak pipem. Od razu skutecznie — Russella po swietnym przyjeciu Popiwczaka."',
-       '"Mamy pipe za pipe — Jankiewicz uruchamia Asparuhova a ten konczy mimo prob obrony."',
-     ],
-   };
-
-   const catExamples = examples[cat] || examples['ATAK LEWE SKRZYDŁO'];
-   // Wybierz przykłady proporcjonalne do dramy
-   const selected = drama >= 3
-     ? catExamples.filter(e => e.includes('KOŃCÓWKA') || !e.includes(':'))
-     : drama === 0
-     ? catExamples.filter(e => e.includes('START') || !e.includes(':'))
-     : catExamples;
-   return selected.slice(0, 3).join('\n');
- };
-
- const fewShotBlock = rallyCategory
-   ? `\n\nPRZYKŁADY TWOJEGO STYLU dla "${rallyCategory}" (naśladuj DOKŁADNIE ten styl):\n${getFewShotExamples(rallyCategory, dramaLevel)}\n`
-   : '';
-
-   const plRules = language === 'pl' ? `
-╔══════════════════════════════════════════════════════════════════╗
-║  COMMENTARY RULES — ZASADY BEZWZGLĘDNE (aktualizacja 2026-05-07) ║
-╚══════════════════════════════════════════════════════════════════╝
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-MUST HAVE — OBOWIĄZKOWE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-[M1] NAZWY DRUŻYN: Używaj DOKŁADNIE nazw z HOME/AWAY. NIGDY nie tłumacz, nie odmieniaj, nie skracaj.
-     "LUK" ≠ "Łuk". "PGE" ≠ "Polskie Górnictwo". Kopiuj DOSŁOWNIE.
-
-[M2] ZACZNIJ OD KULMINACJI: Pierwsze zdanie = kto i jak zdobył punkt (lub błąd).
-     Kontekst (zagrywka, przyjęcie) — dopiero w zdaniu 2-3 jeśli starczy miejsca.
-
-[M3] ZAWSZE zakończ informacją kto i jak zdobył/stracił punkt. NIGDY nie urywaj komentarza.
-     Jeśli musisz skrócić — skróć ŚRODEK, NIGDY koniec.
-
-[M4] MAX 3 zdania na komentarz. Błąd serwisu = 1 zdanie. Długa wymiana = max 3 zdania.
-
-[M5] WYNIK: Używaj DOKŁADNIE "SCORE SITUATION" i "WHO LEADS" z danych. NIGDY nie wymyślaj.
-
-[M6] NAZWISKA: Tylko z touch chain. Imię — tylko jeśli PLAYER PROFILE potwierdza. 
-     W razie wątpliwości: samo nazwisko.
-
-[M7] ODMIANA PL: Odmieniaj nazwiska przez przypadki.
-     Kaczmarek→Kaczmareka, Szalpuk→Szalpuka, Butryn→Butryna, Toniutti→Toniuttiego.
-
-[M8] BLOK — 4 przypadki (KRYTYCZNE):
-     - BLOK PUNKTOWY: piłka spada w pole atakujących → "muruje siatkę!", "blok punktowy!"
-     - WYBLOK: piłka po bloku po stronie blokujących → "wyblok — piłka wraca na stronę [blokujący]!"
-     - BLOK piłka do atakujących: akcja trwa po ich stronie → "blok ale piłka wraca — [drużyna] ponawia!"
-     - BLOK-OUT: piłka wychodzi za boisko → "blok-out! Punkt dla [atakujący]!"
-     NIGDY: "kończy po wybloku X" gdy X jest blokerem — wyblok X = piłka wróciła DO X, nie OD X.
-
-[M9] RATOWAĆ + PIŁKA WYCHODZI — zawsze doprecyzuj:
-     "próbuje ratować PIŁKĘ, ale ta wychodzi NA AUT" — nie "ratować" i nie "wychodzi" bez doprecyzowania.
-
-[M10] PIERWSZA AKCJA meczu (wynik 0:0→1:0 lub 0:1): NIGDY "kolejny punkt".
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-FORBIDDEN — ABSOLUTNY ZAKAZ
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-[F1]  "kapitalnie" — max 1x, tylko dramaLevel 3-4 (końcówka remis/na styku)
-[F2]  "niesamowite" — max 1x, tylko dramaLevel 3-4
-[F3]  "fenomenalnie" — max 1x, tylko dramaLevel 4 (tie-break remis)
-[F4]  "wyciąga z podłogi" — NIGDY. Użyj: "ratuje piłkę", "wybroniony"
-[F5]  "trudne przyjęcie" — NIGDY. Użyj: "niedokładne", "dalekie od ideału", "z problemami"
-[F6]  "atakuje kiwką" — NIGDY. Użyj: "kiwa", "próbuje zaskoczyć kiwką"
-[F7]  "muruje atakującego rywala" — NIGDY. Użyj: "muruje siatkę"
-[F8]  "wbija blok" — NIGDY. Użyj: "zdobywa punkt blokiem", "zamyka blokiem"
-[F9]  "wraca w pole" — NIGDY. Użyj: "wraca na stronę [drużyny]"
-[F10] "wyblokowuje" — NIGDY. Użyj: "dotyka blokiem"
-[F11] "szybko przyjął/przyjęty" — NIGDY. Użyj: "dobrze przyjął", "sprawnie przyjął"
-[F12] "bierze prowadzenie" — NIGDY. Użyj: "wychodzi na prowadzenie"
-[F13] "puszcza/posyła swobodną piłkę" — NIGDY. Użyj: "oddaje piłkę za darmo"
-[F14] "swobodna piłka" — NIGDY. Użyj: "free ball" lub "darmowa piłka"
-[F15] "błąd serwisu" — NIGDY. Zawsze: "błąd serwisowy"
-[F16] "pierwszym tempem" — NIGDY. Zawsze: "z pierwszego tempa"
-[F17] "ratuje obronę" — NIGDY (nie po polsku). Użyj: "ratuje piłkę w obronie"
-[F18] "piłka wychodzi" bez doprecyzowania — NIGDY. Zawsze: "wychodzi NA AUT" lub "poza boisko"
-[F19] "zdobywa" bez doprecyzowania — NIGDY. Zawsze: "zdobywa PUNKT"
-[F20] "punkt trafia na konto X" — NIGDY. Użyj: "Punkt dla X!", "[Nazwisko] kończy!"
-[F21] "Kolejny/kolejne punkt" przy pierwszej akcji — NIGDY
-[F22] "oddane rywalom" — NIGDY (zła gramatyka). Użyj: "dla rywali", "błąd serwisowy"
-[F23] "wystawia do środka" — NIGDY. Użyj: "wystawia na środek"
-[F24] "z pierwszej piłki" — NIGDY. Użyj: "ze środka" (gdy atak środkowego)
-[F25] "piłka żyje" — max 1x. Potem: "akcja trwa"
-[F26] "oczko" — max 1x na komentarz. Preferuj "punkt"
-[F27] Wynik liczbowy (np. "prowadzą 14:11") — NIGDY poza końcem seta
-[F28] "momentum" (ang.) — NIGDY. Użyj: "impet", "seria punktów", "dynamika"
-[F29] "dig" (ang.) — NIGDY. Użyj: "obrona", "wybroniony"
-[F30] "SERVICE ACE" (ang.) — NIGDY. Użyj: "as serwisowy"
-[F31] Tłumaczenie nazw drużyn — NIGDY. "LUK" nie staje się "Łuk". "PGE" zostaje "PGE".
-[F32] Imiona wymyślone przez GPT — NIGDY. Tylko z PLAYER PROFILE.
-[F33] "zagrywa kiwką" (non-serwis) — NIGDY. Użyj: "kiwa"
-[F34] "wbija" bez doprecyzowania — NIGDY. Zawsze: "wbija piłkę w boisko"
-[F35] "muruje siatkę" przy wybloku (niepontowym) — NIGDY. Tylko przy bloku kończącym akcję.
-` : '';
-
- const basePrompt = `${langPrompt}${plRules ? '\n\n' + plRules : ''}
-
-🚨 ABSOLUTE LANGUAGE RULE: Write 100% in Polish (język: POLSKI). EVERY word must be Polish. If you write even one English word — it is a CRITICAL FAILURE. No exceptions. Context data may contain Polish technical words — TRANSLATE them ALL:
+⚠️ ABSOLUTE LANGUAGE RULE: Write 100% in the language above. Context data may contain Polish technical words — TRANSLATE them ALL:
 - "zagrywka z wyskoku" → IT:"servizio in salto" / ES:"saque en salto" / TR:"sıçrama servisi" / DE:"Sprungaufschlag" / JP:"ジャンプサーブ"
 - "przyjęcie" → IT:"ricezione" / ES:"recepción" / TR:"kabul" / DE:"Annahme" / JP:"レセプション"
 - "potężny/potężna/potężni/potężnym/potężnego/potężnymi/potężli" → IT:"potente" / ES:"potente" / TR:"güçlü" / DE:"kraftvoll" / JP:"強力な"
@@ -520,25 +358,71 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 - "punkt dla" → IT:"punto per" / ES:"punto para" / TR:"sayı" / DE:"Punkt für" / JP:"ポイント"
 Player surnames stay as-is. NEVER copy Polish words verbatim.
 
-Twoje zadanie: wygeneruj komentarz siatkarskie w stylu radia — jak Swędrowski na żywo.
-${fewShotBlock}
-JEDNA ZASADA NARRACJI:
-- Akcje 1-4 dotknięcia: chronologicznie, zwięźle
-- Akcje 5+ dotknięć: ZACZNIJ od kto zdobył i jak (★ CLIMAX w danych poniżej), POTEM krótki kontekst
-- MAX 3 zdania. MAX 50 słów. NIGDY nie urywaj przed zakończeniem.
-- ZAWSZE ostatnie zdanie: kto zdobył punkt i jak.
+Your task is to generate professional, factual volleyball match commentary in RADIO STYLE.
 
-FAKTY PONAD WSZYSTKO:
-- Opisuj TYLKO to co jest w touch chain. Zero inwencji.
-- Zagrywka bez "BŁĄD" = dobra zagrywka
-- BLOCK POINT = bloker zdobywa punkt | wyblok = akcja trwa
-- Wynik: używaj "prowadzą/remis/zmniejszają stratę" — NIGDY liczb (widoczne w UI)
-- Imiona: tylko z touch chain lub NAMING RULES — NIGDY nie wymyślaj
+RADIO STYLE MEANS:
+- You receive a TOUCH CHAIN - describe EXACTLY what happened step by step
+- Follow the EXACT order of touches. Do NOT rearrange, skip, or invent actions.
+- If the data says "zagrywka" (without "BLAD"), the serve was GOOD - do NOT say it was an error!
+- If data says "blok PRZEBITY", the BLOCKER lost - the attacker beat them. Do NOT say the blocker broke through.
+- The LAST touch in the chain determines the point. Do NOT add extra actions after it.
+- FOCUS ON CLIMAX: Lead with who scored and how. Earlier touches = brief context only, NOT play-by-play.
+- 1-2 touches (ace/serve error) = max 1 sentence. 3-5 touches = 1-2 sentences. 6+ touches = max 3 sentences with climax at end.
 
-RAG (jeśli dostarczone poniżej):
-- NAMING RULES → stosuj odmianę DOKŁADNIE jak tam podano
-- PRZYKŁADY KOMENTARZY → naśladuj styl i energię
-- FRAZY → inspiracja, nie obowiązek`;
+CRITICAL RULES:
+- Be FACTUAL - describe ONLY what is in the touch chain data
+- NEVER exaggerate situation importance (3:2 is NOT critical!)
+- NEVER mention "morale" or "pressure" in early set
+- Focus on WHAT HAPPENED, not speculation
+- NEVER use quotation marks (" ") around commentary - write directly
+- NEVER invent or add first names - use only surnames provided in data
+- Use proper Polish grammar and declensions for names
+
+VOCABULARY IMPROVEMENTS:
+- NEVER say "chaos w przyjeciu" use "niedokladne przyjecie", "przyjecie daleko od siatki", "bardzo trudne przyjecie"
+- NEVER say "blad blokowy" -> use "blad w bloku"
+- For block errors: praise the ATTACKER who broke through, not the blocker's mistake
+ Example: "Leon przebija blok Kwolka! Potezny atak!"
+
+SCORE ACCURACY — KRYTYCZNE:
+- ALWAYS use SCORE SITUATION and WHO LEADS from the prompt — they tell you EXACTLY what happened
+- NIGDY nie wymyslaj wlasnej interpretacji wyniku
+- If SCORE SITUATION says team is trailing — do NOT say that team is "leading" or "maintaining advantage"!
+- If WHO LEADS says "[team] LEADS" — that team IS leading, not the other way around!
+- NIGDY nie wymyslaj konkretnego wyniku liczbowego (np. "9:9") — wynik jest widoczny w UI
+- Uzywaj ogolnych zwrotow: "prowadza", "wyrownuja", "zmniejszaja strate", "odskoczyly"
+- EXCEPTION: at set end, mention the final score explicitly
+
+NAMING — KRYTYCZNE:
+- Uzywaj nazwisk z PRZEBIEGU AKCJI jako podstawe. Mozesz uzyc IMIENIA jesli masz je z CHARAKTERYSTYKI ZAWODNIKA lub NAMING RULES ponizej.
+- NIGDY nie WYMYSLAJ imion od siebie! Jesli nie masz danych o imieniu gracza — uzywaj TYLKO nazwiska.
+- DOBRZE: "Demyanenko" (samo nazwisko) lub "Danny Demyanenko" (jesli RAG potwierdza imie)
+- ZLE: "Konrad Stankowski" (wymyslony gracz), "Roberto Toniutti" (zgadywane imie)
+- Od czasu do czasu uzyj kombinacji imie+nazwisko dla urozmaicenia (jesli masz dane!)
+
+ANTI-REDUNDANCY:
+- NEVER repeat what is obvious from the action itself
+- Serve error = brief mention of the error — do NOT add "ball out", "end of action", "point for rivals" etc.
+- Attack error = just say "blad w ataku" — do NOT explain what error means
+- Block point = just describe the block — do NOT say "koniec akcji"
+- NEVER mention the exact score in commentary — it is shown in the UI. EXCEPTION: at set end, always state the final score.
+- NEVER say the exact score number in commentary — use general phrases like "leads", "equalizes", "pulling away"
+- ONE sentence per simple rally (serve error, single attack). Max 2-3 for long rallies.
+
+AVOID PHRASES:
+- "kluczowy moment" (unless 20+ points or tie-break)
+- "wplynac na morale" (never use)
+- "presja ze strony przeciwnika" (never for serves)
+- "blad blokowy" (say "blad w bloku")
+- "chaos w przyjeciu" (use better vocabulary)
+- Any dramatic language before 15 points
+
+RAG KNOWLEDGE USAGE:
+- If NAMING RULES are provided above a+' FOLLOW THEM EXACTLY for declensions
+- If TACTICAL KNOWLEDGE is provided a+' use it to enrich commentary
+- If COMMENTARY EXAMPLES are provided a+' match their style and energy
+- If TONE GUIDANCE is provided a+' adjust your tone accordingly
+- RAG knowledge has PRIORITY over these general rules`;
 
  if (isSetEnd) {
  return basePrompt + `
@@ -562,26 +446,62 @@ EXAMPLES:
 NEVER use Polish "KONIEC SETA" — always use target language!`;
  }
 
- // Drama-based zone prompt
- const dramaZone = dramaLevel >= 4
-   ? `\n- 🔥 MAKSYMALNY DRAMAT (remis w końcówce/tie-break)! Każde słowo musi uderzać. Kulminacja!\n- Krotkie mocne zdania. Zero wstępów. Prosto do sedna.`
-   : dramaLevel === 3
-   ? `\n- ⚡ NAPIĘCIE (końcówka na styku)! Wyraźna emocja. Fakty + jeden silny akcent.`
-   : dramaLevel === 2
-   ? `\n- 📈 ENERGIA (końcówka)! Każdy punkt ważny. Energiczne ale kontrolowane.`
-   : dramaLevel === 1
-   ? `\n- 📊 UMIARKOWANIE (środek wyrównany). Fakty z energią. Wzmianka o kontekście walki.`
-   : `\n- 📝 SPOKOJNIE (start/duża przewaga). Zero dramy. Sucho i rzeczowo.
-- Przy błędzie serwisu w KOŃCÓWCE (dramaLevel 3-4): dodaj emocję zawodu/krytyki:
-  "w takim momencie!", "zaryzykował i nie wyszło", "postawił wszystko na jedną kartę",
-  "droga pomyłka w tak kluczowym momencie"`;
+if (isHotSituation) {
+ return basePrompt + `
+- ZONE HOT (20+)! Pelna petarda — kazdy punkt to dramat!
+- Maksymalna emocja, krotkie i mocne zdania. Czas na kulminacje narracji.
+- Jesli byl watek narracyjny (dominujacy zawodnik, seria) — teraz jest moment by go zamknac lub podkreslic.
 
- if (hasStreak) {
-   return basePrompt + dramaZone + `\n- SERIA PUNKTÓW! Wspomnij momentum.`;
+EXAMPLES (Polish):
+- "BUTRYN! W koncowce seta to on bierze sprawy w swoje rece!"
+- "McCarthy as w kluczowym momencie! Nerwy ze stali — mistrzowski serwis!"
+- "Blok Grozdanova! Juz piatym blokiem zamyka rywala! To moze byc punkt przelomowy!"
+- "Nikt nie ustepuje! Kazde dotkniecie pilki to oddzielna historia!"`;
+ } else if (hasStreak) {
+ return basePrompt + `
+- SCORING STREAK (5+)! Emphasize the momentum!
+
+EXAMPLES (Polish):
+- "Kolejny punkt w serii! Gospodarze buduja przewage!"
+- "Seria trwa! Juz piaty punkt pod rzad!"`;
  } else if (hasMilestone) {
-   return basePrompt + dramaZone + `\n- MILESTONE! Wspomnij numer osiągnięcia.`;
+ return basePrompt + `
+- PLAYER MILESTONE! Celebrate and MENTION THE NUMBER!
+
+EXAMPLES (Polish):
+- "Po raz PIATY Grozdanov zatrzymuje rywala blokiem! Dominuje w tym elemencie!"
+- "Trzeci as serwisowy McCarthy w tym secie! Rozgrzal reke!"
+- "DZIESIATY punkt Sasaka! Kapitalna dyspozycja atakujacego!"
+- "Kwolek juz 8. udany atak - skutecznosc imponujaca!"
+
+ALWAYS mention the milestone number!`;
+ } else if (isBigLead) {
+ return basePrompt + `
+- BIG LEAD (10+)! Mention the situation factually!
+
+EXAMPLES (Polish):
+- "Gospodarze prowadza 15:5. Grozdanov dolozyl kolejny punkt."
+- "Point for gosci, ale wciaz spory dystans - 8:18."`;
+ } else if (isEarlySet) {
+ return basePrompt + `
+- ZONE CALM (wynik do 8): Spokojny, rzeczowy start. Zero dramy, zero oceniania.
+- Krotkie zdania, sam fakt. Budujemy atmosfere powoli.
+
+EXAMPLES (Polish):
+- "Grozdanov skuteczny w bloku. Dobry poczatek."
+- "Serve error McCarthy. Point for rywali."
+- "Sasak konczy atak. Goscie obejmuja prowadzenie."`;
+ } else {
+ return basePrompt + `
+- ZONE MID (9-19): Rosnie napiecie. Rzeczowy ale z energia. Akcent na taktykę i walkę.
+- Mozesz wspomniec wątek narracyjny jesli pojawia sie w danych (kto dominuje, mini-seria).
+
+EXAMPLES (Polish):
+- "Grozdanov znow przy siatce! Juz trzeci blok w tym secie!"
+- "McCarthy celny w zagrywce — rosnie przewaga gospodarzy."
+- "Sasak przebija blok po przekatnej! Walka trwa."
+- "Kwolek z kontra! Goscie nie oddaja pola."`;
  }
- return basePrompt + dramaZone;
 };
 
 // ============================================================================
@@ -692,44 +612,6 @@ export async function POST(request: NextRequest) {
  // STEP 2: CHECK IF SET ENDED
  // ========================================================================
  const setNumber = rally.set_number || 1;
-
- // ── PHRASE TRACKER — skanuj ostatnie komentarze seta ────────────────────────
- const TRACKED_PHRASES_CONFIG = [
-   { phrase: 'muruje siatkę', limit: 2, alt: 'zamyka blokiem / zdobywa punkt blokiem' },
-   { phrase: 'muruje siatke', limit: 2, alt: 'zamyka blokiem / zdobywa punkt blokiem' },
-   { phrase: 'blok punktowy', limit: 3, alt: 'zamyka blokiem / czapa! / ręce przy siatce' },
-   { phrase: 'piłka żyje',   limit: 1, alt: 'akcja trwa / wymiana trwa' },
-   { phrase: 'pilka zyje',   limit: 1, alt: 'akcja trwa / wymiana trwa' },
-   { phrase: 'świetna obrona', limit: 2, alt: 'twarda obrona / kapitalnie wybroniony' },
-   { phrase: 'perfekcyjne przyjęcie', limit: 3, alt: 'w punkt przyjął / doskonale przyjął' },
-   { phrase: 'dłuższa wymiana', limit: 2, alt: 'zacięta walka / nie dają wbijać' },
-   { phrase: 'długa wymiana', limit: 2, alt: 'zacięta walka / nie dają wbijać' },
-   { phrase: 'alez emocje', limit: 1, alt: 'niesamowite widowisko / co za mecz' },
-   { phrase: 'z pierwszego tempa', limit: 3, alt: 'ze srodka / blyskawiczny atak / szybka pilka na srodek' },
-   { phrase: 'ze srodka z pierwszego', limit: 2, alt: 'ze srodka / szybka pilka / blyskawicznie' },
-   { phrase: 'konczy atak ze srodka', limit: 3, alt: 'wbija pilke ze srodka / przebija blok ze srodka' },
-   { phrase: 'konczy', limit: 8, alt: 'wbija pilke / przebija blok / zdobywa punkt / uderza' },
- ];
-
- // Zbierz komentarze z bieżącego seta (z recentRallies)
- const currentSetCommentaries = (recentRallies || [])
-   .filter((r: any) => r.set_number === setNumber)
-   .map((r: any) => (r.commentary || r.generated_commentary || '').toLowerCase()
-     .replace(/ą/g,'a').replace(/ę/g,'e').replace(/ó/g,'o').replace(/ś/g,'s')
-     .replace(/ź/g,'z').replace(/ż/g,'z').replace(/ć/g,'c').replace(/ń/g,'n').replace(/ł/g,'l'));
-
- const phraseWarnings: string[] = [];
- for (const tracked of TRACKED_PHRASES_CONFIG) {
-   const count = currentSetCommentaries.filter((c: string) => c.includes(tracked.phrase)).length;
-   if (count >= tracked.limit) {
-     phraseWarnings.push(`"${tracked.phrase}" użyte już ${count}x → użyj: ${tracked.alt}`);
-   }
- }
-
- const phraseWarningBlock = phraseWarnings.length > 0
-   ? '\nFRAZY WYCZERPANE W TYM SECIE — NIE używaj:\n' + phraseWarnings.map(w => '⚠️ ' + w).join('\n') + '\n'
-   : '';
-
  const setEndInfo = checkSetEnd(finalScore, setNumber, homeTeamFullName, awayTeamFullName);
 
  // ========================================================================
@@ -905,66 +787,6 @@ if (!rally.touches || rally.touches.length === 0) {
  
  const scoreDiff = Math.abs(finalScore.home - finalScore.away);
  const isBigLead = scoreDiff >= 10;
-
- // ── DRAMA LEVEL 0-4 (replaces boolean flags in prompt) ─────────────────
- const maxScoreD = Math.max(finalScore.home, finalScore.away);
- let dramaLevel = 0;
- if (maxScoreD >= 20) {
-   if (scoreDiff === 0) dramaLevel = 4;        // KOŃCÓWKA remis
-   else if (scoreDiff <= 2) dramaLevel = 3;    // KOŃCÓWKA na styku
-   else dramaLevel = 2;                         // KOŃCÓWKA
- } else if (maxScoreD >= 11) {
-   if (scoreDiff <= 2) dramaLevel = 1;         // ŚRODEK wyrównana
-   else dramaLevel = 0;                         // ŚRODEK spokojny
- }
- if (rally.set_number === 5) dramaLevel = Math.min(4, dramaLevel + 1); // tie-break +1
-
- // ── RALLY CATEGORY (dla RAG query + few-shot) ────────────────────────────
- const numDigs = rally.touches?.filter((t: any) => t.action?.toLowerCase().includes('dig') || t.action?.toLowerCase().includes('obron')).length || 0;
- const numBlocksTouches = rally.touches?.filter((t: any) => t.action?.toLowerCase().includes('block') || t.action?.toLowerCase().includes('blok')).length || 0;
- const numTouchesTotal = rally.touches?.length || 0;
- const isTransition = rally.touches?.some((t: any) => t.phase === 'Transition') || false;
-
- let rallyCategory = 'INNE';
- const aLower = scoringAction.toLowerCase();
- if (aLower.includes('blad serw') || aLower.includes('serve error') || aLower.includes('error serv')) {
-   rallyCategory = 'BŁĄD SERWISU';
- } else if (aLower.includes('ace') || aLower.includes('as serw') || (numTouchesTotal <= 2 && !aLower.includes('error'))) {
-   rallyCategory = 'AS SERWISOWY';
- } else if ((aLower.includes('blad przyjec') || aLower.includes('receive error')) && numTouchesTotal <= 2) {
-   rallyCategory = 'BŁĄD PRZYJĘCIA';
- } else if (aLower.includes('blad ataku') || aLower.includes('attack error')) {
-   rallyCategory = 'BŁĄD ATAKU';
- } else if (aLower.includes('block') || aLower.includes('blok punkt')) {
-   rallyCategory = 'BLOK PUNKTOWY';
- } else if (numDigs >= 2 || (numDigs >= 1 && numBlocksTouches >= 1)) {
-   rallyCategory = 'DŁUGA WYMIANA';
- } else {
-   const lastTouch = rally.touches?.[rally.touches.length - 1];
-   const attackLoc = lastTouch?.attackLocation || '';
-   const prefix = isTransition ? 'KONTRA → ' : '';
-   if (attackLoc.includes('Left')) rallyCategory = prefix + 'ATAK LEWE SKRZYDŁO';
-   else if (attackLoc.includes('Right')) rallyCategory = prefix + 'ATAK PRAWE SKRZYDŁO';
-   else if (attackLoc.includes('Middle') || attackLoc.includes('Pipe')) rallyCategory = prefix + 'ATAK ŚRODEK / PIPE';
-   else rallyCategory = prefix + 'ATAK WYGRANY';
- }
-
- // ── MOMENT SETA (dla RAG query) ──────────────────────────────────────────
- let momentSeta = '';
- if (maxScoreD <= 10) momentSeta = scoreDiff >= 5 ? 'START duża przewaga' : 'START';
- else if (maxScoreD <= 19) {
-   if (scoreDiff === 0) momentSeta = 'ŚRODEK remis';
-   else if (scoreDiff <= 2) momentSeta = 'ŚRODEK wyrównana';
-   else momentSeta = 'ŚRODEK';
- } else {
-   if (scoreDiff === 0) momentSeta = 'KOŃCÓWKA remis';
-   else if (scoreDiff <= 2) momentSeta = 'KOŃCÓWKA na styku';
-   else momentSeta = 'KOŃCÓWKA';
- }
-
- console.log('[DRAMA]', { dramaLevel, rallyCategory, momentSeta, isTransition });
-
-
  const isFirstPoint = (finalScore.home === 1 && finalScore.away === 0) || 
  (finalScore.home === 0 && finalScore.away === 1);
  const isTied = finalScore.home === finalScore.away;
@@ -1087,24 +909,17 @@ if (!rally.touches || rally.touches.length === 0) {
  
  const tacticsResults = await index.namespace('tactical-knowledge').query({
  vector: tacticsEmbedding.data[0].embedding,
- topK: 2,
+ topK: 4,
  includeMetadata: true,
  });
  
  if (tacticsResults.matches && tacticsResults.matches.length > 0) {
  const relevantTactics = tacticsResults.matches
- .filter(match => (match.score || 0) > 0.50); // wyższy próg — tylko naprawdę trafne
+ .filter(match => (match.score || 0) > 0.3);
  tacticsContext = relevantTactics
- .filter(m => {
-   // Odfiltruj akademickie pliki — zostaw tylko Wytyczne i Zasady
-   const txt = (m.metadata?.content || m.metadata?.text || '').toLowerCase();
-   const name = (m.metadata?.filename || m.metadata?.source || '').toLowerCase();
-   return name.includes('wytyczn') || name.includes('zasad') || name.includes('taktyk') || 
-          txt.includes('komentarz') || txt.includes('blad') || txt.includes('wytyczn');
- })
  .map((match) => match.metadata?.content || match.metadata?.text || '')
  .join('\n\n')
- .substring(0, 500);
+ .substring(0, 800);
  console.log('Tactics context:', tacticsContext.substring(0, 80) + '...');
  }
  ragDebug.push({
@@ -1126,10 +941,7 @@ if (!rally.touches || rally.touches.length === 0) {
  // ========================================================================
 
  let commentaryExamplesContext = '';
- // Używamy kategorii + momentu seta dla precyzyjnego retrievalu
- const commentaryQuery = rallyCategory && momentSeta
-   ? `${rallyCategory} ${momentSeta} przykład komentarz PlusLiga styl`
-   : `${scoringAction} komentarz przykład styl PlusLiga`;
+ const commentaryQuery = `${scoringAction} better commentary example ${scoringPlayer}`;
 
  try {
  console.log('Commentary examples query:', commentaryQuery);
@@ -1342,25 +1154,20 @@ if (!rally.touches || rally.touches.length === 0) {
  let commentaryPhrasesContext = '';
 
  try {
- // Query używa kategorii + momentu seta + fazy dla precyzyjniejszego retrievalu
+ // Query based on action type
+ const actionType = scoringAction.toLowerCase();
  let phrasesQuery = '';
- if (rallyCategory && momentSeta) {
-   phrasesQuery = `${rallyCategory} ${momentSeta} komentarz fraza PlusLiga`;
- } else {
-   const actionType = scoringAction.toLowerCase();
-   if (actionType.includes('ace') || actionType.includes('as serw')) {
-     phrasesQuery = 'as serwisowy zagrywka punkt bezposredni';
-   } else if (actionType.includes('blad serw') || actionType.includes('serve error')) {
-     phrasesQuery = 'blad serwisowy zepsuta zagrywka punkt dla rywali';
-   } else if (actionType.includes('block') || actionType.includes('blok')) {
-     phrasesQuery = 'blok punktowy zatrzymuje muruje mur przy siatce';
-   } else if (actionType.includes('attack') || actionType.includes('atak')) {
-     phrasesQuery = 'atak konczy przebija skuteczny punkt skrzydlo';
-   } else {
-     phrasesQuery = 'punkt akcja komentarz siatkówka PlusLiga';
-   }
+ 
+ if (actionType.includes('ace') || actionType.includes('serve')) {
+ phrasesQuery = 'ace serwis zagrywka punktowy asowy doskonaly perfekcyjny';
+ } else if (actionType.includes('block') && !actionType.includes('error')) {
+ phrasesQuery = 'blok skuteczny zatrzymuje muruje powstrzymuje obrona';
+ } else if (actionType.includes('attack') || actionType.includes('kill')) {
+ phrasesQuery = 'atak konczy przebija potezny skuteczny spike';
+ } else if (actionType.includes('dig')) {
+ phrasesQuery = 'obrona dig ratuje wyciaga odbija';
  }
-
+ 
  if (phrasesQuery) {
  console.log('Commentary phrases query:', phrasesQuery);
  
@@ -1389,7 +1196,7 @@ if (!rally.touches || rally.touches.length === 0) {
  .filter(Boolean);
  
  if (phrases.length > 0) {
- commentaryPhrasesContext = `INSPIRACJA — naturalne frazy z PlusLigi (naśladuj styl, nie kopiuj dosłownie):\n${phrases.join(' / ')}`;
+ commentaryPhrasesContext = `VARIACJE ZWROTOW — OBOWIAZKOWE! Zamiast mechanicznego "Punkt dla X" uzyj JEDNEGO z tych zwrotow:\n${phrases.join(' / ')}\nJezeli masz te warianty — MUSISZ uzyc jednego zamiast "Punkt dla"!`;
  console.log('Commentary phrases found:', phrases.length, 'variants');
  console.log('[RAG-DEBUG] Phrases scores:', phrasesResults.matches.map(m => m.score?.toFixed(3)).join(', '));
  }
@@ -1416,9 +1223,7 @@ if (!rally.touches || rally.touches.length === 0) {
 
  try {
  // Query set-summaries for strategic insights
- const summaryQuery = rallyCategory && momentSeta
-   ? `${momentSeta} ${rallyCategory} komentarz styl narracja PlusLiga`
-   : `komentarz styl ton narracja PlusLiga ${momentSeta}`;
+ const summaryQuery = `set strategy analysis key moments ${scoringPlayer} ${scoringAction}`;
  
  console.log('Set summaries query:', summaryQuery);
  
@@ -1646,20 +1451,20 @@ if (!rally.touches || rally.touches.length === 0) {
    // SERVE
    if (actionLower.includes('zagrywka') || actionLower.includes('serwis') || actionLower.includes('serve')) {
      const sType = touch.serveType || '';
-     const serveDesc = sType.includes('Float') ? 'zagrywka szybująca (float)' : sType.includes('Spin') ? 'zagrywka z wyskoku (jump spin)' : 'zagrywka';
+     const serveDesc = sType.includes('Float') ? 'zagrywka szybujaca/float (lekka, szybujaca — NIGDY mocna! PL: "szybujaca", IT: "flottante", DE: "Floater", TR: "float servis", ES: "flotante", PT: "flutuante", JP: "フローター")' : sType.includes('Spin') ? 'jump serve (PL: z wyskoku, IT: in salto, DE: Sprungaufschlag, TR: sıçrama, ES: en salto, PT: em salto, JP: ジャンプ)' : 'serve';
      const isLastTouch = idx === rally.touches!.length - 1;
      
      if (actionLower.includes('as ') || actionLower.includes('ace')) {
-       desc += ` - ${serveDesc} >>> AS SERWISOWY — punkt bezpośredni!`;
+       desc += ` - ${serveDesc} >>> SERVICE ACE! Direct point!`;
      } else if ((actionLower.includes('blad') || actionLower.includes('error')) && isLastTouch) {
-       desc += ` - ${serveDesc} >>> BŁĄD SERWISOWY — punkt dla rywali`;
+       desc += ` - ${serveDesc} >>> SERVE ERROR`;
      } else {
        desc += ` - ${serveDesc}`;
      }
    // RECEIVE
    } else if (actionLower.includes('przyjecie') || actionLower.includes('pass') || actionLower.includes('receive')) {
      if (actionLower.includes('perfect')) desc += ' - perfect reception';
-     else if (actionLower.includes('positive')) desc += ' - dobre przyjęcie';
+     else if (actionLower.includes('positive')) desc += ' - good reception';
      else if (actionLower.includes('negative') || actionLower.includes('poor')) {
        const poorVariants = [
          ' - imprecise reception',
@@ -1672,7 +1477,7 @@ if (!rally.touches || rally.touches.length === 0) {
        ];
        desc += poorVariants[Math.floor(Math.random() * poorVariants.length)];
      }
-     else desc += ' - przyjęcie';
+     else desc += ' - reception';
    // SET
    } else if (actionLower.includes('rozegranie') || actionLower.includes('setting') || actionLower === 'set') {
      const combo = touch.attackCombination || '';
@@ -1692,32 +1497,32 @@ if (!rally.touches || rally.touches.length === 0) {
      const isBackRow = loc.includes('Back') || loc.toLowerCase().includes('pipe') || combo.toLowerCase().includes('pipe');
      
      let atkDesc = 'attack';
-     if (loc.toLowerCase() === 'pipe') atkDesc = 'atak pipe z drugiej linii';
-     else if (loc.includes('Left') && loc.includes('Back')) atkDesc = 'atak z lewej strony (z drugiej linii)';
-     else if (loc.includes('Left')) atkDesc = 'atak z lewego skrzydła';
-     else if (loc.includes('Right') && loc.includes('Back')) atkDesc = 'atak z prawej strony (z drugiej linii)';
-     else if (loc.includes('Right')) atkDesc = 'atak z prawego skrzydła';
-     else if (loc.includes('Middle')) atkDesc = 'atak ze środka (z pierwszego tempa)';
-     else if (combo.toLowerCase().includes('pipe')) atkDesc = 'atak pipe z drugiej linii';
-     else if (isBackRow) atkDesc = 'atak z drugiej linii';
-     else atkDesc = 'atak';
+     if (loc.toLowerCase() === 'pipe') atkDesc = 'pipe back-row attack';
+     else if (loc.includes('Left') && loc.includes('Back')) atkDesc = 'back-row attack from left';
+     else if (loc.includes('Left')) atkDesc = 'attack from left';
+     else if (loc.includes('Right') && loc.includes('Back')) atkDesc = 'back-row attack from right';
+     else if (loc.includes('Right')) atkDesc = 'attack from right';
+     else if (loc.includes('Middle')) atkDesc = 'quick attack first tempo';
+     else if (combo.toLowerCase().includes('pipe')) atkDesc = 'pipe back-row attack';
+     else if (isBackRow) atkDesc = 'back-row attack';
+     else atkDesc = 'attack';
      
-     if (style === 'Tip') atkDesc += ' (kiwka)';
-     else if (style === 'Tool') atkDesc += ' (atak w blok — blok-out)';
+     if (style === 'Tip') atkDesc += ', tip shot';
+     else if (style === 'Tool') atkDesc += ', tool off block';
      
      const isLastTouch = idx === rally.touches!.length - 1;
      
      if (actionLower.includes('blad') || actionLower.includes('error')) {
        if (isLastTouch) {
-         desc += ` - ${atkDesc} >>> BŁĄD ATAKU — punkt dla rywali`;
+         desc += ` - ${atkDesc} >>> ATTACK ERROR`;
        } else {
-         desc += ` - ${atkDesc} (nieudany, akcja trwa)`;
+         desc += ` - ${atkDesc} (failed, play continues)`;
        }
      } else if (actionLower.includes('zablok') || actionLower.includes('block')) {
        if (isLastTouch) {
-         desc += ` - ${atkDesc} >>> ZABLOKOWANY — blok punktowy rywali`;
+         desc += ` - ${atkDesc} >>> BLOCKED`;
        } else {
-         desc += ` - ${atkDesc} (wyblok — piłka wraca, akcja TRWA)`;
+         desc += ` - ${atkDesc} (blocked, play continues)`;
        }
      } else if (isLastTouch) {
        desc += ` - ${atkDesc} >>> POINT!`;
@@ -1728,25 +1533,42 @@ if (!rally.touches || rally.touches.length === 0) {
    } else if (actionLower.includes('blok') || actionLower.includes('block')) {
      const isLastTouch = idx === rally.touches!.length - 1;
      if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) {
-       // wyblok: blocker touched ball but SCORING PLAYER wins
-       // Make crystal clear who is the blocker vs who scored
-       desc += ` - WYBLOK! ${player} jest BLOKEREM który dotknął piłki, ale atak przebił blok. ${player} NIE zdobył punktu — punkt zdobył atakujący (SCORING PLAYER)!`;
+       const blockSynonyms = [
+         ' - attacker beat the block (wyblok — attacker scores)',
+         ' - found a gap in the block (wyblok)',
+         ' - block touched but attacker wins',
+         ' - late block, attacker scores through',
+       ];
+       desc += blockSynonyms[Math.floor(Math.random() * blockSynonyms.length)];
      } else if (isLastTouch) {
        desc += ' - BLOCK POINT! (blok kończący — bloker zdobywa punkt)';
      } else {
-       desc += ` - WYBLOK przez ${player}: ${player} dotknął piłki ale jej NIE zablokował — piłka żyje, akcja TRWA! ${player} to BLOKER, nie atakujący!`;
+       // KEY FIX: WYBLOK — bloker nie zdobywa punktu. Sprawdz czy bloker wygral rally czy nie.
+       const blockTeamWon = touch.team === rally.team_scored;
+       if (blockTeamWon) {
+         desc += ' - WYBLOK: block touch, ball rebounds into play - this blocking team eventually WINS rally. Say: wyblok, akcja trwa!';
+       } else {
+         desc += ' - WYBLOK: block touch, ball rebounds into play - WARNING: this blocking team LOSES rally. Do NOT say this player scored!';
+       }
      }
    // DIG / DEFENSE
    } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
      const isLastTouch = idx === rally.touches!.length - 1;
      if (isLastTouch) {
-       desc += ' - obrona/dig (piłka wyszła na aut — punkt dla rywali)';
+       desc += ' - defensive dig (ball out — point to other team)';
      } else {
-       desc += ' - obrona/dig (piłka utrzymana w grze)';
+       // KEY FIX: tell GPT whether digging team won or lost the rally
+       // Prevents GPT from praising a dig + adding Fantastyczny punkt! when team lost
+       const digTeamWon = touch.team === rally.team_scored;
+       if (digTeamWon) {
+         desc += ' - dig/obrona (ball kept in play - this team eventually WINS rally)';
+       } else {
+         desc += ' - dig/obrona (ball kept in play) - WARNING: this team LOSES rally. Do NOT celebrate this as scoring.';
+       }
      }
    // FREE
    } else if (actionLower.includes('wolna') || actionLower.includes('free')) {
-     desc += ' - darmowa piłka (free ball — oddana przez rywali)';
+     desc += ' - free ball';
    } else {
      desc += ` - ${action}`;
    }
@@ -1757,52 +1579,23 @@ if (!rally.touches || rally.touches.length === 0) {
  const winnerTeamLabel = rally.team_scored === 'home' ? homeTeamFull : awayTeamFull;
 
  
- // Buduj touch chain: SCORER na górze (nie ostatnie dotknięcie!)
- // Problem: ostatnie dotknięcie to często obrona rywala (dig → aut) — nie atakujący
- // Scorer = scoringPlayer z touch chain. Znajdź jego ostatnią akcję ofensywną.
- const scorerLastAttackIdx = (() => {
-   for (let k = touchChainLines.length - 1; k >= 0; k--) {
-     const line = touchChainLines[k];
-     // Szukaj ataku scoringPlayer lub błędu który dał punkt (serve error, attack error)
-     if (line.includes(scoringPlayer) && (
-       line.includes('ATK') || line.includes('BLK') || line.includes('SRW') ||
-       line.includes('✅') || line.includes('❌') || line.includes('POINT')
-     )) return k;
-   }
-   return touchChainLines.length - 1; // fallback: ostatnia linia
- })();
-
- const climaxLine = touchChainLines[scorerLastAttackIdx] || touchChainLines[touchChainLines.length - 1];
- const contextLines = touchChainLines.filter((_, k) => k !== scorerLastAttackIdx);
-
- const chainFormatted = numTouches <= 4
-   ? touchChainLines.join('\n')
-   : `★ CLIMAX — SCORER: ${scoringPlayer} — ${climaxLine}\n★ POINT FOR: ${winnerTeamLabel}\n\nKONTEKST (wcześniejsze akcje):\n${contextLines.join('\n')}`;
-
  touchContext = `
 TOUCH CHAIN (${numTouches} touches${isLongRally ? ' — long rally!' : ''}):
-${chainFormatted}
-=> SERVED BY: ${rally.touches[0]?.player || '?'} — this player SERVED, scorer is ${scoringPlayer}. NEVER confuse them!
-=> POINT FOR: ${winnerTeamLabel} ← UŻYJ TEJ NAZWY DOSŁOWNIE, nie tłumacz!
+${touchChainLines.join('\n')}
+=> SERVED BY: ${rally.touches[0]?.player || '?'} — this player SERVED. Do NOT say they scored!
+=> FINAL SCORER: ${scoringPlayer} [${winnerTeamLabel}] — ONLY this player/team scored the point!
+=> POINT FOR: ${winnerTeamLabel}
 
 CRITICAL COMMENTARY RULES:
 1. "SERVED BY" ≠ scorer! If "SERVED BY" shows X and scorer is Y — X served, Y finished. NEVER say Y served!
 1b. "POINT FOR: ${winnerTeamLabel}" = ONLY this team scored. NEVER say the other team scored!
-2. CLIMAX-FIRST: ★ CLIMAX pokazuje kto zdobył punkt (SCORER) i jak. To jest PIERWSZE zdanie.
-   NIGDY nie przypisuj punktu osobie z ostatniego dotknięcia jeśli to była obrona/dig!
-   "SCORER: Weber" = Weber zdobywa punkt, nawet jeśli po nim było dotknięcie Karlitzka (dig → aut).
-3. LENGTH LIMIT (ABSOLUTE HARD LIMIT): 1-3 touches = MAX 1 sentence. 4-6 touches = MAX 2 sentences. 7+ touches = MAX 3 SHORT sentences. TOTAL MAX 50 words. NEVER more — cut the context, NEVER cut the ending!
-4. START WITH CLIMAX: For 5+ touches — your FIRST sentence must say who scored and how. Context (serve, reception) goes in sentence 2-3 only if space allows.
-5. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
-6. NO "PUNKT DLA X": Banned! Use: "[Nazwisko] konczy!", "Punkt!", "I to punkt!", "[Druzyna] bierze!" or emotional equivalent.
-7. SERVE: Error only when ">>> SERVE ERROR". Otherwise serve was good.
-8. BLOCK — 4 przypadki:
-   - "BLOCK POINT" / "blok punktowy" = piłka spada w pole atakujących → "muruje siatkę!", "blok punktowy!"
-   - "wyblok" / "ball stays blocker side" = piłka po bloku PO STRONIE BLOKUJĄCYCH → "wyblok — piłka wraca na stronę [blokujący]!"
-   - "block, ball back to attacker" / "piłka wraca do atakujących" = akcja trwa po stronie atakujących → "blok ale piłka wraca — [atakujący] ponawia!"
-   - "blok-out" = piłka po bloku wychodzi za boisko → "blok-out! Punkt dla [atakujący]!"
-   NIE używaj "kończy po wybloku X" — wyblok X oznacza piłka poszła do X, nie od X.
-9. DIG ≠ BLOCK: "defensive dig" = obrona (not blok).
+2. Describe ONLY what is in the touch chain above. Nothing invented!
+3. LENGTH LIMIT (MANDATORY): 2-3 touches = MAX 2 sentences. 4-6 touches = MAX 3 sentences. 7+ touches = MAX 3 sentences. NEVER more than 3 sentences!
+4. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
+5. NO "PUNKT DLA X": Banned! Use: "[Nazwisko] konczy!", "Punkt!", "I to punkt!", "[Druzyna] bierze!" or emotional equivalent.
+6. SERVE: Error only when ">>> SERVE ERROR". Otherwise serve was good.
+7. BLOCK POINT vs WYBLOK: "BLOCK POINT!" = blocker scores. "block touch, ball rebounds" = wyblok — say "wyblok" in PL, NEVER "blokuje" if play continued.
+8. DIG ≠ BLOCK: "defensive dig" = obrona (not blok).
 9. PL: "sets to left/right wing" → "wystawia na lewe/prawe skrzydlo".
 10. NEVER "znowu/ponownie" — only if same player appears TWICE in this touch chain.
 11. PL: "Thales" not "Hoss". "as serwisowy" not "SERVICE ACE". "Koniec seta!" not "SET OVER".`;
@@ -1894,30 +1687,31 @@ ${Object.keys(playerPositions).length > 0 ? `PLAYER POSITIONS (use naturally, do
 ${Object.entries(playerPositions).map(([name, pos]) => `${name} = ${pos}`).join(', ')}
 ` : ''}
 SCORE & CONTEXT:
-HOME: ${homeTeamFull} | AWAY: ${awayTeamFull} ← NAZWY DOSŁOWNE, NIGDY nie tłumacz ani nie modyfikuj!
+HOME: ${homeTeamFull} | AWAY: ${awayTeamFull}
 Rally #${rally.rally_number} | Set ${setNumber} | Score: ${score} | Point scored by: ${rally.team_scored === 'home' ? homeTeamFull + ' (home)' : awayTeamFull + ' (away)'}
 ${rally.phase ? `PHASE: ${rally.phase === 'First Ball' ? 'SIDE-OUT (first ball) - first attack after reception. Reception quality and attack combination are key.' : rally.phase === 'Transition' ? 'TRANSITION - attack after defensive dig. Often chaotic, requires improvisation. Setter has fewer options.' : rally.phase}` : ''}
 ${rally.homeRotation || rally.awayRotation ? `ROTATION: ${homeTeamFull} R${rally.homeRotation || '?'} | ${awayTeamFull} R${rally.awayRotation || '?'}${rally.homeRotation === 1 || rally.awayRotation === 1 ? ' (R1 = setter at net, full attack options)' : ''}${rally.homeRotation === 4 || rally.awayRotation === 4 ? ' (R4 = setter in back row, limited options)' : ''}` : ''}
 SCORE SITUATION: ${scoreSituation}
 WHO LEADS: ${leadInfo}${situationContext}${errorContext}${substitutionContext}
 
-${namingRulesContext ? `ZASADY ODMIANY NAZWISK (PRIORYTET!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `SUGESTIE STYLISTYCZNE (inspiracja):\n${commentaryPhrasesContext}\n\n` : ''}${commentaryHintsContext ? `KOREKTY UZYTKOWNIKA (PRIORYTET!):\n${commentaryHintsContext}\n\n` : ''}${commentaryExamplesContext ? `WZORZEC STYLU:\n${commentaryExamplesContext}\n\n` : ''}${playerContext ? `PROFIL ZAWODNIKA:\n${playerContext}` : ''}
+${tacticsContext ? `TACTICAL CONTEXT:\n${tacticsContext}\n\n` : ''}${commentaryExamplesContext ? `GOOD COMMENTARY EXAMPLES:\n${commentaryExamplesContext}\n\n` : ''}${commentaryHintsContext ? `[!!] USER CORRECTIONS & HINTS (PRIORITY!):\n${commentaryHintsContext}\n\n` : ''}${namingRulesContext ? `NAMING RULES (PRIORITY!):\n${namingRulesContext}\n\n` : ''}${commentaryPhrasesContext ? `PHRASE VARIATIONS:\n${commentaryPhrasesContext}\n\n` : ''}${setSummariesContext ? `SET-LEVEL STRATEGIC INSIGHTS:\n${setSummariesContext}\n\n` : ''}${toneRulesContext ? `TONE GUIDANCE:\n${toneRulesContext}\n\n` : ''}${playerContext ? `PLAYER PROFILE:\n${playerContext}` : ''}
 
-ZASADY (10 regul — zamiast 15+ sprzecznych):
-⚠️ NAZWY DRUŻYN: Używaj DOKŁADNIE nazw z "HOME:" i "AWAY:" powyżej. NIGDY nie tłumacz, nie skracaj, nie modyfikuj. "LUK" to NIE jest "Łuk". "PGE" to NIE jest "Polskie Górnictwo Energetyczne". Kopiuj DOSŁOWNIE.
-1. STYL NARRACJI: \${narrativeStyle === 'climax-first' 
-   ? 'CLIMAX-FIRST — zacznij od kto i jak zdobył punkt (★ CLIMAX). Kontekst (zagrywka, przyjęcie) dopiero potem.'
-   : 'CHRONOLOGICZNY — PIERWSZE ZDANIE musi zaczynac sie od zagrywki. Buduj akcje: zagrywka → przyjecie → atak → PUNKT! NIE zaczynaj od kulminacji — to bedzie climax-first, nie chronologiczny. Jesli zabraknie miejsca — skroc srodek, nigdy nie urywaj zakonczenia.'
-2. TYLKO touch chain — nic nie wymyslaj. Kazda akcja musi byc w danych powyzej.
-2b. PODMIOT ZAWSZE: "piłka kończy atak" jest BŁĘDEM — piłka nie kończy ataku, zawodnik kończy. Zawsze: "[Nazwisko] kończy atak" lub "[Nazwisko] zdobywa punkt".
-3. WYNIK: Uzywaj DOKLADNIE "SCORE SITUATION" i "WHO LEADS". NIGDY nie twórz innego!
-4. NAZWISKA: Z touch chain. Imie tylko jesli PROFIL ZAWODNIKA potwierdza. W razine watpliwosci — samo nazwisko.
-5. ${language === 'pl' ? 'ODMIANA PL: Kaczmarek→Kaczmareka, Szalpuk→Szalpuka, Butryn→Butryna, Toniutti→Toniuttiego.' : 'NAMES: Base form only — Kaczmarek not Kaczmarka.'}
-6. ${setEndInfo.isSetEnd ? `KONIEC SETA! Oglos to! Wynik: ${score}. Zwyciezca: ${setEndInfo.winner}.` : isFirstPoint ? 'PIERWSZA AKCJA meczu — krotko, zadnego "kolejny"!' : isHotSituation ? 'KONCOWKA — buduj napiecie!' : currentStreak >= 3 ? 'SERIA PUNKTOW — wspomnij!' : 'Rzeczowo i energicznie.'}
-7. ${attackingPlayer ? `ATAK: Chwál ${attackingPlayer} za przelamanie bloku. NIE wspominaj bledow obrony!` : ''}
-8. ${attackCombo ? `TYP: ${attackCombo}${attackLocation ? ` z ${attackLocation}` : ''}${attackStyle ? ` styl: ${attackStyle}` : ''} — opisz konkretnie.` : serveType ? `TYP ZAGRYWKI: ${serveType}` : ''}
-9. ${rally.phase === 'Transition' ? 'KONTRA — improwizacja, szybka reakcja.' : rally.phase === 'First Ball' ? 'PIERWSZA PILKA — przyjecie tylko jesli wazne.' : ''}
-10. ${commentaryHintsContext ? 'KOREKTY UZYTKOWNIKA maja ABSOLUTNY PRIORYTET!' : 'Nie powtarzaj informacji. Wynik, zdobywca — wspomnij RAZ.'}
+INSTRUCTIONS:
+- Describe ONLY the touch chain above. Each touch in order. Do not add anything!
+- SCORE: Use EXACTLY the score from SCORE SITUATION and WHO LEADS above. NEVER invent a different score! If it says ${otherTeamName || 'opponent'} STILL LEADS — do not say ${scoringTeamName || 'team'} is ahead!
+- NAMES: Use surnames from touch chain. You may add a first name only if PLAYER PROFILE confirms it — NEVER invent names! If unsure — surname only.
+- ${setEndInfo.isSetEnd ? `SET OVER! ANNOUNCE IT! Final score: ${score}. Winner: ${setEndInfo.winner}.` : isFirstPoint ? 'FIRST POINT — brief and calm.' : isHotSituation ? 'SET ENDGAME — build tension!' : currentStreak >= 3 ? 'STREAK — highlight momentum!' : milestone ? 'MILESTONE — mention the number!' : isBigLead ? 'Big lead — note the dominance.' : isEarlySet ? 'Early set — calm.' : 'Mid-set — factual.'}
+- ${attackingPlayer ? `This is ${attackingPlayer}'s ATTACK — praise the ATTACKER, not the block error! Use: "${attackingPlayer} beats ${scoringPlayer}'s block!"` : ''}
+- ${milestone ? `IMPORTANT: Mention this is ${milestone}!` : ''}${passInstructions}
+- ${commentaryHintsContext ? 'APPLY USER HINTS - they have PRIORITY over other context!' : ''}
+- ${isFirstPoint ? 'Do NOT use "increases/reduces lead" — this is the FIRST point!' : ''}
+- ${language === 'pl' ? 'ODMIANA PL: Odmieniaj nazwiska przez przypadki — Kaczmarek→Kaczmareka, Szalpuk→Szalpuka, Butryn→Butryna, Toniutti→Toniuttiego, Shoji→Shojiego. Dopasuj przypadek do kontekstu zdania!' : 'NAMES: Surnames invariable — use BASE FORM only. NOT Kaczmarka but Kaczmarek.'}
+- DO NOT REPEAT INFORMATION! Score, who scored, who leads — mention ONCE. Do not add another sentence saying the same thing.
+- AVOID MECHANICAL PHRASES: Do NOT use literal score-report language. Use emotional equivalents from tone-rules context.
+- ${attackCombo ? `TACTICAL DATA: Attack type ${attackCombo}${attackLocation ? `, zone: ${attackLocation}` : ''}${attackStyle ? `, style: ${attackStyle}` : ''}. Use this to describe SPECIFICALLY what happened (e.g. diagonal attack, pipe, quick middle) instead of vague terms!` : serveType ? `TACTICAL DATA: Serve type ${serveType}. Describe it specifically!` : ''}
+- ${rally.substitutions?.length ? 'SUBSTITUTION! Weave naturally into commentary using tactical hints.' : ''}
+- ${rally.phase === 'Transition' ? 'TRANSITION ATTACK! Highlight quick reaction, improvisation, less time to set up.' : rally.phase === 'First Ball' ? 'SIDE-OUT — mention reception quality only if it affected the attack (perfect = full combination, poor = forced ball).' : ''}
+- ${(rally.homeRotation || rally.awayRotation) ? 'ROTATION: Mention ONLY when tactically relevant (e.g. setter in back row = fewer options). Do NOT mention rotation number in every commentary!' : ''}
 
 🔴 FINAL REMINDER: Your response must be 100% in ${language === 'pl' ? 'Polish' : language === 'it' ? 'Italian' : language === 'de' ? 'German' : language === 'tr' ? 'Turkish' : language === 'es' ? 'Spanish' : language === 'pt' ? 'Portuguese' : language === 'jp' ? 'Japanese' : 'English'}. Zero Polish words allowed. If context data contains Polish — translate it. Do NOT write a single Polish word.`;
 
@@ -1952,10 +1746,7 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
  isBigLead, 
  currentStreak >= 3,
  milestone !== '',
- language,
- dramaLevel,
- rallyCategory,
- momentSeta
+ language
  );
  
  console.log('[PRE-GPT] touchContext length:', touchContext.length);
@@ -1963,16 +1754,20 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
  
  // B1: Dynamic token limits based on rally complexity
  const isServeError = numTouches <= 2 && scoringAction.toLowerCase().includes('blad serw');
-
- // ── HYBRYDA NARRACJI ──────────────────────────────────────────────────────
- const narrativeStyle: 'climax-first' | 'chronological' = 
-   isServeError ? 'chronological'
-   : dramaLevel >= 3 ? 'climax-first'
-   : dramaLevel === 2 ? (Math.random() < 0.7 ? 'climax-first' : 'chronological')
-   : (Math.random() < 0.5 ? 'climax-first' : 'chronological');
- console.log('[NARRATIVE]', narrativeStyle);
  const isAcePoint = numTouches <= 2 && (scoringAction.toLowerCase().includes('ace') || scoringAction.toLowerCase().includes('as serw'));
  const hasSubstitution = rally.substitutions?.length > 0;
+
+ // ── HYBRYDA NARRACJI — dystrybucja (Tomek 2026-05-13) ──────────────────────
+ // Zmiana: więcej chronologicznych (70% przy dramaLevel 0-1)
+ // >12 dotknięć = zawsze climax-first ale MAX 1 zdanie (skrócony)
+ const isVeryLongRally = numTouches > 12;
+ const narrativeStyle: 'climax-first' | 'chronological' = 
+   isServeError ? 'chronological'
+   : isVeryLongRally ? 'climax-first'   // >12 dotknięć = tylko kto/jak, 1 zdanie
+   : isHotSituation ? 'climax-first'   // końcówka/tie-break = climax first
+   : maxScore >= 18 ? (Math.random() < 0.5 ? 'climax-first' : 'chronological')   // po 18 = 50/50
+   : (Math.random() < 0.3 ? 'climax-first' : 'chronological');  // spokojny = 70% chronologiczny
+ console.log('[NARRATIVE]', narrativeStyle, 'touches:', numTouches, 'veryLong:', isVeryLongRally);
  
  let dynamicMaxTokens = 150; // default: normal rally
  if (setEndInfo.isSetEnd) {
@@ -1982,16 +1777,16 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
  } else if (numTouches <= 3) {
    dynamicMaxTokens = 80;  // short: 1-2 sentences MAX
  } else if (numTouches >= 8) {
-   dynamicMaxTokens = 200; // long rally: raised to prevent cutoff — max 4 sentences
+   dynamicMaxTokens = 160; // long rally: 3 sentences MAX
  } else if (numTouches >= 5) {
-   dynamicMaxTokens = 150; // medium: 2-3 sentences
+   dynamicMaxTokens = 120; // medium: 2-3 sentences MAX
  }
  // Modifiers
  if (hasSubstitution) dynamicMaxTokens += 40;
- if (isHotSituation) dynamicMaxTokens += 40;
+ if (isHotSituation) dynamicMaxTokens += 30;
+ if (narrativeStyle === 'chronological' && !isVeryLongRally) dynamicMaxTokens += 30;
+ if (isVeryLongRally) dynamicMaxTokens = Math.min(dynamicMaxTokens, 80); // >12 dotknięć = max 80 tokenów
  if (milestone) dynamicMaxTokens += 30;
- // Chronologiczny styl potrzebuje więcej tokenów — buduje od zagrywki do końca
- if (narrativeStyle === 'chronological') dynamicMaxTokens += 30;
  
  console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
 
@@ -2035,12 +1830,35 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
    if (lang === 'pl') {
      // ── English leaks → Polish ──────────────────────────────────────────
      t = t.replace(/\bSERVICE ACE\b/g, 'as serwisowy');
+     // "SET para X" — hiszpański artifact w PL
+     t = t.replace(/SET para /g, 'SET dla ');
+     // Hiszpański wykrzyknik ¡ nigdy nie powinien być w PL
+     t = t.replace(/¡SET!/g, 'SET!');
+     t = t.replace(/¡/g, '');
+     // Angielskie/błędne formy serwisu w wielkich literach
+     t = t.replace(/SERVISIE/gi, 'serwisie');
+     t = t.replace(/SERVIS\b/gi, 'serwis');
+     t = t.replace(/BŁĄD W SERV[A-Z]*/gi, 'błąd serwisowy');
      t = t.replace(/\bSET OVER\b/g, 'Koniec seta!');
      t = t.replace(/\bfloat serve\b/gi, 'zagrywka szybująca');
      t = t.replace(/\bjump serve\b/gi, 'zagrywka z wyskoku');
      t = t.replace(/\bmomentum\b/gi, 'impet');
      t = t.replace(/\bdig\b/gi, 'obrona');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/Hossa/g, 'Thalesa');
+     t = t.replace(/Hossi/g, 'Thalesa');
+     t = t.replace(/Hoss /g, 'Thales ');
+     t = t.replace(/Hoss,/g, 'Thales,');
+     t = t.replace(/Hoss!/g, 'Thales!');
+     t = t.replace(/Hoss\./g, 'Thales.');
+
+     // Japońskie znaki wyciekające do PL — zamień na nazwisko
+     t = t.replace(/レオン/g, 'Leon');
+     t = t.replace(/タレス/g, 'Thales');
+     t = t.replace(/ボワンジ/g, 'Bołądź');
+     t = t.replace(/コメンダ/g, 'Komenda');
+     t = t.replace(/タバレス/g, 'Tavares');
+     t = t.replace(/グロズダノフ/g, 'Grozdanov');
 
      // ── "Punkt dla X" → neutral ending ─────────────────────────────────
      const punktDlaVariants = [
@@ -2062,352 +1880,318 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
 
      // ── Forbidden words ─────────────────────────────────────────────────
      t = t.replace(/\bnieporadnie\b/gi, 'nieprecyzyjnie');
+     // "wbija w boisko" → "wbija piłkę w boisko" (feedback użytkownika)
+     t = t.replace(/wbija w boisko/gi, 'wbija piłkę w boisko');
+     t = t.replace(/wbił w boisko/gi, 'wbił piłkę w boisko');
+     // "wyciąga z podłogi obronę — piłka ląduje poza boiskiem"
+     // = gracz stracił rally po swojej obronie → nie chwalimy fenomenalnie, skracamy
+     t = t.replace(/fenomenalnie wyciąga z podłogi obronę[^!.]*piłka ląduje poza boiskiem/gi,
+       'niestety piłka ląduje poza boiskiem');
+     t = t.replace(/wyciąga z podłogi obronę[^!.]*piłka ląduje poza boiskiem/gi,
+       'niestety piłka ląduje poza boiskiem');
+     t = t.replace(/kapitalnie wyciąga z podłogi[^!.]*piłka ląduje poza boiskiem/gi,
+       'niestety piłka ląduje poza boiskiem');
+     t = t.replace(/wyciąga z podłogi[^!.]*piłka ląduje poza boiskiem/gi,
+       'niestety piłka ląduje poza boiskiem');
+     // Błąd ataku vs błąd przyjęcia — kontekstowe naprawienie błędnej klasyfikacji
+     if (scoringAction.toLowerCase().includes('przyjęci') ||
+         scoringAction.toLowerCase().includes('odbior') ||
+         scoringAction.toLowerCase().includes('receive') ||
+         scoringAction.toLowerCase().includes('pass')) {
+       const spEscBl = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+       t = t.replace(new RegExp(`(B|b)łąd w ataku\\s+${spEscBl}`, 'g'),
+         `Błąd w przyjęciu ${scoringPlayer}`);
+       t = t.replace(/błąd w ataku (przyjmującego|przyjmuje)/gi, 'błąd w przyjęciu');
+     }
 
-     // ── Banned phrases — najczęstsze błędy GPT ──────────────────────────
-     // kapitalnie/niesamowite/fenomenalnie — max 1x, tylko przy dramaLevel >= 3
-     {
-       const allowEmphasis = dramaLevel >= 3;
-       // kapitalnie — max 1x przy drama>=3, inaczej → świetnie
-       let kapCount = 0;
-       t = t.replace(/\b(kapitalnie|kapitalna|kapitalny|kapitalnego|kapitalnym|kapitalnej|kapitalnych)\b/gi,
-         (m) => {
-           if (allowEmphasis && kapCount === 0) { kapCount++; return m; }
-           const alt: Record<string,string> = {
-             'kapitalnie':'świetnie','kapitalna':'świetna','kapitalny':'świetny',
-             'kapitalnego':'świetnego','kapitalnym':'świetnym','kapitalnej':'świetnej','kapitalnych':'świetnych'
-           };
-           return alt[m.toLowerCase()] || 'świetnie';
-         });
-       // niesamowite — max 1x przy drama>=3
-       let niesamCount = 0;
-       t = t.replace(/\bniesamowit\w*/gi, (m) => {
-         if (allowEmphasis && niesamCount === 0) { niesamCount++; return m; }
-         return 'doskonał' + (m.slice(-1) === 'e' ? 'e' : m.slice(-2) === 'ie' ? 'ie' : 'y');
-       });
-       // fenomenalnie — max 1x tylko przy drama=4
-       let fenomCount = 0;
-       t = t.replace(/\b(fenomenalnie|fenomenalna|fenomenalny|fenomenalnego)\b/gi, (m) => {
-         if (dramaLevel >= 4 && fenomCount === 0) { fenomCount++; return m; }
-         return m.includes('nie') ? 'znakomicie' : m.includes('na') ? 'znakomita' : 'znakomity';
-       });
-     }
-     t = t.replace(/ma trudne przyjęcie/gi, 'z problemami w przyjęciu');
-     // Odmiana apostrofowanych nazwisk — McCarthy'm → McCarthy'ego
-     t = t.replace(/McCarthy'm/g, "McCarthy'ego");
-     t = t.replace(/McCarthy'mu/g, "McCarthy'emu");
-     t = t.replace(/O'Connor'm/g, "O'Connora");
-     // ── Odmiana nazwisk na -ek ────────────────────────────────────────────────
-     if (lang === 'pl') {
-       t = t.replace(/Kwoleka/g, 'Kwolka');
-       t = t.replace(/Karliczeka/g, 'Karlitzka');
-       t = t.replace(/Karliczek[uo]wi/g, 'Karlitzkowi');
-       t = t.replace(/Karliczkiem/g, 'Karlitzkiem');
-       // Ogólna reguła: [Cz]ek → [tz]ka przy odmianie
-       t = t.replace(/Koppersa/g, 'Koppersa'); // OK
-       t = t.replace(/Toniuttiego/g, 'Toniuttiego'); // OK
-       t = t.replace(/Kwolek[uo]wi/g, 'Kwolkowi');
-       t = t.replace(/Bienieka/g, 'Bieńka');
-       // Duplikat imię+nazwisko
-       t = t.replace(/Thales Thales/g, 'Thales');
-       t = t.replace(/Hoss Hoss/g, 'Hoss');
-       t = t.replace(/\b([A-Z][a-z]{2,}) \1\b/g, '$1');
-       // bierze ten punkt
-       t = t.replace(/bierze ten punkt/gi, 'zdobywa punkt');
-       t = t.replace(/Bieńkea/g, 'Bieńka');
-       t = t.replace(/Sasaeka/g, 'Saszka');
-       // "powiększa impet" — niepolskie
-       t = t.replace(/powiększa impet/gi, 'buduje przewagę');
-       t = t.replace(/zwiększa impet/gi, 'wzmacnia przewagę');
-     }
-     // Ogólna reguła: X'm → X'ego (dopełniacz)
-     t = t.replace(/([A-Z][a-z]+)'m/g, "$1'ego");
-     t = t.replace(/([A-Z][a-z]+)'mu/g, "$1'emu");
-     t = t.replace(/ma trudne przyjecie/gi, 'z problemami w przyjęciu');
-     // Słownictwo blok
-     t = t.replace(/muruje atakującego rywala/gi, 'muruje siatkę');
-     t = t.replace(/muruje atakujacego rywala/gi, 'muruje siatkę');
-     t = t.replace(/wbija blok punktowy/gi, 'zdobywa punkt blokiem');
-     t = t.replace(/wbija blok/gi, 'zamyka blokiem');
-     t = t.replace(/wbija piłkę w boisko/gi, 'wbija piłkę w boisko');
-     t = t.replace(/wbija(?! piłkę)/gi, 'wbija piłkę');
-     // Przyjęcie — nie "trudne"
-     t = t.replace(/trudne przyjęcie/gi, 'niedokładne przyjęcie');
-     t = t.replace(/trudne przyjecie/gi, 'niedokładne przyjęcie');
-     t = t.replace(/przyjęcie nie jest precyzyjne/gi, 'przyjęcie dalekie od ideału');
-     t = t.replace(/przyjecie nie jest precyzyjne/gi, 'przyjęcie dalekie od ideału');
-     // Kiwka — naturalna forma
-     t = t.replace(/atakuje kiwką/gi, 'kiwa');
-     t = t.replace(/atakuje kiwka/gi, 'kiwa');
-     t = t.replace(/próbuje kiwką/gi, 'próbuje zaskoczyć kiwką');
-     // Wyblok — "wraca w pole" → "wraca na stronę"
-     t = t.replace(/wraca w pole/gi, 'wraca na stronę atakujących');
-     t = t.replace(/wraca w pole gry/gi, 'wraca na stronę atakujących');
-     // "oczko" — max 1x
-     {
-       let oczkoCount = 0;
-       t = t.replace(/„oczko"|"oczko"|oczko/gi, (m) => {
-         oczkoCount++;
-         return oczkoCount <= 1 ? 'punkt' : 'punkt';
-       });
-     }
-     t = t.replace(/Punkt oddany bez walki[!.]?/gi, 'strata punktu.');
-     t = t.replace(/Nieudana próba serwisu[!.]?/gi, 'błąd na zagrywce.');
-     t = t.replace(/Zmarnowany serwis[!,.]?/gi, 'Błąd serwisowy.');
-     // "prowadzi już" bez dalszego kontekstu — zbyt urwane
-     t = t.replace(/prowadzi już!\s*$/gi, 'prowadzi!');
-     t = t.replace(/prowadzi już\.\s*$/gi, 'prowadzi!');
-     // Hard length limit — max 3 zdania, max 55 słów
-     if (lang === 'pl') {
-       const sentences = t.split(/(?<=[.!?])\s+/);
-       if (sentences.length > 3) {
-         t = sentences.slice(0, 3).join(' ');
-       }
-       const words = t.split(/\s+/);
-       if (words.length > 55) {
-         // Obetnij do 55 słów na granicy zdania
-         const truncated = words.slice(0, 55).join(' ');
-         const lastPunct = Math.max(truncated.lastIndexOf('.'), truncated.lastIndexOf('!'), truncated.lastIndexOf('?'));
-         t = lastPunct > 30 ? truncated.slice(0, lastPunct + 1) : truncated + '.';
-       }
-     }
-     // Błąd serwisu — max 10 słów, obcinamy nadmiar
-     if (/błąd serwis|serw.*błąd|myli się.*serw|blad serw/i.test(t)) {
-       const sentences = t.split(/(?<=[.!?])\s+/);
-       if (sentences.length > 1 && t.split(/\s+/).length > 12) {
-         t = sentences[0]; // zostaw tylko pierwsze zdanie
-       }
-     }
-     t = t.replace(/wystawia do środka/gi, 'wystawia na środek');
-     t = t.replace(/wystawiając do środka/gi, 'wystawiając na środek');
-     // Gramatyka — "kolejne punkt" i podobne artefakty GPT
-     t = t.replace(/[Kk]olejne punkt/g, 'Kolejny punkt');
-     t = t.replace(/[Kk]olejny punkt trafia na konto/gi, 'Punkt dla');
-     t = t.replace(/[Kk]olejne punkty trafiają na konto/gi, 'Punkt dla');
-     t = t.replace(/[Pp]unkt trafia na konto/gi, 'Punkt dla');
-     t = t.replace(/trafia na konto ([A-ZŁŚŹĆĘÓĄŃ])/g, 'dla $1');
-     // "Kolejny punkt oddane/oddany rywalom"
-     t = t.replace(/[Kk]olejny punkt oddane rywalom[^.!]*[.!]?/gi, 'Błąd serwisowy.');
-     t = t.replace(/[Kk]olejny punkt oddany rywalom[^.!]*[.!]?/gi, 'Błąd serwisowy.');
-     t = t.replace(/[Pp]unkt oddane rywalom[^.!]*/gi, 'Punkt dla rywali.');
-     t = t.replace(/[Pp]unkt oddany rywalom[^.!]*/gi, 'Punkt dla rywali.');
-     t = t.replace(/oddane rywalom/gi, 'dla rywali');
-     // "zdobywa!" bez doprecyzowania
-     t = t.replace(/i zdobywa!/gi, 'i zdobywa punkt!');
-     t = t.replace(/i zdobywa(?! punkt)/gi, 'i zdobywa punkt');
-     // Zdobywa punkt prowadzenie (artefakt score suppression)
-     t = t.replace(/zdobywa punkt prowadzenie/gi, 'zdobywa punkt');
-     t = t.replace(/zdobywa punkt i prowadzenie/gi, 'zdobywa punkt');
-     // Freeball — naturalne formy
-     t = t.replace(/puszcza swobodną piłkę/gi, 'oddaje piłkę za darmo');
-     t = t.replace(/posyła swobodną piłkę/gi, 'oddaje piłkę za darmo');
-     t = t.replace(/zagrywa swobodną piłkę/gi, 'oddaje piłkę za darmo');
-     t = t.replace(/swobodna piłka/gi, 'free ball');
-     t = t.replace(/swobodną piłkę/gi, 'free balla');
-     t = t.replace(/darmowa piłka(?! dla)/gi, 'free ball');
+     // ── Brakujące polskie znaki w outputcie GPT ────────────────────────────
+     // GPT czasem nie stawia diakrytyków — normalizujemy deterministycznie
+     t = t.replace(/druzyna/gi, 'drużyna');
+     t = t.replace(/Druzyna/g, 'Drużyna');
+     t = t.replace(/prowadza(?!\w)/g, 'prowadzą');
+     t = t.replace(/prowadza!/g, 'prowadzą!');
+     t = t.replace(/pilka/gi, 'piłka');
+     t = t.replace(/pilka /g, 'piłka ');
+     t = t.replace(/pilka!/g, 'piłka!');
+     t = t.replace(/pilka,/g, 'piłka,');
+     t = t.replace(/pilke /g, 'piłkę ');
+     t = t.replace(/ pilke/g, ' piłkę');
+     t = t.replace(/pilke/gi, 'piłkę');
+     t = t.replace(/pilki/gi, 'piłki');
+     t = t.replace(/siatkówke/gi, 'siatkówkę');
+     t = t.replace(/serwis szybujacy/gi, 'serwis szybujący');
+     t = t.replace(/zagrywka szybujaca/gi, 'zagrywka szybująca');
+     t = t.replace(/szybujacym/gi, 'szybującym');
+     t = t.replace(/szybujacy/gi, 'szybujący');
+     t = t.replace(/lekka szybujaca/gi, 'lekka szybująca');
+     t = t.replace(/przyjecie/gi, 'przyjęcie');
+     t = t.replace(/przyjecia/gi, 'przyjęcia');
 
-     // ── Nowe reguły z feedbacku Ziomków 2026-05-04 ─────────────────────
-     // Błąd serwisu → błąd serwisowy
-     t = t.replace(/\bBłąd serwisu\b/g, 'Błąd serwisowy');
-     t = t.replace(/\bbląd serwisu\b/gi, 'błąd serwisowy');
-     t = t.replace(/\bbłąd serwisu\b/g, 'błąd serwisowy');
-     // Pierwsze tempo — prawidłowa forma
-     t = t.replace(/atakuje pierwszym tempem/gi, 'atakuje z pierwszego tempa');
-     t = t.replace(/atakuje pierwszego tempa/gi, 'atakuje z pierwszego tempa');
-     t = t.replace(/konczy pierwszym tempem/gi, 'kończy z pierwszego tempa');
-     t = t.replace(/kończy pierwszym tempem/gi, 'kończy z pierwszego tempa');
-     t = t.replace(/uderza pierwszym tempem/gi, 'uderza z pierwszego tempa');
-     t = t.replace(/atakuje pierwsza tempo/gi, 'atakuje z pierwszego tempa');
-     t = t.replace(/atakuje pierwszego tempa/gi, 'atakuje z pierwszego tempa');
-     t = t.replace(/atak pierwszym tempem/gi, 'atak z pierwszego tempa');
-     t = t.replace(/szybkim atakiem z pierwszej piłki/gi, 'szybkim atakiem ze środka');
-     t = t.replace(/atakiem z pierwszej piłki/gi, 'atakiem ze środka');
-     t = t.replace(/kończy z pierwszej piłki środkiem/gi, 'kończy ze środka');
-     t = t.replace(/z pierwszej piłki środkiem/gi, 'ze środka');
-     t = t.replace(/z pierwszej piłki na środku/gi, 'ze środka');
-     t = t.replace(/z pierwszej piłki/gi, 'ze środka');
-     t = t.replace(/atakiem pierwszego tempa/gi, 'atakiem z pierwszego tempa');
-     t = t.replace(/szybkim atakiem pierwszego tempa/gi, 'szybkim atakiem ze środka');
-     t = t.replace(/blyskawicznym atakiem pierwszego tempa/gi, 'błyskawicznym atakiem ze środka');
-     t = t.replace(/błyskawicznym atakiem pierwszego tempa/gi, 'błyskawicznym atakiem ze środka');
-     // Pierwsza piłka — tylko przy złym przyjęciu
-     t = t.replace(/szybkim atakiem pierwszej piłki/gi, 'szybkim atakiem');
-     t = t.replace(/po pierwszym tempem/gi, 'z pierwszego tempa');
-     t = t.replace(/mimo pierwszym tempem/gi, 'mimo ataku z pierwszego tempa');
-     t = t.replace(/z szybkim pierwszym tempem/gi, 'z pierwszego tempa');
-     t = t.replace(/przez pierwsze tempo/gi, 'z pierwszego tempa');
-     t = t.replace(/atak pierwszym tempem/gi, 'atak z pierwszego tempa');
-     t = t.replace(/szybkim atakiem z pierwszej piłki/gi, 'szybkim atakiem ze środka');
-     t = t.replace(/atakiem z pierwszej piłki/gi, 'atakiem ze środka');
-     t = t.replace(/kończy z pierwszej piłki środkiem/gi, 'kończy ze środka');
-     t = t.replace(/z pierwszej piłki środkiem/gi, 'ze środka');
-     t = t.replace(/z pierwszej piłki na środku/gi, 'ze środka');
-     t = t.replace(/z pierwszej piłki/gi, 'ze środka');
-     t = t.replace(/atakiem pierwszej piłki/gi, 'atakiem');
-     t = t.replace(/kończy pierwszą piłkę/gi, 'kończy akcję');
-     // Szybko przyjęty → dobrze przyjęty
-     t = t.replace(/szybko przyjęty/gi, 'dobrze przyjęty');
-     t = t.replace(/szybko przyjął/gi, 'dobrze przyjął');
-     t = t.replace(/szybko przyjęła/gi, 'dobrze przyjęła');
-     t = t.replace(/szybko przyjęte/gi, 'dobrze przyjęte');
-     // Bierze prowadzenie
-     t = t.replace(/bierze prowadzenie/gi, 'wychodzi na prowadzenie');
-     t = t.replace(/biorą prowadzenie/gi, 'wychodzą na prowadzenie');
-     t = t.replace(/Punkt bierze/gi, 'Punkt dla');
-     t = t.replace(/punkt bierze/gi, 'punkt dla');
-     // Wyblokowuje → dotyka blokiem
-     t = t.replace(/wyblokowuje/gi, 'dotyka blokiem');
-     t = t.replace(/dotyka blok(?!u|iem)/gi, 'dotyka bloku');
-     t = t.replace(/dotykacie blok(?!u|iem)/gi, 'dotyka bloku');
-     // Explicit string fallback — regex nie łapie gdy po 'blok' jest interpunkcja
-     t = t.split('dotyka blok, ').join('dotyka bloku, ');
-     // "dotyka bloku — piłka przebija blok" = blok pojawia się 2x
-     t = t.replace(/dotyka bloku — piłka przebija blok/gi, 'dotyka bloku, ale piłka wraca');
-     t = t.replace(/dotyka bloku, ale piłka przebija blok/gi, 'dotyka bloku, ale piłka wraca');
-     // "kontra zaczęła się od zagrywki" — logicznie niemożliwe
-     t = t.replace(/[Kk]ontra zaczęła się od zagrywki/gi, 'akcja zaczęła się od zagrywki');
-     t = t.replace(/[Kk]ontra rozpoczęła się od zagrywki/gi, 'akcja rozpoczęła się od zagrywki');
-     t = t.split('dotyka blok ale ').join('dotyka bloku, ale ');
-     t = t.split('dotyka blok i ').join('dotyka bloku i ');
-     t = t.split('Dotyka blok, ').join('Dotyka bloku, ');
-     // "I to punkt!" — mechaniczne, zastąp wariantami
-     // "I to punkt" — usuń całą frazę z kontekstem
-     t = t.replace(/[!.]\s*I to punkt[^.!]*/gi, '!');
-     t = t.replace(/—\s*I to punkt[^.!]*/gi, '!');
-     t = t.replace(/I to jest punkt[!.]?/gi, '');
-     // As serwisowy + "wbija piłkę" = oksymoron (as = piłka nie przyjęta)
-     t = t.replace(/as serwisowy[^.!]*[.!]\s*Punkt kończy [A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+, wbija piłkę[^.!]*/gi,
-       (m) => m.split(/[.!]/)[0] + '!');
-     // "[Nazwisko] kończy!" jako jedyne zdanie przy błędzie serwisu = mylące
-     // Łapiemy tylko gdy komentarz MA 1-2 słowa (samo "X kończy!")
-     if (lang === 'pl') {
-       const words = t.trim().split(/\s+/);
-       if (words.length <= 3 && /kończy[!.]?$/i.test(t)) {
-         // Zostaw jak jest — to jest za krótkie żeby poprawiać bez kontekstu
-         // GPT musi dostać lepszą instrukcję
-       }
-     }
-     // Pochwały po błędzie serwisu (rozszerzona lista)
-     t = t.replace(/[Bb]łąd serwisowy[^.!]*[.!]\s*[Ff]antastyczny punkt[!.]?/g, (m) => m.split(/[.!]/)[0] + '.');
-     t = t.replace(/[Bb]łąd serwisowy[^.!]*[.!]\s*[Ww]spaniały punkt[!.]?/g, (m) => m.split(/[.!]/)[0] + '.');
-     t = t.replace(/\.\s*[Ff]antastyczny punkt[!.]\s*$/g, '.');
-     t = t.replace(/\.\s*[Ww]spaniały punkt[!.]\s*$/g, '.');
-     t = t.replace(/!\s*[Ff]antastyczny punkt[!.]\s*$/g, '!');
-     t = t.replace(/I to punkt[!.]?/gi, '');
-     // "przebija się przez siatkę" — fizycznie niemożliwe
-     t = t.replace(/przebija się przez siatkę/gi, 'przebija blok');
-     // "piłka muruje siatkę" — piłka nie muruje, ZAWODNIK muruje
-     t = t.replace(/piłka muruje siatkę/gi, 'piłka trafia w blok');
-     t = t.replace(/piłka zamknęła siatkę/gi, 'blok zamknął akcję');
-     // Artefakty ocen technicznych na końcu komentarza
-     if (t.trimEnd().endsWith('doskonłe!')) t = t.trimEnd().slice(0, -10).trimEnd() + '.';
-     if (t.trimEnd().endsWith('doskonły!')) t = t.trimEnd().slice(0, -10).trimEnd() + '.';
-     // Nielacińskie znaki (japonski, cyrylica itp.) — usuń i zastąp
-     if (lang === 'pl') {
-       // Japońskie znaki (U+3040-U+30FF, U+4E00-U+9FFF)
-       // Cyrylica
-       // Jeśli mamy ??? to znaczy że GPT użył złego języka — usuń to słowo
-       t = t.replace(/[ ]{2,}/g, ' ').trim();
-     }
-     // 'Piękny punkt!' po błędzie serwisu — absurd
-     t = t.split('. Piękny punkt!').join('.');
-     t = t.split('! Piękny punkt!').join('!');
-     t = t.split(' Piękny punkt!').join('.');
-     t = t.split('. Piękny punkt.').join('.');
-     // "doskonałe!" w środku zdania
-     t = t.replace(/! doskon[aą][łl]e! /gi, '! ');
-     t = t.replace(/\. doskon[aą][łl]e! /gi, '. ');
-     // Pochwały po błędzie serwisu
-     t = t.split('serwisowy! świetnie!').join('serwisowy!');
-     t = t.split('serwisowy. świetnie!').join('serwisowy!');
-     t = t.replace(/ świetnie!\s*$/g, '.');
-     t = t.replace(/ Świetnie!	*$/gi, '.');
-     if (lang === 'pl' && (t.startsWith('świetnie! ') || t.startsWith('Świetnie! '))) {
-       t = t.slice(t.indexOf(' ') + 1);
-     }
-     t = t.replace(/ Świetnie!\s*$/g, '.');
-     // 'Prowadzą od pierwszej piłki' bez podmiotu
-     t = t.replace(/Prowadzą od pierwszej piłki[!.]/gi, '');
-     t = t.replace(/Wyrównują od pierwszej piłki[!.]/gi, '');
-     // Wymyślone metafory
-     t = t.replace(/przebija się przez mur/gi, 'przebija blok');
-     // "nie dają się" na końcu — zbyt kolokwialne
-     t = t.replace(/ i nie dają się!$/gi, '!');
-     t = t.replace(/ i nie dają się\./gi, '.');
-     t = t.replace(/przebija się przez ścianę/gi, 'przebija blok');
-     t = t.replace(/przebija zasłonę/gi, 'przebija blok');
-     t = t.replace(/przełamuje mur rywali/gi, 'przebija blok rywali');
-     t = t.replace(/przebija mur/gi, 'przebija blok');
-     // Podwójne słowo (GPT się zaciął) — "piłka, piłka" itp.
-     t = t.replace(/(\w{3,}) (?:.*?)/g, '$1');
-     t = t.replace(/, piłka wychodzi na aut! piłka/gi, ', piłka wychodzi na aut!');
-     t = t.replace(/piłka, piłka/gi, 'piłka');
-     t = t.replace(/atak, atak/gi, 'atak');
-     // "kończy po wybloku X" — semantycznie mylące, zamień na naturalne
-     t = t.replace(/kończy atakiem (.{3,30}) po wybloku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/gi,
-       'kończy atakiem $1 po odbiciu od bloku $2');
-     t = t.replace(/kończy (.{0,20}) po wybloku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/gi,
-       'kończy $1 po odbiciu od bloku $2');
-     t = t.replace(/wyblokowują/gi, 'dotykają blokiem');
-     // Ratuje obronę → ratuje piłkę w obronie
-     t = t.replace(/ratuje obronę/gi, 'ratuje piłkę w obronie');
-     // Nie zdąża z obroną → próbuje bronić
-     t = t.replace(/nie zdąża z obroną/gi, 'próbuje bronić, ale piłka');
-     t = t.replace(/nie zdążył z obroną/gi, 'próbował bronić, ale piłka');
-     // Semantyka — "ratować" i "piłka wychodzi" bez doprecyzowania
-     t = t.replace(/próbuje ratować, ale piłka wychodzi/gi, 'próbuje ratować piłkę, ale ta wychodzi na aut');
-     t = t.replace(/probuje ratowac, ale pilka wychodzi/gi, 'próbuje ratować piłkę, ale ta wychodzi na aut');
-     t = t.replace(/próbuje ratować ale piłka wychodzi/gi, 'próbuje ratować piłkę, ale ta wychodzi na aut');
-     t = t.replace(/próbuje ratować, jednak piłka wychodzi/gi, 'próbuje ratować piłkę, ale ta wychodzi na aut');
-     t = t.replace(/stara się ratować, ale piłka wychodzi/gi, 'stara się ratować piłkę, ale ta wychodzi na aut');
-     // "piłka wychodzi" bez doprecyzowania gdzie
-     t = t.replace(/piłka wychodzi — /gi, 'piłka wychodzi na aut — ');
-     t = t.replace(/piłka wychodzi poza(?! boisko)/gi, 'piłka wychodzi poza boisko');
-     t = t.replace(/ale piłka wychodzi(?! (na|poza|za))/gi, 'ale piłka wychodzi na aut');
-     t = t.replace(/a piłka wychodzi(?! (na|poza|za))/gi, 'a piłka wychodzi na aut');
-     t = t.replace(/i piłka wychodzi(?! (na|poza|za))/gi, 'i piłka wychodzi na aut');
-     t = t.replace(/piłka wychodzi\./gi, 'piłka wychodzi na aut.');
-     t = t.replace(/piłka wychodzi!/gi, 'piłka wychodzi na aut!');
-     // Zagrywa kiwką (non-serwis) — zawodnik nie serwuje
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) zagrywa kiwką/g, '$1 kiwa');
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) zagrywa lekko/g, '$1 kiwa');
-     // Muruje siatkę — TYLKO przy bloku punktowym. Przy wybloku usuń
-     // (nie możemy tego zrobić bez kontekstu — robimy w prompcie)
-     // piłka żyje — max 1x
-     {
-       let zyjeCount = 0;
-       t = t.replace(/piłka żyje/gi, (m) => {
-         zyjeCount++;
-         return zyjeCount <= 1 ? m : 'akcja trwa';
-       });
-     }
-     t = t.replace(/\bbierze!$/gi, 'zdobywa punkt!');
-     t = t.replace(/\s+bierze!/g, ' zdobywa punkt!');
-     t = t.replace(/\s+bierze\./g, ' zdobywa punkt.');
+     // "nie daje się" — zły styl PL komentarza siatkówki
+     t = t.replace(/nie daje się i wraca do gry/gi, 'walczy dalej');
+     t = t.replace(/nie daja sie i wraca do gry/gi, 'walczy dalej');
+     t = t.replace(/nie daja sie!/gi, 'walczy dalej!');
+     t = t.replace(/nie daja sie\b/gi, 'nie odpuszcza');
+     t = t.replace(/nie daje się i odskakuje/gi, 'nie odpuszcza i odskakuje');
+     t = t.replace(/nie daje się!/gi, '');
+     t = t.replace(/nie daje się/gi, '');
      t = t.replace(/\bustawia do ataku\b/gi, 'wystawia do ataku');
+     // "wystawieniu X" → "wystawie X" (poprawna gramatyka)
+     t = t.replace(/wystawieniu ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/g, 'wystawie $1');
+     // Archaiczny szyk zdania
+     t = t.replace(/[Zz]agrywkę z wyskoku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) posłał/g, '$1 posłał zagrywkę z wyskoku');
+     t = t.replace(/[Zz]agrywkę floatową ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) posłał/g, '$1 posłał zagrywkę floatową');
+     t = t.replace(/[Zz]agrywkę z wyskoku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) wykonał/g, '$1 wykonał zagrywkę z wyskoku');
+     // Brakujące "punkt" przed "dla X"
+     t = t.replace(/serwisowy i dla ([A-ZŁŚŹĆĘÓĄŃ])/gi, 'serwisowy — punkt dla $1');
+     t = t.replace(/serwisowy — dla ([A-ZŁŚŹĆĘÓĄŃ])/gi, 'serwisowy — punkt dla $1');
+     t = t.replace(/w boisko, dla ([A-ZŁŚŹĆĘÓĄŃ])/gi, 'w boisko — punkt dla $1');
+     // "Zdobyte!" bez kontekstu
+     t = t.replace(/[!.] Zdobyte[!.]\s*$/gi, '!');
+     t = t.replace(/ Zdobyte[!.]\s*$/gi, '!');
+     // "wraca do gry" — tylko przy comeback 5+ (tu go kasujemy bo nie znamy kontekstu seta)
+     t = t.replace(/ i wraca do gry/gi, '');
      t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
      t = t.replace(/\bżywa zagrywka\b/gi, 'zagrywka szybująca');
      t = t.replace(/\bżywą zagrywką\b/gi, 'zagrywką szybującą');
      t = t.replace(/\bżywej zagrywki\b/gi, 'zagrywki szybującej');
      t = t.replace(/\bbroni potężnym blokiem\b/gi, 'potężny blok');
      t = t.replace(/\bbroni mocnym blokiem\b/gi, 'mocny blok');
+     t = t.replace(/\bwyblokowuje\b/gi, 'dotyka bloku, wyblok');
+     // GPT tworzy nieprawidłowe skróty/nicknames zawodników
+     t = t.replace(/\bGroza\b/g, 'Grozdanov');
+     // Błędne odmiany nazwisk obcojęzycznych
+     t = t.replace(/\bKarliczek\b/gi, 'Karlitzek');
+     t = t.replace(/\bKarliczka\b/gi, 'Karlitzka');
+     t = t.replace(/\bKarliczkiem\b/gi, 'Karlitzkiem');
+     t = t.replace(/\bKarllitzek\b/gi, 'Karlitzek');   // podwójne l
+     t = t.replace(/\bKarllitzka\b/gi, 'Karlitzka');
+     t = t.replace(/\bBienioka\b/gi, 'Bieńka');        // błędna germanizacja
+     t = t.replace(/\bBienoka\b/gi, 'Bieńka');
+     // Zduplikowane litery w nazwiskach (GPT typos)
+     t = t.replace(/\bBieniekk\b/gi, 'Bieniek');
+     t = t.replace(/\bBieńkka\b/gi, 'Bieńka');
+     t = t.replace(/\bBieńkk\b/gi, 'Bieniek');
+     // "bleduje" nie istnieje po polsku
+     t = t.replace(/\bleduje\b/gi, 'popełnia błąd');
+     t = t.replace(/\bledowania\b/gi, 'błędów');
+     // "blad" bez ł
+     t = t.replace(/\bblad\b/gi, 'błąd');
+     t = t.replace(/\bBLAD\b/g, 'BŁĄD');
+     t = t.replace(/\bBieńkk\b/gi, 'Bieniek');
+     t = t.replace(/\bGrozy\b/g, 'Grozdanova');
+     t = t.replace(/\bBień\b/g, 'Bieniek');
+     t = t.replace(/\bBieńk\b/g, 'Bieniek');
+     t = t.replace(/\bBienk\b/g, 'Bieniek');
+     t = t.replace(/\bwyblokowują\b/gi, 'dotykają bloku, wyblok');
+     t = t.replace(/\bwyblokowuję\b/gi, 'dotykam bloku, wyblok');
+
+     // ── SŁOWNIK KOREKT PL ────────────────────────────────────────────────
+     if (lang === 'pl') {
+       // Gramatyka ataku
+       t = t.replace(/atakuje na pierwszym tempie/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/pierwszotempowym atakiem/gi, 'atakiem z pierwszego tempa');
+       t = t.replace(/pierwszotempowy atak/gi, 'atak z pierwszego tempa');
+       // Duplikat frazy ataku (GPT powtarza)
+       t = t.replace(/z linii drugiej z drugiej linii/gi, 'z drugiej linii');
+       // Duplikat z przerwą: "z linii drugiej [słowa] z drugiej linii"
+       t = t.replace(/z linii drugiej\b([^.!?]{0,30}?)\bz drugiej linii/gi, 'z drugiej linii$1');
+       // "atakuje z linii drugiej z linii"
+       t = t.replace(/z linii drugiej z linii/gi, 'z drugiej linii');
+       t = t.replace(/z lewego skrzydła z lewej strony/gi, 'z lewego skrzydła');
+       t = t.replace(/z prawego skrzydła z prawej strony/gi, 'z prawego skrzydła');
+       t = t.replace(/atakuje na pierwszym tempo/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/atakuje pierwszym tempem/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/atakuje pierwszym tempo/gi, 'atakuje z pierwszego tempa');
+       t = t.replace(/atak na pierwszym temp/gi, 'atak z pierwszego tempa');
+       t = t.replace(/kończy pierwszym tempem/gi, 'kończy z pierwszego tempa');
+       t = t.replace(/pierwszym tempem/gi, 'z pierwszego tempa');
+
+       // Gramatyka wystawy
+       t = t.replace(/wystawia dla /gi, 'wystawia do ');
+       t = t.replace(/wystawia piłkę dla /gi, 'wystawia piłkę do ');
+       t = t.replace(/ustawia piłkę dla /gi, 'ustawia piłkę do ');
+       t = t.replace(/ustawia dla /gi, 'wystawia do ');
+       t = t.replace(/podaje dla /gi, 'podaje do ');
+
+       // Gramatyka przyjęcia
+       t = t.replace(/receptura/gi, 'przyjęcie');
+       t = t.replace(/piłka odbija się daleko od siatki/gi, 'piłka przyjęta daleko od siatki');
+       // konczy/konczac bez polskich znakow
+       t = t.replace(/konczy /g, 'kończy ');
+       t = t.replace(/konczy!/g, 'kończy!');
+       t = t.replace(/zagrwal/g, 'zagrał');
+       t = t.replace(/zagrywal/g, 'zagrywał');
+
+       // Okrzyki w złym kontekście
+       t = t.replace(/Genialne! /g, '');
+       t = t.replace(/Genialne!$/g, '');
+       t = t.replace(/Kapitalnie! /g, '');
+       t = t.replace(/Kapitalnie!$/g, '');
+
+       // "bierze" bez podmiotu → zdobywa punkt
+       t = t.replace(/ bierze!/g, ' zdobywa punkt!');
+       // "Resovia bierze" (urwane zdanie) → "Resovia zdobywa punkt"
+       t = t.replace(/\bbierze$/gm, 'zdobywa punkt');
+       t = t.replace(/\bbierze\.$/gm, 'zdobywa punkt.');
+       t = t.replace(/ bierze\./g, ' zdobywa punkt.');
+       t = t.replace(/ bierze /g, ' zdobywa punkt ');
+
+       // Hoss → Thales (failsafe — wszystkie formy)
+       t = t.replace(/Hoss/g, 'Thales');
+       t = t.replace(/Hossa/g, 'Thalesa');
+       t = t.replace(/Hossowi/g, 'Thalesowi');
+
+       // Deduplikacja 'Thales Thales' (efekt podwojnego replace Hoss->Thales)
+       t = t.replace(/Thales Thales/g, 'Thales');
+       t = t.replace(/Thalesa Thalesa/g, 'Thalesa');
+
+       // "piłka broni się" → sensowny odpowiednik
+       t = t.replace(/piłka broni się/gi, 'piłka mija blok');
+
+       // ── Odmiana nazwisk ───────────────────────────────────────────────────
+       t = t.replace(/\bKwoleka\b/g, 'Kwolka');
+       t = t.replace(/\bKwoleku\b/g, 'Kwolkowi');
+       t = t.replace(/\bKwolekowi\b/g, 'Kwolkowi');
+
+       // ── Urwane frazy po score suppression ────────────────────────────────
+       // Problem: score suppression usuwa liczbe z "odskakuje na 3:1!" → "odskakuje na!"
+       // Fix: przywracamy sensowne zakonczenie zdania
+       t = t.replace(/\bodskakuje na!/g, 'odskakuje na prowadzenie!');
+       t = t.replace(/\bodskakują na!/g, 'odskakują na prowadzenie!');
+       t = t.replace(/\bodskoczyli na!/g, 'odskoczyli na prowadzenie!');
+       t = t.replace(/\bodskaczają na!/g, 'odskakują na prowadzenie!');
+       t = t.replace(/\bodskoczyło na!/g, 'odskoczyło na prowadzenie!');
+       t = t.replace(/\bwyrównując do!/g, 'wyrównując wynik!');
+       t = t.replace(/\bwyrównują do!/g, 'wyrównują wynik!');
+       t = t.replace(/\bwyrównuje do!/g, 'wyrównuje wynik!');
+       t = t.replace(/\bzmniejsza stratę do!/g, 'zmniejsza stratę!');
+       t = t.replace(/\bzmniejszają stratę do!/g, 'zmniejszają stratę!');
+       // Score suppression artifacts — urwane zdania z "na" + rzeczownik bez liczby
+       // np. "zdobywa punkt na siebie ciężar" ← score suppression ucięło "10." lub "XV"
+       t = t.replace(/\bzdobywa punkt na siebie\b[^.!?]*/gi, 'zdobywa punkt');
+       t = t.replace(/\bpunkt na siebie\b[^.!?]*/gi, 'punkt');
+       // Score suppression artifacts — urwane słowa przed nazwą drużyny
+       // np. "Wiesza Projekt Warszawa" ← ucięło "PGE" lub inne słowo
+       t = t.replace(/\bWiesza\b/g, 'PGE Projekt');
+       // Generyczny fix: słowo "zdobywa" lub "prowad" po urwanym słowie przed nazwą drużyny
+       t = t.replace(/([A-ZŁŚŹŻ][a-złśźżąęóćń]+)\s+(Projekt\s+Warszawa)/g, (m, w1, w2) => {
+         const knownPrefixes = ['PGE', 'Aluron', 'JSW', 'Asseco', 'Indykpol', 'Bogdanka', 'BOGDANKA'];
+         if (!knownPrefixes.includes(w1)) return `PGE ${w2}`;
+         return m;
+       });
+
+       // "prowadzą na" bez liczby (score suppression ucięło np. "prowadzą na 3")
+       t = t.replace(/\bprowadzą na\b(?!\s+\w)/g, 'prowadzą');
+       t = t.replace(/\bprowadzi na\b(?!\s+\w)/g, 'prowadzi');
+       // "wychodzi na prowadzenie, prowadzą" — prowadzą jest redundantne po prowadzenie
+       t = t.replace(/wychodzi na prowadzenie,\s*prowadzą[^!.]*[!.]/gi, 'wychodzi na prowadzenie!');
+       t = t.replace(/obejmuje prowadzenie,\s*prowadzą[^!.]*[!.]/gi, 'obejmuje prowadzenie!');
+       // "zdobywa punkt i wychodzi na prowadzenie, prowadzą!"
+       t = t.replace(/,\s*prowadzą!/g, '!');
+
+       // Okrzyki w złym kontekście — usuwamy zawsze
+       t = t.replace(/Zdobyte!\s*/g, '');
+       t = t.replace(/Piękny punkt!\s*/g, '');
+       t = t.replace(/Niesamowite!\s*/g, '');
+       t = t.replace(/Fantastyczne!\s*/g, '');
+       t = t.replace(/Wspaniale!\s*/g, '');
+       t = t.replace(/Genialne!\s*/g, '');
+
+       // ── "kończy!" przypisane do gracza który NIE zdobył punktu ─────────────
+       // Warunek: team-mismatch — ostatni touch jest z drużyny która PRZEGRAŁA rally
+       // Łapie: dig out, attack error, block error — każdy przypadek błędu ostatniego dotyknięcia
+       const lastTouchTeam = finalTouch?.team || '';
+       const lastTouchIsLoser = lastTouchTeam !== '' && lastTouchTeam !== rally.team_scored;
+       if (lastTouchIsLoser ||
+           scoringAction.toLowerCase().includes('error') ||
+           scoringAction.toLowerCase().includes('błąd') ||
+           scoringAction.toLowerCase().includes('blad')) {
+         // Usuń "[loserPlayer] kończy/zamyka" — ten gracz NIE zdobył punktu
+         const errorPlayerEsc = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+         // Łapiemy: "kończy!", "kończy akcję", "konczy" (bez ń), "zamyka akcję"
+         // Nowa szeroka wersja: usuwa "[player] kończy [cokolwiek]" do końca zdania
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[nń]czy[^!.\\n]*[!.]`, 'gi'), '');
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+zamyka\\s+akcj[eę][^!.\\n]*[!.]`, 'gi'), '');
+         // Wersja bez terminatora (gdy zdanie urywa się lub kończy myślnikiem)
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+ko[n\u0144]czy[^!.\\n]*[!.]`, 'gi'), '');
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+zamyka\\s+akcj[e\u0119][^!.\\n]*[!.]`, 'gi'), '');
+         t = t.replace(new RegExp(`\\b${errorPlayerEsc}\\s+zamyka\\s+akcj[e\u0119](?![!.])`, 'gi'), '');
+       }
+
+       // ── "[ZłyGracz] przebija blok i kończy" gdy scoring player jest inny ─────
+       // np. "Tavares przebija blok i kończy akcję! BOGDANKA wyrównuje!" gdy Leon strzelił
+       // Przechwytujemy: "[Gracz] przebija blok i kończy [akcję]"
+       // i jeśli Gracz ≠ scoringPlayer → zastępujemy scoringPlayer
+              // Prosta wersja bez Unicode w regex (bezpieczna dla buildu)
+       if (scoringPlayer) {  // sprawdzamy zawsze — GPT może błędnie przypisać kończy do dowolnego gracza
+         const _sp = scoringPlayer;
+         t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+ko.czy\s+akcj.[!.]?/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i kończy!` : m);
+         t = t.replace(/(\w+)\s+zamyka\s+akcj.[!.]?/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} zamyka akcję!` : m);
+         t = t.replace(/(\w+)\s+wyci[aą]ga\s+si[eę]\s+i\s+ko[nń]czy[^!.]*[!.]/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} kończy akcję!` : m);
+         t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+ko.czy!/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i kończy!` : m);
+         t = t.replace(/(\w+)\s+przebija\s+blok\s+i\s+wbija[^!]*!/gi, (m, p) => p.toLowerCase() !== _sp.toLowerCase() ? `${_sp} przebija blok i wbija piłkę w boisko!` : m);
+       }
+       // Podwójne "punkt punkt"
+       t = t.replace(/punkt punkt/gi, 'punkt');
+       t = t.replace(/zdobywa punkt punkt/gi, 'zdobywa punkt');
+       t = t.replace(/zdobywa punkt pierwszy punkt/gi, 'zdobywa pierwszy punkt');
+       // "punkt zdobywa punkt X" — nowa forma z nazwą gracza/drużyny
+       t = t.replace(/punkt zdobywa punkt/gi, 'punkt zdobywa');
+       t = t.replace(/zdobywa punkt punkt/gi, 'zdobywa punkt');
+       // "zdobywa punkt kolejny punkt" — nowy duplikat
+       t = t.replace(/zdobywa punkt kolejny punkt/gi, 'zdobywa kolejny punkt');
+       t = t.replace(/zdobywa punkt ostatni punkt/gi, 'zdobywa ostatni punkt');
+       t = t.replace(/to jego zespół zdobywa punkt ostatni punkt/gi, 'to jego zespół zdobywa ostatni punkt');
+       t = t.replace(/punkt kolejny punkt/gi, 'kolejny punkt');
+       // "zdobywa punkt ten punkt" — nowy duplikat
+       t = t.replace(/zdobywa punkt ten punkt/gi, 'zdobywa punkt');
+       t = t.replace(/\bten punkt\b/gi, 'punkt');
+
+       // "zdobywa punkt prowadzenie" — score suppression ucięło "i obejmuje"
+       t = t.replace(/zdobywa punkt prowadzenie/gi, 'zdobywa punkt i wychodzi na prowadzenie');
+       t = t.replace(/zdobywa punkt i prowadzenie/gi, 'zdobywa punkt i wychodzi na prowadzenie');
+       t = t.replace(/zgarnia punkt prowadzenie/gi, 'zgarnia punkt i prowadzi');
+       // Samotne "prowadzenie" jako urwany fragment zdania
+       t = t.replace(/([!.])\s+prowadzenie([!.])/g, '$1');
+       t = t.replace(/\s+prowadzenie$/gm, '!');
+     }
    }
 
    if (lang === 'it') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace');
      t = t.replace(/\bSET OVER\b/gi, 'SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/Hossa/g, 'Thalesa');
+     t = t.replace(/Hossi/g, 'Thalesa');
+     t = t.replace(/Hoss /g, 'Thales ');
+     t = t.replace(/Hoss,/g, 'Thales,');
+     t = t.replace(/Hoss!/g, 'Thales!');
+     t = t.replace(/Hoss\./g, 'Thales.');
    }
 
    if (lang === 'de') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'Aufschlag-Ass');
      t = t.replace(/\bSET OVER\b/gi, 'SATZGEWINN!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/Hossa/g, 'Thalesa');
+     t = t.replace(/Hossi/g, 'Thalesa');
+     t = t.replace(/Hoss /g, 'Thales ');
+     t = t.replace(/Hoss,/g, 'Thales,');
+     t = t.replace(/Hoss!/g, 'Thales!');
+     t = t.replace(/Hoss\./g, 'Thales.');
    }
 
    if (lang === 'tr') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'servis ace');
      t = t.replace(/\bSET OVER\b/gi, 'SET BİTTİ!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/Hossa/g, 'Thalesa');
+     t = t.replace(/Hossi/g, 'Thalesa');
+     t = t.replace(/Hoss /g, 'Thales ');
+     t = t.replace(/Hoss,/g, 'Thales,');
+     t = t.replace(/Hoss!/g, 'Thales!');
+     t = t.replace(/Hoss\./g, 'Thales.');
      t = t.replace(/\bPunkt dla [^!.]+[!.]/g, 'Sayı!');
    }
 
@@ -2415,12 +2199,24 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace de saque');
      t = t.replace(/\bSET OVER\b/gi, '¡SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/Hossa/g, 'Thalesa');
+     t = t.replace(/Hossi/g, 'Thalesa');
+     t = t.replace(/Hoss /g, 'Thales ');
+     t = t.replace(/Hoss,/g, 'Thales,');
+     t = t.replace(/Hoss!/g, 'Thales!');
+     t = t.replace(/Hoss\./g, 'Thales.');
    }
 
    if (lang === 'pt') {
      t = t.replace(/\bSERVICE ACE\b/gi, 'ace no saque');
      t = t.replace(/\bSET OVER\b/gi, 'SET!');
      t = t.replace(/\bHoss\b/g, 'Thales');
+     t = t.replace(/Hossa/g, 'Thalesa');
+     t = t.replace(/Hossi/g, 'Thalesa');
+     t = t.replace(/Hoss /g, 'Thales ');
+     t = t.replace(/Hoss,/g, 'Thales,');
+     t = t.replace(/Hoss!/g, 'Thales!');
+     t = t.replace(/Hoss\./g, 'Thales.');
    }
 
    if (lang === 'jp') {
@@ -2460,16 +2256,7 @@ ZASADY (10 regul — zamiast 15+ sprzecznych):
    return t;
  };
 
- // Wykryj angielski komentarz — jeśli język PL ale mamy angielski tekst
- const hasEnglishWords = language === 'pl' && /(but|the|from|and|for|with|this|that|not|are|was|were|has|have|been|their|they|when|what|where|which|who|how|its|our|your|also|then|than|because|after|before|however|therefore|although|despite|moreover|furthermore|meanwhile|subsequently|consequently)/i.test(rawCommentary);
- 
- const commentary = hasEnglishWords
-   ? postProcess(`BŁĄD GENEROWANIA — spróbuj ponownie. (Kod: EN-${language})`, language)
-   : postProcess(rawCommentary, language);
- 
- if (hasEnglishWords) {
-   console.error('[LANGUAGE ERROR] English commentary detected for PL:', rawCommentary.slice(0, 100));
- }
+ const commentary = postProcess(rawCommentary, language);
 
  // ========================================================================
  // STEP 9: GENERATE TAGS, MILESTONES, ICONS, SCORES
