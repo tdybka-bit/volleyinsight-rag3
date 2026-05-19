@@ -1545,13 +1545,13 @@ if (!rally.touches || rally.touches.length === 0) {
      const isLastTouch = idx === rally.touches!.length - 1;
      if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) {
        if (isLastTouch) {
-         // KRYTYCZNE: blok przebity jako ostatni dotyk = atakujący (scoringPlayer) zdobył punkt
-         // touch.player = BLOKER który przegrał. scoringPlayer = atakujący który wygrał.
-         // GPT musi wiedzieć: touch.player NIE zdobył punktu, scoringPlayer TAK.
-         desc += ` - BLOCK BEATEN! ${touch.player} tried to block but FAILED.`
-           + ` >>> ${scoringPlayer} [${winnerTeamLabel}] SCORES by beating this block!`
-           + ` CRITICAL: Do NOT say ${touch.player} scored — ${touch.player} is the BLOCKER who LOST!`
-           + ` Say: ${scoringPlayer} przebija blok ${touch.player}!`;
+         // KRYTYCZNE: blok przebity jako ostatni dotyk.
+         // touch.player = bloker który PRZEGRAŁ. Nie wspominaj o nim aktywnie.
+         // Opisz TYLKO że scoringPlayer zdobył punkt atakiem.
+         desc += ` >>> RALLY ENDS. ${scoringPlayer} [${winnerTeamLabel}] WINS with an attack.`
+           + ` ${touch.player} failed to stop the ball — this is NOT ${touch.player}'s point.`
+           + ` WRITE IN PL: '${scoringPlayer} wbija piłkę w boisko!' or '${scoringPlayer} kończy atak!'`
+           + ` DO NOT write '${touch.player} przebija' — ${touch.player} is the LOSER here, not the scorer.`;
        } else {
          const blockSynonyms = [
            ' - attacker beat the block (wyblok — attacker scores)',
@@ -2012,12 +2012,14 @@ INSTRUCTIONS:
      if (scoringPlayer) {
        const _sp = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
        // '[Ktoś] przebija blok (Tavaresa|Komendę itp.) i wbija'
+       // Łap WSZYSTKIE warianty: 'X przebija blok', 'X przebija jego blok', 'X przebija jej blok'
        t = t.replace(
-         /([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+(?:\s+[A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)?) przebija blok/g,
+         /([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+(?:\s+[A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)?) przebija (?:jego |jej |ich )?blok/g,
          (match, name) => {
-           // Jeśli imię/nazwisko w komentarzu zgadza się ze scoringPlayer — OK
-           if (scoringPlayer.includes(name) || name.includes(scoringPlayer.split(' ')[0])) return match;
-           // Jeśli nie — zastąp scoringPlayer
+           const firstName = scoringPlayer.split(' ')[0];
+           // Jeśli to już scoringPlayer — OK, zostaw
+           if (scoringPlayer.includes(name) || name.includes(firstName)) return match;
+           // Inny gracz 'przebija blok' — zastąp scoringPlayer + usuń 'jego/jej'
            return `${scoringPlayer} przebija blok`;
          }
        );
