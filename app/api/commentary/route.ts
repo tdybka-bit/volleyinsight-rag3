@@ -2023,51 +2023,43 @@ INSTRUCTIONS:
      t = t.replace(/prowadzi i zdobywa punkt ten/gi, 'prowadzi');
      // "akcja nie zostaje zakończona" → "akcja trwa"
      t = t.replace(/akcja nie zostaje zakończona/gi, 'akcja trwa');
-     // ── NUCLEAR SCORER FIX ────────────────────────────────────────────────
-     // GPT zawsze kredytuje ostatniego gracza w touch chain jako scorera.
-     // postProcess deterministycznie naprawia: jeśli [nie-scorer] 'wbija/kończy' → zamień na scorera.
+     // ── NUCLEAR SCORER FIX v2 ──────────────────────────────────────────────
+     // Deterministyczna podmiana złego gracza na scoringPlayer.
+     // Pattern nazwy: wielka litera + min 3 znaki (obsługuje McCarthy, Grozdanov itp.)
      if (scoringPlayer) {
        const spParts = scoringPlayer.split(' ');
-       const spFirst = spParts[0];    // np. 'Leon'
-       const spLast  = spParts[spParts.length - 1]; // np. 'Leon' (lub drugie nazwisko)
-       const isScorer = (name: string) =>
+       const spFirst = spParts[0];
+       const spLast  = spParts[spParts.length - 1];
+       // Imię uważamy za "scorera" jeśli którykolwiek człon nazwiska pasuje
+       const isScorer = (name: string): boolean =>
          name === spFirst || name === spLast ||
-         scoringPlayer.includes(name) || name.includes(spFirst);
+         scoringPlayer.includes(name) || name.includes(spFirst) ||
+         (spParts.length > 1 && name.includes(spLast));
 
-       // Wzorce punktowania — jeśli gracz ≠ scorer → zamień
-       const scoringPhrases = [
-         'wbija piłkę w boisko',
-         'wbija piłkę',
-         'wbija w boisko',
+       // Pełna lista: "[Gracz] [verb scoring]" → "[scoringPlayer] [verb]"
+       // Pattern [A-Z][A-Za-z...]{3,} łapie McCarthy, Grozdanov, Bieniek, Bołądź itp.
+       // min 4 znaki total = nie łapie "Mc" ani innych skrótów
+       const NAME = '([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})';
+       const fixes: Array<[string, string]> = [
+         [`${NAME} wbija piłkę w boisko`,   'wbija piłkę w boisko'],
+         [`${NAME} wbija piłkę`,            'wbija piłkę'],
+         [`${NAME} wbija w boisko`,         'wbija w boisko'],
+         [`${NAME} wbija punkt`,            'wbija punkt'],
+         [`${NAME} zamyka (?:tę |tą )?wymianę`, 'zamyka akcję'],
+         [`${NAME} zamyka akcję`,           'zamyka akcję'],
+         [`${NAME} zamyka (?:tę |ten )?punkt`, 'zamyka akcję'],
+         [`${NAME} przebija (?:jego |jej |ich )?blok`, 'przebija blok'],
+         [`${NAME} muruje siatkę`,          'blokuje'],
        ];
-       scoringPhrases.forEach(phrase => {
-         const re = new RegExp(
-           `([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) ${phrase.replace(/ /g, ' ')}`,
-           'g'
-         );
-         t = t.replace(re, (match, name) =>
-           isScorer(name) ? match : `${scoringPlayer} ${phrase}`
+
+       fixes.forEach(([pattern, replacement]) => {
+         const re = new RegExp(pattern, 'g');
+         t = t.replace(re, (match: string, name: string) =>
+           isScorer(name) ? match : `${scoringPlayer} ${replacement}`
          );
        });
      }
 
-     // BACKUP: 'X przebija blok i wbija' gdy X != scoringPlayer → zamień na scoringPlayer
-     // Łapiemy wzorzec: '[Nazwisko] przebija blok' gdzie Nazwisko != scoringPlayer
-     if (scoringPlayer) {
-       const _sp = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-       // '[Ktoś] przebija blok (Tavaresa|Komendę itp.) i wbija'
-       // Łap WSZYSTKIE warianty: 'X przebija blok', 'X przebija jego blok', 'X przebija jej blok'
-       t = t.replace(
-         /([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+(?:\s+[A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)?) przebija (?:jego |jej |ich )?blok/g,
-         (match, name) => {
-           const firstName = scoringPlayer.split(' ')[0];
-           // Jeśli to już scoringPlayer — OK, zostaw
-           if (scoringPlayer.includes(name) || name.includes(firstName)) return match;
-           // Inny gracz 'przebija blok' — zastąp scoringPlayer + usuń 'jego/jej'
-           return `${scoringPlayer} przebija blok`;
-         }
-       );
-     }
      // "serwis w salto" → "serwis z wyskoku" (błędna forma)
      t = t.replace(/serwis(?:em)? w salto/gi, 'serwis z wyskoku');
      t = t.replace(/zagrywka w salto/gi, 'zagrywka z wyskoku');
@@ -2141,7 +2133,11 @@ INSTRUCTIONS:
      t = t.replace(/\bBienioka\b/gi, 'Bieńka');        // błędna germanizacja
      t = t.replace(/\bBienoka\b/gi, 'Bieńka');
      // Zduplikowane litery w nazwiskach (GPT typos)
-     t = t.replace(/\bBieniekk\b/gi, 'Bieniek');
+     // Bieniekk — duplikat k, wszystkie formy odmiany
+     t = t.replace(/Bieniekka/g, 'Bieńka');
+     t = t.replace(/Bieniekki/g, 'Bieńki');
+     t = t.replace(/Bieniekkiem/g, 'Bieńkiem');
+     t = t.replace(/Bieniekk/g, 'Bieniek');
      t = t.replace(/\bBieńkka\b/gi, 'Bieńka');
      t = t.replace(/\bBieńkk\b/gi, 'Bieniek');
      // "bleduje" nie istnieje po polsku
