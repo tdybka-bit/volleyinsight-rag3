@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import OpenAI from 'openai';
 import { Pinecone } from '@pinecone-database/pinecone';
+import { COMMENTARY_RULES_PL } from './commentary_rules';
 
 // Initialize clients
 const openai = new OpenAI({
@@ -367,6 +368,8 @@ const getCommentarySystemPrompt = (
 - "świetny/świetnie" → IT:"ottimo" / ES:"excelente" / TR:"harika" / DE:"hervorragend" / JP:"素晴らしい"
 - "punkt dla" → IT:"punto per" / ES:"punto para" / TR:"sayı" / DE:"Punkt für" / JP:"ポイント"
 Player surnames stay as-is. NEVER copy Polish words verbatim.
+
+${language === 'pl' ? COMMENTARY_RULES_PL : ''}
 
 Your task is to generate professional, factual volleyball match commentary in RADIO STYLE.
 
@@ -1600,14 +1603,25 @@ if (!rally.touches || rally.touches.length === 0) {
      desc += ` - ${action}`;
    }
    
-   // ── KLUCZOWY FIX: jeśli ostatni dotyk jest przez PRZEGRYWAJĄCY team (failed dig/blok)
-   // → NIE dodawaj do chain. GPT nie zobaczy ich nazwiska na końcu i nie skredytuje ich.
+   // ── FIX: ostatni dotyk przez przegrywający team → opisz anonimowo (bez nazwiska obrońcy)
+   // Nie pomijamy — GPT musi wiedzieć jak akcja się skończyła.
+   // Ale NIE podajemy nazwiska obrońcy żeby go nie skredytował.
    const isLastTouch_final = idx === rally.touches!.length - 1;
    const lastTouchTeamLoses = isLastTouch_final && touch.team !== rally.team_scored;
    const isFailedLastAction = actionLower.includes('obrona') || actionLower.includes('dig') ||
      actionLower.includes('przebity') || actionLower.includes('wolna') || actionLower.includes('free');
    if (lastTouchTeamLoses && isFailedLastAction) {
-     // Pomiń — nie dodawaj do chain. Scorer jest już w linii FINAL SCORER.
+     // Ostatni dotyk = nieudana obrona/blok przegrywającego teamu.
+     // Opisujemy: obrona miała miejsce ALE nie zatrzymała piłki → punkt dla scorera.
+     // Zawodnik obrońcy może być wymieniony jako kontekst, ale SCORER zdobył punkt.
+     const defenderName = touch.player || 'obrońca';
+     touchChainLines.push(
+       `${defenderName} próbuje obronić — piłka wychodzi na aut.`
+       + ` >>> PUNKT DLA: ${scoringPlayer} [${winnerTeamLabel}].`
+       + ` NAPISZ: '${defenderName} nie zatrzymuje piłki — ${scoringPlayer} zdobywa punkt!'`
+       + ` LUB: 'obrona ${defenderName} na nic — punkt dla ${winnerTeamLabel}!'`
+       + ` NIGDY: '${defenderName} wbija piłkę' — to ${defenderName} STRACIŁ punkt!`
+     );
    } else {
      touchChainLines.push(desc);
    }
