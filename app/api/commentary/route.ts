@@ -1600,7 +1600,17 @@ if (!rally.touches || rally.touches.length === 0) {
      desc += ` - ${action}`;
    }
    
-   touchChainLines.push(desc);
+   // ── KLUCZOWY FIX: jeśli ostatni dotyk jest przez PRZEGRYWAJĄCY team (failed dig/blok)
+   // → NIE dodawaj do chain. GPT nie zobaczy ich nazwiska na końcu i nie skredytuje ich.
+   const isLastTouch_final = idx === rally.touches!.length - 1;
+   const lastTouchTeamLoses = isLastTouch_final && touch.team !== rally.team_scored;
+   const isFailedLastAction = actionLower.includes('obrona') || actionLower.includes('dig') ||
+     actionLower.includes('przebity') || actionLower.includes('wolna') || actionLower.includes('free');
+   if (lastTouchTeamLoses && isFailedLastAction) {
+     // Pomiń — nie dodawaj do chain. Scorer jest już w linii FINAL SCORER.
+   } else {
+     touchChainLines.push(desc);
+   }
  });
 
 
@@ -2092,6 +2102,11 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // "piłka żyje" — absolutny zakaz (Tomek feedback wielokrotny)
+     t = t.replace(/piłka żyje!/gi, 'akcja trwa!');
+     t = t.replace(/piłka żyje/gi, 'akcja trwa');
+     t = t.replace(/pilka zyje!/gi, 'akcja trwa!');
+     t = t.replace(/pilka zyje/gi, 'akcja trwa');
      // Bezsensowne frazy GPT w długich wymianach
      t = t.replace(/,? ale nie wyobraża sobie już obrony[^.!]*/gi, '');
      t = t.replace(/piłka utrzymana,? ale nie wyobraża[^.!]*/gi, 'piłka utrzymana!');
