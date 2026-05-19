@@ -1601,7 +1601,7 @@ CRITICAL COMMENTARY RULES:
 1b. "POINT FOR: ${winnerTeamLabel}" = ONLY this team scored. NEVER say the other team scored!
 2. Describe ONLY what is in the touch chain above. Nothing invented!
 3. LENGTH LIMIT (MANDATORY): 2-3 touches = MAX 2 sentences. 4-6 touches = MAX 3 sentences. 7+ touches = MAX 3 sentences. NEVER more than 3 sentences!
-   3b. ${isMassiveRally ? 'MASSIVE RALLY (15+ touches)! Write EXACTLY 1 sentence: who scored and how. Do NOT describe every touch — just the final moment. Example: "Koppers wbija piłkę w boisko po długiej wymianie!"' : ''}
+   3b. ${numTouches > 14 ? 'MASSIVE RALLY (15+ touches)! Write EXACTLY 1 sentence: who scored and how. Do NOT describe every touch — just the final moment. Example: "Borkowski wbija piłkę w boisko po długiej wymianie!"' : ''}
 4. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
 5. NO "PUNKT DLA X": Banned! Use: "[Nazwisko] konczy!", "Punkt!", "I to punkt!", "[Druzyna] bierze!" or emotional equivalent.
 6. SERVE: Error only when ">>> SERVE ERROR". Otherwise serve was good.
