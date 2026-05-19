@@ -1576,7 +1576,13 @@ if (!rally.touches || rally.touches.length === 0) {
    } else if (actionLower.includes('obrona') || actionLower.includes('dig')) {
      const isLastTouch = idx === rally.touches!.length - 1;
      if (isLastTouch) {
-       desc += ' - defensive dig (ball out — point to other team)';
+       // KRYTYCZNE: ostatni dotyk to obrona która nie zatrzymała piłki.
+       // touch.player (np. Tavares) STRACIŁ piłkę — NIE zdobył punktu!
+       // Punkt idzie do scoringPlayer (np. Leon) bo to JEGO atak spowodował ten błąd.
+       desc += ` - FAILED DEFENSE — ball goes out. ${touch.player} could NOT keep ball in play.`
+         + ` POINT GOES TO: ${scoringPlayer} [${winnerTeamLabel}].`
+         + ` DO NOT say ${touch.player} scored. DO NOT say ${touch.player} wbija piłkę.`
+         + ` CORRECT: '${scoringPlayer} wbija piłkę w boisko!' or '${scoringPlayer} zdobywa punkt!'`;
      } else {
        // KEY FIX: tell GPT whether digging team won or lost the rally
        // Prevents GPT from praising a dig + adding Fantastyczny punkt! when team lost
@@ -2007,7 +2013,35 @@ INSTRUCTIONS:
      t = t.replace(/prowadzi i zdobywa punkt ten/gi, 'prowadzi');
      // "akcja nie zostaje zakończona" → "akcja trwa"
      t = t.replace(/akcja nie zostaje zakończona/gi, 'akcja trwa');
-     // BACKUP: 'X przebija blok i wbija' gdy X != scoringPlayer → zamień X na scoringPlayer
+     // ── NUCLEAR SCORER FIX ────────────────────────────────────────────────
+     // GPT zawsze kredytuje ostatniego gracza w touch chain jako scorera.
+     // postProcess deterministycznie naprawia: jeśli [nie-scorer] 'wbija/kończy' → zamień na scorera.
+     if (scoringPlayer) {
+       const spParts = scoringPlayer.split(' ');
+       const spFirst = spParts[0];    // np. 'Leon'
+       const spLast  = spParts[spParts.length - 1]; // np. 'Leon' (lub drugie nazwisko)
+       const isScorer = (name: string) =>
+         name === spFirst || name === spLast ||
+         scoringPlayer.includes(name) || name.includes(spFirst);
+
+       // Wzorce punktowania — jeśli gracz ≠ scorer → zamień
+       const scoringPhrases = [
+         'wbija piłkę w boisko',
+         'wbija piłkę',
+         'wbija w boisko',
+       ];
+       scoringPhrases.forEach(phrase => {
+         const re = new RegExp(
+           `([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) ${phrase.replace(/ /g, ' ')}`,
+           'g'
+         );
+         t = t.replace(re, (match, name) =>
+           isScorer(name) ? match : `${scoringPlayer} ${phrase}`
+         );
+       });
+     }
+
+     // BACKUP: 'X przebija blok i wbija' gdy X != scoringPlayer → zamień na scoringPlayer
      // Łapiemy wzorzec: '[Nazwisko] przebija blok' gdzie Nazwisko != scoringPlayer
      if (scoringPlayer) {
        const _sp = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
