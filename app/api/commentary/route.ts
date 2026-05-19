@@ -105,8 +105,8 @@ const getLanguagePrompt = (lang: string) => {
 
 STYL PL — RADIO NA ZYWO:
 - Prowadz narracje z EMOCJA proporcjonalna do sytuacji. Serve error = krotko i zwiezle. Koniec seta = wybuch emocji!
-- UNIKAJ mechanicznych zwrotow: zamiast "zwieksza przewage" uzyj "odskoczyc", "dokrecil srube", "nie odpuszcza". Zamiast "zmniejsza strate" uzyj "wraca do gry!", "nie daje sie!", "zapala iskre!".
-- UNIKAJ "gra trwa" — uzyj "akcja trwa!", "wymiana!", "pilka zyje!", "nie daja sie!".
+- UNIKAJ mechanicznych zwrotow: zamiast "zwieksza przewage" uzyj "odskoczyc", "dokrecil srube", "nie odpuszcza". Zamiast "zmniejsza strate" uzyj "odpowiada!", "iskra nadziei!", "zapala iskre!", "rośnie w sile!".
+- UNIKAJ "gra trwa" — uzyj "akcja trwa!", "wymiana!", "pilka zyje!", "walczy dalej!".
 - Przeplataj krotkie zdania uderzajace z dluzszymi opisowymi. Czasem zacznij od akcji: "Mocna zagrywka!", "Kapitalny blok!".
 - Przynajmniej JEDNO zdanie z wykrzyknikiem na komentarz (chyba ze to blad serwisowy — wtedy wystarczy jedno krotkie).
 
@@ -147,6 +147,16 @@ ABSOLUTNY ZAKAZ — te slowa/zwroty sa ZABRONIONE w PL:
 - "SET OVER" — ZAKAZANE! Dla PL: "Koniec seta!", "SET dla [druzyna]!", "[wynik] — seta!"
 - "momentum" — ANGIELSKI! ZASTAP: "impet", "seria punktow", "dynamika", "nie do zatrzymania"
 - "float serve" — ANGIELSKI! ZASTAP: "zagrywka szybujaca", "float"
+- "nie daje się" / "nie dają się" — ZAKAZANE! To brzmienie jest nieprofesjonalne. ZASTAP: "walczy dalej!", "odpowiada!", "nie odpuszcza!", "rośnie w siłę!"
+- "wraca do gry" — TYLKO gdy druzyna odrabia strate 5+ punktow (np. po przegrywaniu 10:16 odbija sie). Przy zwyklym zdobyciu punktu NIE uzywa sie "wraca do gry"! ZASTAP: "odpowiada!", "zdobywa punkt!", "nie odpuszcza!", "zmniejsza strate!"
+- "kończy akcję" — ZA OGOLNE! Napisz KONKRETNIE co sie stalo: "kończy atakiem!", "zamyka blokiem!", "wbija w boisko!"
+
+ROZNORODNOSC SLOWNICTWA — OBOWIAZKOWE:
+- Nie uzywaj tego samego superlatywu wiecej niz RAZ w jednym komentarzu!
+- Zamiast "kapitalnie" mozesz uzyc: znakomicie, wzorowo, pewnie, bez zarzutu, czysto, idealnie
+- Zamiast "perfekcyjnie" mozesz uzyc: bezbladnie, czysto, idealnie, wzorowo, znakomicie
+- Zamiast "fenomenalnie" mozesz uzyc: imponujaco, rewelacyjnie, znakomicie, kapitalnie
+- Zamiast "potezny atak" mozesz uzyc: mocny atak, precyzyjny atak, celny cios, pewne uderzenie
 - "Punkt dla [druzyna]" — MECHANICZNE i NUDNE. ZASTAP kreatywnymi zakonczeniami:
   DOBRE: "[Nazwisko] konczy!", "Punkt!", "[Druzyna] bierze!", "Niesamowite!", 
          "Wbija w boisko!", "Zdobywa!", "Zamkniety!", "I to jest punkt!"
@@ -1598,7 +1608,8 @@ CRITICAL COMMENTARY RULES:
 8. DIG ≠ BLOCK: "defensive dig" = obrona (not blok).
 9. PL: "sets to left/right wing" → "wystawia na lewe/prawe skrzydlo".
 10. NEVER "znowu/ponownie" — only if same player appears TWICE in this touch chain.
-11. PL: "Thales" not "Hoss". "as serwisowy" not "SERVICE ACE". "Koniec seta!" not "SET OVER".`;
+11. PL: "Thales" not "Hoss". "as serwisowy" not "SERVICE ACE". "Koniec seta!" not "SET OVER".
+12. ALWAYS COMPLETE YOUR LAST SENTENCE — never cut off mid-sentence. If you are running out of space, end the current sentence with a period or exclamation mark. A complete 2-sentence commentary is better than 3 incomplete sentences.`;
  }
  
  let situationContext = '';
@@ -1785,7 +1796,7 @@ INSTRUCTIONS:
  if (hasSubstitution) dynamicMaxTokens += 40;
  if (isHotSituation) dynamicMaxTokens += 30;
  if (narrativeStyle === 'chronological' && !isVeryLongRally) dynamicMaxTokens += 30;
- if (isVeryLongRally) dynamicMaxTokens = Math.min(dynamicMaxTokens, 80); // >12 dotknięć = max 80 tokenów
+ if (isVeryLongRally) dynamicMaxTokens = Math.min(dynamicMaxTokens, 130); // >12 dotknięć = max 130 tokenów (było 80 — zbyt mało, urywało zdania)
  if (milestone) dynamicMaxTokens += 30;
  
  console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
@@ -1906,42 +1917,52 @@ INSTRUCTIONS:
 
      // ── Brakujące polskie znaki w outputcie GPT ────────────────────────────
      // GPT czasem nie stawia diakrytyków — normalizujemy deterministycznie
-     t = t.replace(/druzyna/gi, 'drużyna');
-     t = t.replace(/Druzyna/g, 'Drużyna');
-     t = t.replace(/prowadza(?!\w)/g, 'prowadzą');
-     t = t.replace(/prowadza!/g, 'prowadzą!');
-     t = t.replace(/pilka/gi, 'piłka');
+     t = t.replace(/\bdruzyna\b/gi, 'drużyna');
+     t = t.replace(/\bDruzyna\b/g, 'Drużyna');
+     t = t.replace(/\bprowadza\b(?!\w)/g, 'prowadzą');
+     t = t.replace(/\bprowadza!/g, 'prowadzą!');
+     t = t.replace(/\bpilka\b/gi, 'piłka');
      t = t.replace(/pilka /g, 'piłka ');
      t = t.replace(/pilka!/g, 'piłka!');
      t = t.replace(/pilka,/g, 'piłka,');
      t = t.replace(/pilke /g, 'piłkę ');
      t = t.replace(/ pilke/g, ' piłkę');
-     t = t.replace(/pilke/gi, 'piłkę');
-     t = t.replace(/pilki/gi, 'piłki');
-     t = t.replace(/siatkówke/gi, 'siatkówkę');
-     t = t.replace(/serwis szybujacy/gi, 'serwis szybujący');
-     t = t.replace(/zagrywka szybujaca/gi, 'zagrywka szybująca');
-     t = t.replace(/szybujacym/gi, 'szybującym');
-     t = t.replace(/szybujacy/gi, 'szybujący');
-     t = t.replace(/lekka szybujaca/gi, 'lekka szybująca');
-     t = t.replace(/przyjecie/gi, 'przyjęcie');
-     t = t.replace(/przyjecia/gi, 'przyjęcia');
+     t = t.replace(/\bpilke\b/gi, 'piłkę');
+     t = t.replace(/\bpilki\b/gi, 'piłki');
+     t = t.replace(/\bsiatkówke\b/gi, 'siatkówkę');
+     t = t.replace(/\bserwis szybujacy\b/gi, 'serwis szybujący');
+     t = t.replace(/\bzagrywka szybujaca\b/gi, 'zagrywka szybująca');
+     t = t.replace(/\bszybujacym\b/gi, 'szybującym');
+     t = t.replace(/\bszybujacy\b/gi, 'szybujący');
+     t = t.replace(/\blekka szybujaca\b/gi, 'lekka szybująca');
+     t = t.replace(/\bprzyjecie\b/gi, 'przyjęcie');
+     t = t.replace(/\bprzyjecia\b/gi, 'przyjęcia');
 
-     // "nie daje się" — zły styl PL komentarza siatkówki
+     // "nie daje się" — ABSOLUTNY ZAKAZ (nieprofesjonalne brzmienie, fix v8.0)
+     // Specific patterns first (must come before catch-all)
      t = t.replace(/nie daje się i wraca do gry/gi, 'walczy dalej');
      t = t.replace(/nie daja sie i wraca do gry/gi, 'walczy dalej');
-     t = t.replace(/nie daja sie!/gi, 'walczy dalej!');
-     t = t.replace(/nie daja sie\b/gi, 'nie odpuszcza');
      t = t.replace(/nie daje się i odskakuje/gi, 'nie odpuszcza i odskakuje');
-     t = t.replace(/nie daje się!/gi, '');
-     t = t.replace(/nie daje się/gi, '');
+     t = t.replace(/nie daje się i ([a-z])/gi, '$1');
+     t = t.replace(/i nie daje się([!,.])/gi, '$1');
+     t = t.replace(/nie daje się zdominować/gi, 'nie odpuszcza');
+     t = t.replace(/nie daje się złamać/gi, 'nie odpuszcza');
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) nie daje się,/gi, '$1,');
+     t = t.replace(/nie daja sie!/gi, 'walczy dalej!');
+     t = t.replace(/nie daja sie/gi, 'nie odpuszcza');
+     t = t.replace(/nie daje się!/gi, 'walczy dalej!');
+     t = t.replace(/nie daje się/gi, 'nie odpuszcza');
      t = t.replace(/\bustawia do ataku\b/gi, 'wystawia do ataku');
      // "wystawieniu X" → "wystawie X" (poprawna gramatyka)
      t = t.replace(/wystawieniu ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/g, 'wystawie $1');
-     // Archaiczny szyk zdania
+     // Archaiczny szyk zdania — obie kolejności: "[name] posłał" i "posłał [name]"
      t = t.replace(/[Zz]agrywkę z wyskoku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) posłał/g, '$1 posłał zagrywkę z wyskoku');
+     t = t.replace(/[Zz]agrywkę z wyskoku posłał ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/g, '$1 posłał zagrywkę z wyskoku');
      t = t.replace(/[Zz]agrywkę floatową ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) posłał/g, '$1 posłał zagrywkę floatową');
+     t = t.replace(/[Zz]agrywkę floatową posłał ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)/g, '$1 posłał zagrywkę floatową');
      t = t.replace(/[Zz]agrywkę z wyskoku ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) wykonał/g, '$1 wykonał zagrywkę z wyskoku');
+     // "kończy akcję" — za ogólne, za suche
+     t = t.replace(/\bkończy akcję\b/gi, 'zdobywa punkt');
      // Brakujące "punkt" przed "dla X"
      t = t.replace(/serwisowy i dla ([A-ZŁŚŹĆĘÓĄŃ])/gi, 'serwisowy — punkt dla $1');
      t = t.replace(/serwisowy — dla ([A-ZŁŚŹĆĘÓĄŃ])/gi, 'serwisowy — punkt dla $1');
@@ -1949,9 +1970,17 @@ INSTRUCTIONS:
      // "Zdobyte!" bez kontekstu
      t = t.replace(/[!.] Zdobyte[!.]\s*$/gi, '!');
      t = t.replace(/ Zdobyte[!.]\s*$/gi, '!');
-     // "wraca do gry" — tylko przy comeback 5+ (tu go kasujemy bo nie znamy kontekstu seta)
-     t = t.replace(/ i wraca do gry/gi, '');
-     t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // "wraca do gry" — TYLKO przy comeback 5+ punktów straty (scoreDiff dostępny przez closure)
+     if (scoreDiff < 5) {
+       t = t.replace(/\bwraca do gry i odskakuje/gi, 'odskakuje');
+       t = t.replace(/\bwraca do gry i prowadzi/gi, 'prowadzi');
+       t = t.replace(/\bwraca do gry!$/gim, 'odpowiada!');
+       t = t.replace(/\bwraca do gry!/gi, 'odpowiada!');
+       t = t.replace(/\bwraca do gry,\s*/gi, '');
+       t = t.replace(/\bwraca do gry\b/gi, 'odpowiada');
+     }
+     t = t.replace(/ i wraca do gry/gi, '');
+          t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
      t = t.replace(/\bżywa zagrywka\b/gi, 'zagrywka szybująca');
      t = t.replace(/\bżywą zagrywką\b/gi, 'zagrywką szybującą');
      t = t.replace(/\bżywej zagrywki\b/gi, 'zagrywki szybującej');
@@ -2005,7 +2034,7 @@ INSTRUCTIONS:
        t = t.replace(/atakuje pierwszym tempo/gi, 'atakuje z pierwszego tempa');
        t = t.replace(/atak na pierwszym temp/gi, 'atak z pierwszego tempa');
        t = t.replace(/kończy pierwszym tempem/gi, 'kończy z pierwszego tempa');
-       t = t.replace(/pierwszym tempem/gi, 'z pierwszego tempa');
+       t = t.replace(/\bpierwszym tempem\b/gi, 'z pierwszego tempa');
 
        // Gramatyka wystawy
        t = t.replace(/wystawia dla /gi, 'wystawia do ');
@@ -2015,7 +2044,7 @@ INSTRUCTIONS:
        t = t.replace(/podaje dla /gi, 'podaje do ');
 
        // Gramatyka przyjęcia
-       t = t.replace(/receptura/gi, 'przyjęcie');
+       t = t.replace(/\breceptura\b/gi, 'przyjęcie');
        t = t.replace(/piłka odbija się daleko od siatki/gi, 'piłka przyjęta daleko od siatki');
        // konczy/konczac bez polskich znakow
        t = t.replace(/konczy /g, 'kończy ');
@@ -2038,9 +2067,9 @@ INSTRUCTIONS:
        t = t.replace(/ bierze /g, ' zdobywa punkt ');
 
        // Hoss → Thales (failsafe — wszystkie formy)
-       t = t.replace(/Hoss/g, 'Thales');
-       t = t.replace(/Hossa/g, 'Thalesa');
-       t = t.replace(/Hossowi/g, 'Thalesowi');
+       t = t.replace(/\bHoss\b/g, 'Thales');
+       t = t.replace(/\bHossa\b/g, 'Thalesa');
+       t = t.replace(/\bHossowi\b/g, 'Thalesowi');
 
        // Deduplikacja 'Thales Thales' (efekt podwojnego replace Hoss->Thales)
        t = t.replace(/Thales Thales/g, 'Thales');
@@ -2091,12 +2120,12 @@ INSTRUCTIONS:
        t = t.replace(/,\s*prowadzą!/g, '!');
 
        // Okrzyki w złym kontekście — usuwamy zawsze
-       t = t.replace(/Zdobyte!\s*/g, '');
-       t = t.replace(/Piękny punkt!\s*/g, '');
-       t = t.replace(/Niesamowite!\s*/g, '');
-       t = t.replace(/Fantastyczne!\s*/g, '');
-       t = t.replace(/Wspaniale!\s*/g, '');
-       t = t.replace(/Genialne!\s*/g, '');
+       t = t.replace(/\bZdobyte!\s*/g, '');
+       t = t.replace(/\bPiękny punkt!\s*/g, '');
+       t = t.replace(/\bNiesamowite!\s*/g, '');
+       t = t.replace(/\bFantastyczne!\s*/g, '');
+       t = t.replace(/\bWspaniale!\s*/g, '');
+       t = t.replace(/\bGenialne!\s*/g, '');
 
        // ── "kończy!" przypisane do gracza który NIE zdobył punktu ─────────────
        // Warunek: team-mismatch — ostatni touch jest z drużyny która PRZEGRAŁA rally
@@ -2229,8 +2258,8 @@ INSTRUCTIONS:
    // Score is shown in UI — never in commentary (except SET end)
    if (!setEndInfo.isSetEnd) {
      // "leads 14:11", "14:11", "14-11" patterns across all languages
-     t = t.replace(/(leads?|führt|mène|lidera|lidera|führen|mène|portant)\s+\d{1,2}[:\-]\d{1,2}/gi, (m) => m.split(/\s+/)[0]);
-     t = t.replace(/(prowadz[ąią\w]*|remis|wyrównu\w*|führt|lidera|vantaggio|avance|öne geçiyor)\s+\d{1,2}[:\-]\d{1,2}/gi,
+     t = t.replace(/\b(leads?|führt|mène|lidera|lidera|führen|mène|portant)\s+\d{1,2}[:\-]\d{1,2}/gi, (m) => m.split(/\s+/)[0]);
+     t = t.replace(/\b(prowadz[ąią\w]*|remis|wyrównu\w*|führt|lidera|vantaggio|avance|öne geçiyor)\s+\d{1,2}[:\-]\d{1,2}/gi,
        (m) => m.split(/\s+/)[0]);
           // Remove ALL X:Y scores from rally commentary — score is in UI
      // "Remis 11:11" → "Remis!" / "remis" (keep word, remove number)
