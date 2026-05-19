@@ -1543,13 +1543,23 @@ if (!rally.touches || rally.touches.length === 0) {
    } else if (actionLower.includes('blok') || actionLower.includes('block')) {
      const isLastTouch = idx === rally.touches!.length - 1;
      if (actionLower.includes('przebity') || actionLower.includes('error') || actionLower.includes('fail')) {
-       const blockSynonyms = [
-         ' - attacker beat the block (wyblok — attacker scores)',
-         ' - found a gap in the block (wyblok)',
-         ' - block touched but attacker wins',
-         ' - late block, attacker scores through',
-       ];
-       desc += blockSynonyms[Math.floor(Math.random() * blockSynonyms.length)];
+       if (isLastTouch) {
+         // KRYTYCZNE: blok przebity jako ostatni dotyk = atakujący (scoringPlayer) zdobył punkt
+         // touch.player = BLOKER który przegrał. scoringPlayer = atakujący który wygrał.
+         // GPT musi wiedzieć: touch.player NIE zdobył punktu, scoringPlayer TAK.
+         desc += ` - BLOCK BEATEN! ${touch.player} tried to block but FAILED.`
+           + ` >>> ${scoringPlayer} [${winnerTeamLabel}] SCORES by beating this block!`
+           + ` CRITICAL: Do NOT say ${touch.player} scored — ${touch.player} is the BLOCKER who LOST!`
+           + ` Say: ${scoringPlayer} przebija blok ${touch.player}!`;
+       } else {
+         const blockSynonyms = [
+           ' - attacker beat the block (wyblok — attacker scores)',
+           ' - found a gap in the block (wyblok)',
+           ' - block touched but attacker wins',
+           ' - late block, attacker scores through',
+         ];
+         desc += blockSynonyms[Math.floor(Math.random() * blockSynonyms.length)];
+       }
      } else if (isLastTouch) {
        desc += ' - BLOCK POINT! (blok kończący — bloker zdobywa punkt)';
      } else {
@@ -1997,6 +2007,21 @@ INSTRUCTIONS:
      t = t.replace(/prowadzi i zdobywa punkt ten/gi, 'prowadzi');
      // "akcja nie zostaje zakończona" → "akcja trwa"
      t = t.replace(/akcja nie zostaje zakończona/gi, 'akcja trwa');
+     // BACKUP: 'X przebija blok i wbija' gdy X != scoringPlayer → zamień X na scoringPlayer
+     // Łapiemy wzorzec: '[Nazwisko] przebija blok' gdzie Nazwisko != scoringPlayer
+     if (scoringPlayer) {
+       const _sp = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+       // '[Ktoś] przebija blok (Tavaresa|Komendę itp.) i wbija'
+       t = t.replace(
+         /([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+(?:\s+[A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+)?) przebija blok/g,
+         (match, name) => {
+           // Jeśli imię/nazwisko w komentarzu zgadza się ze scoringPlayer — OK
+           if (scoringPlayer.includes(name) || name.includes(scoringPlayer.split(' ')[0])) return match;
+           // Jeśli nie — zastąp scoringPlayer
+           return `${scoringPlayer} przebija blok`;
+         }
+       );
+     }
      // "serwis w salto" → "serwis z wyskoku" (błędna forma)
      t = t.replace(/serwis(?:em)? w salto/gi, 'serwis z wyskoku');
      t = t.replace(/zagrywka w salto/gi, 'zagrywka z wyskoku');
