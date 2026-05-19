@@ -1601,6 +1601,7 @@ CRITICAL COMMENTARY RULES:
 1b. "POINT FOR: ${winnerTeamLabel}" = ONLY this team scored. NEVER say the other team scored!
 2. Describe ONLY what is in the touch chain above. Nothing invented!
 3. LENGTH LIMIT (MANDATORY): 2-3 touches = MAX 2 sentences. 4-6 touches = MAX 3 sentences. 7+ touches = MAX 3 sentences. NEVER more than 3 sentences!
+   3b. ${isMassiveRally ? 'MASSIVE RALLY (15+ touches)! Write EXACTLY 1 sentence: who scored and how. Do NOT describe every touch — just the final moment. Example: "Koppers wbija piłkę w boisko po długiej wymianie!"' : ''}
 4. NO SCORE IN TEXT: NEVER write "14:11" or "prowadza 14:11" — score is in UI! Say: "prowadza", "remis", "odskoczyc".
 5. NO "PUNKT DLA X": Banned! Use: "[Nazwisko] konczy!", "Punkt!", "I to punkt!", "[Druzyna] bierze!" or emotional equivalent.
 6. SERVE: Error only when ">>> SERVE ERROR". Otherwise serve was good.
@@ -1772,6 +1773,7 @@ INSTRUCTIONS:
  // Zmiana: więcej chronologicznych (70% przy dramaLevel 0-1)
  // >12 dotknięć = zawsze climax-first ale MAX 1 zdanie (skrócony)
  const isVeryLongRally = numTouches > 12;
+ const isMassiveRally = numTouches > 14; // 15+ dotknięć = absolutne minimum, tylko scorer
  const narrativeStyle: 'climax-first' | 'chronological' = 
    isServeError ? 'chronological'
    : isVeryLongRally ? 'climax-first'   // >12 dotknięć = tylko kto/jak, 1 zdanie
@@ -1796,7 +1798,8 @@ INSTRUCTIONS:
  if (hasSubstitution) dynamicMaxTokens += 40;
  if (isHotSituation) dynamicMaxTokens += 30;
  if (narrativeStyle === 'chronological' && !isVeryLongRally) dynamicMaxTokens += 30;
- if (isVeryLongRally) dynamicMaxTokens = Math.min(dynamicMaxTokens, 170); // >12 dotknięć = max 170 tokenów (v8.1: zwiększone z 130 bo nadal urywało przy 14+ dotknięciach)
+ if (isMassiveRally) dynamicMaxTokens = 90;  // 15+ dotknięć = MAX 1 zdanie, nie opisuj każdego dotyku!
+ else if (isVeryLongRally) dynamicMaxTokens = Math.min(dynamicMaxTokens, 150); // 13-14 dotknięć = max 150
  if (milestone) dynamicMaxTokens += 30;
  
  console.log(`[TOKENS] touches=${numTouches}, maxTokens=${dynamicMaxTokens}, serveErr=${isServeError}, ace=${isAcePoint}, setEnd=${setEndInfo.isSetEnd}`);
@@ -1988,8 +1991,18 @@ INSTRUCTIONS:
      t = t.replace(/blokiem kończy akcję/gi, 'blokuje — punkt');
      t = t.replace(/i blokiem kończy akcję/gi, 'i blokuje skutecznie');
      t = t.replace(/\bkończy akcję\b/gi, 'zdobywa punkt');
-     // "znowu" / "ponownie" — GPT nadużywa, usuń bezwarunkowo (bez touch chain nie da się ocenić kontekstu)
+     // Score suppression artifacts — GPT doklejało kontekst po usuniętym wyniku
+     t = t.replace(/zdobywa punkt ten [^!.]+punkt/gi, 'zdobywa punkt');
+     t = t.replace(/zdobywa punkt to [^!.]{0,40}[!.]/gi, 'zdobywa punkt!');
+     t = t.replace(/prowadzi i zdobywa punkt ten/gi, 'prowadzi');
+     // "akcja nie zostaje zakończona" → "akcja trwa"
+     t = t.replace(/akcja nie zostaje zakończona/gi, 'akcja trwa');
+     // "serwis w salto" → "serwis z wyskoku" (błędna forma)
+     t = t.replace(/serwis(?:em)? w salto/gi, 'serwis z wyskoku');
+     t = t.replace(/zagrywka w salto/gi, 'zagrywka z wyskoku');
+     // "znowu" / "znów" / "ponownie" — GPT nadużywa, usuń bezwarunkowo
      t = t.replace(/\bznowu\b/gi, '');
+     t = t.replace(/\bznów\b/gi, '');    // wariant z ó — też zakazany
      t = t.replace(/\bpownie\b/gi, '');   // literówka GPT
      t = t.replace(/\bponownie\b/gi, '');
      t = t.replace(/  +/g, ' '); // cleanup podwójnych spacji po usunięciu
@@ -2018,6 +2031,11 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // Bezsensowne frazy GPT w długich wymianach
+     t = t.replace(/,? ale nie wyobraża sobie już obrony[^.!]*/gi, '');
+     t = t.replace(/piłka utrzymana,? ale nie wyobraża[^.!]*/gi, 'piłka utrzymana!');
+     // "mimo wszystkiego" — dziwna forma
+     t = t.replace(/mimo wszystkiego/gi, 'mimo to');
      // "staje na wysokości zadania" — klisze, zastępujemy rotacją
      t = t.replace(/staje na wysokości zadania/gi, () => {
        const v = ['odpowiada na wyzwanie', 'nie zawodzi', 'jest niesamowity', 'robi co do niego należy'];
