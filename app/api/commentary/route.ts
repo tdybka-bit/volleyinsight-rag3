@@ -1618,9 +1618,9 @@ if (!rally.touches || rally.touches.length === 0) {
      touchChainLines.push(
        `${defenderName} próbuje obronić — piłka wychodzi na aut.`
        + ` >>> PUNKT DLA: ${scoringPlayer} [${winnerTeamLabel}].`
-       + ` NAPISZ: '${defenderName} nie zatrzymuje piłki — ${scoringPlayer} zdobywa punkt!'`
-       + ` LUB: 'obrona ${defenderName} na nic — punkt dla ${winnerTeamLabel}!'`
-       + ` NIGDY: '${defenderName} wbija piłkę' — to ${defenderName} STRACIŁ punkt!`
+       + ` NAPISZ (scorer PIERWSZY): '${scoringPlayer} zdobywa punkt! Obrona ${defenderName} nie wystarczyła.'`
+       + ` LUB: '${scoringPlayer} wbija piłkę w boisko mimo obrony ${defenderName}!'`
+       + ` ABSOLUTNIE NIGDY: '${defenderName} zdobywa punkt' / '${defenderName} wbija' — ${defenderName} PRZEGRAŁ!`
      );
    } else {
      touchChainLines.push(desc);
@@ -2064,6 +2064,9 @@ INSTRUCTIONS:
          [`${NAME} zamyka (?:tę |ten )?punkt`, 'zamyka akcję'],
          [`${NAME} przebija (?:jego |jej |ich )?blok`, 'przebija blok'],
          [`${NAME} muruje siatkę`,          'blokuje'],
+         [`${NAME} zdobywa punkt`,           'zdobywa punkt'],
+         [`${NAME} punktuje`,                'zdobywa punkt'],
+         [`${NAME} kończy akcję`,            'zdobywa punkt'],
        ];
 
        fixes.forEach(([pattern, replacement]) => {
