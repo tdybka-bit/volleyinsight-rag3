@@ -658,13 +658,25 @@ if (!rally.touches || rally.touches.length === 0) {
  let playerTeam = finalTouch?.team || '';
 
  // ── POPRAWNE określenie scorera ─────────────────────────────────────────
- // finalTouch może być obroną przegrywającego teamu (Tavares dig po ataku Leona)
- // W takim przypadku finalTouch.player = obrońca, NIE scorer.
- // Fix: weź ostatniego gracza z WYGRYWAJĄCEGO teamu w touch chain.
- const winningTeamId = rally.team_scored; // 'home' lub 'away'
- const winningTouches = rally.touches.filter((t: any) => t.team === winningTeamId);
- const lastWinningTouch = winningTouches[winningTouches.length - 1];
- let scoringPlayer = lastWinningTouch?.player || finalTouch?.player || '';
+ // Dwa przypadki:
+ // A) Normalny punkt (atak, blok): scorer = ostatni gracz WYGRYWAJĄCEGO teamu
+ //    (nie bierzemy finalTouch bo może to być obrońca przegrywającego teamu)
+ // B) Błąd (attack_error, serve_error): scorer = gracz który popełnił błąd
+ //    (finalTouch.player = Butryn który się pomylił — o nim ma być komentarz)
+ const _finalAction = (finalTouch?.action || '').toLowerCase();
+ const _isErrorTouch = _finalAction.includes('error') || _finalAction.includes('fault')
+   || _finalAction.includes('blad') || _finalAction.includes('błąd');
+ let scoringPlayer: string;
+ if (_isErrorTouch) {
+   // Błąd — scorer to gracz który popełnił błąd (finalTouch)
+   scoringPlayer = finalTouch?.player || '';
+ } else {
+   // Normalny punkt — scorer = ostatni gracz wygrywającego teamu
+   const winningTeamId = rally.team_scored;
+   const winningTouches = rally.touches.filter((t: any) => t.team === winningTeamId);
+   const lastWinningTouch = winningTouches[winningTouches.length - 1];
+   scoringPlayer = lastWinningTouch?.player || finalTouch?.player || '';
+ }
     const displayScoringPlayer = scoringPlayer;
 
  console.log('Final touch:', scoringPlayer, '| Action:', scoringAction, '| Team:', playerTeam, '| Rally won by:', rally.team_scored);
