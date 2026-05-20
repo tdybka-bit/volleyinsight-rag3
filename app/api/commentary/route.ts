@@ -2055,11 +2055,13 @@ INSTRUCTIONS:
      t = t.replace(/prowadzi i zdobywa punkt ten/gi, 'prowadzi');
      // "akcja nie zostaje zakończona" → "akcja trwa"
      t = t.replace(/akcja nie zostaje zakończona/gi, 'akcja trwa');
-     // Bieniekk — duplikat k, wszystkie formy odmiany
-     t = t.replace(/Bieniekka/g, 'Bieńka');
-     t = t.replace(/Bieniekki/g, 'Bieńki');
-     t = t.replace(/Bieniekkiem/g, 'Bieńkiem');
-     t = t.replace(/Bieniekk/g, 'Bieniek');
+     // Bieniekk — duplikat k, wszystkie odmiany (od najdłuższej do najkrótszej!)
+     t = t.replace(/Bieniekkowi/g, 'Bieńkowi');   // celownik
+     t = t.replace(/Bieniekkiem/g, 'Bieńkiem');   // narzędnik
+     t = t.replace(/Bieniekka/g,  'Bieńka');      // dopełniacz
+     t = t.replace(/Bieniekki/g,  'Bieńki');
+     t = t.replace(/Bieniekek/g,  'Bieniek');     // GPT typo z wstawionym 'e'
+     t = t.replace(/Bieniekk/g,   'Bieniek');     // mianownik + reszta
      t = t.replace(/\bBieńkka\b/gi, 'Bieńka');
      t = t.replace(/\bBieńkk\b/gi, 'Bieniek');
 
@@ -2119,6 +2121,11 @@ INSTRUCTIONS:
          t = t.replace(re, '$1 $2');
        }
      });
+     // "X popełnia błąd i X zdobywa punkt" — bezsens przy błędzie przyjęcia/ataku
+     t = t.replace(/popełnia błąd[^!.]*i ([A-ZŁŚŹĆĘÓĄŃ][A-Za-zÀ-ž]{3,}) zdobywa punkt[!.]?/gi,
+       'popełnia błąd!');
+     t = t.replace(/popełnia błąd w przyjęciu i ([A-ZŁŚŹĆĘÓĄŃ][A-Za-zÀ-ž]{3,}) zdobywa[^!.]*[!.]/gi,
+       'popełnia błąd w przyjęciu!');
      // "Obrona [X] nie wystarczyła" — usuń nazwisko obrońcy (i tak błędne creditowanie)
      // Zostaje samo "Obrona nie wystarczyła" jako neutralny kontekst
      t = t.replace(/[Oo]brona [A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']+ nie wystarczyła/g, 'Obrona nie wystarczyła');
