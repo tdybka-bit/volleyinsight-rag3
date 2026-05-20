@@ -2032,11 +2032,11 @@ INSTRUCTIONS:
      // "posyłał zagrywkę" → "posłał zagrywkę" (czas niedokonany brzmi nienaturalnie)
      t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) posyłał zagrywkę/g, '$1 posłał zagrywkę');
      t = t.replace(/posyłał zagrywkę z wyskoku/gi, 'posłał zagrywkę z wyskoku');
-     // "kończy akcję" — za ogólne, za suche
+     // "kończy akcję" — za ogólne
+     // UWAGA: \b nie działa po 'ę' (non-ASCII) w JS — używamy lookahead
      t = t.replace(/i blokiem kończy akcję/gi, 'i blokuje — punkt');
      t = t.replace(/blokiem kończy akcję/gi, 'blokuje — punkt');
-     t = t.replace(/i blokiem kończy akcję/gi, 'i blokuje skutecznie');
-     t = t.replace(/\bkończy akcję\b/gi, 'zdobywa punkt');
+     t = t.replace(/kończy akcję(?=[^a-zA-Z]|$)/gi, 'zdobywa punkt');
      // Score suppression artifacts — GPT doklejało kontekst po usuniętym wyniku
      t = t.replace(/zdobywa punkt ten [^!.]+punkt/gi, 'zdobywa punkt');
      t = t.replace(/zdobywa punkt to [^!.]{0,40}[!.]/gi, 'zdobywa punkt!');
@@ -2091,6 +2091,22 @@ INSTRUCTIONS:
        });
      }
 
+     // "[Nazwa drużyny lub prefiks] [Gracz] zdobywa" → "[Gracz] zdobywa"
+     // GPT czasem pisze 'PGE Projekt Kochanowski' zamiast 'PGE Projekt Warszawa Kochanowski'
+     // Sprawdzamy każdy prefiks nazwy drużyny (od najdłuższego)
+     const _teamNames = [homeTeamFull, awayTeamFull].filter(Boolean);
+     _teamNames.forEach((team: string) => {
+       const parts = team.split(' ');
+       for (let i = parts.length; i >= 2; i--) {
+         const prefix = parts.slice(0, i).join(' ');
+         const esc = prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+         const re = new RegExp(
+           '\\b' + esc + '\\s+([A-Z][A-Za-z]{3,})\\s+(zdobywa|wbija|zamyka|blokuje)',
+           'g'
+         );
+         t = t.replace(re, '$1 $2');
+       }
+     });
      // "Obrona [X] nie wystarczyła" — usuń nazwisko obrońcy (i tak błędne creditowanie)
      // Zostaje samo "Obrona nie wystarczyła" jako neutralny kontekst
      t = t.replace(/[Oo]brona [A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']+ nie wystarczyła/g, 'Obrona nie wystarczyła');
@@ -2128,6 +2144,12 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // Urwany komentarz — 'muruje siatkę i!' / 'blokuje i!' itp.
+     // GPT zaczął zdanie ale token limit uciął. Czyścimy wisielcze 'i!'
+     t = t.replace(/ i!$/gm, '!');
+     t = t.replace(/ i! /g, '! ');
+     t = t.replace(/ ale!$/gm, '!');
+     t = t.replace(/ lecz!$/gm, '!');
      // "piłka żyje" — absolutny zakaz (Tomek feedback wielokrotny)
      t = t.replace(/piłka żyje!/gi, 'akcja trwa!');
      t = t.replace(/piłka żyje/gi, 'akcja trwa');
