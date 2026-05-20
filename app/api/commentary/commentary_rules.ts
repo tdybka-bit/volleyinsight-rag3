@@ -99,12 +99,40 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 [F47] "piłka muruje siatkę" — NIGDY. ZAWODNIK muruje siatkę, nie piłka. Poprawnie: "[Bloker] muruje siatkę!"
 [F48] "nie odpuszcza" — TYLKO gdy od dłuższego czasu jest seria punkt za punkt. NIE jako ogólna zachęta na końcu komentarza.
 [F49] Japońskie/cyrylica w PL komentarzu — NIGDY. Imiona obcokrajowców piszemy łaciną: Demyanenko, nie デミヤネンコ.
-[F51] SCORER RULE: Ostatni obrońca w akcji (np. Tavares "próbuje ratować") NIGDY nie zdobywa punktu.
-      Punkt zawsze należy do SCORERA z nagłówka. Obrona może być wspomniana jako kontekst,
-      ale zakończenie ZAWSZE: "[Scorer] zdobywa punkt / wbija piłkę w boisko".
+[F51] SCORER ≠ OBROŃCA: Gdy ostatni dotyk to nieudana obrona (dig/blok przebity),
+      obrońca NIE zdobył punktu. Punkt należy do atakującego. Obrona może być wspomniana
+      jako kontekst ("mimo obrony X"), ale scoring verb zawsze = atakujący.
+      POPRAWNIE: "Leon wbija piłkę w boisko! Mimo obrony Tavaresa."
+      NIGDY: "Tavares wbija piłkę" / "Tavares zdobywa punkt" gdy Tavares bronił.
+
 [F52] "piłka żyje" — ABSOLUTNY ZAKAZ. Użyj: "akcja trwa", "wymiana trwa".
-[F53] "nie daje się" — ABSOLUTNY ZAKAZ. Użyj: "odpowiada", "nie odpuszcza", "walczy dalej".
-[F54] "wraca do gry" — TYLKO gdy drużyna odrabia stratę 5+ punktów. Przy zwykłym punkcie: "odpowiada".
+
+[F53] "nie daje się" / "nie dają się" — ABSOLUTNY ZAKAZ. Brzmi nieprofesjonalnie.
+      Użyj: "odpowiada", "nie odpuszcza", "walczy dalej".
+
+[F54] "wraca do gry" — TYLKO gdy drużyna odrabia stratę 5+ punktów (np. z 10:16→11:16).
+      Przy zwykłym punkcie: "odpowiada", "zmniejsza stratę", "nie odpuszcza".
+
+[F55] "znowu" / "znów" / "ponownie" — ZAKAZ. GPT nadużywa bez kontekstu powtórzenia.
+      Użyj konkretnego opisu akcji zamiast nawiązywać do poprzedniej.
+
+[F56] SCORER przy błędzie: gdy akcja to błąd przyjęcia/ataku/serwisu — NIE używaj
+      "[gracz który bronił/serwował] zdobywa punkt". Poprawnie: "[gracz który popełnił błąd]
+      myli się" lub "as serwisowy" przy błędzie przyjęcia na zagrywce.
+
+[F57] "znakomicie" / "perfekcyjnie" / "fenomenalnie" — max 1x każde słowo na komentarz.
+      Nie używaj 2+ superlatywów w jednym komentarzu. Rotuj: wzorowo, bez zarzutu, pewnie,
+      bezbłędnie, czysto, dobrze, dokładnie.
+
+[F58] "powiększa przewagę" — ZAKAZ jako zakończenie komentarza. Użyj konkretnie:
+      "odskakuje dwoma punktami", "rośnie w siłę", "dokręca śrubę", "buduje przewagę".
+
+[F59] "kończy akcję" — ZA OGÓLNE. Zawsze konkretnie: "kończy atakiem", "zamyka blokiem",
+      "wbija w boisko", "blokuje punktowo".
+
+[F60] "X popełnia błąd i X zdobywa punkt" — NONSENS LOGICZNY. Nigdy nie łącz błędu i
+      zdobycia punktu przez TEN SAM podmiot w jednym zdaniu.
+
 [F50] As serwisowy + "wystawia na..." w jednym komentarzu = BŁĄD LOGICZNY. As = piłka nie przyjęta. Nie może być wystawy. — NIGDY. Kontra = przejście z obrony do ataku w trakcie wymiany. Zagrywka ZAWSZE zaczyna akcję, nie kontrę. + "wbija piłkę w boisko" = oksymoron — NIGDY. As = piłka NIE była przyjęta. Nie "wbił w boisko". Kwolek→Kwolka, Bieniek→Bieńka, Sasek→Saszka. Reguła: -ek odpada. NIGDY Kwoleka, Bienieka. ("przez mur", "przez ścianę") — NIGDY. Tylko to co jest w touch chain. "Piękny punkt!" po błędzie serwisowym — NIGDY. Błąd serwisu to strata, nie osiągnięcie. Nie oceniaj błędów jako pięknych.
 `;
 
@@ -122,18 +150,39 @@ export const FEEDBACK_LOG = `
 OSTATNIE ZMIANY (najnowsze na górze)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[2026-05-19] Tomek: GPT kredytuje ostatniego obrońcę jako scorera (Tavares wbija zamiast Leon)
-→ route.ts: touch chain — opis nieudanej obrony z explicite SCORER
-→ route.ts: nuclear scorer postProcess v2 — podmiana [non-scorer] wbija/zamyka/przebija
-→ route.ts: import COMMENTARY_RULES_PL do basePrompt (było podpięte!)
-→ COMMENTARY_RULES: F51 (scorer rule), F52 (piłka żyje), F53 (nie daje się), F54 (wraca do gry)
+[2026-05-20] Sesja naprawcza — root cause scorer bug + systematyczne postProcess
+→ COMMENTARY_RULES: F51-F60 dodane (scorer≠obrońca, błąd+zdobywa, superlatywy, powiększa przewagę)
+→ route.ts: scoringPlayer = lastWinningTouch (nie finalTouch gdy obrona przegrywającego)
+→ route.ts: isErrorTouch — przy błędach scoringPlayer = gracz który popełnił błąd
+→ route.ts: nuclear scorer fix v2 — podmiana wszystkich scoring verbs
+→ route.ts: postProcess — piłka żyje, nie daje się, znowu/znów, wraca do gry, punkt dla
+→ route.ts: token cap — isMassiveRally 15+ dotknięć = 90 tokenów
+→ route.ts: import COMMENTARY_RULES_PL → inject do basePrompt PL
 
 [2026-05-11] Tomek: "Piękny punkt!" po błędzie serwisu — absurd
 → COMMENTARY_RULES: F36 dodane
 → route.ts: postProcess usuwa "Piękny punkt!" po błędzie serwisowym
+[2026-05-20] Sesja naprawcza — root cause scorer bug + systematyczne postProcess
+→ COMMENTARY_RULES: F51-F60 dodane (scorer≠obrońca, błąd+zdobywa, superlatywy, powiększa przewagę)
+→ route.ts: scoringPlayer = lastWinningTouch (nie finalTouch gdy obrona przegrywającego)
+→ route.ts: isErrorTouch — przy błędach scoringPlayer = gracz który popełnił błąd
+→ route.ts: nuclear scorer fix v2 — podmiana wszystkich scoring verbs
+→ route.ts: postProcess — piłka żyje, nie daje się, znowu/znów, wraca do gry, punkt dla
+→ route.ts: token cap — isMassiveRally 15+ dotknięć = 90 tokenów
+→ route.ts: import COMMENTARY_RULES_PL → inject do basePrompt PL
+
 [2026-05-11] Tomek: hybryda narracji
 → route.ts: narrativeStyle climax-first/chronological per dramaLevel
 → PHRASE_TRACKER: wbudowany w route.ts, skanuje recentRallies per set
+
+[2026-05-20] Sesja naprawcza — root cause scorer bug + systematyczne postProcess
+→ COMMENTARY_RULES: F51-F60 dodane (scorer≠obrońca, błąd+zdobywa, superlatywy, powiększa przewagę)
+→ route.ts: scoringPlayer = lastWinningTouch (nie finalTouch gdy obrona przegrywającego)
+→ route.ts: isErrorTouch — przy błędach scoringPlayer = gracz który popełnił błąd
+→ route.ts: nuclear scorer fix v2 — podmiana wszystkich scoring verbs
+→ route.ts: postProcess — piłka żyje, nie daje się, znowu/znów, wraca do gry, punkt dla
+→ route.ts: token cap — isMassiveRally 15+ dotknięć = 90 tokenów
+→ route.ts: import COMMENTARY_RULES_PL → inject do basePrompt PL
 
 [2026-05-11] Tomek: frazy się powtarzają (muruje, piłka żyje)
 → route.ts: PHRASE_TRACKER — limity per set z alternatywami
