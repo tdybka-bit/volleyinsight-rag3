@@ -654,12 +654,18 @@ if (!rally.touches || rally.touches.length === 0) {
 
  // Get final action info
  const finalTouch = rally.touches[rally.touches.length - 1];
- let scoringPlayer = finalTouch?.player || '';
-    
-    // Display name handled by RAG naming rules
-    const displayScoringPlayer = scoringPlayer;
  let scoringAction = finalTouch?.action || '';
  let playerTeam = finalTouch?.team || '';
+
+ // ── POPRAWNE określenie scorera ─────────────────────────────────────────
+ // finalTouch może być obroną przegrywającego teamu (Tavares dig po ataku Leona)
+ // W takim przypadku finalTouch.player = obrońca, NIE scorer.
+ // Fix: weź ostatniego gracza z WYGRYWAJĄCEGO teamu w touch chain.
+ const winningTeamId = rally.team_scored; // 'home' lub 'away'
+ const winningTouches = rally.touches.filter((t: any) => t.team === winningTeamId);
+ const lastWinningTouch = winningTouches[winningTouches.length - 1];
+ let scoringPlayer = lastWinningTouch?.player || finalTouch?.player || '';
+    const displayScoringPlayer = scoringPlayer;
 
  console.log('Final touch:', scoringPlayer, '| Action:', scoringAction, '| Team:', playerTeam, '| Rally won by:', rally.team_scored);
 
@@ -1615,12 +1621,12 @@ if (!rally.touches || rally.touches.length === 0) {
      // Opisujemy: obrona miała miejsce ALE nie zatrzymała piłki → punkt dla scorera.
      // Zawodnik obrońcy może być wymieniony jako kontekst, ale SCORER zdobył punkt.
      const defenderName = touch.player || 'obrońca';
+     // ZERO przykładów zdań — GPT kopiuje strukturę i odwraca podmiot.
+     // Podajemy tylko fakty: kto bronił (kontekst), kto jest SCORER (wynik).
      touchChainLines.push(
-       `${defenderName} próbuje obronić — piłka wychodzi na aut.`
-       + ` >>> PUNKT DLA: ${scoringPlayer} [${winnerTeamLabel}].`
-       + ` NAPISZ (scorer PIERWSZY): '${scoringPlayer} zdobywa punkt! Obrona ${defenderName} nie wystarczyła.'`
-       + ` LUB: '${scoringPlayer} wbija piłkę w boisko mimo obrony ${defenderName}!'`
-       + ` ABSOLUTNIE NIGDY: '${defenderName} zdobywa punkt' / '${defenderName} wbija' — ${defenderName} PRZEGRAŁ!`
+       `[CONTEXT] ${defenderName} attempted defense — ball out of play.`
+       + ` [SCORER] ${scoringPlayer} / [TEAM] ${winnerTeamLabel} / [ACTION] attack won`
+       + ` [RULE] Subject of scoring sentence = ${scoringPlayer}. ${defenderName} = loser, context only.`
      );
    } else {
      touchChainLines.push(desc);
@@ -2037,6 +2043,14 @@ INSTRUCTIONS:
      t = t.replace(/prowadzi i zdobywa punkt ten/gi, 'prowadzi');
      // "akcja nie zostaje zakończona" → "akcja trwa"
      t = t.replace(/akcja nie zostaje zakończona/gi, 'akcja trwa');
+     // Bieniekk — duplikat k, wszystkie formy odmiany
+     t = t.replace(/Bieniekka/g, 'Bieńka');
+     t = t.replace(/Bieniekki/g, 'Bieńki');
+     t = t.replace(/Bieniekkiem/g, 'Bieńkiem');
+     t = t.replace(/Bieniekk/g, 'Bieniek');
+     t = t.replace(/\bBieńkka\b/gi, 'Bieńka');
+     t = t.replace(/\bBieńkk\b/gi, 'Bieniek');
+
      // ── NUCLEAR SCORER FIX v2 ──────────────────────────────────────────────
      // Deterministyczna podmiana złego gracza na scoringPlayer.
      // Pattern nazwy: wielka litera + min 3 znaki (obsługuje McCarthy, Grozdanov itp.)
@@ -2077,6 +2091,9 @@ INSTRUCTIONS:
        });
      }
 
+     // "Obrona [X] nie wystarczyła" — usuń nazwisko obrońcy (i tak błędne creditowanie)
+     // Zostaje samo "Obrona nie wystarczyła" jako neutralny kontekst
+     t = t.replace(/[Oo]brona [A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']+ nie wystarczyła/g, 'Obrona nie wystarczyła');
      // "serwis w salto" → "serwis z wyskoku" (błędna forma)
      t = t.replace(/serwis(?:em)? w salto/gi, 'serwis z wyskoku');
      t = t.replace(/zagrywka w salto/gi, 'zagrywka z wyskoku');
@@ -2150,13 +2167,6 @@ INSTRUCTIONS:
      t = t.replace(/\bBienioka\b/gi, 'Bieńka');        // błędna germanizacja
      t = t.replace(/\bBienoka\b/gi, 'Bieńka');
      // Zduplikowane litery w nazwiskach (GPT typos)
-     // Bieniekk — duplikat k, wszystkie formy odmiany
-     t = t.replace(/Bieniekka/g, 'Bieńka');
-     t = t.replace(/Bieniekki/g, 'Bieńki');
-     t = t.replace(/Bieniekkiem/g, 'Bieńkiem');
-     t = t.replace(/Bieniekk/g, 'Bieniek');
-     t = t.replace(/\bBieńkka\b/gi, 'Bieńka');
-     t = t.replace(/\bBieńkk\b/gi, 'Bieniek');
      // "bleduje" nie istnieje po polsku
      t = t.replace(/\bleduje\b/gi, 'popełnia błąd');
      t = t.replace(/\bledowania\b/gi, 'błędów');
