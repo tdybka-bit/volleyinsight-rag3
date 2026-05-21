@@ -1650,7 +1650,9 @@ if (!rally.touches || rally.touches.length === 0) {
      touchChainLines.push(
        `[CONTEXT] ${defenderName} attempted defense after attack by ${scoringPlayer} — ball out of play.`
        + ` [SCORER] ${scoringPlayer} / [TEAM] ${winnerTeamLabel} / [ACTION] attack won`
-       + ` [RULE] Subject of scoring sentence = ${scoringPlayer}. ${defenderName} = loser, context only.`
+       + ` [RULE] Subject of scoring sentence = ${scoringPlayer}. ${defenderName} = context only.`
+       + ` REQUIRED (rule M11): name BOTH players — attacker AND defender.`
+       + ` '${defenderName} próbuje obrony po ataku ${scoringPlayer}, ale piłka wychodzi!'`
      );
    } else {
      touchChainLines.push(desc);
@@ -2137,8 +2139,11 @@ INSTRUCTIONS:
      t = t.replace(/\bSkra Bełchatów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bLUK Lublin\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      // "X popełnia błąd [desc]. X zdobywa punkt." — NONSENS (ten sam gracz popełnia błąd i zdobywa)
-     // Obsługuje: ten sam gracz w zdaniu 2, lub team+gracz w zdaniu 2
-     // Pattern 1: X popełnia błąd. X zdobywa punkt. (dokładnie ten sam gracz)
+     // Dotyczy: błąd serwisowy, błąd w przyjęciu, błąd ataku
+     // Pattern A: "X popełnia błąd w przyjęciu i X zdobywa punkt" (przecinek lub "i")
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd w przyjęciu[^.!]*i \1 zdobywa punkt[^.!]*/gi, '$1 popełnia błąd w przyjęciu!');
+     t = t.replace(/błąd w przyjęciu ([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,})[^.!]*i \1 zdobywa punkt[^.!]*/gi, 'błąd w przyjęciu $1!');
+     // Pattern B: X popełnia błąd. X zdobywa punkt. (dokładnie ten sam gracz)
      t = t.replace(
        /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*[!.]?/gi,
        (m: string, p: string) => `${p} popełnia błąd!`
@@ -2229,6 +2234,11 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // "poza systemem" — anglicyzm techniczny, zbyt specjalistyczny
+     t = t.replace(/przyjmuje daleko od siatki i poza systemem/gi, 'przyjmuje daleko od siatki, zmuszając rozgrywającego do trudnego wystawienia');
+     t = t.replace(/przyjmuje poza systemem i daleko od siatki/gi, 'przyjmuje daleko od siatki');
+     t = t.replace(/przyjmuje poza systemem/gi, 'przyjmuje daleko od siatki');
+     t = t.replace(/poza systemem/gi, 'daleko od siatki');
      // Pleonazmy
      t = t.replace(/po znakomicie przyjętym przyjęciu/gi, 'po znakomitym przyjęciu');
      t = t.replace(/po perfekcyjnie przyjętym przyjęciu/gi, 'po perfekcyjnym przyjęciu');
