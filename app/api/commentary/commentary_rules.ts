@@ -143,6 +143,17 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
       BŁĄD: "błąd w recepcji", "perfekcyjna recepcja"
       POPRAWNIE: "błąd w przyjęciu", "perfekcyjne przyjęcie"
 
+[F63] INTERPUNKCJA po zdobyciu punktu — zawsze wykrzyknik, nigdy średnik.
+      ŹLE:  "Bołądź zdobywa punkt; BOGDANKA LUK Lublin prowadzi"
+      DOBRZE: "Bołądź zdobywa punkt! BOGDANKA LUK Lublin prowadzi"
+
+[F64] "gra się toczy" — ZAKAZ. Użyj: "akcja trwa!", "wymiana trwa!", "piłka żyje!"
+      Podobnie: "gra trwa" → "akcja trwa"
+
+[F65] Pleonazm "przyjętym przyjęciu" — ZAKAZ.
+      ŹLE:  "po znakomicie przyjętym przyjęciu Thalesa"
+      DOBRZE: "po znakomitym przyjęciu Thalesa"
+
 [F62] "odpowiada" po błędzie serwisowym — SEMANTYCZNIE BŁĘDNE.
       Gdy poprzednia akcja to błąd serwisowy, drużyna przyjmująca dostaje punkt ZA DARMO.
       Nie "odpowiada" — nie musiała nic robić. Nie miała żadnego wkładu w zdobycie punktu.
