@@ -3,7 +3,7 @@
 // ============================================================================
 // Ten plik zawiera WSZYSTKIE wypracowane zasady komentarza.
 // NIGDY nie usuwaj stąd zasad. Tylko DODAWAJ.
-// Każda zasada ma datę dodania i powód. 
+// Każda zasada ma datę dodania i powód.
 // ============================================================================
 
 export const COMMENTARY_RULES_PL = `
@@ -129,6 +129,20 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 
 [F59] "kończy akcję" — ZA OGÓLNE. Zawsze konkretnie: "kończy atakiem", "zamyka blokiem",
       "wbija w boisko", "blokuje punktowo".
+
+[F61] "recepcja" / "recepcji" / "recepcję" / "recepcją" — ABSOLUTNY ZAKAZ. To kalka z angielskiego
+      "reception". Po polsku zawsze: "przyjęcie", "przyjęcia", "przyjęciem".
+      BŁĄD: "błąd w recepcji", "perfekcyjna recepcja"
+      POPRAWNIE: "błąd w przyjęciu", "perfekcyjne przyjęcie"
+
+[F62] "odpowiada" po błędzie serwisowym — SEMANTYCZNIE BŁĘDNE.
+      Gdy poprzednia akcja to błąd serwisowy, drużyna przyjmująca dostaje punkt ZA DARMO.
+      Nie "odpowiada" — nie musiała nic robić. Nie miała żadnego wkładu w zdobycie punktu.
+      BŁĄD: "BOGDANKA odpowiada i powiększa przewagę" (po błędzie serwisowym)
+      BŁĄD: "Zawiercie odpowiada, nie odpuszcza!" (po błędzie serwisu rywala)
+      POPRAWNIE: "BOGDANKA zdobywa punkt!", "Błąd serwisowy daje punkt Zawierciu!",
+                 "Punkt dla BOGDANKI po błędzie serwisowym!"
+      UWAGA: "odpowiada" jest POPRAWNE gdy drużyna zdobywa punkt po normalnej wymianie.
 
 [F60] "X popełnia błąd i X zdobywa punkt" — NONSENS LOGICZNY. Nigdy nie łącz błędu i
       zdobycia punktu przez TEN SAM podmiot w jednym zdaniu.
