@@ -15,7 +15,7 @@ const pinecone = new Pinecone({
 const index = pinecone.index('ed-volley');
 
 // ============================================================================
-// SCORE VALIDATION & SET END DETECTION
+// SCORE VALIDATION & SET END DETECTION 
 // ============================================================================
 
 function validateAndFixScore(
