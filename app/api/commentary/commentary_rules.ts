@@ -3,7 +3,7 @@
 // ============================================================================
 // Ten plik zawiera WSZYSTKIE wypracowane zasady komentarza.
 // NIGDY nie usuwaj stąd zasad. Tylko DODAWAJ.
-// Każda zasada ma datę dodania i powód.
+// Każda zasada ma datę dodania i powód. 
 // ============================================================================
 
 export const COMMENTARY_RULES_PL = `
