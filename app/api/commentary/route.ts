@@ -2121,11 +2121,23 @@ INSTRUCTIONS:
          t = t.replace(re, '$1 $2');
        }
      });
-     // "X popełnia błąd i X zdobywa punkt" — bezsens przy błędzie przyjęcia/ataku
-     t = t.replace(/popełnia błąd[^!.]*i ([A-ZŁŚŹĆĘÓĄŃ][A-Za-zÀ-ž]{3,}) zdobywa punkt[!.]?/gi,
-       'popełnia błąd!');
-     t = t.replace(/popełnia błąd w przyjęciu i ([A-ZŁŚŹĆĘÓĄŃ][A-Za-zÀ-ž]{3,}) zdobywa[^!.]*[!.]/gi,
-       'popełnia błąd w przyjęciu!');
+     // "X popełnia błąd [desc]. X zdobywa punkt." — NONSENS (ten sam gracz popełnia błąd i zdobywa)
+     // Obsługuje: ten sam gracz w zdaniu 2, lub team+gracz w zdaniu 2
+     // Pattern 1: X popełnia błąd. X zdobywa punkt. (dokładnie ten sam gracz)
+     t = t.replace(
+       /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*[!.]?/gi,
+       (m: string, p: string) => `${p} popełnia błąd!`
+     );
+     // Pattern 2: X popełnia błąd serwisowy. [Team] X zdobywa punkt. (gracz po nazwie drużyny)
+     t = t.replace(
+       /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd serwisowy[^.!]*[.!]([\s\S]{1,120}?)\1 zdobywa punkt[^.!]*[!.]?/gi,
+       (m: string, p: string) => `${p} popełnia błąd serwisowy!`
+     );
+     // Pattern 3: popełnia błąd serwisowy. [Drużyna] odpowiada, zdobywając punkt
+     t = t.replace(
+       /(popełnia błąd serwisowy[^.!]*[.!])\s*([A-ZŁŚŹĆĘÓĄŃ][^,]{5,50}),\s*zdobywając punkt/gi,
+       '$1 $2 zdobywa punkt'
+     );
      // "Obrona [X] nie wystarczyła" — usuń nazwisko obrońcy (i tak błędne creditowanie)
      // Zostaje samo "Obrona nie wystarczyła" jako neutralny kontekst
      t = t.replace(/[Oo]brona [A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']+ nie wystarczyła/g, 'Obrona nie wystarczyła');
@@ -2163,6 +2175,16 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // "Wilfredo punkt w secie" — imię bez czasownika (urwane przez GPT)
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) punkt w secie!/gi, '$1 zdobywa punkt w secie!');
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) punkt w meczu!/gi, '$1 zdobywa punkt w meczu!');
+     // "Pilkę" → "Piłkę" (brak diakrytyku)
+     t = t.replace(/\bPilkę\b/g, 'Piłkę');
+     t = t.replace(/\bpilkę\b/g, 'piłkę');
+     t = t.replace(/\bPilka\b/g, 'Piłka');
+     // "Henir Henno" → "Henno" (błędne imię GPT — profil mówi samo Henno)
+     t = t.replace(/Henir Henno/gi, 'Henno');
+     t = t.replace(/Henir/gi, 'Henno');
      // Urwany komentarz — 'muruje siatkę i!' / 'blokuje i!' itp.
      // GPT zaczął zdanie ale token limit uciął. Czyścimy wisielcze 'i!'
      t = t.replace(/ i!$/gm, '!');
