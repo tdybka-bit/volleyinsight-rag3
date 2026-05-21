@@ -162,6 +162,15 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 [F64] "gra się toczy" — ZAKAZ. Użyj: "akcja trwa!", "wymiana trwa!", "piłka żyje!"
       Podobnie: "gra trwa" → "akcja trwa"
 
+[F74] "Błąd X i X zdobywa punkt" — NONSENS LOGICZNY (F74).
+      Gracz który popełnił błąd NIE zdobywa punktu.
+      ŹLE:  "Błąd Poręby i Poręba zdobywa punkt!"
+      DOBRZE: "Błąd Poręby! Asseco zdobywa punkt!"
+
+[F75] "zdobywa kolejny punkt" — ukryte "znowu" (F75). ZAKAZ.
+      ŹLE:  "Węgiel zdobywa kolejny punkt i rośnie w siłę"
+      DOBRZE: "Węgiel zdobywa punkt!" / "Seria trwa!" / "I znów skuteczni!"
+
 [F72] "nie odpuszcza" / "dokręca śrubę" / "rośnie w siłę" / "buduje przewagę" PO BŁĘDZIE SERWISOWYM — ZAKAZ.
       Drużyna dostaje punkt bez wysiłku — żadne z tych określeń nie jest na miejscu.
       ŹLE:  "Szalpuk popełnia błąd serwisowy! JSW nie odpuszcza i zdobywa punkt!"
