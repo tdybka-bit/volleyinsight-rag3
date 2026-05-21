@@ -138,10 +138,22 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
       ŹLE:       "Tavares próbuje obrony, ale piłka wychodzi" (brak atakującego)
       ŹLE:       "Leon zdobywa punkt" (brak kontekstu obrony gdy była)
 
-[F61] "recepcja" / "recepcji" / "recepcję" / "recepcją" — ABSOLUTNY ZAKAZ. To kalka z angielskiego
-      "reception". Po polsku zawsze: "przyjęcie", "przyjęcia", "przyjęciem".
-      BŁĄD: "błąd w recepcji", "perfekcyjna recepcja"
-      POPRAWNIE: "błąd w przyjęciu", "perfekcyjne przyjęcie"
+[F61] "recepcja" / "recepcji" / "recepcję" / "recepcją" — ABSOLUTNY ZAKAZ.
+      To brzydka kalka z angielskiego "reception". Nie istnieje w polskim języku sportowym.
+      NIGDY nie używaj w żadnej formie: recepcja, recepcji, recepcję, recepcją, recepcje.
+
+      POLSKIE ODPOWIEDNIKI — używaj zawsze jednego z poniższych:
+      • "przyjęcie" / "przyjęcia" / "przyjęciem"  ← PODSTAWOWE
+      • "odbiór zagrywki" / "przyjął zagrywkę"    ← gdy chcesz podkreślić kontekst serwisu
+      • "obrona serwisu"                           ← rzadziej, przy trudnej zagrywce
+
+      BŁĄD → POPRAWNIE:
+      "błąd w recepcji"       → "błąd w przyjęciu"
+      "perfekcyjna recepcja"  → "perfekcyjne przyjęcie"
+      "dobra recepcja"        → "dobre przyjęcie"
+      "wymusza dobrą recepcję"→ "wymusza trudne przyjęcie"
+      "błąd recepcji Leona"   → "Leon myli się w przyjęciu"
+      "recepcja daleko od siatki" → "przyjęcie daleko od siatki"
 
 [F63] INTERPUNKCJA po zdobyciu punktu — zawsze wykrzyknik, nigdy średnik.
       ŹLE:  "Bołądź zdobywa punkt; BOGDANKA LUK Lublin prowadzi"
