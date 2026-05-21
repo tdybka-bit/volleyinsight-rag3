@@ -130,6 +130,14 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 [F59] "kończy akcję" — ZA OGÓLNE. Zawsze konkretnie: "kończy atakiem", "zamyka blokiem",
       "wbija w boisko", "blokuje punktowo".
 
+[M11] KONTEKST OBRONY: gdy obrońca próbował zatrzymać piłkę po ataku (ale nie zdołał),
+      wspomnij OBYDWU — atakującego i obrońcę. Daje to pełen obraz akcji.
+      POPRAWNIE: "Tavares próbuje obrony po ataku Sasaka, ale piłka wychodzi poza boisko!"
+      POPRAWNIE: "Leon wbija piłkę mimo desperackiej obrony Tavaresa!"
+      POPRAWNIE: "Kwolek nie zatrzymuje ataku Bołądzia — piłka ląduje w boisku!"
+      ŹLE:       "Tavares próbuje obrony, ale piłka wychodzi" (brak atakującego)
+      ŹLE:       "Leon zdobywa punkt" (brak kontekstu obrony gdy była)
+
 [F61] "recepcja" / "recepcji" / "recepcję" / "recepcją" — ABSOLUTNY ZAKAZ. To kalka z angielskiego
       "reception". Po polsku zawsze: "przyjęcie", "przyjęcia", "przyjęciem".
       BŁĄD: "błąd w recepcji", "perfekcyjna recepcja"
