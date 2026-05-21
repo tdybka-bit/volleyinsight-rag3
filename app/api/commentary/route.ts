@@ -2153,6 +2153,9 @@ INSTRUCTIONS:
        /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*[!.]?/gi,
        (m: string, p: string) => `${p} popełnia błąd!`
      );
+     // Pattern C: "X myli się w ataku! X zdobywa punkt" — ten sam wzorzec co błąd
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się w ataku[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się w ataku!');
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się[^.!]{0,30}[.!]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się!');
      // Pattern 2: X popełnia błąd serwisowy. [Team] X zdobywa punkt. (gracz po nazwie drużyny)
      t = t.replace(
        /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd serwisowy[^.!]*[.!]([\s\S]{1,120}?)\1 zdobywa punkt[^.!]*[!.]?/gi,
@@ -2248,6 +2251,15 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // "piłka odpowiada" — bez sensu, nic nie znaczy
+     t = t.replace(/piłka odpowiada!/gi, 'akcja trwa!');
+     t = t.replace(/wyblok i piłka odpowiada/gi, 'wyblok — akcja trwa');
+     t = t.replace(/piłka odpowiada/gi, 'akcja trwa');
+     // "trafia w blok, ale X dotyka bloku" — masło maślane
+     t = t.replace(/trafia w blok, ale (\S+ \S+) dotyka bloku[,—–]?\s*wyblok/gi,
+       'napotyka blok $1 — wyblok');
+     t = t.replace(/trafia w blok, ale (\S+) dotyka bloku[,—–]?\s*wyblok/gi,
+       'napotyka blok $1 — wyblok');
      // "Wilfredo [Drużyna]" — imię bez nazwiska + team name (GPT obciął Leon)
      t = t.replace(/\bWilfredo BOGDANKA\b/g, 'Wilfredo Leon');
      t = t.replace(/\bWilfredo Aluron\b/gi, 'Wilfredo Leon');
