@@ -1644,7 +1644,7 @@ if (!rally.touches || rally.touches.length === 0) {
      // ZERO przykładów zdań — GPT kopiuje strukturę i odwraca podmiot.
      // Podajemy tylko fakty: kto bronił (kontekst), kto jest SCORER (wynik).
      touchChainLines.push(
-       `[CONTEXT] ${defenderName} attempted defense — ball out of play.`
+       `[CONTEXT] ${defenderName} attempted defense after attack by ${scoringPlayer} — ball out of play.`
        + ` [SCORER] ${scoringPlayer} / [TEAM] ${winnerTeamLabel} / [ACTION] attack won`
        + ` [RULE] Subject of scoring sentence = ${scoringPlayer}. ${defenderName} = loser, context only.`
      );
@@ -2181,10 +2181,12 @@ INSTRUCTIONS:
      // ── Błąd serwisowy: podmiana scorera + odpowiada ────────────────────────
      // '[X] błąd serwisowy. [X] zdobywa punkt' = NONSENS — X STRACIŁ punkt!
      // Bezpieczna forma: kasujemy '[X] zdobywa punkt' po 'błąd serwisowy X'
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]{3,}) popełnia błąd serwisowy[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*[.!]?/gi, '$1 popełnia błąd serwisowy!');
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,}) popełnia błąd serwisowy[^.!,]*[,.!]\s*\1 zdobywa punkt[^.!]*[.!]?/gi, '$1 popełnia błąd serwisowy!');
      t = t.replace(/Błąd serwisowy ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,})[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*/gi, 'Błąd serwisowy $1');
      // '[X] błąd serwisowy X. [drużyna] X zdobywa punkt' (team+imię wklejone)
-     t = t.replace(/błąd serwisowy ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,})[^.!]*[.!][^.!]{0,60}\1 zdobywa punkt[^.!]*/gi, 'błąd serwisowy $1!');
+     t = t.replace(/błąd serwisowy ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,})[^.!]*[.!][^.!]{0,80}\1 zdobywa punkt[^.!]*/gi, 'błąd serwisowy $1!');
+     // Wariant: 'błąd serwisowy. [Team prefix] [X] zdobywa' — team prefix wklejony
+     t = t.replace(/(popełnia błąd serwisowy)[^.!]*[.!]\s*(?:[A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{2,}\s+){1,4}(zdobywa punkt[^.!]*)/gi, '$1!');
      if (/błąd serwisow/i.test(t)) {
        // '[Drużyna] odpowiada, nie odpuszcza' → '[Drużyna] zdobywa punkt i nie odpuszcza'
        t = t.replace(
@@ -2527,6 +2529,13 @@ INSTRUCTIONS:
      t = t.replace(/SET OVER/gi, 'セット終了！');
      t = t.replace(/Hoss/g, 'タレス');
    }
+
+   // Bieniekk — duplikat k (universal, niezależnie od języka — nazwisko zawodnika)
+   t = t.replace(/Bieniekkowi/g, 'Bieńkowi');
+   t = t.replace(/Bieniekkiem/g, 'Bieńkiem');
+   t = t.replace(/Bieniekka/g,  'Bieńka');
+   t = t.replace(/Bieniekki/g,  'Bieńki');
+   t = t.replace(/Bieniekk/g,   'Bieniek');
 
    // ── All languages: remove score from text ────────────────────────────────
    // Score is shown in UI — never in commentary (except SET end)
