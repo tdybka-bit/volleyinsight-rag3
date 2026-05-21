@@ -118,6 +118,8 @@ OBOWIAZKOWE SLOWNICTWO PL:
 - Obrona/dig: "kapitalnie obroniony!", "wyciagnal z podlogi!", "fenomenalna obrona!" — NIGDY angielskie "dig"
 - Float serve: "zagrywka szybujaca", "float" — ZAWSZE lekka/szybujaca, NIGDY "mocna zagrywka" przy float
 - Przyjecie perfekcyjne: "kapitalnie przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!"
+- PODWOJNE CREDITOWANIE (F73): "Louati wbija pilke i Louati zdobywa punkt" = ZAKAZ.
+  Jeden scoring verb na akcje. Nie powtarzaj scorer + verb dwa razy z rzedu.
 - KONTEKST OBRONY (M11): gdy obronca probowal zatrzymac pilke po ataku ale nie zdolal,
   wspomnij OBYDWU. POPRAWNIE: "Tavares probuje obrony po ataku Sasaka, ale pilka wychodzi!"
   POPRAWNIE: "Leon wbija mimo desperackiej obrony Tavaresa!"
@@ -148,10 +150,11 @@ ABSOLUTNY ZAKAZ — te slowa/zwroty sa ZABRONIONE w PL:
 - "SET OVER" — ZAKAZANE! Dla PL: "Koniec seta!", "SET dla [druzyna]!", "[wynik] — seta!"
 - "recepcja" / "recepcji" / "recepcję" — KALKA Z ANGIELSKIEGO! Zawsze: "przyjęcie", "przyjęcia", "przyjęcie".
   NIGDY nie pisz "błąd w recepcji", "perfekcyjna recepcja" — tylko "błąd w przyjęciu", "perfekcyjne przyjęcie".
-- "odpowiada" PO BŁĘDZIE SERWISOWYM — SEMANTYCZNIE BŁĘDNE! Drużyna przyjmująca NIE odpowiada
-  na błąd serwisowy — po prostu dostaje punkt za darmo. Pisz: "[Drużyna] zdobywa punkt!",
-  "[Drużyna] przejmuje punkt!", "Błąd serwisowy daje punkt [Drużynie]!".
-  "odpowiada" jest OK tylko gdy drużyna zdobywa punkt po normalnej wymianie (nie po błędzie).
+- BLEDY SERWISOWE — semantyka (F68, F72):
+  PO BLEDZIE SERWISOWYM rywal dostaje punkt ZA DARMO. Dlatego ZAKAZ: 'odpowiada', 'nie odpuszcza',
+  'dokrecal srube', 'rosnie w sile', 'buduje przewage' — te zwroty sa dla punktow zdobytych WYSILKIEM.
+  POPRAWNIE: '[Druzyna] zdobywa punkt!', 'korzysta z prezentu i zdobywa punkt', 'latwy punkt dla X'.
+  'odpowiada' jest OK tylko po normalnej wymianie.
 - "momentum" — ANGIELSKI! ZASTAP: "impet", "seria punktow", "dynamika", "nie do zatrzymania"
 - "float serve" — ANGIELSKI! ZASTAP: "zagrywka szybujaca", "float"
 - "nie daje się" / "nie dają się" — ZAKAZANE! To brzmienie jest nieprofesjonalne. ZASTAP: "walczy dalej!", "odpowiada!", "nie odpuszcza!", "rośnie w siłę!"
@@ -1960,6 +1963,8 @@ INSTRUCTIONS:
      t = t.replace(/[,—–]\s*punkt dla [^!.]+[!.]/gi, () => ' ' + _rdx());
      // "Punkt dla X!" (sentence start)
      t = t.replace(/Punkt dla [^!.]+[!.]/g, _rdx);
+     // "zdobywa punkt dla X" — scorer OK ale suffix niepotrzebny
+     t = t.replace(/zdobywa punkt dla [A-ZŁŚŹĆĘÓĄŃ][^.!?,]{0,40}/gi, 'zdobywa punkt');
      // Fallback: any remaining "punkt dla X" without punctuation
      t = t.replace(/punkt dla [A-ZŁŚŹĆĘÓĄŃ][^.!?,]{0,40}/gi, 'punkt');
      // Cleanup: wiszący zaimek względny po usunięciu "punkt dla X"
@@ -2221,6 +2226,8 @@ INSTRUCTIONS:
        t = t.replace(/i buduje przewagę!?$/gim, '!');
        t = t.replace(/i buduje przewagę/gi, '');
        t = t.replace(/i nie odpuszcza!?$/gim, '!');
+       t = t.replace(/ i nie odpuszcza!/gi, '!');
+       t = t.replace(/ nie odpuszcza i zdobywa punkt/gi, ' zdobywa punkt');
        // '[Drużyna] odpowiada, nie odpuszcza' → '[Drużyna] zdobywa punkt i nie odpuszcza'
        t = t.replace(
          /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E\s]{4,40}) odpowiada, nie odpuszcza/g,
@@ -2255,11 +2262,12 @@ INSTRUCTIONS:
      t = t.replace(/piłka odpowiada!/gi, 'akcja trwa!');
      t = t.replace(/wyblok i piłka odpowiada/gi, 'wyblok — akcja trwa');
      t = t.replace(/piłka odpowiada/gi, 'akcja trwa');
-     // "trafia w blok, ale X dotyka bloku" — masło maślane
-     t = t.replace(/trafia w blok, ale (\S+ \S+) dotyka bloku[,—–]?\s*wyblok/gi,
+     // "trafia w blok, ale X dotyka bloku" — masło maślane (trafia + dotyka w tym samym zdaniu)
+     t = t.replace(/trafia w blok, ale ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+ [A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) dotyka bloku[,—–]?\s*wyblok/gi,
        'napotyka blok $1 — wyblok');
-     t = t.replace(/trafia w blok, ale (\S+) dotyka bloku[,—–]?\s*wyblok/gi,
+     t = t.replace(/trafia w blok, ale ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) dotyka bloku[,—–]?\s*wyblok/gi,
        'napotyka blok $1 — wyblok');
+     // "dotyka blok," (bez poprzedniego trafia) — zostaw, może być poprawne
      // "Wilfredo [Drużyna]" — imię bez nazwiska + team name (GPT obciął Leon)
      t = t.replace(/\bWilfredo BOGDANKA\b/g, 'Wilfredo Leon');
      t = t.replace(/\bWilfredo Aluron\b/gi, 'Wilfredo Leon');
@@ -2283,6 +2291,16 @@ INSTRUCTIONS:
      t = t.replace(/przyjęte przyjęcie/gi, 'przyjęcie');
      // duplikat 'zdobywa ... zdobywa punkt'
      t = t.replace(/zdobywa (\w+ )?zdobywa punkt/gi, 'zdobywa punkt');
+     // Podwójne creditowanie: 'X wbija piłkę i X zdobywa punkt' → 'X wbija piłkę'
+     t = t.replace(
+       /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) wbija piłkę[^.!]*[.!]?\s*\1 zdobywa punkt[^.!]*/gi,
+       '$1 wbija piłkę w boisko!'
+     );
+     // 'X wbija piłkę i X zdobywa' (w jednym zdaniu)
+     t = t.replace(
+       /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) wbija piłkę w boisko i \1 zdobywa punkt/gi,
+       '$1 wbija piłkę w boisko'
+     );
      t = t.replace(/zdobywa punkt i zdobywa punkt/gi, 'zdobywa punkt');
      // "Wilfredo punkt w secie" — imię bez czasownika (urwane przez GPT)
      t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) punkt w secie!/gi, '$1 zdobywa punkt w secie!');
@@ -2592,6 +2610,21 @@ INSTRUCTIONS:
      t = t.replace(/SET OVER/gi, 'セット終了！');
      t = t.replace(/Hoss/g, 'タレス');
    }
+
+   // ── recepcja → przyjęcie (universal) ──────────────────────────────────────
+   // F61: recepcja = ABSOLUTNY ZAKAZ (kalka z ang. 'reception')
+   // Obsługujemy wszystkie formy odmiany przez przypadki:
+   t = t.replace(/wymusi[łl][ao]? dobr[aą] recepcj[ęą]/gi, 'wymusiła trudne przyjęcie');
+   t = t.replace(/wymusza dobr[aą] recepcj[ęą]/gi, 'wymusza trudne przyjęcie');
+   t = t.replace(/dobr[aą] recepcj[ęą]/gi, 'dobre przyjęcie');
+   t = t.replace(/perfekcyjn[aą] recepcj[ęą]/gi, 'perfekcyjne przyjęcie');
+   t = t.replace(/trudną recepcj[ęą]/gi, 'trudne przyjęcie');
+   t = t.replace(/daleko[^.]{0,20}recepcj[ąę]/gi, 'daleko od siatki');
+   t = t.replace(/błąd w recepcji/gi, 'błąd w przyjęciu');
+   t = t.replace(/recepcj[ąę]/gi, 'przyjęcie');   // recepcją, recepcję
+   t = t.replace(/recepcji/gi, 'przyjęcia');      // dopełniacz
+   t = t.replace(/recepcje/gi, 'przyjęcia');      // liczba mnoga
+   t = t.replace(/recepcja/gi, 'przyjęcie');      // mianownik (fallback)
 
    // Bieniekk — duplikat k (universal, niezależnie od języka — nazwisko zawodnika)
    t = t.replace(/Bieniekkowi/g, 'Bieńkowi');
