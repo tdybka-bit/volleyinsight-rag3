@@ -1962,6 +1962,11 @@ INSTRUCTIONS:
      t = t.replace(/Punkt dla [^!.]+[!.]/g, _rdx);
      // Fallback: any remaining "punkt dla X" without punctuation
      t = t.replace(/punkt dla [A-ZŁŚŹĆĘÓĄŃ][^.!?,]{0,40}/gi, 'punkt');
+     // Cleanup: wiszący zaimek względny po usunięciu "punkt dla X"
+     // "Łatwy punkt, która prowadzi w pierwszym secie!" → "Łatwy punkt!"
+     t = t.replace(/,\s*(który|która|które|którzy)\s+prowadzi[^!.]*[!.]?/gi, '!');
+     // Wiszący zaimek przy kontekście drużynowym (nie przy piłce)
+     t = t.replace(/,\s*(który|która|które|którzy)\s+(prowadzi|wychodzi na|zmniejsza|odrabia|wyrównuje|odskakuje)[^!.]{0,60}[!.]/gi, '!');
 
      // ── Score in text → remove explicit numbers ─────────────────────────
      if (!setEndInfo.isSetEnd) {
