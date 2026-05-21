@@ -150,6 +150,19 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 [F64] "gra się toczy" — ZAKAZ. Użyj: "akcja trwa!", "wymiana trwa!", "piłka żyje!"
       Podobnie: "gra trwa" → "akcja trwa"
 
+[F66] "poza systemem" — ANGLICYZM TECHNICZNY. Nie używamy w polskim komentarzu radiowym.
+      ŹLE:  "Henno przyjmuje daleko od siatki i poza systemem"
+      ŹLE:  "przyjmuje poza systemem"
+      DOBRZE: "Henno przyjmuje daleko od siatki, zmuszając rozgrywającego do trudnego wystawienia"
+      DOBRZE: "trudne przyjęcie Henno — Malinowski musi wystawiać z pilki sytuacyjnej"
+      DOBRZE: "przyjmuje daleko od siatki"
+
+[F67] "X popełnia błąd w przyjęciu i X zdobywa punkt" — NONSENS LOGICZNY.
+      Gracz który popełnił błąd w przyjęciu NIE zdobywa punktu — punkt traci.
+      ŹLE:  "Popiwczak popełnia błąd w przyjęciu i Popiwczak zdobywa punkt"
+      DOBRZE: "Błąd w przyjęciu Popiwczaka daje punkt rywalowi!"
+      DOBRZE: "As serwisowy! Popiwczak nie opanowuje przyjęcia!"
+
 [F65] Pleonazm "przyjętym przyjęciu" — ZAKAZ.
       ŹLE:  "po znakomicie przyjętym przyjęciu Thalesa"
       DOBRZE: "po znakomitym przyjęciu Thalesa"
