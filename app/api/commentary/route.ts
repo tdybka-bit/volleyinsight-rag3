@@ -2179,9 +2179,12 @@ INSTRUCTIONS:
      t = t.replace(/odpowiada i odpowiada/gi, 'odpowiada');
 
      // ── Błąd serwisowy: podmiana scorera + odpowiada ────────────────────────
-     // Przy błędzie serwisowym '[gracz] zdobywa punkt' = absurd — gracz STRACIŁ punkt.
-     // Fix: nuclear scorer postProcess już podmienia [gracz] → [winnerTeamLabel].
-     // Tu tylko czyścimy artefakty GPT w kontekście błędu serwisowego.
+     // '[X] błąd serwisowy. [X] zdobywa punkt' = NONSENS — X STRACIŁ punkt!
+     // Bezpieczna forma: kasujemy '[X] zdobywa punkt' po 'błąd serwisowy X'
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]{3,}) popełnia błąd serwisowy[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*[.!]?/gi, '$1 popełnia błąd serwisowy!');
+     t = t.replace(/Błąd serwisowy ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,})[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*/gi, 'Błąd serwisowy $1');
+     // '[X] błąd serwisowy X. [drużyna] X zdobywa punkt' (team+imię wklejone)
+     t = t.replace(/błąd serwisowy ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,})[^.!]*[.!][^.!]{0,60}\1 zdobywa punkt[^.!]*/gi, 'błąd serwisowy $1!');
      if (/błąd serwisow/i.test(t)) {
        // '[Drużyna] odpowiada, nie odpuszcza' → '[Drużyna] zdobywa punkt i nie odpuszcza'
        t = t.replace(
@@ -2213,6 +2216,9 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // duplikat 'zdobywa ... zdobywa punkt'
+     t = t.replace(/zdobywa (\w+ )?zdobywa punkt/gi, 'zdobywa punkt');
+     t = t.replace(/zdobywa punkt i zdobywa punkt/gi, 'zdobywa punkt');
      // "Wilfredo punkt w secie" — imię bez czasownika (urwane przez GPT)
      t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) punkt w secie!/gi, '$1 zdobywa punkt w secie!');
      t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) punkt w meczu!/gi, '$1 zdobywa punkt w meczu!');
@@ -2244,13 +2250,14 @@ INSTRUCTIONS:
        const v = ['odpowiada na wyzwanie', 'nie zawodzi', 'jest niesamowity', 'robi co do niego należy'];
        return v[Math.floor(Math.random() * v.length)];
      });
-     // "powiększa przewagę" — mechaniczne, zastępujemy rotacją
-     // (tylko standalone zdanie na końcu, nie w środku)
-     t = t.replace(/i powiększa przewagę!$/gim, () => {
-       const v = ['i odskakuje!', 'i rośnie w siłę!', 'i dokręca śrubę!', 'i prowadzi pewnie!'];
-       return v[Math.floor(Math.random() * v.length)];
-     });
+     // "powiększa przewagę" — zbyt mechaniczne, rotacja
+     t = t.replace(/i powiększa przewagę!$/gim, 'i rośnie w siłę!');
+     t = t.replace(/i powiększa przewagę!/gi, 'i dokręca śrubę!');
+     t = t.replace(/powiększa przewagę i prowadzi/gi, 'prowadzi i dokręca śrubę');
      t = t.replace(/powiększa przewagę, prowadz/gi, 'prowadz');
+     t = t.replace(/powiększa przewagę\.$/gim, 'prowadzi pewnie.');
+     t = t.replace(/powiększa przewagę!/gi, 'rośnie w siłę!');
+     t = t.replace(/powiększa przewagę/gi, 'buduje przewagę');
      t = t.replace(/\bżywa zagrywka\b/gi, 'zagrywka szybująca');
      t = t.replace(/\bżywą zagrywką\b/gi, 'zagrywką szybującą');
      t = t.replace(/\bżywej zagrywki\b/gi, 'zagrywki szybującej');
