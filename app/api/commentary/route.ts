@@ -685,7 +685,8 @@ if (!rally.touches || rally.touches.length === 0) {
    || _finalAction.includes('blad') || _finalAction.includes('błąd');
  let scoringPlayer: string;
  if (_isErrorTouch) {
-   // Błąd — scorer to gracz który popełnił błąd (finalTouch)
+   // Błąd — scoringPlayer = gracz który popełnił błąd (do opisu błędu)
+   // ALE: postProcess musi wiedzieć żeby NIE pisać '[błąd-gracz] zdobywa punkt'
    scoringPlayer = finalTouch?.player || '';
  } else {
    // Normalny punkt — scorer = ostatni gracz wygrywającego teamu
@@ -1632,6 +1633,11 @@ if (!rally.touches || rally.touches.length === 0) {
        }
      }
    // FREE
+   } else if (actionLower.includes('serve_error') || (actionLower.includes('error') && actionLower.includes('serw'))) {
+     // Błąd serwisowy — punkt TRAFIA DO RYWALA, nie do serwującego
+     desc += ` - SERVE ERROR by ${touch.player}. Point goes FREE to ${winnerTeamLabel}. `
+       + `Write: '${touch.player} popełnia błąd serwisowy. ${winnerTeamLabel} zdobywa punkt!' `
+       + `NEVER write '${touch.player} zdobywa punkt' — ${touch.player} LOST this point.`;
    } else if (actionLower.includes('wolna') || actionLower.includes('free')) {
      desc += ' - free ball';
    } else {
@@ -2187,9 +2193,28 @@ INSTRUCTIONS:
      // Deduplikacja po replace wraca do gry → odpowiada
      t = t.replace(/odpowiada i odpowiada/gi, 'odpowiada');
 
-     // ── "odpowiada" po błędzie serwisowym = semantycznie złe ──────────────
-     // Drużyna przyjmująca NIE odpowiada na błąd serwisowy — po prostu dostaje punkt.
-     // Kontekst: 'błąd serwisowy' + '[Drużyna] odpowiada' → '[Drużyna] zdobywa punkt'
+     // ── Błąd serwisowy: podmiana scorera + odpowiada ────────────────────────
+     // Przy błędzie serwisowym:
+     // 1. '[błąd-gracz] zdobywa punkt' → '[winnerTeamLabel] zdobywa punkt' (logiczny absurd)
+     // 2. '[Drużyna] odpowiada' → '[Drużyna] zdobywa punkt' (semantycznie złe)
+     if (/błąd serwisow/i.test(t)) {
+       // Fix 1: '[X] zdobywa punkt' gdzie X = gracz który serwował (popełnił błąd)
+       // scoringPlayer w tym kontekście = błąd-gracz, ale to ON stracił punkt!
+       // Podmień na winnerTeamLabel (drużyna która dostała punkt za darmo)
+       if (scoringPlayer) {
+         const _spEsc = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+         // '[X] zdobywa punkt [desc]' → '[winnerTeamLabel] zdobywa punkt'
+         t = t.replace(
+           new RegExp(_spEsc + "'?s? zdobywa punkt[^.!]*[.!]?", 'gi'),
+           winnerTeamLabel ? `${winnerTeamLabel} zdobywa punkt!` : 'Punkt!'
+         );
+         // '[X] zdobywa [X] punkt' (GPT typo)
+         t = t.replace(
+           new RegExp(_spEsc + " zdobywa " + _spEsc + " punkt", 'gi'),
+           winnerTeamLabel ? `${winnerTeamLabel} zdobywa punkt!` : 'Punkt!'
+         );
+       }
+     }
      if (/błąd serwisow/i.test(t)) {
        // '[Drużyna] odpowiada, nie odpuszcza' → '[Drużyna] zdobywa punkt i nie odpuszcza'
        t = t.replace(
