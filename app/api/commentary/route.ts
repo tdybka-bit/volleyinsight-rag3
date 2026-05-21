@@ -1625,6 +1625,9 @@ if (!rally.touches || rally.touches.length === 0) {
        }
      }
    // FREE
+   } else if (isVeryLongRally && (actionLower.includes('blok') || actionLower.includes('wyblok')) && !isLastTouch) {
+     // Long rally (12+ dotknięć): nie opisuj szczegółów wybloku — tylko krótki znacznik
+     desc += ' - blok/wyblok (skipped detail — too many touches)';
    } else if (actionLower.includes('serve_error') || (actionLower.includes('error') && actionLower.includes('serw'))) {
      // Błąd serwisowy — punkt TRAFIA DO RYWALA, nie do serwującego
      desc += ` - SERVE ERROR by ${touch.player}. Point goes FREE to ${winnerTeamLabel}. `
@@ -2161,6 +2164,11 @@ INSTRUCTIONS:
      // Pattern C: "X myli się w ataku! X zdobywa punkt" — ten sam wzorzec co błąd
      t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się w ataku[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się w ataku!');
      t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się[^.!]{0,30}[.!]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się!');
+     // Pattern D: "Błąd X i X zdobywa punkt" (F74) — ten sam gracz błądzi i 'zdobywa'
+     t = t.replace(/[Bb]łąd ([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) i \1 zdobywa punkt[^.!]*/gi, 'Błąd $1!');
+     // Pattern E: "[Team prefix] X zdobywa punkt" po błędzie ataku (team ucięty)
+     // np. 'Asseco Szerszeń zdobywa punkt' gdy Szerszeń właśnie popełnił błąd
+     // → złapane przez istniejące nuclear + team prefix fix
      // Pattern 2: X popełnia błąd serwisowy. [Team] X zdobywa punkt. (gracz po nazwie drużyny)
      t = t.replace(
        /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd serwisowy[^.!]*[.!]([\s\S]{1,120}?)\1 zdobywa punkt[^.!]*[!.]?/gi,
@@ -2291,6 +2299,10 @@ INSTRUCTIONS:
      t = t.replace(/przyjęte przyjęcie/gi, 'przyjęcie');
      // duplikat 'zdobywa ... zdobywa punkt'
      t = t.replace(/zdobywa (\w+ )?zdobywa punkt/gi, 'zdobywa punkt');
+     // "kolejny punkt" = ukryte 'znowu' (F75) — usuń przymiotnik
+     t = t.replace(/zdobywa kolejny punkt/gi, 'zdobywa punkt');
+     t = t.replace(/zdobywa kolejne punkty/gi, 'zdobywa punkty');
+     t = t.replace(/kolejny punkt dla/gi, 'punkt dla');
      // Podwójne creditowanie: 'X wbija piłkę i X zdobywa punkt' → 'X wbija piłkę'
      t = t.replace(
        /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) wbija piłkę[^.!]*[.!]?\s*\1 zdobywa punkt[^.!]*/gi,
