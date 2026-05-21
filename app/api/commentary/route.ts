@@ -15,7 +15,7 @@ const pinecone = new Pinecone({
 const index = pinecone.index('ed-volley');
 
 // ============================================================================
-// SCORE VALIDATION & SET END DETECTION 
+// SCORE VALIDATION & SET END DETECTION
 // ============================================================================
 
 function validateAndFixScore(
@@ -119,22 +119,7 @@ OBOWIAZKOWE SLOWNICTWO PL:
 - Float serve: "zagrywka szybujaca", "float" — ZAWSZE lekka/szybujaca, NIGDY "mocna zagrywka" przy float
 - Przyjecie perfekcyjne: "kapitalnie przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!"
 - Przyjecie zle: "trudne przyjecie", "pilka daleko od siatki", "nieidealne przyjecie" — NIGDY "nieporadnie"
-     // "recepcja" → "przyjęcie" (PL siatka nie używa recepcji)
-     // "recepcja" — kalka z angielskiego, po polsku zawsze "przyjęcie"
-     t = t.replace(/wymuszon[aą] recepcj[aąęiąy]/gi, 'wymuszone przyjęcie');
-     t = t.replace(/perfekcyjn[aą] recepcj[aąęiąy]/gi, 'perfekcyjne przyjęcie');
-     t = t.replace(/dobr[aą] recepcj[aąęiąy]/gi, 'dobre przyjęcie');
-     t = t.replace(/błąd w recepcji/gi, 'błąd w przyjęciu');
-     t = t.replace(/błąd recepcji/gi, 'błąd przyjęcia');
-     t = t.replace(/recepcj[aąęią]/gi, (m: string) => {
-       // odmiana: recepcja→przyjęcie, recepcji→przyjęcia, recepcję→przyjęcie, recepcją→przyjęciem
-       const map: Record<string,string> = {
-         'recepcja':'przyjęcie','recepcją':'przyjęciem','recepcji':'przyjęcia',
-         'recepcję':'przyjęcie','recepcje':'przyjęcia'
-       };
-       return map[m.toLowerCase()] || 'przyjęcie';
-     });
-     t = t.replace(/recepcja/gi, 'przyjęcie'); // fallback
+- NIGDY nie pisz "recepcja", "recepcji", "recepcję" — zawsze "przyjęcie", "przyjęcia".
      // "piłka zyje" → "piłka żyje"
      t = t.replace(/piłka zyje/gi, 'piłka żyje');
      t = t.replace(/pilka zyje/gi, 'piłka żyje');
@@ -2131,19 +2116,19 @@ INSTRUCTIONS:
      // "[Nazwa drużyny lub prefiks] [Gracz] zdobywa" → "[Gracz] zdobywa"
      // GPT czasem pisze 'PGE Projekt Kochanowski' zamiast 'PGE Projekt Warszawa Kochanowski'
      // Sprawdzamy każdy prefiks nazwy drużyny (od najdłuższego)
-     const _teamNames = [homeTeamFull, awayTeamFull].filter(Boolean);
-     _teamNames.forEach((team: string) => {
-       const parts = team.split(' ');
-       for (let i = parts.length; i >= 2; i--) {
-         const prefix = parts.slice(0, i).join(' ');
-         const esc = prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-         const re = new RegExp(
-           '\\b' + esc + '\\s+([A-Z][A-Za-z]{3,})\\s+(zdobywa|wbija|zamyka|blokuje)',
-           'g'
-         );
-         t = t.replace(re, '$1 $2');
-       }
-     });
+     // "[Prefix nazwy drużyny] [Gracz] zdobywa" — GPT wkleja prefiks przed nazwiskiem
+     // Statyczne wzorce dla PlusLigi (bezpieczne dla SWC — tylko t.replace())
+     t = t.replace(/\bPGE Projekt\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAluron CMC\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAluron\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bBOGDANKA LUK\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bBOGDANKA\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bJSW Jastrzębski\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAsseco Resovia\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bIndykpol AZS\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bZAKSA\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bSkra Bełchatów\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bLUK Lublin\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      // "X popełnia błąd [desc]. X zdobywa punkt." — NONSENS (ten sam gracz popełnia błąd i zdobywa)
      // Obsługuje: ten sam gracz w zdaniu 2, lub team+gracz w zdaniu 2
      // Pattern 1: X popełnia błąd. X zdobywa punkt. (dokładnie ten sam gracz)
@@ -2194,27 +2179,9 @@ INSTRUCTIONS:
      t = t.replace(/odpowiada i odpowiada/gi, 'odpowiada');
 
      // ── Błąd serwisowy: podmiana scorera + odpowiada ────────────────────────
-     // Przy błędzie serwisowym:
-     // 1. '[błąd-gracz] zdobywa punkt' → '[winnerTeamLabel] zdobywa punkt' (logiczny absurd)
-     // 2. '[Drużyna] odpowiada' → '[Drużyna] zdobywa punkt' (semantycznie złe)
-     if (/błąd serwisow/i.test(t)) {
-       // Fix 1: '[X] zdobywa punkt' gdzie X = gracz który serwował (popełnił błąd)
-       // scoringPlayer w tym kontekście = błąd-gracz, ale to ON stracił punkt!
-       // Podmień na winnerTeamLabel (drużyna która dostała punkt za darmo)
-       if (scoringPlayer) {
-         const _spEsc = scoringPlayer.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-         // '[X] zdobywa punkt [desc]' → '[winnerTeamLabel] zdobywa punkt'
-         t = t.replace(
-           new RegExp(_spEsc + "'?s? zdobywa punkt[^.!]*[.!]?", 'gi'),
-           winnerTeamLabel ? `${winnerTeamLabel} zdobywa punkt!` : 'Punkt!'
-         );
-         // '[X] zdobywa [X] punkt' (GPT typo)
-         t = t.replace(
-           new RegExp(_spEsc + " zdobywa " + _spEsc + " punkt", 'gi'),
-           winnerTeamLabel ? `${winnerTeamLabel} zdobywa punkt!` : 'Punkt!'
-         );
-       }
-     }
+     // Przy błędzie serwisowym '[gracz] zdobywa punkt' = absurd — gracz STRACIŁ punkt.
+     // Fix: nuclear scorer postProcess już podmienia [gracz] → [winnerTeamLabel].
+     // Tu tylko czyścimy artefakty GPT w kontekście błędu serwisowego.
      if (/błąd serwisow/i.test(t)) {
        // '[Drużyna] odpowiada, nie odpuszcza' → '[Drużyna] zdobywa punkt i nie odpuszcza'
        t = t.replace(
