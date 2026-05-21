@@ -120,10 +120,21 @@ OBOWIAZKOWE SLOWNICTWO PL:
 - Przyjecie perfekcyjne: "kapitalnie przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!"
 - Przyjecie zle: "trudne przyjecie", "pilka daleko od siatki", "nieidealne przyjecie" — NIGDY "nieporadnie"
      // "recepcja" → "przyjęcie" (PL siatka nie używa recepcji)
-     t = t.replace(/wymuszona recepcja/gi, 'wymuszone przyjęcie');
-     t = t.replace(/perfekcyjna recepcja/gi, 'perfekcyjne przyjęcie');
-     t = t.replace(/dobra recepcja/gi, 'dobre przyjęcie');
-     t = t.replace(/recepcja/gi, 'przyjęcie');
+     // "recepcja" — kalka z angielskiego, po polsku zawsze "przyjęcie"
+     t = t.replace(/wymuszon[aą] recepcj[aąęiąy]/gi, 'wymuszone przyjęcie');
+     t = t.replace(/perfekcyjn[aą] recepcj[aąęiąy]/gi, 'perfekcyjne przyjęcie');
+     t = t.replace(/dobr[aą] recepcj[aąęiąy]/gi, 'dobre przyjęcie');
+     t = t.replace(/błąd w recepcji/gi, 'błąd w przyjęciu');
+     t = t.replace(/błąd recepcji/gi, 'błąd przyjęcia');
+     t = t.replace(/recepcj[aąęią]/gi, (m: string) => {
+       // odmiana: recepcja→przyjęcie, recepcji→przyjęcia, recepcję→przyjęcie, recepcją→przyjęciem
+       const map: Record<string,string> = {
+         'recepcja':'przyjęcie','recepcją':'przyjęciem','recepcji':'przyjęcia',
+         'recepcję':'przyjęcie','recepcje':'przyjęcia'
+       };
+       return map[m.toLowerCase()] || 'przyjęcie';
+     });
+     t = t.replace(/recepcja/gi, 'przyjęcie'); // fallback
      // "piłka zyje" → "piłka żyje"
      t = t.replace(/piłka zyje/gi, 'piłka żyje');
      t = t.replace(/pilka zyje/gi, 'piłka żyje');
@@ -146,6 +157,12 @@ ABSOLUTNY ZAKAZ — te slowa/zwroty sa ZABRONIONE w PL:
 - "potezna zagrywka floatowa" — float jest ZAWSZE lekka/szybujaca, NIGDY potezna
 - "SERVICE ACE" — ZAKAZANE po angielsku! ZASTAP: "as serwisowy!", "bezposredni punkt!", "prosto w boisko!"
 - "SET OVER" — ZAKAZANE! Dla PL: "Koniec seta!", "SET dla [druzyna]!", "[wynik] — seta!"
+- "recepcja" / "recepcji" / "recepcję" — KALKA Z ANGIELSKIEGO! Zawsze: "przyjęcie", "przyjęcia", "przyjęcie".
+  NIGDY nie pisz "błąd w recepcji", "perfekcyjna recepcja" — tylko "błąd w przyjęciu", "perfekcyjne przyjęcie".
+- "odpowiada" PO BŁĘDZIE SERWISOWYM — SEMANTYCZNIE BŁĘDNE! Drużyna przyjmująca NIE odpowiada
+  na błąd serwisowy — po prostu dostaje punkt za darmo. Pisz: "[Drużyna] zdobywa punkt!",
+  "[Drużyna] przejmuje punkt!", "Błąd serwisowy daje punkt [Drużynie]!".
+  "odpowiada" jest OK tylko gdy drużyna zdobywa punkt po normalnej wymianie (nie po błędzie).
 - "momentum" — ANGIELSKI! ZASTAP: "impet", "seria punktow", "dynamika", "nie do zatrzymania"
 - "float serve" — ANGIELSKI! ZASTAP: "zagrywka szybujaca", "float"
 - "nie daje się" / "nie dają się" — ZAKAZANE! To brzmienie jest nieprofesjonalne. ZASTAP: "walczy dalej!", "odpowiada!", "nie odpuszcza!", "rośnie w siłę!"
@@ -2169,6 +2186,35 @@ INSTRUCTIONS:
      t = t.replace(/ i wraca do gry/gi, '');
      // Deduplikacja po replace wraca do gry → odpowiada
      t = t.replace(/odpowiada i odpowiada/gi, 'odpowiada');
+
+     // ── "odpowiada" po błędzie serwisowym = semantycznie złe ──────────────
+     // Drużyna przyjmująca NIE odpowiada na błąd serwisowy — po prostu dostaje punkt.
+     // Kontekst: 'błąd serwisowy' + '[Drużyna] odpowiada' → '[Drużyna] zdobywa punkt'
+     if (/błąd serwisow/i.test(t)) {
+       // '[Drużyna] odpowiada, nie odpuszcza' → '[Drużyna] zdobywa punkt i nie odpuszcza'
+       t = t.replace(
+         /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E\s]{4,40}) odpowiada, nie odpuszcza/g,
+         '$1 zdobywa punkt i nie odpuszcza'
+       );
+       t = t.replace(
+         /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E\s]{4,40}) odpowiada i nie odpuszcza/g,
+         '$1 zdobywa punkt i nie odpuszcza'
+       );
+       t = t.replace(
+         /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E\s]{4,40}) odpowiada i powiększa przewagę/g,
+         '$1 powiększa przewagę'
+       );
+       // '[Drużyna] odpowiada!' na końcu zdania → '[Drużyna] zdobywa punkt!'
+       t = t.replace(
+         /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E\s]{4,40}) odpowiada!/g,
+         '$1 zdobywa punkt!'
+       );
+       // '[Drużyna] odpowiada i zmniejsza stratę' → bez 'odpowiada'
+       t = t.replace(
+         /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E\s]{4,40}) odpowiada i (zmniejsza|wyrównuje|odskakuje)/g,
+         '$1 $2'
+       );
+     }
      t = t.replace(/i odpowiada i odpowiada/gi, 'i odpowiada');
      // "ale I to punkt" — artifact po score suppression (ale [wynik usunięty] I to punkt)
      // Pattern: "..., ale I to jest punkt dla X!" → "... — punkt!"
