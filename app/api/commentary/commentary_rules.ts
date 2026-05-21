@@ -150,6 +150,21 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 [F64] "gra się toczy" — ZAKAZ. Użyj: "akcja trwa!", "wymiana trwa!", "piłka żyje!"
       Podobnie: "gra trwa" → "akcja trwa"
 
+[F69] "piłka odpowiada" — bez sensu, nic nie znaczy. ZAKAZ.
+      ŹLE:  "wyblok i piłka odpowiada!"
+      DOBRZE: "wyblok — akcja trwa!" / "piłka wraca na stronę rywali!"
+
+[F70] Masło maślane przy bloku — ZAKAZ powtarzania tej samej informacji.
+      ŹLE:  "atakuje, który trafia w blok, ale Kochanowski dotyka bloku, wyblok"
+            (trzy razy mówimy o tym samym kontakcie z blokiem)
+      DOBRZE: "atakuje, ale napotyka blok Kochanowskiego — wyblok!"
+      DOBRZE: "Kochanowski blokuje! Wyblok, akcja trwa!"
+      Zasada: jeden opis kontaktu z blokiem = jedno zdanie, jeden czasownik.
+
+[F71] "X myli się w ataku! X zdobywa punkt" — NONSENS LOGICZNY.
+      Gracz który się pomylił NIE zdobywa punktu.
+      DOBRZE: "X myli się w ataku! [rywal] zdobywa punkt!"
+
 [F68] "dokręca śrubę" / "rośnie w siłę" / "buduje przewagę" PO BŁĘDZIE SERWISOWYM — semantycznie złe.
       Drużyna dostaje punkt za darmo — nie dzięki własnej grze, wysiłkowi ani presji.
       ŹLE:  "Sasak popełnia błąd serwisowy! Aluron dokręca śrubę!"
