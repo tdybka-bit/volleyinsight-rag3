@@ -2204,6 +2204,15 @@ INSTRUCTIONS:
      // Wariant: 'błąd serwisowy. [Team prefix] [X] zdobywa' — team prefix wklejony
      t = t.replace(/(popełnia błąd serwisowy)[^.!]*[.!]\s*(?:[A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{2,}\s+){1,4}(zdobywa punkt[^.!]*)/gi, '$1!');
      if (/błąd serwisow/i.test(t)) {
+       // 'dokręca śrubę / rośnie w siłę / buduje przewagę' po błędzie serwisowym
+       // = drużyna dostaje punkt za darmo, nie dzięki własnemu wysiłkowi
+       t = t.replace(/i dokręca śrubę!?$/gim, 'i wychodzi na prowadzenie!');
+       t = t.replace(/i dokręca śrubę/gi, '');
+       t = t.replace(/i rośnie w siłę!?$/gim, '!');
+       t = t.replace(/i rośnie w siłę/gi, '');
+       t = t.replace(/i buduje przewagę!?$/gim, '!');
+       t = t.replace(/i buduje przewagę/gi, '');
+       t = t.replace(/i nie odpuszcza!?$/gim, '!');
        // '[Drużyna] odpowiada, nie odpuszcza' → '[Drużyna] zdobywa punkt i nie odpuszcza'
        t = t.replace(
          /([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E\s]{4,40}) odpowiada, nie odpuszcza/g,
@@ -2234,6 +2243,17 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // "Wilfredo [Drużyna]" — imię bez nazwiska + team name (GPT obciął Leon)
+     t = t.replace(/\bWilfredo BOGDANKA\b/g, 'Wilfredo Leon');
+     t = t.replace(/\bWilfredo Aluron\b/gi, 'Wilfredo Leon');
+     t = t.replace(/\bWilfredo CMC\b/gi, 'Wilfredo Leon');
+     // "McCarthy'ego McCarthy" — podwójne imię (dopełniacz + mianownik)
+     t = t.replace(/McCarthy'ego McCarthy/gi, 'McCarthy');
+     t = t.replace(/Bołądzia Bołądź/gi, 'Bołądź');
+     t = t.replace(/Kwolka Kwolek/gi, 'Kwolek');
+     t = t.replace(/Bieńka Bieniek/gi, 'Bieniek');
+     t = t.replace(/Leona Leon\b/gi, 'Leon');
+     t = t.replace(/Russella Russell\b/gi, 'Russell');
      // "poza systemem" — anglicyzm techniczny, zbyt specjalistyczny
      t = t.replace(/przyjmuje daleko od siatki i poza systemem/gi, 'przyjmuje daleko od siatki, zmuszając rozgrywającego do trudnego wystawienia');
      t = t.replace(/przyjmuje poza systemem i daleko od siatki/gi, 'przyjmuje daleko od siatki');
