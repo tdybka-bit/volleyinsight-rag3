@@ -150,6 +150,15 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 [F64] "gra się toczy" — ZAKAZ. Użyj: "akcja trwa!", "wymiana trwa!", "piłka żyje!"
       Podobnie: "gra trwa" → "akcja trwa"
 
+[F68] "dokręca śrubę" / "rośnie w siłę" / "buduje przewagę" PO BŁĘDZIE SERWISOWYM — semantycznie złe.
+      Drużyna dostaje punkt za darmo — nie dzięki własnej grze, wysiłkowi ani presji.
+      ŹLE:  "Sasak popełnia błąd serwisowy! Aluron dokręca śrubę!"
+      ŹLE:  "Błąd serwisowy! BOGDANKA rośnie w siłę!"
+      DOBRZE: "Sasak popełnia błąd serwisowy! Aluron wychodzi na prowadzenie!"
+      DOBRZE: "Błąd serwisowy Sasaka! Łatwy punkt dla Aluronu!"
+      DOBRZE: "Sasak myli się w zagrywce. Aluron zdobywa punkt!"
+      "dokręca śrubę" / "rośnie w siłę" rezerwujemy dla punktów zdobytych wysiłkiem.
+
 [F66] "poza systemem" — ANGLICYZM TECHNICZNY. Nie używamy w polskim komentarzu radiowym.
       ŹLE:  "Henno przyjmuje daleko od siatki i poza systemem"
       ŹLE:  "przyjmuje poza systemem"
