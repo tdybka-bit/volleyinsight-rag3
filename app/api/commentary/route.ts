@@ -118,6 +118,10 @@ OBOWIAZKOWE SLOWNICTWO PL:
 - Obrona/dig: "kapitalnie obroniony!", "wyciagnal z podlogi!", "fenomenalna obrona!" — NIGDY angielskie "dig"
 - Float serve: "zagrywka szybujaca", "float" — ZAWSZE lekka/szybujaca, NIGDY "mocna zagrywka" przy float
 - Przyjecie perfekcyjne: "kapitalnie przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!"
+- KONTEKST OBRONY (M11): gdy obronca probowal zatrzymac pilke po ataku ale nie zdolal,
+  wspomnij OBYDWU. POPRAWNIE: "Tavares probuje obrony po ataku Sasaka, ale pilka wychodzi!"
+  POPRAWNIE: "Leon wbija mimo desperackiej obrony Tavaresa!"
+  ZLE: "Tavares probuje obrony, ale pilka wychodzi" (brak atakujacego)
 - Przyjecie zle: "trudne przyjecie", "pilka daleko od siatki", "nieidealne przyjecie" — NIGDY "nieporadnie"
 - NIGDY nie pisz "recepcja", "recepcji", "recepcję" — zawsze "przyjęcie", "przyjęcia".
      // "piłka zyje" → "piłka żyje"
@@ -2118,17 +2122,20 @@ INSTRUCTIONS:
      // Sprawdzamy każdy prefiks nazwy drużyny (od najdłuższego)
      // "[Prefix nazwy drużyny] [Gracz] zdobywa" — GPT wkleja prefiks przed nazwiskiem
      // Statyczne wzorce dla PlusLigi (bezpieczne dla SWC — tylko t.replace())
-     t = t.replace(/\bPGE Projekt\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bAluron CMC\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bAluron\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bBOGDANKA LUK\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bBOGDANKA\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bJSW Jastrzębski\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bAsseco Resovia\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bIndykpol AZS\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bZAKSA\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bSkra Bełchatów\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bLUK Lublin\s+([A-Z][A-Za-z]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bPGE Projekt\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAluron CMC Warta Zawiercie\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAluron CMC Warta\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAluron CMC\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAluron\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAluron\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bBOGDANKA LUK\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bBOGDANKA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bJSW Jastrzębski\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAsseco Resovia\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bIndykpol AZS\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bZAKSA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bSkra Bełchatów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bLUK Lublin\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      // "X popełnia błąd [desc]. X zdobywa punkt." — NONSENS (ten sam gracz popełnia błąd i zdobywa)
      // Obsługuje: ten sam gracz w zdaniu 2, lub team+gracz w zdaniu 2
      // Pattern 1: X popełnia błąd. X zdobywa punkt. (dokładnie ten sam gracz)
@@ -2158,6 +2165,10 @@ INSTRUCTIONS:
      t = t.replace(/\bpownie\b/gi, '');   // literówka GPT
      t = t.replace(/\bponownie\b/gi, '');
      t = t.replace(/  +/g, ' '); // cleanup podwójnych spacji po usunięciu
+     // Średnik po zdobyciu punktu → wykrzyknik
+     t = t.replace(/(zdobywa punkt);/gi, '$1!');
+     t = t.replace(/(wbija piłkę w boisko);/gi, '$1!');
+     t = t.replace(/(blokuje — punkt);/gi, '$1!');
      // Brakujące "punkt" przed "dla X"
      t = t.replace(/serwisowy i dla ([A-ZŁŚŹĆĘÓĄŃ])/gi, 'serwisowy — punkt dla $1');
      t = t.replace(/serwisowy — dla ([A-ZŁŚŹĆĘÓĄŃ])/gi, 'serwisowy — punkt dla $1');
@@ -2218,6 +2229,11 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // Pleonazmy
+     t = t.replace(/po znakomicie przyjętym przyjęciu/gi, 'po znakomitym przyjęciu');
+     t = t.replace(/po perfekcyjnie przyjętym przyjęciu/gi, 'po perfekcyjnym przyjęciu');
+     t = t.replace(/po (?:\w+ )?przyjętym przyjęciu/gi, 'po przyjęciu');
+     t = t.replace(/przyjęte przyjęcie/gi, 'przyjęcie');
      // duplikat 'zdobywa ... zdobywa punkt'
      t = t.replace(/zdobywa (\w+ )?zdobywa punkt/gi, 'zdobywa punkt');
      t = t.replace(/zdobywa punkt i zdobywa punkt/gi, 'zdobywa punkt');
