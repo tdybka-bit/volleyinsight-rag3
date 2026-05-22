@@ -118,6 +118,16 @@ OBOWIAZKOWE SLOWNICTWO PL:
 - Obrona/dig: "kapitalnie obroniony!", "wyciagnal z podlogi!", "fenomenalna obrona!" — NIGDY angielskie "dig"
 - Float serve: "zagrywka szybujaca", "float" — ZAWSZE lekka/szybujaca, NIGDY "mocna zagrywka" przy float
 - Przyjecie perfekcyjne: "kapitalnie przyjal!", "perfekcyjne przyjecie!", "bezbladne przyjecie [nazwisko]!"
+- WYBLOK (F76) — uzywaj TYLKO gdy atakujacy dotknal pilki po bloku i pilka wraca na strone blokujacej druzyny.
+  NIGDY przy block point (blok zdobywa punkt) ani attack point (atakujacy przebil blok).
+  5 scenariuszy:
+  A) Attack error → punkt dla PRZECIWNEJ druzyny
+  B) Atak bez bloku → punkt dla ATAKUJACEJ
+  C) Pilka po bloku wpada w boisko BLOKUJACEJ → BLOCK POINT dla BLOKUJACEJ ("zamyka blokiem!")
+  D) Pilka po bloku wpada w boisko ATAKUJACEJ → ATTACK POINT dla ATAKUJACEJ ("przebija blok!")
+  D2) BLOK-OUT: pilka dotknela bloku i od razu wylatuje na aut → ATTACK POINT dla ATAKUJACEJ
+      ("blok-out — punkt dla [druzyna atakujaca]!", "blok wypycha pilke na aut!")
+  E) Atakujacy dotyka pilki po bloku → WYBLOK, akcja trwa ("wyblok — akcja trwa!")
 - PODWOJNE CREDITOWANIE (F73): "Louati wbija pilke i Louati zdobywa punkt" = ZAKAZ.
   Jeden scoring verb na akcje. Nie powtarzaj scorer + verb dwa razy z rzedu.
 - KONTEKST OBRONY (M11): gdy obronca probowal zatrzymac pilke po ataku ale nie zdolal,
