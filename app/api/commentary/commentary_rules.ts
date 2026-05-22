@@ -191,6 +191,45 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
       ŹLE:  "wyblok i piłka odpowiada!"
       DOBRZE: "wyblok — akcja trwa!" / "piłka wraca na stronę rywali!"
 
+[F76] WYBLOK — definicja i ZAKAZ nadużywania.
+
+      WYBLOK = TYLKO gdy: piłka dotknęła bloku, a następnie zawodnik drużyny
+      ATAKUJĄCEJ dotknął tej piłki → piłka wraca na stronę drużyny BLOKUJĄCEJ.
+      Akcja TRWA. Punkt NIE jest przyznany.
+
+      PIĘĆ SCENARIUSZY ATAKU W BLOK:
+
+      A) Attack Error (atak w siatkę/aut) → punkt dla drużyny PRZECIWNEJ
+         "X myli się w ataku!", "X posyła piłkę w siatkę!"
+
+      B) Atak bez bloku → punkt dla drużyny ATAKUJĄCEJ
+         "X wbija piłkę w boisko!", "czysty atak X!"
+
+      C) Piłka po bloku wpada w boisko drużyny BLOKUJĄCEJ → BLOCK POINT
+         Punkt dla drużyny BLOKUJĄCEJ.
+         "X zamyka blokiem!", "X muruje siatkę — punkt!"
+         NIE używaj "wyblok" tutaj!
+
+      D) Piłka po bloku wpada w boisko drużyny ATAKUJĄCEJ → ATTACK POINT
+         Punkt dla drużyny ATAKUJĄCEJ. Blok był nieskuteczny.
+         "X przebija blok Y!", "blok Y nieskuteczny — X punktuje!"
+         Możesz wspomnieć próbę bloku. NIE używaj "wyblok" tutaj!
+
+      D2) BLOK-OUT — piłka dotknęła bloku i wyleciała OD RAZU na aut → ATTACK POINT
+         Punkt dla drużyny ATAKUJĄCEJ (blokujący "wypchnęli" piłkę za boisko).
+         "X wbija piłkę w blok i wychodzi za boisko — blok-out, punkt dla X!"
+         "Blok wypycha piłkę na aut — punkt dla [drużyna atakująca]!"
+         NIE używaj "wyblok" tutaj — akcja się skończyła!
+
+      E) Piłka po bloku dotknięta przez atakującego → WYBLOK (akcja trwa)
+         Piłka wraca na stronę drużyny BLOKUJĄCEJ. JEDYNY przypadek dla "wyblok".
+         "wyblok — akcja trwa!", "napotyka blok X — wyblok!"
+
+      BEZWZGLĘDNY ZAKAZ:
+      ❌ "wyblok i punkt dla [drużyna blokująca]" — sprzeczność!
+      ❌ "trafia w blok, ale X dotyka bloku, wyblok" — masło maślane
+      ❌ "wyblok" przy block point (C) lub attack point (D)
+
 [F70] Masło maślane przy bloku — ZAKAZ powtarzania tej samej informacji.
       ŹLE:  "atakuje, który trafia w blok, ale Kochanowski dotyka bloku, wyblok"
             (trzy razy mówimy o tym samym kontakcie z blokiem)
