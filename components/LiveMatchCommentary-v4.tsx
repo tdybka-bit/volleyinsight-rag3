@@ -2601,9 +2601,18 @@ export default function LiveMatchCommentaryV4() {
            onChange={e => { setSelectedMatch(e.target.value); localStorage.setItem('vi_selected_match', e.target.value); setCommentaries([]); setCurrentRallyIndex(0); setCurrentSetNumber(0); setIsPlaying(false); }}
            style={{ padding: '4px 10px', borderRadius: 7, background: '#1a2740', border: '1px solid rgba(255,255,255,.1)', color: '#e2e8f0', fontSize: 11, fontWeight: 600, cursor: 'pointer', colorScheme: 'dark' as any }}
          >
-           <option value="2025-11-12_ZAW-LBN.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Aluron Zawiercie vs Bogdanka Lublin (12.11)</option>
-           <option value="2025-11-26_PGE-Ind.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>PGE Projekt Warszawa vs Indykpol Olsztyn (26.11)</option>
-           <option value="2025-12-06_JSW-Ass.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Jastrzębski Węgiel vs Asseco Rzeszów (06.12)</option>
+           <option value="2025-11-12_ZAW-LBN.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Aluron Zawiercie vs BOGDANKA Lublin (12.11.2025)</option>
+           <option value="2025-11-26_PGE-Ind.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>PGE Projekt Warszawa vs Indykpol AZS Olsztyn (26.11.2025)</option>
+           <option value="2025-12-06_JSW-Ass.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Jastrzębski Węgiel vs Asseco Resovia (06.12.2025)</option>
+           <option value="2025-12-17 Ste-ZAK.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Stena Recycling Bełchatów vs ZAKSA Kędzierzyn (17.12.2025)</option>
+           <option value="2025-12-20 SUW-BAR.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Ślepsk Malow Suwałki vs Barkom-Każany Lwów (20.12.2025)</option>
+           <option value="2026-01-03 ZAK-Bog.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>ZAKSA Kędzierzyn vs BOGDANKA Lublin (03.01.2026)</option>
+           <option value="2026-01-09 GDA-SUW.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Trefl Gdańsk vs Ślepsk Malow Suwałki (09.01.2026)</option>
+           <option value="2026-01-18 Ass-PGE.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Asseco Resovia vs PGE Projekt Warszawa (18.01.2026)</option>
+           <option value="2026-02-01 OLS-Ste.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Indykpol AZS Olsztyn vs Stena Recycling Bełchatów (01.02.2026)</option>
+           <option value="2026-02-21 ZAW-GDA.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Aluron Zawiercie vs Trefl Gdańsk (21.02.2026)</option>
+           <option value="2026-02-25 GDA-InP.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Trefl Gdańsk vs Indykpol AZS Olsztyn (25.02.2026)</option>
+           <option value="2026-03-22 PGE-Cup.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>PGE Projekt Warszawa — Puchar (22.03.2026)</option>
          </select>
          {/* Live indicator */}
          <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '3px 8px', background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.2)', borderRadius: 6 }}>
