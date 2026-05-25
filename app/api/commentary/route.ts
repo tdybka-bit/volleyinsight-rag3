@@ -1635,7 +1635,7 @@ if (!rally.touches || rally.touches.length === 0) {
        }
      }
    // FREE
-   } else if (isVeryLongRally && (actionLower.includes('blok') || actionLower.includes('wyblok')) && !isLastTouch) {
+   } else if (numTouches > 12 && (actionLower.includes('blok') || actionLower.includes('wyblok')) && !isLastTouch) {
      // Long rally (12+ dotknięć): nie opisuj szczegółów wybloku — tylko krótki znacznik
      desc += ' - blok/wyblok (skipped detail — too many touches)';
    } else if (actionLower.includes('serve_error') || (actionLower.includes('error') && actionLower.includes('serw'))) {
