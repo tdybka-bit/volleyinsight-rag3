@@ -2178,6 +2178,18 @@ INSTRUCTIONS:
      t = t.replace(/\bInPost ChKS Chełm\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bInPost ChKS\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bCuprum Stilon Gorzów\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bCuprum Stilon\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bŚlepsk Malow Suwałki\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bŚlepsk Malow\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bPGE GiEK SKRA Bełchatów\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bPGE GiEK SKRA\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bPGE GiEK\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bSteam Hemarpol Politechnika Częstochowa\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bSteam Hemarpol Politechnika\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bSteam Hemarpol\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bEnerga Trefl Gdańsk\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bEnerga Trefl\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bZAKSA Kędzierzyn-Koźle\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
 
      // "X popełnia błąd [desc]. X zdobywa punkt." — NONSENS (ten sam gracz popełnia błąd i zdobywa)
      // Dotyczy: błąd serwisowy, błąd w przyjęciu, błąd ataku
@@ -2258,6 +2270,8 @@ INSTRUCTIONS:
        t = t.replace(/i dokręca śrubę!?$/gim, 'i wychodzi na prowadzenie!');
        t = t.replace(/i dokręca śrubę/gi, '');
        t = t.replace(/i rośnie w siłę!?$/gim, '!');
+       t = t.replace(/prowadzi i rośnie w siłę!/gi, 'prowadzi!');
+       t = t.replace(/wychodzi na prowadzenie i rośnie w siłę!/gi, 'wychodzi na prowadzenie!');
        t = t.replace(/i rośnie w siłę/gi, '');
        t = t.replace(/i buduje przewagę!?$/gim, '!');
        t = t.replace(/i buduje przewagę/gi, '');
