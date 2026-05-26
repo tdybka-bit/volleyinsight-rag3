@@ -638,6 +638,10 @@ export default function LiveMatchCommentaryV4() {
  }
  }
 
+ // Nadpisz kodami z nazwy pliku — rozwiązuje konflikt PGE=WAW vs PGE=BEL
+ if (_fileHomeCode) homeTeamName = _fileHomeCode;
+ if (_fileAwayCode) awayTeamName = _fileAwayCode;
+
  // Detect home/away PREFIX from Team labels (e.g. PGE=Home, IND=Away)
  let homePrefix = '';
  let awayPrefix = '';
@@ -1446,6 +1450,12 @@ export default function LiveMatchCommentaryV4() {
  try {
  console.log('Loading match data (DataVolley format)...');
  
+
+      // Wyciągaj kody drużyn z nazwy pliku — niezawodne vs rotation labels
+      // Format: 'YYYY-MM-DD HOME-AWAY.json' → home='waw', away='ols'
+      const _fileMatch = selectedMatch.match(/([A-Z]{2,4})-([A-Z]{2,4})\.json$/i);
+      const _fileHomeCode = _fileMatch?.[1]?.toLowerCase() || null;
+      const _fileAwayCode = _fileMatch?.[2]?.toLowerCase() || null;
  const response = await fetch(`/data/matches/rallies/${selectedMatch}`);
  
  if (!response.ok) {
