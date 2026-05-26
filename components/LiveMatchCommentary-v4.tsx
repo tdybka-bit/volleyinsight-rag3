@@ -64,8 +64,8 @@ function getTeamLogo(teamName: string): string {
  }
  }
  
- console.warn('[LOGO] No match for:', teamName, 'trying fallback...');
- return '/team-logos/aluron-logo.png';
+ console.warn('[LOGO] No match for:', teamName);
+ return '';
 }
 
 const fetchWithUTF8 = async (url: string, options?: RequestInit) => {
@@ -433,6 +433,16 @@ const TEAM_NAME_FIXES: Record<string, string> = {
  'Cuprum Stilon Gorzow': 'Cuprum Stilon Gorzów',
  // Chełm
  'InPost ChKS Chelm': 'InPost ChKS Chełm',
+ // Stare nazwy z poprzednich meczów
+ 'Barkom-Każany Lwów': 'Barkom Każany Lwów',
+ 'Barkom-Kazany Lwow': 'Barkom Każany Lwów',
+ 'BARKOM Lviv': 'Barkom Każany Lwów',
+ 'Barkom Lviv': 'Barkom Każany Lwów',
+ 'Barkom Każany Lwow': 'Barkom Każany Lwów',
+ // Steam Hemarpol — skrócone nazwy z VolleyStation
+ 'Steam Hemarpol Politechnika Cz': 'Steam Hemarpol Politechnika Częstochowa',
+ 'Steam Hemarpol Politechnika Cze': 'Steam Hemarpol Politechnika Częstochowa',
+ 'Steam Hemarpol Czestochowa': 'Steam Hemarpol Politechnika Częstochowa',
 };
 
 function normalizeTeamName(raw: string): string {
@@ -2690,7 +2700,7 @@ export default function LiveMatchCommentaryV4() {
          {/* Home */}
          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
            <div style={{ width: 5, height: 32, borderRadius: 99, background: '#3b82f6' }} />
-           <img src={getTeamLogo(matchData?.teams?.home || '')} alt="" style={{ width: 32, height: 32, objectFit: 'contain', flexShrink: 0 }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+           {getTeamLogo(matchData?.teams?.home || '') && <img src={getTeamLogo(matchData?.teams?.home || '')} alt="" style={{ width: 32, height: 32, objectFit: 'contain', flexShrink: 0 }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
            <div>
              <div style={{ fontSize: 14, fontWeight: 700 }}>{getHomeTeamFull()}</div>
              <div style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em' }}>{BUDDY_I18N[language]?.homeLabel || 'GOSPODARZE'}</div>
@@ -2744,7 +2754,7 @@ export default function LiveMatchCommentaryV4() {
              <div style={{ fontSize: 14, fontWeight: 700 }}>{getAwayTeamFull()}</div>
              <div style={{ fontSize: 10, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '.12em' }}>{BUDDY_I18N[language]?.awayLabel || 'GOŚCIE'}</div>
            </div>
-           <img src={getTeamLogo(matchData?.teams?.away || '')} alt="" style={{ width: 32, height: 32, objectFit: 'contain', flexShrink: 0 }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+           {getTeamLogo(matchData?.teams?.away || '') && <img src={getTeamLogo(matchData?.teams?.away || '')} alt="" style={{ width: 32, height: 32, objectFit: 'contain', flexShrink: 0 }} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
            <div style={{ width: 5, height: 32, borderRadius: 99, background: '#f59e0b' }} />
          </div>
        </div>
