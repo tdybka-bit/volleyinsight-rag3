@@ -7,47 +7,47 @@ import { loadDataVolleyMatch, type MatchData as DVMatchData } from '@/lib/datavo
 
 const TEAM_LOGOS: Record<string, string> = {
  // ZAW — Aluron CMC Warta Zawiercie
- 'ZAW': '/team-logos/zaw-logo.png', 'zaw': '/team-logos/zaw-logo.png',
- 'Aluron': '/team-logos/zaw-logo.png', 'aluron': '/team-logos/zaw-logo.png',
+ 'ZAW': '/team-logos/ZAW.png', 'zaw': '/team-logos/ZAW.png',
+ 'Aluron': '/team-logos/ZAW.png', 'aluron': '/team-logos/ZAW.png',
  // WAW — PGE Projekt Warszawa
- 'WAW': '/team-logos/waw-logo.png', 'waw': '/team-logos/waw-logo.png',
- 'Projekt': '/team-logos/waw-logo.png',
+ 'WAW': '/team-logos/WAW.png', 'waw': '/team-logos/WAW.png',
+ 'Projekt': '/team-logos/WAW.png',
  // JAS — JSW Jastrzębski Węgiel
- 'JAS': '/team-logos/jas-logo.png', 'jas': '/team-logos/jas-logo.png',
- 'JSW': '/team-logos/jas-logo.png', 'jsw': '/team-logos/jas-logo.png',
+ 'JAS': '/team-logos/JAS.png', 'jas': '/team-logos/JAS.png',
+ 'JSW': '/team-logos/JAS.png', 'jsw': '/team-logos/JAS.png',
  // CZE — Steam Hemarpol Politechnika Częstochowa
- 'CZE': '/team-logos/cze-logo.png', 'cze': '/team-logos/cze-logo.png',
- 'Steam': '/team-logos/cze-logo.png',
+ 'CZE': '/team-logos/CZE.png', 'cze': '/team-logos/CZE.png',
+ 'Steam': '/team-logos/CZE.png',
  // SUW — Ślepsk Malow Suwałki
- 'SUW': '/team-logos/suw-logo.png', 'suw': '/team-logos/suw-logo.png',
- 'Ślepsk': '/team-logos/suw-logo.png',
+ 'SUW': '/team-logos/SUW.png', 'suw': '/team-logos/SUW.png',
+ 'Ślepsk': '/team-logos/SUW.png',
  // KED — ZAKSA Kędzierzyn-Koźle
- 'KED': '/team-logos/ked-logo.png', 'ked': '/team-logos/ked-logo.png',
- 'ZAKSA': '/team-logos/ked-logo.png',
+ 'KED': '/team-logos/KED.png', 'ked': '/team-logos/KED.png',
+ 'ZAKSA': '/team-logos/KED.png',
  // GDA — Energa Trefl Gdańsk
- 'GDA': '/team-logos/gda-logo.png', 'gda': '/team-logos/gda-logo.png',
- 'Trefl': '/team-logos/gda-logo.png', 'Energa': '/team-logos/gda-logo.png',
+ 'GDA': '/team-logos/GDA.png', 'gda': '/team-logos/GDA.png',
+ 'Trefl': '/team-logos/GDA.png', 'Energa': '/team-logos/GDA.png',
  // RZE — Asseco Resovia Rzeszów
- 'RZE': '/team-logos/rze-logo.png', 'rze': '/team-logos/rze-logo.png',
- 'Asseco': '/team-logos/rze-logo.png',
+ 'RZE': '/team-logos/RZE.png', 'rze': '/team-logos/RZE.png',
+ 'Asseco': '/team-logos/RZE.png',
  // OLS — Indykpol AZS Olsztyn
- 'OLS': '/team-logos/ols-logo.png', 'ols': '/team-logos/ols-logo.png',
- 'Indykpol': '/team-logos/ols-logo.png',
+ 'OLS': '/team-logos/OLS.png', 'ols': '/team-logos/OLS.png',
+ 'Indykpol': '/team-logos/OLS.png',
  // BEL — PGE GiEK SKRA Bełchatów
- 'BEL': '/team-logos/bel-logo.png', 'bel': '/team-logos/bel-logo.png',
- 'SKRA': '/team-logos/bel-logo.png', 'GiEK': '/team-logos/bel-logo.png',
+ 'BEL': '/team-logos/BEL.png', 'bel': '/team-logos/BEL.png',
+ 'SKRA': '/team-logos/BEL.png', 'GiEK': '/team-logos/BEL.png',
  // LBN — BOGDANKA LUK Lublin
- 'LBN': '/team-logos/lbn-logo.png', 'lbn': '/team-logos/lbn-logo.png',
- 'BOGDANKA': '/team-logos/lbn-logo.png', 'Bogdanka': '/team-logos/lbn-logo.png',
+ 'LBN': '/team-logos/LBN.png', 'lbn': '/team-logos/LBN.png',
+ 'BOGDANKA': '/team-logos/LBN.png', 'Bogdanka': '/team-logos/LBN.png',
  // BAR — Barkom Każany Lwów
- 'BAR': '/team-logos/bar-logo.png', 'bar': '/team-logos/bar-logo.png',
- 'Barkom': '/team-logos/bar-logo.png',
+ 'BAR': '/team-logos/BAR.png', 'bar': '/team-logos/BAR.png',
+ 'Barkom': '/team-logos/BAR.png',
  // CHE — InPost ChKS Chełm
- 'CHE': '/team-logos/che-logo.png', 'che': '/team-logos/che-logo.png',
- 'InPost': '/team-logos/che-logo.png', 'ChKS': '/team-logos/che-logo.png',
+ 'CHE': '/team-logos/CHE.png', 'che': '/team-logos/CHE.png',
+ 'InPost': '/team-logos/CHE.png', 'ChKS': '/team-logos/CHE.png',
  // GOR — Cuprum Stilon Gorzów
- 'GOR': '/team-logos/gor-logo.png', 'gor': '/team-logos/gor-logo.png',
- 'Cuprum': '/team-logos/gor-logo.png',
+ 'GOR': '/team-logos/GOR.png', 'gor': '/team-logos/GOR.png',
+ 'Cuprum': '/team-logos/GOR.png',
 };
 
 function getTeamLogo(teamName: string): string {
