@@ -6,31 +6,48 @@ import { getIcon } from './IconMapper';
 import { loadDataVolleyMatch, type MatchData as DVMatchData } from '@/lib/datavolley-parser';
 
 const TEAM_LOGOS: Record<string, string> = {
- 'Aluron': '/team-logos/aluron-logo.png',
- 'aluron': '/team-logos/aluron-logo.png',
- 'zaw': '/team-logos/aluron-logo.png',
- 'ZAW': '/team-logos/aluron-logo.png',
- 
- 'Bogdanka': '/team-logos/bogdanka-logo.png',
- 'bogdanka': '/team-logos/bogdanka-logo.png',
- 'lbn': '/team-logos/bogdanka-logo.png',
- 'LBN': '/team-logos/bogdanka-logo.png',
- 
- 'PGE': '/team-logos/warszawa-logo.png',
- 'pge': '/team-logos/warszawa-logo.png',
- 'Projekt': '/team-logos/warszawa-logo.png',
- 
- 'IND': '/team-logos/olsztyn-logo.png',
- 'ind': '/team-logos/olsztyn-logo.png',
- 'Indykpol': '/team-logos/olsztyn-logo.png',
- 
- 'JSW': '/team-logos/jsw-logo.png',
- 'jsw': '/team-logos/jsw-logo.png',
- 'Jastrzebski': '/team-logos/jsw-logo.png',
- 
- 'ASS': '/team-logos/rzeszow-logo.png',
- 'ass': '/team-logos/rzeszow-logo.png',
- 'Asseco': '/team-logos/rzeszow-logo.png',
+ // ZAW — Aluron CMC Warta Zawiercie
+ 'ZAW': '/team-logos/zaw-logo.png', 'zaw': '/team-logos/zaw-logo.png',
+ 'Aluron': '/team-logos/zaw-logo.png', 'aluron': '/team-logos/zaw-logo.png',
+ // WAW — PGE Projekt Warszawa
+ 'WAW': '/team-logos/waw-logo.png', 'waw': '/team-logos/waw-logo.png',
+ 'Projekt': '/team-logos/waw-logo.png',
+ // JAS — JSW Jastrzębski Węgiel
+ 'JAS': '/team-logos/jas-logo.png', 'jas': '/team-logos/jas-logo.png',
+ 'JSW': '/team-logos/jas-logo.png', 'jsw': '/team-logos/jas-logo.png',
+ // CZE — Steam Hemarpol Politechnika Częstochowa
+ 'CZE': '/team-logos/cze-logo.png', 'cze': '/team-logos/cze-logo.png',
+ 'Steam': '/team-logos/cze-logo.png',
+ // SUW — Ślepsk Malow Suwałki
+ 'SUW': '/team-logos/suw-logo.png', 'suw': '/team-logos/suw-logo.png',
+ 'Ślepsk': '/team-logos/suw-logo.png',
+ // KED — ZAKSA Kędzierzyn-Koźle
+ 'KED': '/team-logos/ked-logo.png', 'ked': '/team-logos/ked-logo.png',
+ 'ZAKSA': '/team-logos/ked-logo.png',
+ // GDA — Energa Trefl Gdańsk
+ 'GDA': '/team-logos/gda-logo.png', 'gda': '/team-logos/gda-logo.png',
+ 'Trefl': '/team-logos/gda-logo.png', 'Energa': '/team-logos/gda-logo.png',
+ // RZE — Asseco Resovia Rzeszów
+ 'RZE': '/team-logos/rze-logo.png', 'rze': '/team-logos/rze-logo.png',
+ 'Asseco': '/team-logos/rze-logo.png',
+ // OLS — Indykpol AZS Olsztyn
+ 'OLS': '/team-logos/ols-logo.png', 'ols': '/team-logos/ols-logo.png',
+ 'Indykpol': '/team-logos/ols-logo.png',
+ // BEL — PGE GiEK SKRA Bełchatów
+ 'BEL': '/team-logos/bel-logo.png', 'bel': '/team-logos/bel-logo.png',
+ 'SKRA': '/team-logos/bel-logo.png', 'GiEK': '/team-logos/bel-logo.png',
+ // LBN — BOGDANKA LUK Lublin
+ 'LBN': '/team-logos/lbn-logo.png', 'lbn': '/team-logos/lbn-logo.png',
+ 'BOGDANKA': '/team-logos/lbn-logo.png', 'Bogdanka': '/team-logos/lbn-logo.png',
+ // BAR — Barkom Każany Lwów
+ 'BAR': '/team-logos/bar-logo.png', 'bar': '/team-logos/bar-logo.png',
+ 'Barkom': '/team-logos/bar-logo.png',
+ // CHE — InPost ChKS Chełm
+ 'CHE': '/team-logos/che-logo.png', 'che': '/team-logos/che-logo.png',
+ 'InPost': '/team-logos/che-logo.png', 'ChKS': '/team-logos/che-logo.png',
+ // GOR — Cuprum Stilon Gorzów
+ 'GOR': '/team-logos/gor-logo.png', 'gor': '/team-logos/gor-logo.png',
+ 'Cuprum': '/team-logos/gor-logo.png',
 };
 
 function getTeamLogo(teamName: string): string {
@@ -368,26 +385,54 @@ const getActionLabel = (action: string, lang: Language): string => {
 };
 
 const TEAM_FULL_NAMES: Record<string, string> = {
- 'zaw': 'Aluron CMC Warta Zawiercie',
- 'lbn': 'BOGDANKA LUK Lublin',
- 'pge': 'PGE Projekt Warszawa',
- 'ind': 'Indykpol AZS Olsztyn',
- 'jsw': 'JSW Jastrzębski Węgiel',
- 'ass': 'Asseco Resovia Rzeszów',
- 'aluron': 'Aluron CMC Warta Zawiercie',
- 'bogdanka': 'BOGDANKA LUK Lublin',
+ 'zaw': 'Aluron CMC Warta Zawiercie',       'ZAW': 'Aluron CMC Warta Zawiercie',
+ 'waw': 'PGE Projekt Warszawa',             'WAW': 'PGE Projekt Warszawa',
+ 'jas': 'JSW Jastrzębski Węgiel',           'JAS': 'JSW Jastrzębski Węgiel',
+ 'cze': 'Steam Hemarpol Politechnika Częstochowa', 'CZE': 'Steam Hemarpol Politechnika Częstochowa',
+ 'suw': 'Ślepsk Malow Suwałki',             'SUW': 'Ślepsk Malow Suwałki',
+ 'ked': 'ZAKSA Kędzierzyn-Koźle',           'KED': 'ZAKSA Kędzierzyn-Koźle',
+ 'gda': 'Energa Trefl Gdańsk',              'GDA': 'Energa Trefl Gdańsk',
+ 'rze': 'Asseco Resovia Rzeszów',           'RZE': 'Asseco Resovia Rzeszów',
+ 'ols': 'Indykpol AZS Olsztyn',             'OLS': 'Indykpol AZS Olsztyn',
+ 'bel': 'PGE GiEK SKRA Bełchatów',         'BEL': 'PGE GiEK SKRA Bełchatów',
+ 'lbn': 'BOGDANKA LUK Lublin',              'LBN': 'BOGDANKA LUK Lublin',
+ 'bar': 'Barkom Każany Lwów',              'BAR': 'Barkom Każany Lwów',
+ 'che': 'InPost ChKS Chełm',               'CHE': 'InPost ChKS Chełm',
+ 'gor': 'Cuprum Stilon Gorzów',            'GOR': 'Cuprum Stilon Gorzów',
 };
 
-// Normalize team names from VolleyStation JSON (may have encoding issues or missing diacritics)
+// Normalize team names from VolleyStation JSON (encoding issues, missing diacritics)
 const TEAM_NAME_FIXES: Record<string, string> = {
+ // JSW
  'Jastrzebski Wegiel': 'JSW Jastrzębski Węgiel',
  'JSW Jastrzebski Wegiel': 'JSW Jastrzębski Węgiel',
  'JSW Jastrzebski Węgiel': 'JSW Jastrzębski Węgiel',
+ // Asseco
  'Asseco Resovia Rzeszow': 'Asseco Resovia Rzeszów',
- 'Asseco Resovia Rzeszów': 'Asseco Resovia Rzeszów',
- // Fix Polish genitive form leaking from VolleyStation JSON
+ // BOGDANKA genitive leak
  'BOGDANKI LUK Lublin': 'BOGDANKA LUK Lublin',
- 'Bogdanki LUK Lublin': 'Bogdanka LUK Lublin',
+ 'Bogdanki LUK Lublin': 'BOGDANKA LUK Lublin',
+ // ZAKSA
+ 'ZAKSA Kedzierzyn-Kozle': 'ZAKSA Kędzierzyn-Koźle',
+ 'ZAKSA Kędzierzyn-Koźle': 'ZAKSA Kędzierzyn-Koźle',
+ // Trefl
+ 'Energa Trefl Gdansk': 'Energa Trefl Gdańsk',
+ // Ślepsk
+ 'Slepsk Malow Suwalki': 'Ślepsk Malow Suwałki',
+ 'Slepsk Malow Suwałki': 'Ślepsk Malow Suwałki',
+ // Barkom
+ 'Barkom-Kazany Lwow': 'Barkom Każany Lwów',
+ 'Barkom Kazany Lwow': 'Barkom Każany Lwów',
+ 'Barkom-Każany Lwów': 'Barkom Każany Lwów',
+ // Steam
+ 'Steam Hemarpol Politechnika Czestochowa': 'Steam Hemarpol Politechnika Częstochowa',
+ // Bełchatów
+ 'PGE GiEK SKRA Belchatow': 'PGE GiEK SKRA Bełchatów',
+ 'PGE GiEK SKRA Bełchatow': 'PGE GiEK SKRA Bełchatów',
+ // Gorzów
+ 'Cuprum Stilon Gorzow': 'Cuprum Stilon Gorzów',
+ // Chełm
+ 'InPost ChKS Chelm': 'InPost ChKS Chełm',
 };
 
 function normalizeTeamName(raw: string): string {
@@ -2601,18 +2646,18 @@ export default function LiveMatchCommentaryV4() {
            onChange={e => { setSelectedMatch(e.target.value); localStorage.setItem('vi_selected_match', e.target.value); setCommentaries([]); setCurrentRallyIndex(0); setCurrentSetNumber(0); setIsPlaying(false); }}
            style={{ padding: '4px 10px', borderRadius: 7, background: '#1a2740', border: '1px solid rgba(255,255,255,.1)', color: '#e2e8f0', fontSize: 11, fontWeight: 600, cursor: 'pointer', colorScheme: 'dark' as any }}
          >
-           <option value="2025-11-12_ZAW-LBN.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Aluron Zawiercie vs BOGDANKA Lublin (12.11.2025)</option>
-           <option value="2025-11-26_PGE-Ind.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>PGE Projekt Warszawa vs Indykpol AZS Olsztyn (26.11.2025)</option>
-           <option value="2025-12-06_JSW-Ass.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Jastrzębski Węgiel vs Asseco Resovia (06.12.2025)</option>
-           <option value="2025-12-17 Ste-ZAK.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Stena Recycling Bełchatów vs ZAKSA Kędzierzyn (17.12.2025)</option>
-           <option value="2025-12-20 SUW-BAR.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Ślepsk Malow Suwałki vs Barkom-Każany Lwów (20.12.2025)</option>
-           <option value="2026-01-03 ZAK-Bog.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>ZAKSA Kędzierzyn vs BOGDANKA Lublin (03.01.2026)</option>
-           <option value="2026-01-09 GDA-SUW.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Trefl Gdańsk vs Ślepsk Malow Suwałki (09.01.2026)</option>
-           <option value="2026-01-18 Ass-PGE.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Asseco Resovia vs PGE Projekt Warszawa (18.01.2026)</option>
-           <option value="2026-02-01 OLS-Ste.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Indykpol AZS Olsztyn vs Stena Recycling Bełchatów (01.02.2026)</option>
-           <option value="2026-02-21 ZAW-GDA.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Aluron Zawiercie vs Trefl Gdańsk (21.02.2026)</option>
-           <option value="2026-02-25 GDA-InP.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>Trefl Gdańsk vs Indykpol AZS Olsztyn (25.02.2026)</option>
-           <option value="2026-03-22 PGE-Cup.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>PGE Projekt Warszawa — Puchar (22.03.2026)</option>
+           <option value="2025-11-12 ZAW-LBN.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>ZAW vs LBN — Aluron Zawiercie vs BOGDANKA Lublin (12.11.2025)</option>
+           <option value="2025-11-26 WAW-OLS.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>WAW vs OLS — PGE Projekt Warszawa vs Indykpol AZS Olsztyn (26.11.2025)</option>
+           <option value="2025-12-06 JAS-RZE.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>JAS vs RZE — Jastrzębski Węgiel vs Asseco Resovia (06.12.2025)</option>
+           <option value="2025-12-17 CZE-KED.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>CZE vs KED — Steam Hemarpol Częstochowa vs ZAKSA Kędzierzyn (17.12.2025)</option>
+           <option value="2025-12-20 SUW-BAR.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>SUW vs BAR — Ślepsk Malow Suwałki vs Barkom Każany Lwów (20.12.2025)</option>
+           <option value="2026-01-03 KED-LBN.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>KED vs LBN — ZAKSA Kędzierzyn vs BOGDANKA Lublin (03.01.2026)</option>
+           <option value="2026-01-09 GDA-SUW.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>GDA vs SUW — Energa Trefl Gdańsk vs Ślepsk Malow Suwałki (09.01.2026)</option>
+           <option value="2026-01-18 RZE-WAW.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>RZE vs WAW — Asseco Resovia vs PGE Projekt Warszawa (18.01.2026)</option>
+           <option value="2026-02-01 OLS-CZE.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>OLS vs CZE — Indykpol AZS Olsztyn vs Steam Hemarpol Częstochowa (01.02.2026)</option>
+           <option value="2026-02-21 ZAW-GDA.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>ZAW vs GDA — Aluron Zawiercie vs Energa Trefl Gdańsk (21.02.2026)</option>
+           <option value="2026-02-25 GDA-CHE.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>GDA vs CHE — Energa Trefl Gdańsk vs InPost ChKS Chełm (25.02.2026)</option>
+           <option value="2026-03-22 BEL-GOR.json" style={{ background: '#1a2740', color: '#e2e8f0' }}>BEL vs GOR — PGE GiEK SKRA Bełchatów vs Cuprum Stilon Gorzów (22.03.2026)</option>
          </select>
          {/* Live indicator */}
          <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '3px 8px', background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.2)', borderRadius: 6 }}>
