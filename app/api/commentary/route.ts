@@ -2162,6 +2162,7 @@ INSTRUCTIONS:
      t = t.replace(/\bŚlepsk Malow Suwałki\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bŚlepsk Malow\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bZAKSA Kędzierzyn-Koźle\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bZAKSA Kędzierzyn-([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bZAKSA\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bEnerga Trefl Gdańsk\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bEnerga Trefl\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
@@ -2173,6 +2174,8 @@ INSTRUCTIONS:
      t = t.replace(/\bPGE GiEK SKRA\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bBOGDANKA LUK Lublin\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bBOGDANKA LUK\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bBogdanka LUK Lublin\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bBogdanka LUK\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bBOGDANKA\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bBarkom Każany Lwów\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bInPost ChKS Chełm\s+([A-Z\\u0104-\\u017E][A-Za-z\\u00C0-\\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
@@ -2308,6 +2311,11 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // 'powiększa impet' — nie jest frazą siatkówkową, zbyt mechaniczne
+     t = t.replace(/powiększa impet!/gi, 'rośnie w siłę!');
+     t = t.replace(/powiększa impet/gi, 'rośnie w siłę');
+     // 'Seria trzech punktów' urwane — dodaj wykrzyknik
+     t = t.replace(/Seria (\w+ )?punktów$/gim, 'Seria $1punktów!');
      // "piłka odpowiada" — bez sensu, nic nie znaczy
      t = t.replace(/piłka odpowiada!/gi, 'akcja trwa!');
      t = t.replace(/wyblok i piłka odpowiada/gi, 'wyblok — akcja trwa');
