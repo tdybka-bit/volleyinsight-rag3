@@ -1635,7 +1635,7 @@ if (!rally.touches || rally.touches.length === 0) {
        }
      }
    // FREE
-   } else if (numTouches > 12 && (actionLower.includes('blok') || actionLower.includes('wyblok')) && !isLastTouch) {
+   } else if (numTouches > 10 && (actionLower.includes('blok') || actionLower.includes('wyblok')) && !isLastTouch) {
      // Long rally (12+ dotknięć): nie opisuj szczegółów wybloku — tylko krótki znacznik
      desc += ' - blok/wyblok (skipped detail — too many touches)';
    } else if (actionLower.includes('serve_error') || (actionLower.includes('error') && actionLower.includes('serw'))) {
@@ -1984,7 +1984,7 @@ INSTRUCTIONS:
      // "Łatwy punkt, która prowadzi w pierwszym secie!" → "Łatwy punkt!"
      t = t.replace(/,\s*(który|która|które|którzy)\s+prowadzi[^!.]*[!.]?/gi, '!');
      // Wiszący zaimek przy kontekście drużynowym (nie przy piłce)
-     t = t.replace(/,\s*(który|która|które|którzy)\s+(prowadzi|wychodzi na|zmniejsza|odrabia|wyrównuje|odskakuje)[^!.]{0,60}[!.]/gi, '!');
+     t = t.replace(/,\s*(który|która|które|którzy)\s+(prowadzi|wychodzi na|zmniejsza|odrabia|wyrównuje|odskakuje|powiększa|buduje|rośnie|zdobywa)[^!.]{0,60}[!.]/gi, '!');
 
      // ── Score in text → remove explicit numbers ─────────────────────────
      if (!setEndInfo.isSetEnd) {
@@ -2196,8 +2196,9 @@ INSTRUCTIONS:
 
      // "X popełnia błąd [desc]. X zdobywa punkt." — NONSENS (ten sam gracz popełnia błąd i zdobywa)
      // Dotyczy: błąd serwisowy, błąd w przyjęciu, błąd ataku
-     // Pattern A: "X popełnia błąd w przyjęciu i X zdobywa punkt" (przecinek lub "i")
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd w przyjęciu[^.!]*i \1 zdobywa punkt[^.!]*/gi, '$1 popełnia błąd w przyjęciu!');
+     // Pattern A: "X popełnia błąd w przyjęciu [i/,] X zdobywa punkt"
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd w przyjęciu[^.!,]*[i,] \1 zdobywa punkt[^.!]*/gi, '$1 popełnia błąd w przyjęciu!');
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd w przyjęciu[^.!]*[.!,]\s*\1 zdobywa punkt[^.!]*/gi, '$1 popełnia błąd w przyjęciu!');
      t = t.replace(/błąd w przyjęciu ([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,})[^.!]*i \1 zdobywa punkt[^.!]*/gi, 'błąd w przyjęciu $1!');
      // Pattern B: X popełnia błąd. X zdobywa punkt. (dokładnie ten sam gracz)
      t = t.replace(
@@ -2265,7 +2266,7 @@ INSTRUCTIONS:
      // ── Błąd serwisowy: podmiana scorera + odpowiada ────────────────────────
      // '[X] błąd serwisowy. [X] zdobywa punkt' = NONSENS — X STRACIŁ punkt!
      // Bezpieczna forma: kasujemy '[X] zdobywa punkt' po 'błąd serwisowy X'
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,}) popełnia błąd serwisowy[^.!,]*[,.!]\s*\1 zdobywa punkt[^.!]*[.!]?/gi, '$1 popełnia błąd serwisowy!');
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,}) popełnia błąd serwisowy[^.!,—]*[,.!—]\s*\1 zdobywa punkt[^.!]*[.!]?/gi, '$1 popełnia błąd serwisowy!');
      t = t.replace(/Błąd serwisowy ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,})[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*/gi, 'Błąd serwisowy $1');
      // '[X] błąd serwisowy X. [drużyna] X zdobywa punkt' (team+imię wklejone)
      t = t.replace(/błąd serwisowy ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,})[^.!]*[.!][^.!]{0,80}\1 zdobywa punkt[^.!]*/gi, 'błąd serwisowy $1!');
