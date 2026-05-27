@@ -2205,8 +2205,12 @@ INSTRUCTIONS:
        (m: string, p: string) => `${p} popełnia błąd!`
      );
      // Pattern C: "X myli się w ataku! X zdobywa punkt" — ten sam wzorzec co błąd
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się w ataku[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się w ataku!');
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się[^.!]{0,30}[.!]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się!');
+     // myli się + zdobywa — separator może być . ! lub — (em dash)
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się w ataku[^.!—]*[.!—]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się w ataku!');
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się w przyjęciu[^.!—]*[.!—]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się w przyjęciu!');
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się[^.!—]{0,30}[.!—]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się!');
+     // myli się w ataku i [Team Prefix] [Gracz] zdobywa — team prefix wklejony przed scorer
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się w ataku[^.!]*[.!]?\s*(?:[A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E\s]{3,20})\1 zdobywa punkt[^.!]*/gi, '$1 myli się w ataku!');
      // Pattern D: "Błąd X i X zdobywa punkt" (F74) — ten sam gracz błądzi i 'zdobywa'
      t = t.replace(/[Bb]łąd ([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) i \1 zdobywa punkt[^.!]*/gi, 'Błąd $1!');
      // Pattern E: "[Team prefix] X zdobywa punkt" po błędzie ataku (team ucięty)
