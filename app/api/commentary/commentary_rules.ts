@@ -162,6 +162,29 @@ FORBIDDEN — ABSOLUTNY ZAKAZ
 [F64] "gra się toczy" — ZAKAZ. Użyj: "akcja trwa!", "wymiana trwa!", "piłka żyje!"
       Podobnie: "gra trwa" → "akcja trwa"
 
+[F77] Rozgrywający jako atakujący — właściwa terminologia.
+
+      Gdy rozgrywający atakuje (zamiast wystawiać), rozróżnij:
+
+      A) 2. kontakt (setter atakuje bezpośrednio po przyjęciu):
+         "atak z drugiej piłki", "kiwka z drugiej piłki", "wbija z drugiej!"
+         ŹLE: "wystawia na lewe skrzydło, Komenda wbija" (Komenda = setter)
+         DOBRZE: "Komenda decyduje się na kiwkę z drugiej piłki!"
+
+      B) 3. kontakt sytuacyjny (setter wystawia ale w trudnej sytuacji):
+         "wystawienie sytuacyjne", "piłka sytuacyjna", "z daleka od siatki"
+         DOBRZE: "daleko od siatki — Janusz zmuszony do wystawienia sytuacyjnego"
+         DOBRZE: "Komenda ratuje sytuację wystawieniem z drugiej linii"
+
+      C) Pipe attack (środkowy atakuje za rozgrywającym):
+         "atak pipe", "Chiţigoi atakuje pipe za plecami Łomacza"
+
+[F78] "ale piłka wychodzi" bez dopełnienia — ZAKAZ.
+      Zawsze dodaj kontekst: "ale piłka wychodzi poza boisko!", "na aut!",
+      "za linię boczną!", "poza pole gry!"
+      ŹLE:  "Tavares próbuje obrony, ale piłka wychodzi!"
+      DOBRZE: "Tavares próbuje obrony, ale piłka wychodzi poza boisko!"
+
 [F74] "Błąd X i X zdobywa punkt" — NONSENS LOGICZNY (F74).
       Gracz który popełnił błąd NIE zdobywa punktu.
       ŹLE:  "Błąd Poręby i Poręba zdobywa punkt!"
