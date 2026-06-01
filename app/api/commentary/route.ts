@@ -2318,19 +2318,13 @@ INSTRUCTIONS:
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
      // "ale piłka wychodzi" bez dopełnienia — zawsze dodaj kontekst (F78)
      // Deterministyczna rotacja oparta na długości tekstu (bez Math.random)
-     t = t.replace(/ale piłka wychodzi!$/gim, (m: string, offset: number) => {
-       const opts = [
-         'ale piłka wychodzi poza boisko!',
-         'ale piłka wychodzi na aut!',
-         'ale piłka wychodzi za linię boczną!',
-         'ale piłka wychodzi poza pole gry!',
-       ];
-       return opts[offset % opts.length];
-     });
-     t = t.replace(/ale piłka wychodzi([^!\w]|$)/gim, (m: string, suffix: string, offset: number) => {
-       const opts = ['poza boisko', 'na aut', 'za linię', 'poza pole gry'];
-       return 'ale piłka wychodzi ' + opts[offset % opts.length] + suffix;
-     });
+     // 'ale piłka wychodzi!' bez dopełnienia → dodaj (F78)
+     // Tylko gdy po 'wychodzi' nie ma już słów (unikamy podwójnego dopełnienia)
+     t = t.replace(/ale piłka wychodzi!/gim, 'ale piłka wychodzi poza boisko!');
+     // Cleanup podwójnego dopełnienia: 'poza X poza boisko' → 'poza X'
+     t = t.replace(/poza (pole gry|boisko|autem?) poza boisko/gi, 'poza $1');
+     t = t.replace(/na aut poza boisko/gi, 'na aut');
+     t = t.replace(/za linię poza boisko/gi, 'za linię');
      // 'powiększa impet' — nie jest frazą siatkówkową, zbyt mechaniczne
      t = t.replace(/powiększa impet!/gi, 'rośnie w siłę!');
      t = t.replace(/powiększa impet/gi, 'rośnie w siłę');
