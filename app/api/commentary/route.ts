@@ -2179,6 +2179,7 @@ INSTRUCTIONS:
      t = t.replace(/\bBOGDANKA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bBarkom Każany Lwów\s+(?!Lwów\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bInPost ChKS Chełm\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bInPost CHKS Chełm\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bInPost ChKS\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bCuprum Stilon Gorzów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bCuprum Stilon\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
@@ -2388,6 +2389,9 @@ INSTRUCTIONS:
      // "Henir Henno" → "Henno" (błędne imię GPT — profil mówi samo Henno)
      t = t.replace(/Henir Henno/gi, 'Henno');
      t = t.replace(/Henir/gi, 'Henno');
+     // Odmiana trudnych nazwisk (brak profilu RAG)
+     t = t.replace(/po ataku Esfandiar([^a-z])/g, 'po ataku Esfandiarze$1');
+     t = t.replace(/po ataku Amirhosseina Esfandiar([^a-z])/g, 'po ataku Esfandiarze$1');
      // 'serwuje w salto' — nie istnieje w polskiej siatkówce
      t = t.replace(/serwuje w salto/gi, 'serwuje z wyskoku');
      t = t.replace(/zagrywka w salto/gi, 'zagrywka z wyskoku');
@@ -2398,6 +2402,8 @@ INSTRUCTIONS:
      t = t.replace(/ i!$/gm, '!');
      t = t.replace(/ i! /g, '! ');
      t = t.replace(/ ale!$/gm, '!');
+     t = t.replace(/ ale$/gm, ' ale nie zatrzymuje piłki!');
+     t = t.replace(/ lecz$/gm, ' lecz piłka wychodzi!');
      t = t.replace(/ lecz!$/gm, '!');
      // "piłka żyje" — absolutny zakaz (Tomek feedback wielokrotny)
      t = t.replace(/piłka żyje!/gi, 'akcja trwa!');
