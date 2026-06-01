@@ -2148,7 +2148,7 @@ INSTRUCTIONS:
      // "[Prefix nazwy drużyny] [Gracz] zdobywa" — GPT wkleja prefiks przed nazwiskiem
      // Statyczne wzorce dla PlusLigi (bezpieczne dla SWC — tylko t.replace())
      t = t.replace(/\bPGE Projekt\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bAluron CMC Warta Zawiercie\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAluron CMC Warta Zawiercie\s+(?!Zawiercie\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bAluron CMC Warta\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bAluron CMC\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bAluron\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
@@ -2159,39 +2159,39 @@ INSTRUCTIONS:
      t = t.replace(/\bSteam Hemarpol Politechnika Częstochowa\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bSteam Hemarpol Politechnika\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bSteam Hemarpol\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bŚlepsk Malow Suwałki\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bŚlepsk Malow\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bŚlepsk Malow Suwałki\s+(?!Suwałki\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bŚlepsk Malow\s+(?!Suwałki\s|Malow\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bZAKSA Kędzierzyn-Koźle\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bZAKSA Kędzierzyn-([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bZAKSA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bEnerga Trefl Gdańsk\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bEnerga Trefl\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bEnerga Trefl Gdańsk\s+(?!Gdańsk\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bEnerga Trefl\s+(?!Gdańsk\s|Gdansk\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bAsseco Resovia Rzeszów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bAsseco Resovia\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bIndykpol AZS Olsztyn\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bIndykpol AZS\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bPGE GiEK SKRA Bełchatów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bPGE GiEK SKRA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bBOGDANKA LUK Lublin\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bBOGDANKA LUK Lublin\s+(?!Lublin\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bBOGDANKA LUK\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bBogdanka LUK Lublin\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bBogdanka LUK\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bBOGDANKA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bBarkom Każany Lwów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bBarkom Każany Lwów\s+(?!Lwów\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bInPost ChKS Chełm\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bInPost ChKS\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bCuprum Stilon Gorzów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bCuprum Stilon\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bŚlepsk Malow Suwałki\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bŚlepsk Malow\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bŚlepsk Malow Suwałki\s+(?!Suwałki\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bŚlepsk Malow\s+(?!Suwałki\s|Malow\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bPGE GiEK SKRA Bełchatów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bPGE GiEK SKRA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bPGE GiEK\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bSteam Hemarpol Politechnika Częstochowa\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bSteam Hemarpol Politechnika\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bSteam Hemarpol\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bEnerga Trefl Gdańsk\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bEnerga Trefl\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bEnerga Trefl Gdańsk\s+(?!Gdańsk\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bEnerga Trefl\s+(?!Gdańsk\s|Gdansk\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bZAKSA Kędzierzyn-Koźle\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
 
      // "X popełnia błąd [desc]. X zdobywa punkt." — NONSENS (ten sam gracz popełnia błąd i zdobywa)
@@ -2316,6 +2316,21 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // "ale piłka wychodzi" bez dopełnienia — zawsze dodaj kontekst (F78)
+     // Deterministyczna rotacja oparta na długości tekstu (bez Math.random)
+     t = t.replace(/ale piłka wychodzi!$/gim, (m: string, offset: number) => {
+       const opts = [
+         'ale piłka wychodzi poza boisko!',
+         'ale piłka wychodzi na aut!',
+         'ale piłka wychodzi za linię boczną!',
+         'ale piłka wychodzi poza pole gry!',
+       ];
+       return opts[offset % opts.length];
+     });
+     t = t.replace(/ale piłka wychodzi([^!\w]|$)/gim, (m: string, suffix: string, offset: number) => {
+       const opts = ['poza boisko', 'na aut', 'za linię', 'poza pole gry'];
+       return 'ale piłka wychodzi ' + opts[offset % opts.length] + suffix;
+     });
      // 'powiększa impet' — nie jest frazą siatkówkową, zbyt mechaniczne
      t = t.replace(/powiększa impet!/gi, 'rośnie w siłę!');
      t = t.replace(/powiększa impet/gi, 'rośnie w siłę');
@@ -2379,6 +2394,11 @@ INSTRUCTIONS:
      // "Henir Henno" → "Henno" (błędne imię GPT — profil mówi samo Henno)
      t = t.replace(/Henir Henno/gi, 'Henno');
      t = t.replace(/Henir/gi, 'Henno');
+     // 'serwuje w salto' — nie istnieje w polskiej siatkówce
+     t = t.replace(/serwuje w salto/gi, 'serwuje z wyskoku');
+     t = t.replace(/zagrywka w salto/gi, 'zagrywka z wyskoku');
+     t = t.replace(/zagrywkę w salto/gi, 'zagrywkę z wyskoku');
+     t = t.replace(/serwisem w salto/gi, 'zagrywką z wyskoku');
      // Urwany komentarz — 'muruje siatkę i!' / 'blokuje i!' itp.
      // GPT zaczął zdanie ale token limit uciął. Czyścimy wisielcze 'i!'
      t = t.replace(/ i!$/gm, '!');
