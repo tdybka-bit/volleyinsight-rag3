@@ -2418,6 +2418,16 @@ INSTRUCTIONS:
      t = t.replace(/po ataku Nowakowski([^a-zA-Z])/g, 'po ataku Nowakowskiego$1');
      t = t.replace(/po ataku Kochanowski([^a-zA-Z])/g, 'po ataku Kochanowskiego$1');
      t = t.replace(/po ataku Majchrzak([^a-zA-Z])/g, 'po ataku Majchrzaka$1');
+     t = t.replace(/po ataku Halaba([^a-zA-Z])/g, 'po ataku Halaby$1');
+     t = t.replace(/po ataku Indra([^a-zA-Z])/g, 'po ataku Indry$1');
+     t = t.replace(/po ataku Adamczyk([^a-zA-Z])/g, 'po ataku Adamczyka$1');
+     t = t.replace(/po ataku Ciunajtis([^a-zA-Z])/g, 'po ataku Ciunajtisa$1');
+     t = t.replace(/po ataku Popiela([^a-zA-Z])/g, 'po ataku Popieli$1');
+     t = t.replace(/po ataku Siwczyk([^a-zA-Z])/g, 'po ataku Siwczyka$1');
+     t = t.replace(/po ataku Gierżot([^a-zA-Z])/g, 'po ataku Gierżota$1');
+     t = t.replace(/po ataku Stępień([^a-zA-Z])/g, 'po ataku Stępnia$1');
+     t = t.replace(/po ataku Butryn([^a-zA-Z])/g, 'po ataku Butryna$1');
+     t = t.replace(/po ataku Pietras([^a-zA-Z])/g, 'po ataku Pietrasa$1');
      t = t.replace(/po ataku Amirhosseina Esfandiar([^a-z])/g, 'po ataku Esfandiarze$1');
      // 'serwuje w salto' — nie istnieje w polskiej siatkówce
      t = t.replace(/serwuje w salto/gi, 'serwuje z wyskoku');
