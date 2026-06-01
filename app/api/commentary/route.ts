@@ -2322,6 +2322,8 @@ INSTRUCTIONS:
      // 'ale piłka wychodzi!' bez dopełnienia → dodaj (F78)
      // Tylko gdy po 'wychodzi' nie ma już słów (unikamy podwójnego dopełnienia)
      t = t.replace(/ale piłka wychodzi!/gim, 'ale piłka wychodzi poza boisko!');
+     t = t.replace(/— piłka wychodzi!/gim, '— piłka wychodzi poza boisko!');
+     t = t.replace(/(?<!poza |na aut|za linię|\w )piłka wychodzi!$/gim, 'piłka wychodzi poza boisko!');
      // Cleanup podwójnego dopełnienia: 'poza X poza boisko' → 'poza X'
      t = t.replace(/poza (pole gry|boisko|autem?) poza boisko/gi, 'poza $1');
      t = t.replace(/na aut poza boisko/gi, 'na aut');
@@ -2389,8 +2391,33 @@ INSTRUCTIONS:
      // "Henir Henno" → "Henno" (błędne imię GPT — profil mówi samo Henno)
      t = t.replace(/Henir Henno/gi, 'Henno');
      t = t.replace(/Henir/gi, 'Henno');
-     // Odmiana trudnych nazwisk (brak profilu RAG)
-     t = t.replace(/po ataku Esfandiar([^a-z])/g, 'po ataku Esfandiarze$1');
+     // Odmiana po 'po ataku X' — deterministyczna dla najczęstszych zawodników
+     t = t.replace(/po ataku Esfandiar([^a-zA-Z])/g, 'po ataku Esfandiarze$1');
+     t = t.replace(/po ataku Bołądź([^a-zA-Z])/g, 'po ataku Bołądzia$1');
+     t = t.replace(/po ataku Kwolek([^a-zA-Z])/g, 'po ataku Kwolka$1');
+     t = t.replace(/po ataku Sasak([^a-zA-Z])/g, 'po ataku Sasaka$1');
+     t = t.replace(/po ataku Russell([^a-zA-Z])/g, 'po ataku Russella$1');
+     t = t.replace(/po ataku Leon([^a-zA-Z])/g, 'po ataku Leona$1');
+     t = t.replace(/po ataku Schulz([^a-zA-Z])/g, 'po ataku Schulza$1');
+     t = t.replace(/po ataku Brand([^a-zA-Z])/g, 'po ataku Branda$1');
+     t = t.replace(/po ataku Orczyk([^a-zA-Z])/g, 'po ataku Orczyka$1');
+     t = t.replace(/po ataku Souza([^a-zA-Z])/g, 'po ataku Souzy$1');
+     t = t.replace(/po ataku Nowak([^a-zA-Z])/g, 'po ataku Nowaka$1');
+     t = t.replace(/po ataku Grozdanov([^a-zA-Z])/g, 'po ataku Grozdanova$1');
+     t = t.replace(/po ataku Fornal([^a-zA-Z])/g, 'po ataku Fornala$1');
+     t = t.replace(/po ataku Semeniuk([^a-zA-Z])/g, 'po ataku Semeniuka$1');
+     t = t.replace(/po ataku Szalpuk([^a-zA-Z])/g, 'po ataku Szalpuka$1');
+     t = t.replace(/po ataku Gierżot([^a-zA-Z])/g, 'po ataku Gierżota$1');
+     t = t.replace(/po ataku Koppers([^a-zA-Z])/g, 'po ataku Koppersa$1');
+     t = t.replace(/po ataku Rychlicki([^a-zA-Z])/g, 'po ataku Rychlickiego$1');
+     t = t.replace(/po ataku Lipiński([^a-zA-Z])/g, 'po ataku Lipińskiego$1');
+     t = t.replace(/po ataku McCarthy([^a-zA-Z])/g, "po ataku McCarthy'ego$1");
+     t = t.replace(/po ataku Tillie([^a-zA-Z])/g, 'po ataku Tilliego$1');
+     t = t.replace(/po ataku Toniutti([^a-zA-Z])/g, 'po ataku Toniuttiego$1');
+     t = t.replace(/po ataku Hadrava([^a-zA-Z])/g, 'po ataku Hadravy$1');
+     t = t.replace(/po ataku Nowakowski([^a-zA-Z])/g, 'po ataku Nowakowskiego$1');
+     t = t.replace(/po ataku Kochanowski([^a-zA-Z])/g, 'po ataku Kochanowskiego$1');
+     t = t.replace(/po ataku Majchrzak([^a-zA-Z])/g, 'po ataku Majchrzaka$1');
      t = t.replace(/po ataku Amirhosseina Esfandiar([^a-z])/g, 'po ataku Esfandiarze$1');
      // 'serwuje w salto' — nie istnieje w polskiej siatkówce
      t = t.replace(/serwuje w salto/gi, 'serwuje z wyskoku');
