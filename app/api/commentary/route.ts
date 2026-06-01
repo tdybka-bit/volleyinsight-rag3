@@ -97,6 +97,48 @@ function checkSetEnd(
 // MULTI-LANGUAGE SYSTEM PROMPTS
 // ============================================================================
 
+// ── SHORT_RULES: esencja zasad dla GPT (max 50 linii) ──────────────────────
+// Pełna dokumentacja: commentary_rules.ts
+// postProcess obsługuje deterministycznie: recepcja, powiększa przewagę, punkt dla, Bieniekk
+// GPT musi wiedzieć poniższe:
+
+const SHORT_RULES_PL = `
+ZASADY KOMENTARZA (bezwzględne):
+
+ZAKAZY JĘZYKOWE:
+[F53] "nie daje się/dają się" → ZAKAZ. Użyj: odpowiada!, walczy dalej!, rośnie w siłę!
+[F54] "wraca do gry" → TYLKO gdy drużyna odrabia stratę 5+ pkt. Inaczej: odpowiada!, zmniejsza stratę!
+[F55] "znowu/znów/ponownie" → ZAKAZ bez kontekstu powtórzenia
+[F59] "kończy akcję" → ZAKAZ. Konkretnie: kończy atakiem!, zamyka blokiem!, wbija w boisko!
+[F61] "recepcja/recepcji/recepcję" → ZAKAZ (kalka z ang.). Zawsze: przyjęcie, odbiór zagrywki
+[F63] Po zdobyciu punktu: zawsze wykrzyknik, nigdy średnik
+[F66] "poza systemem" → ZAKAZ. Użyj: daleko od siatki, wystawienie sytuacyjne
+[F78] "ale piłka wychodzi" → zawsze dodaj dokąd: poza boisko!, na aut!, za linię!
+
+SEMANTYKA:
+[F68] Po BŁĘDZIE SERWISOWYM: ZAKAZ dokręca śrubę/rośnie w siłę/nie odpuszcza/odpowiada.
+      Drużyna dostaje punkt ZA DARMO. Poprawnie: zdobywa punkt!, korzysta z prezentu!
+[F72] Po BŁĘDZIE SERWISOWYM: ZAKAZ nie odpuszcza/dokręca śrubę/rośnie w siłę/buduje przewagę
+[F73] Podwójne creditowanie ZAKAZ: "X wbija piłkę i X zdobywa punkt" → tylko raz
+[F74] "Błąd X i X zdobywa punkt" → NONSENS. X popełnił błąd = X STRACIŁ punkt
+[F75] "zdobywa kolejny punkt" → ZAKAZ (ukryte znowu). Użyj: zdobywa punkt!
+
+NARRACJA:
+[M11] Gdy obrońca próbował zatrzymać piłkę po ataku → wspomnij OBYDWU:
+      "Tavares próbuje obrony po ataku Sasaka, ale piłka wychodzi poza boisko!"
+[F77] Rozgrywający atakuje bezpośrednio (2. kontakt) → "kiwka z drugiej piłki!", "atak z drugiej!"
+      Wystawienie z trudnej pozycji → "wystawienie sytuacyjne", "piłka sytuacyjna"
+
+WYBLOK — 6 SCENARIUSZY (F76):
+A) Attack error → punkt dla PRZECIWNEJ drużyny
+B) Atak bez bloku → punkt dla ATAKUJĄCEJ ("wbija w boisko!")  
+C) Piłka po bloku wpada w boisko BLOKUJĄCYCH → BLOCK POINT ("zamyka blokiem!")
+D) Piłka po bloku wpada w boisko ATAKUJĄCYCH → ATTACK POINT ("przebija blok!")
+D2) Blok-out: piłka leci od razu na aut → ATTACK POINT ("blok-out — punkt!")
+E) Atakujący dotknął piłki po bloku → WYBLOK, akcja trwa ("wyblok — akcja trwa!")
+ZAKAZ: "wyblok i punkt dla blokujących" = sprzeczność!
+`;
+
 const getLanguagePrompt = (lang: string) => {
  const prompts: Record<string, string> = {
 
@@ -388,7 +430,7 @@ const getCommentarySystemPrompt = (
 - "punkt dla" → IT:"punto per" / ES:"punto para" / TR:"sayı" / DE:"Punkt für" / JP:"ポイント"
 Player surnames stay as-is. NEVER copy Polish words verbatim.
 
-${language === 'pl' ? COMMENTARY_RULES_PL : ''}
+${language === 'pl' ? SHORT_RULES_PL : ''}
 
 Your task is to generate professional, factual volleyball match commentary in RADIO STYLE.
 
