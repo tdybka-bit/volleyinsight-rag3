@@ -2360,7 +2360,10 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
      // 'wyblok — wyblok' / 'wyblok, wyblok' — masło maślane
-     t = t.replace(/wyblok[,—–\s]+wyblok/gi, 'wyblok');
+     t = t.replace(/wyblok[,—–\-\s]+wyblok/gi, 'wyblok');  // en-dash/myślnik też
+     t = t.replace(/jest wyblokowany[,—–\s]+wyblok/gi, 'wyblok');
+     t = t.replace(/wyblokowany[,—–\s]+wyblok/gi, 'wyblok');
+     t = t.replace(/jest wyblokowany, akcja trwa/gi, 'wyblok — akcja trwa');
      t = t.replace(/wyblokował piłkę[,—–\s]+wyblok/gi, 'wyblok');
      t = t.replace(/wyblok piłkę i wyblok/gi, 'wyblok');
      t = t.replace(/dotyka bloku[,—–\s]+wyblok piłkę/gi, 'napotyka blok — wyblok');
@@ -2497,7 +2500,11 @@ INSTRUCTIONS:
      t = t.replace(/ ale$/gm, ' ale nie zatrzymuje piłki!');
      t = t.replace(/ lecz$/gm, ' lecz piłka wychodzi!');
      t = t.replace(/ lecz!$/gm, '!');
-     // "piłka żyje" — absolutny zakaz (Tomek feedback wielokrotny)
+     // "piłka żyje" — absolutny zakaz F52 (wszystkie warianty)
+     t = t.replace(/piłka wciąż żyje!/gi, 'akcja trwa!');
+     t = t.replace(/piłka wciąż żyje/gi, 'akcja trwa');
+     t = t.replace(/piłka nadal żyje!/gi, 'akcja trwa!');
+     t = t.replace(/piłka nadal żyje/gi, 'akcja trwa');
      t = t.replace(/piłka żyje!/gi, 'akcja trwa!');
      t = t.replace(/piłka żyje/gi, 'akcja trwa');
      t = t.replace(/pilka zyje!/gi, 'akcja trwa!');
