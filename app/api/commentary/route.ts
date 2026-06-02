@@ -1199,7 +1199,7 @@ if (!rally.touches || rally.touches.length === 0) {
  
  const namingResults = await index.namespace('naming-rules').query({
  vector: namingEmbedding.data[0].embedding,
- topK: 10, // More results - we want all relevant names
+ topK: 3, // More results - we want all relevant names
  includeMetadata: true,
  });
  
@@ -1245,6 +1245,7 @@ if (!rally.touches || rally.touches.length === 0) {
  // ========================================================================
 
  let commentaryPhrasesContext = '';
+    if (!isServeError) { // RAG OPT: skip phrases for serve errors
 
  try {
  // Query based on action type
@@ -1307,6 +1308,7 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('Commentary phrases namespace not yet populated');
  ragDebug.push({ namespace: 'commentary-phrases', query: '', topScore: 0, retrieved: 0, used: false, preview: 'namespace empty/error' });
  }
+    } // end RAG OPT phrases
 
  // ========================================================================
  // SET SUMMARIES (wzorce podsumowan setow/meczow)
@@ -1317,6 +1319,7 @@ if (!rally.touches || rally.touches.length === 0) {
  try {
  // Query set-summaries for strategic insights
  const summaryQuery = `set strategy analysis key moments ${scoringPlayer} ${scoringAction}`;
+    if (!isServeError && numTouches > 2) { // RAG OPT: skip set-summaries for serve errors
  
  console.log('Set summaries query:', summaryQuery);
  
@@ -1345,6 +1348,7 @@ if (!rally.touches || rally.touches.length === 0) {
  } catch (error) {
  console.log('Set summaries namespace not yet populated');
  }
+    } // end RAG OPT set-summaries
 
  // ========================================================================
  // TONE RULES (kiedy dramatycznie, kiedy spokojnie)
@@ -1352,6 +1356,7 @@ if (!rally.touches || rally.touches.length === 0) {
 
  let toneRulesContext = '';
 
+ if (!isServeError && numTouches > 2) { // RAG OPT: skip tone-rules for serve errors
  try {
  // Build context about current situation
  const situationContext = [
@@ -1403,6 +1408,7 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('i, Tone rules namespace not yet populated');
  ragDebug.push({ namespace: 'tone-rules', query: '', topScore: 0, retrieved: 0, used: false, preview: 'ERROR' });
  }
+    } // end RAG OPT tone-rules
 
  // ========================================================================
  // STEP 6: RAG QUERY - PLAYER INFO
@@ -2359,12 +2365,24 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // 'tipem' / 'tipa' — angielski! ZAKAZ (F-tip). Użyj: kiwką, delikatnym atakiem
+     t = t.replace(/precyzyjnym tipem/gi, 'precyzyjną kiwką');
+     t = t.replace(/delikatnym tipem/gi, 'delikatną kiwką');
+     t = t.replace(/zaskakuje tipem/gi, 'zaskakuje kiwką');
+     t = t.replace(/kończy tipem/gi, 'kończy kiwką');
+     t = t.replace(/atakuje tipem/gi, 'atakuje kiwką');
+     t = t.replace(/atak tipem/gi, 'atak kiwką');
+     t = t.replace(/z tipem/gi, 'kiwką');
+     t = t.replace(/tipem/gi, 'kiwką');
      // F4: 'wyciąga z podłogi' → zakaz
      t = t.replace(/wyciąga z podłogi/gi, 'ratuje piłkę w obronie');
      t = t.replace(/wyciągnął z podłogi/gi, 'obronił piłkę');
      t = t.replace(/wyciągając z podłogi/gi, 'ratując piłkę');
      // 'wyblok — wyblok' / 'wyblok, wyblok' — masło maślane
      t = t.replace(/wyblok[,—–\-\s]+wyblok/gi, 'wyblok');  // em/en-dash/myślnik
+     t = t.replace(/wyblok–wyblok/g, 'wyblok');
+     t = t.replace(/wyblok—wyblok/g, 'wyblok');
+     t = t.replace(/wyblok-wyblok/gi, 'wyblok');
      t = t.replace(/jest wyblokowany[,—–\s]+wyblok/gi, 'wyblok');
      t = t.replace(/wyblokowany[,—–\s]+wyblok/gi, 'wyblok');
      t = t.replace(/jest wyblokowany, akcja trwa/gi, 'wyblok — akcja trwa');
