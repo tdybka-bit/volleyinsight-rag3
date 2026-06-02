@@ -2359,8 +2359,12 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // F4: 'wyciąga z podłogi' → zakaz
+     t = t.replace(/wyciąga z podłogi/gi, 'ratuje piłkę w obronie');
+     t = t.replace(/wyciągnął z podłogi/gi, 'obronił piłkę');
+     t = t.replace(/wyciągając z podłogi/gi, 'ratując piłkę');
      // 'wyblok — wyblok' / 'wyblok, wyblok' — masło maślane
-     t = t.replace(/wyblok[,—–\-\s]+wyblok/gi, 'wyblok');  // en-dash/myślnik też
+     t = t.replace(/wyblok[,—–\-\s]+wyblok/gi, 'wyblok');  // em/en-dash/myślnik
      t = t.replace(/jest wyblokowany[,—–\s]+wyblok/gi, 'wyblok');
      t = t.replace(/wyblokowany[,—–\s]+wyblok/gi, 'wyblok');
      t = t.replace(/jest wyblokowany, akcja trwa/gi, 'wyblok — akcja trwa');
