@@ -2361,6 +2361,9 @@ INSTRUCTIONS:
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
      // 'wyblok — wyblok' / 'wyblok, wyblok' — masło maślane
      t = t.replace(/wyblok[,—–\s]+wyblok/gi, 'wyblok');
+     t = t.replace(/wyblokował piłkę[,—–\s]+wyblok/gi, 'wyblok');
+     t = t.replace(/wyblok piłkę i wyblok/gi, 'wyblok');
+     t = t.replace(/dotyka bloku[,—–\s]+wyblok piłkę/gi, 'napotyka blok — wyblok');
      t = t.replace(/wyblok — akcja trwa! wyblok/gi, 'wyblok — akcja trwa!');
      // 'ČČ' / 'Čč' — podwójny znak diakrytyczny (GPT/encoding bug)
      t = t.replace(/ČČ/g, 'Č');
@@ -2372,6 +2375,9 @@ INSTRUCTIONS:
      // Tylko gdy po 'wychodzi' nie ma już słów (unikamy podwójnego dopełnienia)
      t = t.replace(/ale piłka wychodzi!/gim, 'ale piłka wychodzi poza boisko!');
      t = t.replace(/— piłka wychodzi!/gim, '— piłka wychodzi poza boisko!');
+     t = t.replace(/jednak piłka wychodzi!/gim, 'jednak piłka wychodzi poza boisko!');
+     t = t.replace(/lecz piłka wychodzi!/gim, 'lecz piłka wychodzi poza boisko!');
+     t = t.replace(/a piłka wychodzi!/gim, 'a piłka wychodzi poza boisko!');
      t = t.replace(/(?<!poza |na aut|za linię|\w )piłka wychodzi!$/gim, 'piłka wychodzi poza boisko!');
      // Cleanup podwójnego dopełnienia: 'poza X poza boisko' → 'poza X'
      t = t.replace(/poza (pole gry|boisko|autem?) poza boisko/gi, 'poza $1');
