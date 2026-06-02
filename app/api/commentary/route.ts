@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import OpenAI from 'openai';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { COMMENTARY_RULES_PL } from './commentary_rules';
- 
+
 // Initialize clients
 const openai = new OpenAI({
  apiKey: process.env.OPENAI_API_KEY,
