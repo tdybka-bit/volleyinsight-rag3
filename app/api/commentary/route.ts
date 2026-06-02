@@ -1316,10 +1316,11 @@ if (!rally.touches || rally.touches.length === 0) {
 
  let setSummariesContext = '';
 
+ // RAG OPT: skip set-summaries for serve errors and short rallies
+ if (!isServeError && numTouches > 2) {
  try {
  // Query set-summaries for strategic insights
  const summaryQuery = `set strategy analysis key moments ${scoringPlayer} ${scoringAction}`;
-    if (!isServeError && numTouches > 2) { // RAG OPT: skip set-summaries for serve errors
  
  console.log('Set summaries query:', summaryQuery);
  
@@ -1348,7 +1349,7 @@ if (!rally.touches || rally.touches.length === 0) {
  } catch (error) {
  console.log('Set summaries namespace not yet populated');
  }
-    } // end RAG OPT set-summaries
+ } // end RAG OPT set-summaries
 
  // ========================================================================
  // TONE RULES (kiedy dramatycznie, kiedy spokojnie)
