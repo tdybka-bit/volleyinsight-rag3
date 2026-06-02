@@ -1245,8 +1245,7 @@ if (!rally.touches || rally.touches.length === 0) {
  // ========================================================================
 
  let commentaryPhrasesContext = '';
-    if (!isServeError) { // RAG OPT: skip phrases for serve errors
-
+    
  try {
  // Query based on action type
  const actionType = scoringAction.toLowerCase();
@@ -1308,7 +1307,7 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('Commentary phrases namespace not yet populated');
  ragDebug.push({ namespace: 'commentary-phrases', query: '', topScore: 0, retrieved: 0, used: false, preview: 'namespace empty/error' });
  }
-    } // end RAG OPT phrases
+
 
  // ========================================================================
  // SET SUMMARIES (wzorce podsumowan setow/meczow)
@@ -1317,7 +1316,7 @@ if (!rally.touches || rally.touches.length === 0) {
  let setSummariesContext = '';
 
  // RAG OPT: skip set-summaries for serve errors and short rallies
- if (!isServeError && numTouches > 2) {
+ if ((rally.touches?.length || 0) > 2) {
  try {
  // Query set-summaries for strategic insights
  const summaryQuery = `set strategy analysis key moments ${scoringPlayer} ${scoringAction}`;
@@ -1357,7 +1356,7 @@ if (!rally.touches || rally.touches.length === 0) {
 
  let toneRulesContext = '';
 
- if (!isServeError && numTouches > 2) { // RAG OPT: skip tone-rules for serve errors
+ if ((rally.touches?.length || 0) > 2) { // RAG OPT: skip tone-rules for short rallies
  try {
  // Build context about current situation
  const situationContext = [
