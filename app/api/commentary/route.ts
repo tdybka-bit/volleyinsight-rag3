@@ -2359,6 +2359,13 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // 'wyblok — wyblok' / 'wyblok, wyblok' — masło maślane
+     t = t.replace(/wyblok[,—–\s]+wyblok/gi, 'wyblok');
+     t = t.replace(/wyblok — akcja trwa! wyblok/gi, 'wyblok — akcja trwa!');
+     // 'ČČ' / 'Čč' — podwójny znak diakrytyczny (GPT/encoding bug)
+     t = t.replace(/ČČ/g, 'Č');
+     t = t.replace(/Čč/g, 'Č');
+     t = t.replace(/čč/g, 'č');
      // "ale piłka wychodzi" bez dopełnienia — zawsze dodaj kontekst (F78)
      // Deterministyczna rotacja oparta na długości tekstu (bez Math.random)
      // 'ale piłka wychodzi!' bez dopełnienia → dodaj (F78)
