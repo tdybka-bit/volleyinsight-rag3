@@ -1128,7 +1128,7 @@ if (!rally.touches || rally.touches.length === 0) {
  dimensions: 768,
  });
  
- const hintsResults = await index.namespace('commentary-hints').query({
+ const hintsResults = await index.namespace('commentary-examples').query({
  vector: hintsEmbedding.data[0].embedding,
  topK: 5,
  includeMetadata: true,
@@ -1197,9 +1197,9 @@ if (!rally.touches || rally.touches.length === 0) {
  dimensions: 768,
  });
  
- const namingResults = await index.namespace('naming-rules').query({
+ const namingResults = await index.namespace('player-profiles').query({
  vector: namingEmbedding.data[0].embedding,
- topK: 3, // More results - we want all relevant names
+ topK: 6, // More results - we want all relevant names
  includeMetadata: true,
  });
  
@@ -1270,7 +1270,7 @@ if (!rally.touches || rally.touches.length === 0) {
  dimensions: 768,
  });
  
- const phrasesResults = await index.namespace('commentary-phrases').query({
+ const phrasesResults = await index.namespace('commentary-examples').query({
  vector: phrasesEmbedding.data[0].embedding,
  topK: 5,
  includeMetadata: true,
@@ -1379,7 +1379,7 @@ if (!rally.touches || rally.touches.length === 0) {
  dimensions: 768,
  });
  
- const toneResults = await index.namespace('tone-rules').query({
+ const toneResults = await index.namespace('commentary-examples').query({
  vector: toneEmbedding.data[0].embedding,
  topK: 3,
  includeMetadata: true,
@@ -1470,7 +1470,7 @@ if (!rally.touches || rally.touches.length === 0) {
      input: expertQuery,
      dimensions: 768,
    });
-   const expertResults = await index.namespace('expert-knowledge').query({
+   const expertResults = await index.namespace('player-profiles').query({
      vector: expertEmbedding.data[0].embedding,
      topK: 3,
      includeMetadata: true,
@@ -2365,6 +2365,9 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
+     // podwójny scoring: 'wpada w boisko! Wbija piłkę w boisko'
+     t = t.replace(/wpada w boisko[!.]\s*Wbija piłkę w boisko[!.]?/gi, 'wpada w boisko!');
+     t = t.replace(/wpada w boisko[!.]\s*([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) wbija piłkę[^!]*/gi, 'wpada w boisko!');
      // 'tipem' / 'tipa' — angielski! ZAKAZ (F-tip). Użyj: kiwką, delikatnym atakiem
      t = t.replace(/precyzyjnym tipem/gi, 'precyzyjną kiwką');
      t = t.replace(/delikatnym tipem/gi, 'delikatną kiwką');
@@ -2374,6 +2377,11 @@ INSTRUCTIONS:
      t = t.replace(/atak tipem/gi, 'atak kiwką');
      t = t.replace(/z tipem/gi, 'kiwką');
      t = t.replace(/tipem/gi, 'kiwką');
+     t = t.replace(/z tipa/gi, 'kiwką');
+     t = t.replace(/tipa/gi, 'kiwki');
+     t = t.replace(/pipe'a/gi, 'pipe');
+     t = t.replace(/z pipe'a/gi, 'z pipe');
+     t = t.replace(/pipe'em/gi, 'pipe');
      // F4: 'wyciąga z podłogi' → zakaz
      t = t.replace(/wyciąga z podłogi/gi, 'ratuje piłkę w obronie');
      t = t.replace(/wyciągnął z podłogi/gi, 'obronił piłkę');
@@ -3046,4 +3054,7 @@ INSTRUCTIONS:
  },
  });
  }
+     // 'punkt wędruje do nich' — wiszący zaimek
+     t = t.replace(/[Ii] punkt wędruje do nich[!.]?/gi, '!');
+     t = t.replace(/[Pp]unkt wędruje do nich[!.]?/gi, 'Punkt zdobyty!');
 }
