@@ -2388,6 +2388,8 @@ INSTRUCTIONS:
      t = t.replace(/wyciągając z podłogi/gi, 'ratując piłkę');
      // 'wyblok — wyblok' / 'wyblok, wyblok' — masło maślane
      t = t.replace(/wyblok[,—–\-\s]+wyblok/gi, 'wyblok');  // em/en-dash/myślnik
+     t = t.replace(/wyblok [—–\-] wyblok/gi, 'wyblok');  // z spacjami
+     t = t.replace(/wyblok, wyblok/gi, 'wyblok');
      t = t.replace(/wyblok–wyblok/g, 'wyblok');
      t = t.replace(/wyblok—wyblok/g, 'wyblok');
      t = t.replace(/wyblok-wyblok/gi, 'wyblok');
@@ -2537,6 +2539,9 @@ INSTRUCTIONS:
      t = t.replace(/piłka nadal żyje/gi, 'akcja trwa');
      t = t.replace(/piłka żyje!/gi, 'akcja trwa!');
      t = t.replace(/piłka żyje/gi, 'akcja trwa');
+     // 'piłka wraca do gry' przy wybloku → akcja trwa
+     t = t.replace(/wyblok, piłka wraca do gry/gi, 'wyblok — akcja trwa');
+     t = t.replace(/piłka wraca do gry/gi, 'akcja trwa');
      t = t.replace(/pilka zyje!/gi, 'akcja trwa!');
      t = t.replace(/pilka zyje/gi, 'akcja trwa');
      // Bezsensowne frazy GPT w długich wymianach
