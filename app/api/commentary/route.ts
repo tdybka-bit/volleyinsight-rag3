@@ -1122,45 +1122,6 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('Players in rally:', allPlayersInRally);
  console.log('Name variants:', uniqueVariants);
  
- const hintsEmbedding = await openai.embeddings.create({
- model: 'text-embedding-3-small',
- input: hintsQuery,
- dimensions: 768,
- });
- 
- const hintsResults = await index.namespace('commentary-examples').query({
- vector: hintsEmbedding.data[0].embedding,
- topK: 5,
- includeMetadata: true,
- });
- 
- if (hintsResults.matches && hintsResults.matches.length > 0) {
- // FIX: raised threshold from 0.3 to 0.5 to avoid random hint matches
- const HINTS_THRESHOLD = 0.5;
- const relevantHints = hintsResults.matches
- .filter(match => (match.score || 0) > HINTS_THRESHOLD)
- .map((match) => match.metadata?.betterCommentary || match.metadata?.content || match.metadata?.text || '')
- .filter(Boolean);
- 
- if (relevantHints.length > 0) {
- commentaryHintsContext = relevantHints.join('\n').substring(0, 600);
- console.log('Commentary hints found:', commentaryHintsContext.substring(0, 150) + '...');
- console.log('Hints scores:', hintsResults.matches.map(m => m.score?.toFixed(3)));
- ragDebug.push({ namespace: 'commentary-hints', query: hintsQuery, topScore: hintsResults.matches[0]?.score || 0, retrieved: hintsResults.matches.length, used: true, preview: commentaryHintsContext.substring(0, 120) });
- } else {
- console.log(`No relevant hints (all scores < ${HINTS_THRESHOLD})`);
- ragDebug.push({ namespace: 'commentary-hints', query: hintsQuery, topScore: hintsResults.matches[0]?.score || 0, retrieved: hintsResults.matches.length, used: false, preview: `all scores < ${HINTS_THRESHOLD} (top: ${hintsResults.matches[0]?.score?.toFixed(3)})` });
- }
- } else {
- console.log('No commentary hints found for this query');
- ragDebug.push({ namespace: 'commentary-hints', query: hintsQuery, topScore: 0, retrieved: 0, used: false, preview: 'no matches' });
- }
- } catch (error) {
- console.error('Commentary hints error:', error);
- ragDebug.push({ namespace: 'commentary-hints', query: hintsQuery, topScore: 0, retrieved: 0, used: false, preview: 'ERROR' });
- }
-
- // ========================================================================
  // NEW NAMESPACES - NAMING RULES, PHRASES, TONE
  // ========================================================================
 
@@ -1191,56 +1152,6 @@ if (!rally.touches || rally.touches.length === 0) {
  
  console.log('Naming rules query:', namingQuery);
  
- const namingEmbedding = await openai.embeddings.create({
- model: 'text-embedding-3-small',
- input: namingQuery,
- dimensions: 768,
- });
- 
- const namingResults = await index.namespace('player-profiles').query({
- vector: namingEmbedding.data[0].embedding,
- topK: 6, // More results - we want all relevant names
- includeMetadata: true,
- });
- 
- if (namingResults.matches && namingResults.matches.length > 0) {
- const relevantRules = namingResults.matches
- .filter(match => (match.score || 0) > 0.30) // Lower threshold - we need naming help!
- .map((match) => {
- // Support multiple metadata structures
- return match.metadata?.rule_text || 
- match.metadata?.content || 
- match.metadata?.rule || 
- match.metadata?.text || '';
- })
- .filter(Boolean);
- 
- if (relevantRules.length > 0) {
- namingRulesContext = relevantRules.join('\n').substring(0, 1500);
- console.log('Naming rules found:', namingRulesContext.substring(0, 100) + '...');
- console.log('[RAG-DEBUG] Naming scores:', namingResults.matches.map(m => m.score?.toFixed(3)).join(', '));
- }
- ragDebug.push({
-   namespace: 'naming-rules',
-   query: namingResults.matches[0] ? `${scoringPlayer} naming rule declension odmiana` : '',
-   topScore: namingResults.matches[0]?.score || 0,
-   retrieved: namingResults.matches.length,
-   used: namingRulesContext.length > 0,
-   preview: namingRulesContext.substring(0, 120),
- });
- }
- } catch (error) {
- console.log('Naming rules namespace not yet populated');
- ragDebug.push({ namespace: 'naming-rules', query: `${scoringPlayer} naming rule`, topScore: 0, retrieved: 0, used: false, preview: 'namespace empty/error' });
- }
-
-    // Fallback: if no RAG naming rules found, ask GPT to decline name
-    if (!namingRulesContext && scoringPlayer) {
-      namingRulesContext = getGPTNamingFallback(scoringPlayer);
-      console.log('[NAMING-FALLBACK] Using GPT fallback for', scoringPlayer);
-    }
-
- // ========================================================================
  // COMMENTARY PHRASES (variacje zwrotow)
  // ========================================================================
 
@@ -1264,52 +1175,6 @@ if (!rally.touches || rally.touches.length === 0) {
  if (phrasesQuery) {
  console.log('Commentary phrases query:', phrasesQuery);
  
- const phrasesEmbedding = await openai.embeddings.create({
- model: 'text-embedding-3-small',
- input: phrasesQuery,
- dimensions: 768,
- });
- 
- const phrasesResults = await index.namespace('commentary-examples').query({
- vector: phrasesEmbedding.data[0].embedding,
- topK: 5,
- includeMetadata: true,
- });
- 
- if (phrasesResults.matches && phrasesResults.matches.length > 0) {
- const phrases = phrasesResults.matches
- .filter((match) => (match.score || 0) > 0.30) // Accept relevant phrases
- .map((match) => {
- // Support multiple metadata structures
- return match.metadata?.text_preview || 
- match.metadata?.content || 
- match.metadata?.phrase || 
- match.metadata?.text || '';
- })
- .filter(Boolean);
- 
- if (phrases.length > 0) {
- commentaryPhrasesContext = `VARIACJE ZWROTOW — OBOWIAZKOWE! Zamiast mechanicznego "Punkt dla X" uzyj JEDNEGO z tych zwrotow:\n${phrases.join(' / ')}\nJezeli masz te warianty — MUSISZ uzyc jednego zamiast "Punkt dla"!`;
- console.log('Commentary phrases found:', phrases.length, 'variants');
- console.log('[RAG-DEBUG] Phrases scores:', phrasesResults.matches.map(m => m.score?.toFixed(3)).join(', '));
- }
- ragDebug.push({
-   namespace: 'commentary-phrases',
-   query: phrasesQuery,
-   topScore: phrasesResults.matches[0]?.score || 0,
-   retrieved: phrasesResults.matches.length,
-   used: commentaryPhrasesContext.length > 0,
-   preview: commentaryPhrasesContext.substring(0, 120),
- });
- }
- }
- } catch (error) {
- console.log('Commentary phrases namespace not yet populated');
- ragDebug.push({ namespace: 'commentary-phrases', query: '', topScore: 0, retrieved: 0, used: false, preview: 'namespace empty/error' });
- }
-
-
- // ========================================================================
  // SET SUMMARIES (wzorce podsumowan setow/meczow)
  // ========================================================================
 
@@ -1373,44 +1238,6 @@ if (!rally.touches || rally.touches.length === 0) {
  
  console.log('i, Tone rules query:', toneQuery);
  
- const toneEmbedding = await openai.embeddings.create({
- model: 'text-embedding-3-small',
- input: toneQuery,
- dimensions: 768,
- });
- 
- const toneResults = await index.namespace('commentary-examples').query({
- vector: toneEmbedding.data[0].embedding,
- topK: 3,
- includeMetadata: true,
- });
- 
- if (toneResults.matches && toneResults.matches.length > 0) {
- const toneRules = toneResults.matches
- .filter(m => (m.score || 0) > 0.3)
- .map((match) => match.metadata?.content || match.metadata?.rule || match.metadata?.rule_text || match.metadata?.text || '')
- .filter(Boolean);
- 
- if (toneRules.length > 0) {
- toneRulesContext = `TONE GUIDANCE:\n${toneRules.join('\n')}`;
- console.log('Tone rules found:', toneRules.length, 'rules');
- }
- ragDebug.push({
-   namespace: 'tone-rules',
-   query: toneQuery,
-   topScore: toneResults.matches[0]?.score || 0,
-   retrieved: toneResults.matches.length,
-   used: toneRulesContext.length > 0,
-   preview: toneRulesContext.substring(0, 120),
- });
- }
- } catch (error) {
- console.log('i, Tone rules namespace not yet populated');
- ragDebug.push({ namespace: 'tone-rules', query: '', topScore: 0, retrieved: 0, used: false, preview: 'ERROR' });
- }
-    } // end RAG OPT tone-rules
-
- // ========================================================================
  // STEP 6: RAG QUERY - PLAYER INFO
  // ========================================================================
  
@@ -1461,47 +1288,6 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('No RAG context in player-profiles, trying expert-knowledge...');
  ragDebug.push({ namespace: 'player-profiles', query: searchQuery, topScore: searchResults.matches[0]?.score || 0, retrieved: searchResults.matches.length, used: false, preview: `scores < ${PROFILE_THRESHOLD} → fallback to expert-knowledge` });
  
- // Fallback: query expert-knowledge namespace
- // FIX: player-focused query + higher threshold + filter out rulebook content
- const expertQuery = `${scoringPlayer} zawodnik profil charakterystyka styl gry`;
- try {
-   const expertEmbedding = await openai.embeddings.create({
-     model: 'text-embedding-3-small',
-     input: expertQuery,
-     dimensions: 768,
-   });
-   const expertResults = await index.namespace('player-profiles').query({
-     vector: expertEmbedding.data[0].embedding,
-     topK: 3,
-     includeMetadata: true,
-   });
-   
-   const EXPERT_THRESHOLD = 0.5;
-   const RULEBOOK_KEYWORDS = ['12.6', '12.7', 'przepis', 'regulamin', 'sędzia', 'FIVB', 'art.', 'punkt zasad', 'błędy po uderzeniu'];
-   
-   if (expertResults.matches && expertResults.matches.length > 0) {
-     const expertContext = expertResults.matches
-       .filter(m => (m.score || 0) > EXPERT_THRESHOLD)
-       .map((match) => match.metadata?.content || match.metadata?.text || '')
-       .filter(Boolean)
-       .filter(text => !RULEBOOK_KEYWORDS.some(kw => text.includes(kw)))
-       .join('\n\n');
-     if (expertContext) {
-       playerContext = expertContext;
-       console.log('[EXPERT-KNOWLEDGE] Found player context:', playerContext.substring(0, 200) + '...');
-       ragDebug.push({ namespace: 'expert-knowledge', query: expertQuery, topScore: expertResults.matches[0]?.score || 0, retrieved: expertResults.matches.length, used: true, preview: playerContext.substring(0, 120) });
-     } else {
-       console.log('[EXPERT-KNOWLEDGE] No useful content (low score or rulebook filtered)');
-       ragDebug.push({ namespace: 'expert-knowledge', query: expertQuery, topScore: expertResults.matches[0]?.score || 0, retrieved: expertResults.matches.length, used: false, preview: `scores < ${EXPERT_THRESHOLD} or rulebook filtered` });
-     }
-   }
- } catch (err) {
-   console.log('expert-knowledge namespace error:', err);
-   ragDebug.push({ namespace: 'expert-knowledge', query: expertQuery, topScore: 0, retrieved: 0, used: false, preview: 'ERROR' });
- }
- }
-
- // ========================================================================
  // STEP 7: BUILD COMMENTARY PROMPT
  // ========================================================================
  
@@ -2026,6 +1812,7 @@ INSTRUCTIONS:
      t = t.replace(/Punkt dla [^!.]+[!.]/g, _rdx);
      // "zdobywa punkt dla X" — scorer OK ale suffix niepotrzebny
      t = t.replace(/zdobywa punkt dla [A-ZŁŚŹĆĘÓĄŃ][^.!?,]{0,40}/gi, 'zdobywa punkt');
+     t = t.replace(/zdobywa punkt dla [A-Za-z][^.!?,]{0,40}/gi, 'zdobywa punkt');
      // Fallback: any remaining "punkt dla X" without punctuation
      t = t.replace(/punkt dla [A-ZŁŚŹĆĘÓĄŃ][^.!?,]{0,40}/gi, 'punkt');
      // Cleanup: wiszący zaimek względny po usunięciu "punkt dla X"
@@ -2389,6 +2176,9 @@ INSTRUCTIONS:
      // 'wyblok — wyblok' / 'wyblok, wyblok' — masło maślane
      t = t.replace(/wyblok[,—–\-\s]+wyblok/gi, 'wyblok');  // em/en-dash/myślnik
      t = t.replace(/wyblok [—–\-] wyblok/gi, 'wyblok');  // z spacjami
+     t = t.replace(/wyblok, wyblok — akcja/gi, 'wyblok — akcja');
+     t = t.replace(/wyblok, wyblok – akcja/gi, 'wyblok – akcja');
+     t = t.replace(/dotyka bloku, wyblok [—–\-] wyblok/gi, 'napotyka blok — wyblok');
      t = t.replace(/wyblok, wyblok/gi, 'wyblok');
      t = t.replace(/wyblok–wyblok/g, 'wyblok');
      t = t.replace(/wyblok—wyblok/g, 'wyblok');
@@ -2535,6 +2325,8 @@ INSTRUCTIONS:
      // "piłka żyje" — absolutny zakaz F52 (wszystkie warianty)
      t = t.replace(/piłka wciąż żyje!/gi, 'akcja trwa!');
      t = t.replace(/piłka wciąż żyje/gi, 'akcja trwa');
+     t = t.replace(/pilka zyje/gi, 'akcja trwa');
+     t = t.replace(/piłka zyje/gi, 'akcja trwa');
      t = t.replace(/piłka nadal żyje!/gi, 'akcja trwa!');
      t = t.replace(/piłka nadal żyje/gi, 'akcja trwa');
      t = t.replace(/piłka żyje!/gi, 'akcja trwa!');
