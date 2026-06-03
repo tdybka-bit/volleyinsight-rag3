@@ -1122,7 +1122,7 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('Players in rally:', allPlayersInRally);
  console.log('Name variants:', uniqueVariants);
  
- } catch(e) { /* hints merged */ }
+ } catch { /* hints merged */ }
  // NEW NAMESPACES - NAMING RULES, PHRASES, TONE
  // ========================================================================
 
@@ -1153,7 +1153,7 @@ if (!rally.touches || rally.touches.length === 0) {
  
  console.log('Naming rules query:', namingQuery);
  
- } catch(e) { /* naming merged */ }
+ } catch { /* naming merged */ }
  // COMMENTARY PHRASES (variacje zwrotow)
  // ========================================================================
 
@@ -1173,7 +1173,7 @@ if (!rally.touches || rally.touches.length === 0) {
  } else if (actionType.includes('dig')) {
  phrasesQuery = 'obrona dig ratuje wyciaga odbija';
  }
- } catch(e) { /* phrases merged */ }
+ } catch { /* phrases merged */ }
  
  if (phrasesQuery) {
  console.log('Commentary phrases query:', phrasesQuery);
@@ -1241,7 +1241,7 @@ if (!rally.touches || rally.touches.length === 0) {
  const toneQuery = `${situationContext} temperature emotion energy tone`;
  
  console.log('i, Tone rules query:', toneQuery);
- } catch(e) { /* tone merged */ }
+ } catch { /* tone merged */ }
     } // end RAG OPT tone-rules
  
  // STEP 6: RAG QUERY - PLAYER INFO
