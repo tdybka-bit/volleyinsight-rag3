@@ -1157,7 +1157,7 @@ if (!rally.touches || rally.touches.length === 0) {
  
  const namingResults = await index.namespace('player-profiles').query({
  vector: namingEmbedding.data[0].embedding,
- topK: 10, // More results - we want all relevant names
+ topK: 3,  // Reduced from 10 — top 3 naming rules are sufficient
  includeMetadata: true,
  });
  
@@ -1668,7 +1668,7 @@ if (!rally.touches || rally.touches.length === 0) {
        + ` [SCORER] ${scoringPlayer} / [TEAM] ${winnerTeamLabel} / [ACTION] attack won`
        + ` [RULE] Subject of scoring sentence = ${scoringPlayer}. ${defenderName} = context only.`
        + ` REQUIRED (rule M11): name BOTH players — attacker AND defender.`
-       + ` '${defenderName} próbuje obrony po ataku ${scoringPlayer}, ale piłka wychodzi!'`
+       + ` '${defenderName} próbuje obrony po ataku ${scoringPlayer}, ale piłka wychodzi poza boisko!'`
      );
    } else {
      touchChainLines.push(desc);
@@ -2159,7 +2159,11 @@ INSTRUCTIONS:
      t = t.replace(/\bAsseco Resovia\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bIndykpol AZS\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bZAKSA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/ZAKSA Kędzierzyn-([A-ZĄ-ž][a-zÀ-ž]{3,})\s+(zdobywa|wbija)/g, '$1 $2'); // Kędzierzyn-Gracz bez Koźle
      t = t.replace(/\bSkra Bełchatów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/Steam Hemarpol Politechnika Częstochowa\s+([A-ZĄ-ž][a-zÀ-ž]{3,})\s+(zdobywa|wbija)/g, '$1 $2');
+     t = t.replace(/Steam Hemarpol Politechnika\s+([A-ZĄ-ž][a-zÀ-ž]{3,})\s+(zdobywa|wbija)/g, '$1 $2');
+     t = t.replace(/Steam Hemarpol\s+([A-ZĄ-ž][a-zÀ-ž]{3,})\s+(zdobywa|wbija)/g, '$1 $2'); // Steam Hemarpol variants
      t = t.replace(/\bLUK Lublin\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      // "X popełnia błąd [desc]. X zdobywa punkt." — NONSENS (ten sam gracz popełnia błąd i zdobywa)
      // Dotyczy: błąd serwisowy, błąd w przyjęciu, błąd ataku
