@@ -1158,11 +1158,11 @@ if (!rally.touches || rally.touches.length === 0) {
  // ========================================================================
 
  let commentaryPhrasesContext = '';
+ let phrasesQuery = '';
     
  try {
  // Query based on action type
  const actionType = scoringAction.toLowerCase();
- let phrasesQuery = '';
  
  if (actionType.includes('ace') || actionType.includes('serve')) {
  phrasesQuery = 'ace serwis zagrywka punktowy asowy doskonaly perfekcyjny';
