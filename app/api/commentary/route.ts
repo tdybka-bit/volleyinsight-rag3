@@ -1122,6 +1122,7 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('Players in rally:', allPlayersInRally);
  console.log('Name variants:', uniqueVariants);
  
+ } catch(e) { /* hints merged */ }
  // NEW NAMESPACES - NAMING RULES, PHRASES, TONE
  // ========================================================================
 
@@ -1152,6 +1153,7 @@ if (!rally.touches || rally.touches.length === 0) {
  
  console.log('Naming rules query:', namingQuery);
  
+ } catch(e) { /* naming merged */ }
  // COMMENTARY PHRASES (variacje zwrotow)
  // ========================================================================
 
@@ -1171,9 +1173,11 @@ if (!rally.touches || rally.touches.length === 0) {
  } else if (actionType.includes('dig')) {
  phrasesQuery = 'obrona dig ratuje wyciaga odbija';
  }
+ } catch(e) { /* phrases merged */ }
  
  if (phrasesQuery) {
  console.log('Commentary phrases query:', phrasesQuery);
+ }
  
  // SET SUMMARIES (wzorce podsumowan setow/meczow)
  // ========================================================================
@@ -1237,6 +1241,8 @@ if (!rally.touches || rally.touches.length === 0) {
  const toneQuery = `${situationContext} temperature emotion energy tone`;
  
  console.log('i, Tone rules query:', toneQuery);
+ } catch(e) { /* tone merged */ }
+    } // end RAG OPT tone-rules
  
  // STEP 6: RAG QUERY - PLAYER INFO
  // ========================================================================
@@ -2112,7 +2118,10 @@ INSTRUCTIONS:
        // 'dokręca śrubę / rośnie w siłę / buduje przewagę' po błędzie serwisowym
        // = drużyna dostaje punkt za darmo, nie dzięki własnemu wysiłkowi
        t = t.replace(/i dokręca śrubę!?$/gim, 'i wychodzi na prowadzenie!');
-       t = t.replace(/i dokręca śrubę/gi, '');
+     // 'punkt wędruje do nich' — wiszący zaimek
+     t = t.replace(/[Ii] punkt wędruje do nich[!.]?/gi, '!');
+     t = t.replace(/[Pp]unkt wędruje do nich[!.]?/gi, 'Punkt zdobyty!');
+}       t = t.replace(/i dokręca śrubę/gi, '');
        t = t.replace(/i rośnie w siłę!?$/gim, '!');
        t = t.replace(/prowadzi i rośnie w siłę!/gi, 'prowadzi!');
        t = t.replace(/wychodzi na prowadzenie i rośnie w siłę!/gi, 'wychodzi na prowadzenie!');
@@ -2851,7 +2860,4 @@ INSTRUCTIONS:
  },
  });
  }
-     // 'punkt wędruje do nich' — wiszący zaimek
-     t = t.replace(/[Ii] punkt wędruje do nich[!.]?/gi, '!');
-     t = t.replace(/[Pp]unkt wędruje do nich[!.]?/gi, 'Punkt zdobyty!');
 }
