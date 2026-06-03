@@ -97,48 +97,6 @@ function checkSetEnd(
 // MULTI-LANGUAGE SYSTEM PROMPTS
 // ============================================================================
 
-// ── SHORT_RULES: esencja zasad dla GPT (max 50 linii) ──────────────────────
-// Pełna dokumentacja: commentary_rules.ts
-// postProcess obsługuje deterministycznie: recepcja, powiększa przewagę, punkt dla, Bieniekk
-// GPT musi wiedzieć poniższe:
-
-const SHORT_RULES_PL = `
-ZASADY KOMENTARZA (bezwzględne):
-
-ZAKAZY JĘZYKOWE:
-[F53] "nie daje się/dają się" → ZAKAZ. Użyj: odpowiada!, walczy dalej!, rośnie w siłę!
-[F54] "wraca do gry" → TYLKO gdy drużyna odrabia stratę 5+ pkt. Inaczej: odpowiada!, zmniejsza stratę!
-[F55] "znowu/znów/ponownie" → ZAKAZ bez kontekstu powtórzenia
-[F59] "kończy akcję" → ZAKAZ. Konkretnie: kończy atakiem!, zamyka blokiem!, wbija w boisko!
-[F61] "recepcja/recepcji/recepcję" → ZAKAZ (kalka z ang.). Zawsze: przyjęcie, odbiór zagrywki
-[F63] Po zdobyciu punktu: zawsze wykrzyknik, nigdy średnik
-[F66] "poza systemem" → ZAKAZ. Użyj: daleko od siatki, wystawienie sytuacyjne
-[F78] "ale piłka wychodzi" → zawsze dodaj dokąd: poza boisko!, na aut!, za linię!
-
-SEMANTYKA:
-[F68] Po BŁĘDZIE SERWISOWYM: ZAKAZ dokręca śrubę/rośnie w siłę/nie odpuszcza/odpowiada.
-      Drużyna dostaje punkt ZA DARMO. Poprawnie: zdobywa punkt!, korzysta z prezentu!
-[F72] Po BŁĘDZIE SERWISOWYM: ZAKAZ nie odpuszcza/dokręca śrubę/rośnie w siłę/buduje przewagę
-[F73] Podwójne creditowanie ZAKAZ: "X wbija piłkę i X zdobywa punkt" → tylko raz
-[F74] "Błąd X i X zdobywa punkt" → NONSENS. X popełnił błąd = X STRACIŁ punkt
-[F75] "zdobywa kolejny punkt" → ZAKAZ (ukryte znowu). Użyj: zdobywa punkt!
-
-NARRACJA:
-[M11] Gdy obrońca próbował zatrzymać piłkę po ataku → wspomnij OBYDWU:
-      "Tavares próbuje obrony po ataku Sasaka, ale piłka wychodzi poza boisko!"
-[F77] Rozgrywający atakuje bezpośrednio (2. kontakt) → "kiwka z drugiej piłki!", "atak z drugiej!"
-      Wystawienie z trudnej pozycji → "wystawienie sytuacyjne", "piłka sytuacyjna"
-
-WYBLOK — 6 SCENARIUSZY (F76):
-A) Attack error → punkt dla PRZECIWNEJ drużyny
-B) Atak bez bloku → punkt dla ATAKUJĄCEJ ("wbija w boisko!")  
-C) Piłka po bloku wpada w boisko BLOKUJĄCYCH → BLOCK POINT ("zamyka blokiem!")
-D) Piłka po bloku wpada w boisko ATAKUJĄCYCH → ATTACK POINT ("przebija blok!")
-D2) Blok-out: piłka leci od razu na aut → ATTACK POINT ("blok-out — punkt!")
-E) Atakujący dotknął piłki po bloku → WYBLOK, akcja trwa ("wyblok — akcja trwa!")
-ZAKAZ: "wyblok i punkt dla blokujących" = sprzeczność!
-`;
-
 const getLanguagePrompt = (lang: string) => {
  const prompts: Record<string, string> = {
 
@@ -179,7 +137,7 @@ OBOWIAZKOWE SLOWNICTWO PL:
 - Przyjecie zle: "trudne przyjecie", "pilka daleko od siatki", "nieidealne przyjecie" — NIGDY "nieporadnie"
 - NIGDY nie pisz "recepcja", "recepcji", "recepcję" — zawsze "przyjęcie", "przyjęcia".
      // "piłka zyje" → "piłka żyje"
-     t = t.replace(/piłka zyje/gi, 'piłka żyje');
+     t = t.replace(/piłka zyje/gi, 'akcja trwa');  // bez ogonka ż
      t = t.replace(/pilka zyje/gi, 'piłka żyje');
      t = t.replace(/zyje!/g, 'żyje!');
      // szybujaco bez ą
@@ -430,7 +388,7 @@ const getCommentarySystemPrompt = (
 - "punkt dla" → IT:"punto per" / ES:"punto para" / TR:"sayı" / DE:"Punkt für" / JP:"ポイント"
 Player surnames stay as-is. NEVER copy Polish words verbatim.
 
-${language === 'pl' ? SHORT_RULES_PL : ''}
+${language === 'pl' ? COMMENTARY_RULES_PL : ''}
 
 Your task is to generate professional, factual volleyball match commentary in RADIO STYLE.
 
@@ -1122,7 +1080,45 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('Players in rally:', allPlayersInRally);
  console.log('Name variants:', uniqueVariants);
  
- } catch { /* hints merged */ }
+ const hintsEmbedding = await openai.embeddings.create({
+ model: 'text-embedding-3-small',
+ input: hintsQuery,
+ dimensions: 768,
+ });
+ 
+ const hintsResults = await index.namespace('commentary-examples').query({
+ vector: hintsEmbedding.data[0].embedding,
+ topK: 5,
+ includeMetadata: true,
+ });
+ 
+ if (hintsResults.matches && hintsResults.matches.length > 0) {
+ // FIX: raised threshold from 0.3 to 0.5 to avoid random hint matches
+ const HINTS_THRESHOLD = 0.5;
+ const relevantHints = hintsResults.matches
+ .filter(match => (match.score || 0) > HINTS_THRESHOLD)
+ .map((match) => match.metadata?.betterCommentary || match.metadata?.content || match.metadata?.text || '')
+ .filter(Boolean);
+ 
+ if (relevantHints.length > 0) {
+ commentaryHintsContext = relevantHints.join('\n').substring(0, 600);
+ console.log('Commentary hints found:', commentaryHintsContext.substring(0, 150) + '...');
+ console.log('Hints scores:', hintsResults.matches.map(m => m.score?.toFixed(3)));
+ ragDebug.push({ namespace: 'commentary-hints', query: hintsQuery, topScore: hintsResults.matches[0]?.score || 0, retrieved: hintsResults.matches.length, used: true, preview: commentaryHintsContext.substring(0, 120) });
+ } else {
+ console.log(`No relevant hints (all scores < ${HINTS_THRESHOLD})`);
+ ragDebug.push({ namespace: 'commentary-hints', query: hintsQuery, topScore: hintsResults.matches[0]?.score || 0, retrieved: hintsResults.matches.length, used: false, preview: `all scores < ${HINTS_THRESHOLD} (top: ${hintsResults.matches[0]?.score?.toFixed(3)})` });
+ }
+ } else {
+ console.log('No commentary hints found for this query');
+ ragDebug.push({ namespace: 'commentary-hints', query: hintsQuery, topScore: 0, retrieved: 0, used: false, preview: 'no matches' });
+ }
+ } catch (error) {
+ console.error('Commentary hints error:', error);
+ ragDebug.push({ namespace: 'commentary-hints', query: hintsQuery, topScore: 0, retrieved: 0, used: false, preview: 'ERROR' });
+ }
+
+ // ========================================================================
  // NEW NAMESPACES - NAMING RULES, PHRASES, TONE
  // ========================================================================
 
@@ -1153,16 +1149,65 @@ if (!rally.touches || rally.touches.length === 0) {
  
  console.log('Naming rules query:', namingQuery);
  
- } catch { /* naming merged */ }
+ const namingEmbedding = await openai.embeddings.create({
+ model: 'text-embedding-3-small',
+ input: namingQuery,
+ dimensions: 768,
+ });
+ 
+ const namingResults = await index.namespace('player-profiles').query({
+ vector: namingEmbedding.data[0].embedding,
+ topK: 10, // More results - we want all relevant names
+ includeMetadata: true,
+ });
+ 
+ if (namingResults.matches && namingResults.matches.length > 0) {
+ const relevantRules = namingResults.matches
+ .filter(match => (match.score || 0) > 0.30) // Lower threshold - we need naming help!
+ .map((match) => {
+ // Support multiple metadata structures
+ return match.metadata?.rule_text || 
+ match.metadata?.content || 
+ match.metadata?.rule || 
+ match.metadata?.text || '';
+ })
+ .filter(Boolean);
+ 
+ if (relevantRules.length > 0) {
+ namingRulesContext = relevantRules.join('\n').substring(0, 1500);
+ console.log('Naming rules found:', namingRulesContext.substring(0, 100) + '...');
+ console.log('[RAG-DEBUG] Naming scores:', namingResults.matches.map(m => m.score?.toFixed(3)).join(', '));
+ }
+ ragDebug.push({
+   namespace: 'naming-rules',
+   query: namingResults.matches[0] ? `${scoringPlayer} naming rule declension odmiana` : '',
+   topScore: namingResults.matches[0]?.score || 0,
+   retrieved: namingResults.matches.length,
+   used: namingRulesContext.length > 0,
+   preview: namingRulesContext.substring(0, 120),
+ });
+ }
+ } catch (error) {
+ console.log('Naming rules namespace not yet populated');
+ ragDebug.push({ namespace: 'naming-rules', query: `${scoringPlayer} naming rule`, topScore: 0, retrieved: 0, used: false, preview: 'namespace empty/error' });
+ }
+
+    // Fallback: if no RAG naming rules found, ask GPT to decline name
+    if (!namingRulesContext && scoringPlayer) {
+      namingRulesContext = getGPTNamingFallback(scoringPlayer);
+      console.log('[NAMING-FALLBACK] Using GPT fallback for', scoringPlayer);
+    }
+
+ // ========================================================================
  // COMMENTARY PHRASES (variacje zwrotow)
  // ========================================================================
 
  let commentaryPhrasesContext = '';
- let phrasesQuery = '';
-    
+
  try {
  // Query based on action type
  const actionType = scoringAction.toLowerCase();
+ let phrasesQuery = '';
  
  if (actionType.includes('ace') || actionType.includes('serve')) {
  phrasesQuery = 'ace serwis zagrywka punktowy asowy doskonaly perfekcyjny';
@@ -1173,19 +1218,60 @@ if (!rally.touches || rally.touches.length === 0) {
  } else if (actionType.includes('dig')) {
  phrasesQuery = 'obrona dig ratuje wyciaga odbija';
  }
- } catch { /* phrases merged */ }
  
  if (phrasesQuery) {
  console.log('Commentary phrases query:', phrasesQuery);
- }
  
+ const phrasesEmbedding = await openai.embeddings.create({
+ model: 'text-embedding-3-small',
+ input: phrasesQuery,
+ dimensions: 768,
+ });
+ 
+ const phrasesResults = await index.namespace('commentary-examples').query({
+ vector: phrasesEmbedding.data[0].embedding,
+ topK: 5,
+ includeMetadata: true,
+ });
+ 
+ if (phrasesResults.matches && phrasesResults.matches.length > 0) {
+ const phrases = phrasesResults.matches
+ .filter((match) => (match.score || 0) > 0.30) // Accept relevant phrases
+ .map((match) => {
+ // Support multiple metadata structures
+ return match.metadata?.text_preview || 
+ match.metadata?.content || 
+ match.metadata?.phrase || 
+ match.metadata?.text || '';
+ })
+ .filter(Boolean);
+ 
+ if (phrases.length > 0) {
+ commentaryPhrasesContext = `VARIACJE ZWROTOW — OBOWIAZKOWE! Zamiast mechanicznego "Punkt dla X" uzyj JEDNEGO z tych zwrotow:\n${phrases.join(' / ')}\nJezeli masz te warianty — MUSISZ uzyc jednego zamiast "Punkt dla"!`;
+ console.log('Commentary phrases found:', phrases.length, 'variants');
+ console.log('[RAG-DEBUG] Phrases scores:', phrasesResults.matches.map(m => m.score?.toFixed(3)).join(', '));
+ }
+ ragDebug.push({
+   namespace: 'commentary-phrases',
+   query: phrasesQuery,
+   topScore: phrasesResults.matches[0]?.score || 0,
+   retrieved: phrasesResults.matches.length,
+   used: commentaryPhrasesContext.length > 0,
+   preview: commentaryPhrasesContext.substring(0, 120),
+ });
+ }
+ }
+ } catch (error) {
+ console.log('Commentary phrases namespace not yet populated');
+ ragDebug.push({ namespace: 'commentary-phrases', query: '', topScore: 0, retrieved: 0, used: false, preview: 'namespace empty/error' });
+ }
+
+ // ========================================================================
  // SET SUMMARIES (wzorce podsumowan setow/meczow)
  // ========================================================================
 
  let setSummariesContext = '';
 
- // RAG OPT: skip set-summaries for serve errors and short rallies
- if ((rally.touches?.length || 0) > 2) {
  try {
  // Query set-summaries for strategic insights
  const summaryQuery = `set strategy analysis key moments ${scoringPlayer} ${scoringAction}`;
@@ -1217,7 +1303,6 @@ if (!rally.touches || rally.touches.length === 0) {
  } catch (error) {
  console.log('Set summaries namespace not yet populated');
  }
- } // end RAG OPT set-summaries
 
  // ========================================================================
  // TONE RULES (kiedy dramatycznie, kiedy spokojnie)
@@ -1225,7 +1310,6 @@ if (!rally.touches || rally.touches.length === 0) {
 
  let toneRulesContext = '';
 
- if ((rally.touches?.length || 0) > 2) { // RAG OPT: skip tone-rules for short rallies
  try {
  // Build context about current situation
  const situationContext = [
@@ -1241,9 +1325,44 @@ if (!rally.touches || rally.touches.length === 0) {
  const toneQuery = `${situationContext} temperature emotion energy tone`;
  
  console.log('i, Tone rules query:', toneQuery);
- } catch { /* tone merged */ }
-    } // end RAG OPT tone-rules
  
+ const toneEmbedding = await openai.embeddings.create({
+ model: 'text-embedding-3-small',
+ input: toneQuery,
+ dimensions: 768,
+ });
+ 
+ const toneResults = await index.namespace('commentary-examples').query({
+ vector: toneEmbedding.data[0].embedding,
+ topK: 3,
+ includeMetadata: true,
+ });
+ 
+ if (toneResults.matches && toneResults.matches.length > 0) {
+ const toneRules = toneResults.matches
+ .filter(m => (m.score || 0) > 0.3)
+ .map((match) => match.metadata?.content || match.metadata?.rule || match.metadata?.rule_text || match.metadata?.text || '')
+ .filter(Boolean);
+ 
+ if (toneRules.length > 0) {
+ toneRulesContext = `TONE GUIDANCE:\n${toneRules.join('\n')}`;
+ console.log('Tone rules found:', toneRules.length, 'rules');
+ }
+ ragDebug.push({
+   namespace: 'tone-rules',
+   query: toneQuery,
+   topScore: toneResults.matches[0]?.score || 0,
+   retrieved: toneResults.matches.length,
+   used: toneRulesContext.length > 0,
+   preview: toneRulesContext.substring(0, 120),
+ });
+ }
+ } catch (error) {
+ console.log('i, Tone rules namespace not yet populated');
+ ragDebug.push({ namespace: 'tone-rules', query: '', topScore: 0, retrieved: 0, used: false, preview: 'ERROR' });
+ }
+
+ // ========================================================================
  // STEP 6: RAG QUERY - PLAYER INFO
  // ========================================================================
  
@@ -1294,6 +1413,47 @@ if (!rally.touches || rally.touches.length === 0) {
  console.log('No RAG context in player-profiles, trying expert-knowledge...');
  ragDebug.push({ namespace: 'player-profiles', query: searchQuery, topScore: searchResults.matches[0]?.score || 0, retrieved: searchResults.matches.length, used: false, preview: `scores < ${PROFILE_THRESHOLD} → fallback to expert-knowledge` });
  
+ // Fallback: query expert-knowledge namespace
+ // FIX: player-focused query + higher threshold + filter out rulebook content
+ const expertQuery = `${scoringPlayer} zawodnik profil charakterystyka styl gry`;
+ try {
+   const expertEmbedding = await openai.embeddings.create({
+     model: 'text-embedding-3-small',
+     input: expertQuery,
+     dimensions: 768,
+   });
+   const expertResults = await index.namespace('player-profiles').query({
+     vector: expertEmbedding.data[0].embedding,
+     topK: 3,
+     includeMetadata: true,
+   });
+   
+   const EXPERT_THRESHOLD = 0.5;
+   const RULEBOOK_KEYWORDS = ['12.6', '12.7', 'przepis', 'regulamin', 'sędzia', 'FIVB', 'art.', 'punkt zasad', 'błędy po uderzeniu'];
+   
+   if (expertResults.matches && expertResults.matches.length > 0) {
+     const expertContext = expertResults.matches
+       .filter(m => (m.score || 0) > EXPERT_THRESHOLD)
+       .map((match) => match.metadata?.content || match.metadata?.text || '')
+       .filter(Boolean)
+       .filter(text => !RULEBOOK_KEYWORDS.some(kw => text.includes(kw)))
+       .join('\n\n');
+     if (expertContext) {
+       playerContext = expertContext;
+       console.log('[EXPERT-KNOWLEDGE] Found player context:', playerContext.substring(0, 200) + '...');
+       ragDebug.push({ namespace: 'expert-knowledge', query: expertQuery, topScore: expertResults.matches[0]?.score || 0, retrieved: expertResults.matches.length, used: true, preview: playerContext.substring(0, 120) });
+     } else {
+       console.log('[EXPERT-KNOWLEDGE] No useful content (low score or rulebook filtered)');
+       ragDebug.push({ namespace: 'expert-knowledge', query: expertQuery, topScore: expertResults.matches[0]?.score || 0, retrieved: expertResults.matches.length, used: false, preview: `scores < ${EXPERT_THRESHOLD} or rulebook filtered` });
+     }
+   }
+ } catch (err) {
+   console.log('expert-knowledge namespace error:', err);
+   ragDebug.push({ namespace: 'expert-knowledge', query: expertQuery, topScore: 0, retrieved: 0, used: false, preview: 'ERROR' });
+ }
+ }
+
+ // ========================================================================
  // STEP 7: BUILD COMMENTARY PROMPT
  // ========================================================================
  
@@ -1475,7 +1635,7 @@ if (!rally.touches || rally.touches.length === 0) {
        }
      }
    // FREE
-   } else if (numTouches > 10 && (actionLower.includes('blok') || actionLower.includes('wyblok')) && !isLastTouch) {
+   } else if (numTouches > 12 && (actionLower.includes('blok') || actionLower.includes('wyblok')) && !isLastTouch) {
      // Long rally (12+ dotknięć): nie opisuj szczegółów wybloku — tylko krótki znacznik
      desc += ' - blok/wyblok (skipped detail — too many touches)';
    } else if (actionLower.includes('serve_error') || (actionLower.includes('error') && actionLower.includes('serw'))) {
@@ -1818,14 +1978,13 @@ INSTRUCTIONS:
      t = t.replace(/Punkt dla [^!.]+[!.]/g, _rdx);
      // "zdobywa punkt dla X" — scorer OK ale suffix niepotrzebny
      t = t.replace(/zdobywa punkt dla [A-ZŁŚŹĆĘÓĄŃ][^.!?,]{0,40}/gi, 'zdobywa punkt');
-     t = t.replace(/zdobywa punkt dla [A-Za-z][^.!?,]{0,40}/gi, 'zdobywa punkt');
      // Fallback: any remaining "punkt dla X" without punctuation
      t = t.replace(/punkt dla [A-ZŁŚŹĆĘÓĄŃ][^.!?,]{0,40}/gi, 'punkt');
      // Cleanup: wiszący zaimek względny po usunięciu "punkt dla X"
      // "Łatwy punkt, która prowadzi w pierwszym secie!" → "Łatwy punkt!"
      t = t.replace(/,\s*(który|która|które|którzy)\s+prowadzi[^!.]*[!.]?/gi, '!');
      // Wiszący zaimek przy kontekście drużynowym (nie przy piłce)
-     t = t.replace(/,\s*(który|która|które|którzy)\s+(prowadzi|wychodzi na|zmniejsza|odrabia|wyrównuje|odskakuje|powiększa|buduje|rośnie|zdobywa)[^!.]{0,60}[!.]/gi, '!');
+     t = t.replace(/,\s*(który|która|które|którzy)\s+(prowadzi|wychodzi na|zmniejsza|odrabia|wyrównuje|odskakuje)[^!.]{0,60}[!.]/gi, '!');
 
      // ── Score in text → remove explicit numbers ─────────────────────────
      if (!setEndInfo.isSetEnd) {
@@ -1989,58 +2148,23 @@ INSTRUCTIONS:
      // "[Prefix nazwy drużyny] [Gracz] zdobywa" — GPT wkleja prefiks przed nazwiskiem
      // Statyczne wzorce dla PlusLigi (bezpieczne dla SWC — tylko t.replace())
      t = t.replace(/\bPGE Projekt\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bAluron CMC Warta Zawiercie\s+(?!Zawiercie\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAluron CMC Warta Zawiercie\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bAluron CMC Warta\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bAluron CMC\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bAluron\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bPGE Projekt Warszawa\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bPGE Projekt\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bJSW Jastrzębski Węgiel\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bJSW Jastrzębski\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bSteam Hemarpol Politechnika Częstochowa\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bSteam Hemarpol Politechnika\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bSteam Hemarpol\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bŚlepsk Malow Suwałki\s+(?!Suwałki\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bŚlepsk Malow\s+(?!Suwałki\s|Malow\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bZAKSA Kędzierzyn-Koźle\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bZAKSA Kędzierzyn-([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bZAKSA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bEnerga Trefl Gdańsk\s+(?!Gdańsk\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bEnerga Trefl\s+(?!Gdańsk\s|Gdansk\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bAsseco Resovia Rzeszów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bAsseco Resovia\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bIndykpol AZS Olsztyn\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bIndykpol AZS\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bPGE GiEK SKRA Bełchatów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bPGE GiEK SKRA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bBOGDANKA LUK Lublin\s+(?!Lublin\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAluron\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bBOGDANKA LUK\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bBogdanka LUK Lublin\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bBogdanka LUK\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      t = t.replace(/\bBOGDANKA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bBarkom Każany Lwów\s+(?!Lwów\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bInPost ChKS Chełm\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bInPost CHKS Chełm\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bInPost ChKS\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bCuprum Stilon Gorzów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bCuprum Stilon\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bŚlepsk Malow Suwałki\s+(?!Suwałki\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bŚlepsk Malow\s+(?!Suwałki\s|Malow\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bPGE GiEK SKRA Bełchatów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bPGE GiEK SKRA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bPGE GiEK\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bSteam Hemarpol Politechnika Częstochowa\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bSteam Hemarpol Politechnika\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bSteam Hemarpol\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bEnerga Trefl Gdańsk\s+(?!Gdańsk\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bEnerga Trefl\s+(?!Gdańsk\s|Gdansk\s)([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-     t = t.replace(/\bZAKSA Kędzierzyn-Koźle\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
-
+     t = t.replace(/\bJSW Jastrzębski\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bAsseco Resovia\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bIndykpol AZS\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bZAKSA\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bSkra Bełchatów\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
+     t = t.replace(/\bLUK Lublin\s+([A-Z\u0104-\u017E][A-Za-z\u00C0-\u017E]{3,})\s+(zdobywa|wbija|zamyka|blokuje)/g, '$1 $2');
      // "X popełnia błąd [desc]. X zdobywa punkt." — NONSENS (ten sam gracz popełnia błąd i zdobywa)
      // Dotyczy: błąd serwisowy, błąd w przyjęciu, błąd ataku
-     // Pattern A: "X popełnia błąd w przyjęciu [i/,] X zdobywa punkt"
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd w przyjęciu[^.!,]*[i,] \1 zdobywa punkt[^.!]*/gi, '$1 popełnia błąd w przyjęciu!');
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd w przyjęciu[^.!]*[.!,]\s*\1 zdobywa punkt[^.!]*/gi, '$1 popełnia błąd w przyjęciu!');
+     // Pattern A: "X popełnia błąd w przyjęciu i X zdobywa punkt" (przecinek lub "i")
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) popełnia błąd w przyjęciu[^.!]*i \1 zdobywa punkt[^.!]*/gi, '$1 popełnia błąd w przyjęciu!');
      t = t.replace(/błąd w przyjęciu ([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,})[^.!]*i \1 zdobywa punkt[^.!]*/gi, 'błąd w przyjęciu $1!');
      // Pattern B: X popełnia błąd. X zdobywa punkt. (dokładnie ten sam gracz)
      t = t.replace(
@@ -2048,12 +2172,8 @@ INSTRUCTIONS:
        (m: string, p: string) => `${p} popełnia błąd!`
      );
      // Pattern C: "X myli się w ataku! X zdobywa punkt" — ten sam wzorzec co błąd
-     // myli się + zdobywa — separator może być . ! lub — (em dash)
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się w ataku[^.!—]*[.!—]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się w ataku!');
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się w przyjęciu[^.!—]*[.!—]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się w przyjęciu!');
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się[^.!—]{0,30}[.!—]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się!');
-     // myli się w ataku i [Team Prefix] [Gracz] zdobywa — team prefix wklejony przed scorer
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się w ataku[^.!]*[.!]?\s*(?:[A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E\s]{3,20})\1 zdobywa punkt[^.!]*/gi, '$1 myli się w ataku!');
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się w ataku[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się w ataku!');
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) myli się[^.!]{0,30}[.!]\s*\1 zdobywa punkt[^.!]*/gi, '$1 myli się!');
      // Pattern D: "Błąd X i X zdobywa punkt" (F74) — ten sam gracz błądzi i 'zdobywa'
      t = t.replace(/[Bb]łąd ([A-ZŁŚŹĆĘÓĄŃ][A-Za-z\u00C0-\u017E]{3,}) i \1 zdobywa punkt[^.!]*/gi, 'Błąd $1!');
      // Pattern E: "[Team prefix] X zdobywa punkt" po błędzie ataku (team ucięty)
@@ -2108,7 +2228,7 @@ INSTRUCTIONS:
      // ── Błąd serwisowy: podmiana scorera + odpowiada ────────────────────────
      // '[X] błąd serwisowy. [X] zdobywa punkt' = NONSENS — X STRACIŁ punkt!
      // Bezpieczna forma: kasujemy '[X] zdobywa punkt' po 'błąd serwisowy X'
-     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,}) popełnia błąd serwisowy[^.!,—]*[,.!—]\s*\1 zdobywa punkt[^.!]*[.!]?/gi, '$1 popełnia błąd serwisowy!');
+     t = t.replace(/([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,}) popełnia błąd serwisowy[^.!,]*[,.!]\s*\1 zdobywa punkt[^.!]*[.!]?/gi, '$1 popełnia błąd serwisowy!');
      t = t.replace(/Błąd serwisowy ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,})[^.!]*[.!]\s*\1 zdobywa punkt[^.!]*/gi, 'Błąd serwisowy $1');
      // '[X] błąd serwisowy X. [drużyna] X zdobywa punkt' (team+imię wklejone)
      t = t.replace(/błąd serwisowy ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń']{3,})[^.!]*[.!][^.!]{0,80}\1 zdobywa punkt[^.!]*/gi, 'błąd serwisowy $1!');
@@ -2118,13 +2238,8 @@ INSTRUCTIONS:
        // 'dokręca śrubę / rośnie w siłę / buduje przewagę' po błędzie serwisowym
        // = drużyna dostaje punkt za darmo, nie dzięki własnemu wysiłkowi
        t = t.replace(/i dokręca śrubę!?$/gim, 'i wychodzi na prowadzenie!');
-     // 'punkt wędruje do nich' — wiszący zaimek
-     t = t.replace(/[Ii] punkt wędruje do nich[!.]?/gi, '!');
-     t = t.replace(/[Pp]unkt wędruje do nich[!.]?/gi, 'Punkt zdobyty!');
-}       t = t.replace(/i dokręca śrubę/gi, '');
+       t = t.replace(/i dokręca śrubę/gi, '');
        t = t.replace(/i rośnie w siłę!?$/gim, '!');
-       t = t.replace(/prowadzi i rośnie w siłę!/gi, 'prowadzi!');
-       t = t.replace(/wychodzi na prowadzenie i rośnie w siłę!/gi, 'wychodzi na prowadzenie!');
        t = t.replace(/i rośnie w siłę/gi, '');
        t = t.replace(/i buduje przewagę!?$/gim, '!');
        t = t.replace(/i buduje przewagę/gi, '');
@@ -2161,70 +2276,27 @@ INSTRUCTIONS:
      t = t.replace(/,?\s*ale [Ii] to jest punkt dla [^!.]+[!.]/g, ' — punkt!');
      t = t.replace(/,?\s*ale [Ii] to punkt dla [^!.]+[!.]/g, ' — punkt!');
           t = t.replace(/\bgra trwa\b/gi, 'akcja trwa');
-     // podwójny scoring: 'wpada w boisko! Wbija piłkę w boisko'
-     t = t.replace(/wpada w boisko[!.]\s*Wbija piłkę w boisko[!.]?/gi, 'wpada w boisko!');
-     t = t.replace(/wpada w boisko[!.]\s*([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) wbija piłkę[^!]*/gi, 'wpada w boisko!');
-     // 'tipem' / 'tipa' — angielski! ZAKAZ (F-tip). Użyj: kiwką, delikatnym atakiem
+     // tipem/tipa/pipe'a — angielskie, ZAKAZ
      t = t.replace(/precyzyjnym tipem/gi, 'precyzyjną kiwką');
      t = t.replace(/delikatnym tipem/gi, 'delikatną kiwką');
      t = t.replace(/zaskakuje tipem/gi, 'zaskakuje kiwką');
      t = t.replace(/kończy tipem/gi, 'kończy kiwką');
      t = t.replace(/atakuje tipem/gi, 'atakuje kiwką');
      t = t.replace(/atak tipem/gi, 'atak kiwką');
-     t = t.replace(/z tipem/gi, 'kiwką');
-     t = t.replace(/tipem/gi, 'kiwką');
      t = t.replace(/z tipa/gi, 'kiwką');
      t = t.replace(/tipa/gi, 'kiwki');
+     t = t.replace(/tipem/gi, 'kiwką');
      t = t.replace(/pipe'a/gi, 'pipe');
      t = t.replace(/z pipe'a/gi, 'z pipe');
-     t = t.replace(/pipe'em/gi, 'pipe');
-     // F4: 'wyciąga z podłogi' → zakaz
-     t = t.replace(/wyciąga z podłogi/gi, 'ratuje piłkę w obronie');
-     t = t.replace(/wyciągnął z podłogi/gi, 'obronił piłkę');
-     t = t.replace(/wyciągając z podłogi/gi, 'ratując piłkę');
-     // 'wyblok — wyblok' / 'wyblok, wyblok' — masło maślane
-     t = t.replace(/wyblok[,—–\-\s]+wyblok/gi, 'wyblok');  // em/en-dash/myślnik
-     t = t.replace(/wyblok [—–\-] wyblok/gi, 'wyblok');  // z spacjami
-     t = t.replace(/wyblok, wyblok — akcja/gi, 'wyblok — akcja');
-     t = t.replace(/wyblok, wyblok – akcja/gi, 'wyblok – akcja');
-     t = t.replace(/dotyka bloku, wyblok [—–\-] wyblok/gi, 'napotyka blok — wyblok');
-     t = t.replace(/wyblok, wyblok/gi, 'wyblok');
-     t = t.replace(/wyblok–wyblok/g, 'wyblok');
-     t = t.replace(/wyblok—wyblok/g, 'wyblok');
-     t = t.replace(/wyblok-wyblok/gi, 'wyblok');
-     t = t.replace(/jest wyblokowany[,—–\s]+wyblok/gi, 'wyblok');
-     t = t.replace(/wyblokowany[,—–\s]+wyblok/gi, 'wyblok');
-     t = t.replace(/jest wyblokowany, akcja trwa/gi, 'wyblok — akcja trwa');
-     t = t.replace(/wyblokował piłkę[,—–\s]+wyblok/gi, 'wyblok');
-     t = t.replace(/wyblok piłkę i wyblok/gi, 'wyblok');
-     t = t.replace(/dotyka bloku[,—–\s]+wyblok piłkę/gi, 'napotyka blok — wyblok');
-     t = t.replace(/wyblok — akcja trwa! wyblok/gi, 'wyblok — akcja trwa!');
-     // 'ČČ' / 'Čč' — podwójny znak diakrytyczny (GPT/encoding bug)
-     t = t.replace(/ČČ/g, 'Č');
-     t = t.replace(/Čč/g, 'Č');
-     t = t.replace(/čč/g, 'č');
-     // "ale piłka wychodzi" bez dopełnienia — zawsze dodaj kontekst (F78)
-     // Deterministyczna rotacja oparta na długości tekstu (bez Math.random)
-     // 'ale piłka wychodzi!' bez dopełnienia → dodaj (F78)
-     // Tylko gdy po 'wychodzi' nie ma już słów (unikamy podwójnego dopełnienia)
-     t = t.replace(/ale piłka wychodzi!/gim, 'ale piłka wychodzi poza boisko!');
-     t = t.replace(/— piłka wychodzi!/gim, '— piłka wychodzi poza boisko!');
-     t = t.replace(/jednak piłka wychodzi!/gim, 'jednak piłka wychodzi poza boisko!');
-     t = t.replace(/lecz piłka wychodzi!/gim, 'lecz piłka wychodzi poza boisko!');
-     t = t.replace(/a piłka wychodzi!/gim, 'a piłka wychodzi poza boisko!');
-     t = t.replace(/(?<!poza |na aut|za linię|\w )piłka wychodzi!$/gim, 'piłka wychodzi poza boisko!');
-     // Cleanup podwójnego dopełnienia: 'poza X poza boisko' → 'poza X'
-     t = t.replace(/poza (pole gry|boisko|autem?) poza boisko/gi, 'poza $1');
-     t = t.replace(/na aut poza boisko/gi, 'na aut');
-     t = t.replace(/za linię poza boisko/gi, 'za linię');
-     // 'powiększa impet' — nie jest frazą siatkówkową, zbyt mechaniczne
-     t = t.replace(/powiększa impet!/gi, 'rośnie w siłę!');
-     t = t.replace(/powiększa impet/gi, 'rośnie w siłę');
-     // 'Seria trzech punktów' urwane — dodaj wykrzyknik
-     t = t.replace(/Seria (\w+ )?punktów$/gim, 'Seria $1punktów!');
      // "piłka odpowiada" — bez sensu, nic nie znaczy
      t = t.replace(/piłka odpowiada!/gi, 'akcja trwa!');
      t = t.replace(/wyblok i piłka odpowiada/gi, 'wyblok — akcja trwa');
+     t = t.replace(/wyblok – wyblok/gi, 'wyblok');
+     t = t.replace(/wyblok — wyblok/gi, 'wyblok');
+     t = t.replace(/wyblok, wyblok/gi, 'wyblok');
+     t = t.replace(/wyblokowany, wyblok/gi, 'wyblok');
+     t = t.replace(/wyblok piłkę [—–] wyblok/gi, 'wyblok');
+     t = t.replace(/dotyka bloku, wyblok [—–] wyblok/gi, 'napotyka blok — wyblok');
      t = t.replace(/piłka odpowiada/gi, 'akcja trwa');
      // "trafia w blok, ale X dotyka bloku" — masło maślane (trafia + dotyka w tym samym zdaniu)
      t = t.replace(/trafia w blok, ale ([A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+ [A-ZŁŚŹĆĘÓĄŃ][a-złśźćęóąń]+) dotyka bloku[,—–]?\s*wyblok/gi,
@@ -2280,69 +2352,15 @@ INSTRUCTIONS:
      // "Henir Henno" → "Henno" (błędne imię GPT — profil mówi samo Henno)
      t = t.replace(/Henir Henno/gi, 'Henno');
      t = t.replace(/Henir/gi, 'Henno');
-     // Odmiana po 'po ataku X' — deterministyczna dla najczęstszych zawodników
-     t = t.replace(/po ataku Esfandiar([^a-zA-Z])/g, 'po ataku Esfandiarze$1');
-     t = t.replace(/po ataku Bołądź([^a-zA-Z])/g, 'po ataku Bołądzia$1');
-     t = t.replace(/po ataku Kwolek([^a-zA-Z])/g, 'po ataku Kwolka$1');
-     t = t.replace(/po ataku Sasak([^a-zA-Z])/g, 'po ataku Sasaka$1');
-     t = t.replace(/po ataku Russell([^a-zA-Z])/g, 'po ataku Russella$1');
-     t = t.replace(/po ataku Leon([^a-zA-Z])/g, 'po ataku Leona$1');
-     t = t.replace(/po ataku Schulz([^a-zA-Z])/g, 'po ataku Schulza$1');
-     t = t.replace(/po ataku Brand([^a-zA-Z])/g, 'po ataku Branda$1');
-     t = t.replace(/po ataku Orczyk([^a-zA-Z])/g, 'po ataku Orczyka$1');
-     t = t.replace(/po ataku Souza([^a-zA-Z])/g, 'po ataku Souzy$1');
-     t = t.replace(/po ataku Nowak([^a-zA-Z])/g, 'po ataku Nowaka$1');
-     t = t.replace(/po ataku Grozdanov([^a-zA-Z])/g, 'po ataku Grozdanova$1');
-     t = t.replace(/po ataku Fornal([^a-zA-Z])/g, 'po ataku Fornala$1');
-     t = t.replace(/po ataku Semeniuk([^a-zA-Z])/g, 'po ataku Semeniuka$1');
-     t = t.replace(/po ataku Szalpuk([^a-zA-Z])/g, 'po ataku Szalpuka$1');
-     t = t.replace(/po ataku Gierżot([^a-zA-Z])/g, 'po ataku Gierżota$1');
-     t = t.replace(/po ataku Koppers([^a-zA-Z])/g, 'po ataku Koppersa$1');
-     t = t.replace(/po ataku Rychlicki([^a-zA-Z])/g, 'po ataku Rychlickiego$1');
-     t = t.replace(/po ataku Lipiński([^a-zA-Z])/g, 'po ataku Lipińskiego$1');
-     t = t.replace(/po ataku McCarthy([^a-zA-Z])/g, "po ataku McCarthy'ego$1");
-     t = t.replace(/po ataku Tillie([^a-zA-Z])/g, 'po ataku Tilliego$1');
-     t = t.replace(/po ataku Toniutti([^a-zA-Z])/g, 'po ataku Toniuttiego$1');
-     t = t.replace(/po ataku Hadrava([^a-zA-Z])/g, 'po ataku Hadravy$1');
-     t = t.replace(/po ataku Nowakowski([^a-zA-Z])/g, 'po ataku Nowakowskiego$1');
-     t = t.replace(/po ataku Kochanowski([^a-zA-Z])/g, 'po ataku Kochanowskiego$1');
-     t = t.replace(/po ataku Majchrzak([^a-zA-Z])/g, 'po ataku Majchrzaka$1');
-     t = t.replace(/po ataku Halaba([^a-zA-Z])/g, 'po ataku Halaby$1');
-     t = t.replace(/po ataku Indra([^a-zA-Z])/g, 'po ataku Indry$1');
-     t = t.replace(/po ataku Adamczyk([^a-zA-Z])/g, 'po ataku Adamczyka$1');
-     t = t.replace(/po ataku Ciunajtis([^a-zA-Z])/g, 'po ataku Ciunajtisa$1');
-     t = t.replace(/po ataku Popiela([^a-zA-Z])/g, 'po ataku Popieli$1');
-     t = t.replace(/po ataku Siwczyk([^a-zA-Z])/g, 'po ataku Siwczyka$1');
-     t = t.replace(/po ataku Gierżot([^a-zA-Z])/g, 'po ataku Gierżota$1');
-     t = t.replace(/po ataku Stępień([^a-zA-Z])/g, 'po ataku Stępnia$1');
-     t = t.replace(/po ataku Butryn([^a-zA-Z])/g, 'po ataku Butryna$1');
-     t = t.replace(/po ataku Pietras([^a-zA-Z])/g, 'po ataku Pietrasa$1');
-     t = t.replace(/po ataku Amirhosseina Esfandiar([^a-z])/g, 'po ataku Esfandiarze$1');
-     // 'serwuje w salto' — nie istnieje w polskiej siatkówce
-     t = t.replace(/serwuje w salto/gi, 'serwuje z wyskoku');
-     t = t.replace(/zagrywka w salto/gi, 'zagrywka z wyskoku');
-     t = t.replace(/zagrywkę w salto/gi, 'zagrywkę z wyskoku');
-     t = t.replace(/serwisem w salto/gi, 'zagrywką z wyskoku');
      // Urwany komentarz — 'muruje siatkę i!' / 'blokuje i!' itp.
      // GPT zaczął zdanie ale token limit uciął. Czyścimy wisielcze 'i!'
      t = t.replace(/ i!$/gm, '!');
      t = t.replace(/ i! /g, '! ');
      t = t.replace(/ ale!$/gm, '!');
-     t = t.replace(/ ale$/gm, ' ale nie zatrzymuje piłki!');
-     t = t.replace(/ lecz$/gm, ' lecz piłka wychodzi!');
      t = t.replace(/ lecz!$/gm, '!');
-     // "piłka żyje" — absolutny zakaz F52 (wszystkie warianty)
-     t = t.replace(/piłka wciąż żyje!/gi, 'akcja trwa!');
-     t = t.replace(/piłka wciąż żyje/gi, 'akcja trwa');
-     t = t.replace(/pilka zyje/gi, 'akcja trwa');
-     t = t.replace(/piłka zyje/gi, 'akcja trwa');
-     t = t.replace(/piłka nadal żyje!/gi, 'akcja trwa!');
-     t = t.replace(/piłka nadal żyje/gi, 'akcja trwa');
+     // "piłka żyje" — absolutny zakaz (Tomek feedback wielokrotny)
      t = t.replace(/piłka żyje!/gi, 'akcja trwa!');
      t = t.replace(/piłka żyje/gi, 'akcja trwa');
-     // 'piłka wraca do gry' przy wybloku → akcja trwa
-     t = t.replace(/wyblok, piłka wraca do gry/gi, 'wyblok — akcja trwa');
-     t = t.replace(/piłka wraca do gry/gi, 'akcja trwa');
      t = t.replace(/pilka zyje!/gi, 'akcja trwa!');
      t = t.replace(/pilka zyje/gi, 'akcja trwa');
      // Bezsensowne frazy GPT w długich wymianach
